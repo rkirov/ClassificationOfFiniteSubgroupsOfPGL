@@ -1,33 +1,5 @@
 import Mathlib
 
-
-namespace test
-
-variable {G : Type*} [Group G] ( H : Subgroup G) (hHMax : Maximal (Subgroup.IsCommutative) H)
-
-example : H.IsCommutative := hHMax.prop
-
-example : ∀ J, H < J → ¬J.IsCommutative := by
-  intro J hJ
-  contrapose! hJ
-  exact Maximal.not_gt hHMax hJ
-
-example : ∀ (J : Subgroup G),(J.IsCommutative ∧ (∀ K, J < K → ¬K.IsCommutative)) →
-    Maximal (Subgroup.IsCommutative) J := by
-  intro J hJ
-  rw [Maximal]
-  use hJ.left
-  replace hJ := hJ.right
-  intro K hK hJK
-  specialize hJ K
-  if h: J = K then
-    rw [h]
-  else
-    exact (hJ (lt_of_le_of_ne hJK h) hK).elim
-
-end test
-
-
 namespace ElementaryAbelian
 
 def IsElementaryAbelian (p : ℕ) [Fact (Nat.Prime p)] (G : Type*) [CommGroup G] : Prop  :=
@@ -78,7 +50,7 @@ def center_of_SL_2_F : center SL(2,F) ≃* rootsOfUnity 2 F  := by apply Matrix.
 
 /- Requires Jordan Normal Form -/
 /- Lemma 1.5. Each element of SL(2,F) is conjugate to either D δ for some δ ∈ Fˣ, or to  ± T τ for some τ ∈ F .-/
-theorem theorem_1_5 [IsAlgClosed F] (S : SL(2,F)) : ∃ δ : Fˣ, IsConj S (D δ) ∨ ∃ τ : F, IsConj S (T τ) := by sorry
+lemma lemma_1_5 [IsAlgClosed F] (S : SL(2,F)) : ∃ δ : Fˣ, IsConj S (D δ) ∨ ∃ τ : F, IsConj S (T τ) := by sorry
 
 end one
 
@@ -116,24 +88,22 @@ theorem theorem_2_3_i
   Subgroup.centralizer {⟨x, by aesop⟩} ∈ MaximalAbelianSubgroups G := by sorry
 
 /- Theorem 2.3 (ii) For any two distinct subgroups A and B of M, we have A ∩ B = Z. -/
--- theorem theorem_2_6_ii
---   (A B : Subgroup G)
---   (hA : A ∈ MaximalAbelianSubgroups G)
---   (hB : B ∈ MaximalAbelianSubgroups G)
---   (A_neq_B: A ≠ B)
---   (hG : center SL(2,F) ≤ G) :
---   ((A) ⊓ (B)) = ((center SL(2,F))) := by sorry
+theorem theorem_2_6_ii
+  (A B : Subgroup G)
+  (hA : A ∈ MaximalAbelianSubgroups G)
+  (hB : B ∈ MaximalAbelianSubgroups G)
+  (A_neq_B: A ≠ B)
+  (hG : center SL(2,F) ≤ G) :
+  ((A) ⊓ (B)) = ((center SL(2,F))) := by sorry
 
-example {G : Type*} [Group G] {M N : Subgroup G} [M.Normal]
-    [N.Normal] (h : M = N) : G ⧸ M ≃* G ⧸ N := QuotientGroup.quotientMulEquivOfEq h
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
 of G. -/
--- theorem theorem_2_6_iii
---   (A : Subgroup G)
---   (hA : A ∈ MaximalAbelianSubgroups G) :
---   (IsCyclic A ∧ Nat.Coprime (Nat.card A) p) ∨
---   (∃ Q : Sylow p G, IsElementaryAbelian Q → ∃ φ : A →* (Q.toSubgroup.prod (center SL(2,F)))) := by sorry
+theorem theorem_2_6_iii
+  (A : Subgroup G)
+  (hA : A ∈ MaximalAbelianSubgroups G) :
+  (IsCyclic A ∧ Nat.Coprime (Nat.card A) p) ∨
+  (∃ Q : Sylow p G, IsElementaryAbelian Q → ∃ φ : A →* (Q.toSubgroup.prod (center SL(2,F)))) := by sorry
 
 /- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [NG (A) : A] ≤ 2. -/
 theorem theorem_2_3_iv_a (A : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) : A.normalizer.index ≤ 2 := by sorry
@@ -143,7 +113,7 @@ theorem theorem_2_3_iv_b (A : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups G)
   (x : A) : ∃ y ∈ A.normalizer.carrier \ A, y * x * y⁻¹ = x⁻¹ := by sorry
 
 /- Theorem 2.3 (v a) Let Q be a Sylow p-subgroup of G. If Q 6= {IG }, then there is a cyclic subgroup K of G such that NG (Q) = QK.  -/
--- theorem theorem_2_6_v_a { p : ℕ } (hp : Nat.Prime p) (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) : ∃ K : Subgroup G, IsCyclic K → Q.toSubgroup.normalizer ≃* Q.toSubgroup.prod K:= by sorry
+theorem theorem_2_6_v_a { p : ℕ } (hp : Nat.Prime p) (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) : ∃ K : Subgroup G, IsCyclic K → Q.toSubgroup.normalizer ≃* Q.toSubgroup.prod K:= by sorry
 
 /- Theorem 2.3 (v b)If |K| > |Z|, then K ∈ M. -/
 theorem theorem_2_6_v_b { p : ℕ }
@@ -159,7 +129,7 @@ theorem theorem_2_6_v_b { p : ℕ }
 
 /- Conjugacy of Maximal Abelian subgroups -/
 /-
-Definition. The set Ci = {xAi x−1 : x ∈ G} is called the conjugacy class of
+Definition. The set Clᵢ = {x Aᵢx⁻¹ : x ∈ G} is called the conjugacy class of
 A ∈ M.
 -/
 
@@ -170,7 +140,7 @@ A ∈ M.
 
 
 /-
-Clᵢ = {x Aᵢx⁻¹ : x ∈ G}
+
 
 For some Ai ∈ M and A∗i ∈ M∗ let,
 Ci = ⋃ x ∈ G, x * Aᵢ * x⁻¹, and Cᵢ* = ⋃ x ∈ G, x Aᵢ* x⁻¹
@@ -178,13 +148,3 @@ Ci = ⋃ x ∈ G, x * Aᵢ * x⁻¹, and Cᵢ* = ⋃ x ∈ G, x Aᵢ* x⁻¹
 It’s evident that Cᵢ* = Cᵢ \ Z(SL(2,F)) and that there is a Cᵢ corresponding to each
 Cᵢ . Clearly we have the relation, |Cᵢ*| = |Aᵢ*||Clᵢ*| (clearly on pen and paper smh...) -/
 end two
-
-section three
-
-/- Theorem 3.6 -/
-theorem dickson_classification_theorem_class_I {p : ℕ} [CharP F p] (hp : Prime p) (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p)
-  (G : Subgroup (SL(2,F))) [Finite G] : SL(2,F) = SL(2,F) := sorry
-
-end three
-
-end SpecialLinearGroup
