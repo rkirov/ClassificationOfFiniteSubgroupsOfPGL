@@ -26,7 +26,6 @@ example : ∀ (J : Subgroup G),(J.IsCommutative ∧ (∀ K, J < K → ¬K.IsComm
 
 end test
 
-
 namespace ElementaryAbelian
 
 def IsElementaryAbelian (p : ℕ) [Fact (Nat.Prime p)] (G : Type*) [CommGroup G] : Prop  :=
@@ -43,7 +42,6 @@ open Subgroup
 
 def IsMaximalAbelian (G : Type*) [Group G] (H : Subgroup G) : Prop := Maximal (IsCommutative) H
 
--- def NonCentral
 def MaximalAbelianSubgroups { G : Type*} [Group G](H : Subgroup G) : Set (Subgroup H) :=
   { K : Subgroup H | @IsMaximalAbelian H _ K}
 
@@ -58,6 +56,7 @@ open Matrix MatrixGroups
 variable (F : Type u) [Field F]
 
 instance : Group SL(2,F) := by infer_instance
+
 section one
 
 def T {F : Type*} [Field F] (τ : F): SL(2, F) :=
@@ -105,10 +104,10 @@ lemma lemma_1_1_iii (δ : Fˣ) (τ : F) : D δ * T τ * (D δ)⁻¹ = T (τ * δ
 lemma lemma_1_1_iv (δ : Fˣ) : W * (D δ) * W⁻¹ = (D δ)⁻¹ := by
   rw [inv_D_eq]
   ext i j
-  fin_cases i <;> fin_cases j <;>  simp [D, W]
+  fin_cases i <;> fin_cases j <;>  simp [W, D]
 
 /- Lemma 1.2.1.1-/
-def setOfD : Subgroup SL(2,F) where
+def subgroupOfD {F : Type*} [Field F] : Subgroup SL(2,F) where
   carrier := { D δ | δ : Fˣ }
   mul_mem' := by
               intro S Q hS hQ
@@ -128,7 +127,7 @@ def setOfD : Subgroup SL(2,F) where
               simp [← hS]
 
 /- Lemma 1.2.1.2 -/
-def setOfT : Subgroup SL(2,F) where
+def subgroupOfT {F : Type*}  [Field F] : Subgroup SL(2,F) where
   carrier := { T τ | τ : F}
   mul_mem' := by
               intro S Q hS hQ
@@ -148,6 +147,22 @@ def setOfT : Subgroup SL(2,F) where
               use (-τ)
               simp [← hτ]
 
+instance : Group (Fˣ) := by exact Units.instGroup
+
+/- Lemma 1.2.1.3 -/
+noncomputable def subgroupOfD_iso_units_of_F {F : Type*} [Field F] : @subgroupOfD F _  ≃* (⊤ : Subgroup Fˣ) where
+  toFun D := ⟨D.property.choose, by simp⟩
+  invFun δ := ⟨D δ.val, by simp [subgroupOfD]⟩
+  left_inv A := by simp [D]; sorry
+  right_inv a := by
+                simp_all only
+                obtain ⟨δ, property⟩ := a
+                simp_all only [Subtype.mk.injEq]
+                sorry
+  map_mul' := sorry
+
+/- Lemma 1.2.1.4 { T τ } ≃* F -/
+-- def subgroupOfT_iso_F {F :Type*} [Field F] : @subgroupOfT F _ ≃* (⊤ :  F.to) := by sorry
 
 open Subgroup
 
@@ -172,7 +187,7 @@ theorem theorem_1_5 [IsAlgClosed F] (S : SL(2,F)) : ∃ δ : Fˣ, IsConj S (D δ
   obtain h := @Module.End.exists_isNilpotent_isSemisimple F (Matrix (Fin 2) (Fin 2) F) _ _ _-- (S.coeToGL.toLinear_apply)
   sorry
 
-/- Proposition 1.7. (i) NL (D1 ) = hD, wi, where D1 is any subgroup of D with
+/- Proposition 1.7. (i) N_L (D₁) = hD, wi, where D₁ is any subgroup of D with
 order greater than 2.-/
 
 
@@ -228,8 +243,6 @@ theorem theorem_2_3_i
 --   (hG : center SL(2,F) ≤ G) :
 --   ((A) ⊓ (B)) = ((center SL(2,F))) := by sorry
 
-example {G : Type*} [Group G] {M N : Subgroup G} [M.Normal]
-    [N.Normal] (h : M = N) : G ⧸ M ≃* G ⧸ N := QuotientGroup.quotientMulEquivOfEq h
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
 of G. -/
@@ -258,12 +271,11 @@ theorem theorem_2_6_v_b { p : ℕ }
   (hp : Nat.Prime p)
   (Q : Sylow p G)
   (h : Q.toSubgroup ≠ ⊥)
-  (K :  Subgroup G)
+  (K : Subgroup G)
   (hK : IsCyclic K)
   (NG_iso_prod_QK : Q.toSubgroup.normalizer ≃* Q.toSubgroup.prod K)
   (h: Nat.card K > Nat.card (center SL(2,F))) :
   K ∈ MaximalAbelianSubgroups G := by sorry
-
 
 /- Conjugacy of Maximal Abelian subgroups -/
 /-
