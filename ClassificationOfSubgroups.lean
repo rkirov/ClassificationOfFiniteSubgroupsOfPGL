@@ -3,4 +3,5 @@
 import ClassificationOfSubgroups.Matrix
 import ClassificationOfSubgroups.Endomorphism
 import ClassificationOfSubgroups.SpecialLinearGroup
-import ClassificationOfSubgroups.Zulip
+import ClassificationOfSubgroups.Zulip1
+import ClassificationOfSubgroups.Zulip2

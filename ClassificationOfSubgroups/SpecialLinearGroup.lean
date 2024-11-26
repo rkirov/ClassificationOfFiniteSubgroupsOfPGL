@@ -70,9 +70,6 @@ def W {F : Type*} [Field F] : SL(2, F) :=
 
 @[simp]
 lemma inv_D_eq (δ : Fˣ) : (D δ)⁻¹ = D (δ⁻¹) := by simp [Matrix.SpecialLinearGroup.SL2_inv_expl, D]; rfl
-  -- ext i j
-  -- fin_cases i <;> fin_cases j <;>
-  -- simp [D]
 
 @[simp]
 lemma inv_T_eq (τ : F) : (T τ)⁻¹ = T (-τ) := by simp [Matrix.SpecialLinearGroup.SL2_inv_expl, T]; rfl
@@ -147,13 +144,27 @@ def subgroupOfT {F : Type*}  [Field F] : Subgroup SL(2,F) where
               use (-τ)
               simp [← hτ]
 
+instance : CommGroup (@subgroupOfT F _) where
+  mul_comm := by
+              intro a b
+              rw [subgroupOfT] at a b --kills the bound variables in the goal :(
+              sorry
+
+
 instance : Group (Fˣ) := by exact Units.instGroup
 
 /- Lemma 1.2.1.3 -/
 noncomputable def subgroupOfD_iso_units_of_F {F : Type*} [Field F] : @subgroupOfD F _  ≃* (⊤ : Subgroup Fˣ) where
   toFun D := ⟨D.property.choose, by simp⟩
   invFun δ := ⟨D δ.val, by simp [subgroupOfD]⟩
-  left_inv A := by simp [D]; sorry
+  left_inv A := by
+                simp [D]
+                congr
+                ext i j
+                fin_cases i <;> fin_cases j <;>
+                rw [← @Set.coe_setOf] at A     -- kills the bound variable :(
+                obtain ⟨δ, hδ⟩ := A.property
+                sorry
   right_inv a := by
                 simp_all only
                 obtain ⟨δ, property⟩ := a
@@ -162,7 +173,12 @@ noncomputable def subgroupOfD_iso_units_of_F {F : Type*} [Field F] : @subgroupOf
   map_mul' := sorry
 
 /- Lemma 1.2.1.4 { T τ } ≃* F -/
--- def subgroupOfT_iso_F {F :Type*} [Field F] : @subgroupOfT F _ ≃* (⊤ :  F.to) := by sorry
+instance : AddCommGroup F where
+  add_comm := add_comm
+
+-- #check Field.to
+
+-- def subgroupOfT_iso_F {F :Type*} [Field F] : @subgroupOfT F _ ≃+ (⊤ :  Subgroup (F)) := by sorry
 
 open Subgroup
 
