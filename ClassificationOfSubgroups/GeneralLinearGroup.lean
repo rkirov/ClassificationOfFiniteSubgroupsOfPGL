@@ -124,6 +124,24 @@ theorem mem_center_general_linear_group_iff {M : GL n R} : M ∈ Subgroup.center
 
 end Center
 
+
+
+instance hasInv : Inv (GeneralLinearGroup n R) :=
+  ⟨fun A => ⟨
+    ((det A)⁻¹ • adjugate A.1),
+    A,
+    by
+    rw [smul_mul, adjugate_mul]
+    exact inv_smul_smul (det A) 1,
+    by
+    rw [mul_eq_one_comm, smul_mul, adjugate_mul]
+    exact inv_smul_smul (det A) 1
+    ⟩
+  ⟩
+
+-- instance hasInv : Inv (GeneralLinearGroup n R) := by exact Units.instInv
+
+
 end GeneralLinearGroup
 
 end Matrix
