@@ -617,7 +617,6 @@ theorem isTriangularizable_of_algClosed {F : Type*} [Field F] [DecidableEq F] [I
   -- If β = 0 and α = δ
   · use W.coeToGL
     simp [W, G_coe_eq]
-    simp [← GeneralLinearGroup.coe_mul]
     sorry
 
 lemma upper_triangular_isConj_diagonal_of_nonzero_det {F : Type* } [DecidableEq F] [Field F]
