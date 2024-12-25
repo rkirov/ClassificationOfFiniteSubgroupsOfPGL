@@ -48,14 +48,10 @@ theorem coe_inv (A : GeneralLinearGroup n F) : ↑ₘA⁻¹ = (det A.1)⁻¹ •
 
 instance : CommRing F := Field.toCommRing
 
+@[simp]
 theorem GL2_inv_expl (A : GL(2, F)) :
     ((A⁻¹ :  GeneralLinearGroup (Fin 2) F) : Matrix (Fin 2) (Fin 2) F) = (det A.1)⁻¹ • !![A.1 1 1, -A.1 0 1; -A.1 1 0, A.1 0 0] := by
     rw [coe_inv, ← @adjugate_fin_two]
-
-/- β*x^2 - α*x*y + δ*x*y - γ*y^2-/
--- variable (x y w z α β γ δ : F)
-
--- #eval !![x, y; w, z] * !![α, β; γ, δ]
 
 
 
