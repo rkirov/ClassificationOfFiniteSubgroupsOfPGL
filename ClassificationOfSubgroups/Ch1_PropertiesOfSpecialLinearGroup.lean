@@ -163,7 +163,6 @@ def subgroupGeneratedByDT : Subgroup SL(2,F) where
               ext <;> simp [DT]
 
 
-
 /- Lemma 1.2.1.3 -/
 def subgroupOfD_iso_units_of_F : subgroupGeneratedByD F ≃* Fˣ where
   toFun D := ⟨
@@ -299,10 +298,10 @@ lemma smul_one_of_minpoly_eq_X_sub_C { R : Type*} {n : ℕ} [ CommRing R ] [NoZe
   s = a • 1 := by
   obtain ⟨unit, hunit⟩ := hs
   let Ξ := minpoly R s
-    -- The minimal polynomial evaluated at M must be 0
+  -- The minimal polynomial evaluated at M must be 0
   have s_eq_smul_one : aeval s Ξ = 0 := minpoly.aeval _ _
   have Ξ_eq : ∃ u_inv, IsUnit u_inv ∧ Ξ = (X - C a) * u_inv := ⟨unit.inv, by simp [← hunit]⟩
-  -- We rearrange Ξ_eq to isolate Ξ and plug
+  -- We rearrange Ξ_eq to isolate Ξ, and plug in Ξ
   obtain ⟨u_inv, u_inv_is_unit, Ξ_eq⟩ := Ξ_eq
   rw [Polynomial.isUnit_iff] at u_inv_is_unit --------
   obtain ⟨u_inv', u_inv'_is_unit, C_u_inv'_eq_u_inv⟩  := u_inv_is_unit
@@ -425,13 +424,18 @@ lemma upper_triangular_isConj_diagonal_of_nonzero_det  [DecidableEq F]
   repeat' field_simp
   ring_nf
 
-
 lemma upper_triangular_isConj_jordan {a b : F} (hb : b ≠ 0) :
   IsConj !![a, b; 0, a] !![a, 1; 0, a] := by
   use GeneralLinearGroup.mk' !![1 / b, 0; 0, 1]
     (by simp; apply invertibleOfNonzero <| inv_ne_zero hb)
   apply Matrix.fin_two_eq
   repeat' field_simp
+
+lemma bottom_triangular_isConj_upper_triangular {a b : F} :
+  ∃ C : SL(2,F), C * !![a, 0; -b, a] * C⁻¹ = !![a, b; 0, a] := by
+  have h' : det !![0, -1; (1 : F), 0] = 1 := by simp
+  use ⟨!![0,-1;(1 : F),0], h'⟩
+  simp
 
 lemma mul_left_eq_mul_right_iff {α : Type* }[Monoid α]{N M : α }(c : αˣ) :
   ((c : α) * M = N * (c : α)) ↔ M = c⁻¹ * N * c := by
@@ -449,82 +453,88 @@ lemma det_eq_det_IsConj {n : ℕ}{M N : Matrix (Fin n) (Fin n) R} (h : IsConj N 
   rw [SemiconjBy, mul_left_eq_mul_right_iff] at hc
   rw [hc, Matrix.coe_units_inv, det_conj' c.isUnit N]
 
--- lemma IsConj_coe {n : ℕ}{M N : SL(n,R)} : IsConj (M : Matrix (Fin n) (Fin n) R) N ↔ IsConj M N := by
---   constructor
---   intro h
---   obtain ⟨c, hc⟩ := h
---   -- have : IsUnit (det c) :=  by sorry
---   rw [IsConj]
---   -- use c
---   -- rw [SemiconjBy] at hc
---   -- push_cast at hc
---   sorry
---   intro h
---   simp [IsConj] at h ⊢
---   obtain ⟨c, hc⟩ := h
---   use c
---   simp [SemiconjBy]
---   sorry
+-- if underlying matrices are the same then the matrices
+-- a subtypes of the special linear group are the same
+lemma SpecialLinearGroup.eq_of {S L : SL(2,F) } (h : (S : Matrix ( Fin 2) (Fin 2) F)  = L) :
+  S = L := by ext <;> simp [h]
 
-
-
-lemma foo {M N : Matrix (Fin 2) (Fin 2) F} (hM : det M = 1) (hN : det N = 1)
+lemma IsConj_coe {M N : Matrix (Fin 2) (Fin 2) F} (hM : det M = 1) (hN : det N = 1)
   (h : ∃ C : SL(2, F), C * M * C⁻¹ = N) : ∃ C : SL(2,F), C * ⟨M, hM⟩ * C⁻¹ = ⟨N, hN⟩ := by
   obtain ⟨C, hC⟩ := h
   use C
-  -- if underlying matrices are the same then the matrices
-  -- a subtypes of the special linear group are the same
-  sorry
-  -- simp [hC]
+  apply SpecialLinearGroup.eq_of
+  simp only [SpecialLinearGroup.coe_mul]
+  rw [hC]
 
-  -- rw [isConj_iff]
-/- Lemma 1.5. Each element of SL(2,F) is conjugate to either
-D δ for some δ ∈ Fˣ, or to  ± T τ for some τ ∈ F .-/
+
+/-
+Lemma 1.5.
+Each element of SL(2,F) is conjugate to either
+D δ for some δ ∈ Fˣ, or to  ± T τ for some τ ∈ F.
+-/
 theorem lemma_1_5 [DecidableEq F] [IsAlgClosed F] [NeZero (2 : F)] {S : SL(2, F)} :
-  (∃ δ : Fˣ, IsConj (D δ) S) ∨ ∃ τ : F, IsConj (T τ) S := by
-  have S_IsConj_upper_triangular : ∃ a b d, ∃ C :SL(2,F), (C *S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
+  (∃ δ : Fˣ, IsConj (D δ) S) ∨ (∃ τ : F, IsConj (T τ) S) ∨ (∃ τ : F, IsConj (- T τ) S) := by
+  have S_IsConj_upper_triangular :
+    ∃ a b d, ∃ C : SL(2,F), (C *S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
     @isTriangularizable_of_algClosed F _ _ _ _ (S : Matrix (Fin 2) (Fin 2) F)
   have det_coe_S_eq_one : det (S : Matrix (Fin 2) (Fin 2) F ) = 1 := by simp
   obtain ⟨a, b, d, C, h⟩ := S_IsConj_upper_triangular
   have det_eq_one : det !![a, b; 0, d] = 1 := by
-    rw [← det_coe_S_eq_one, ← h] -- det_conj
-    sorry
+    rw [← det_coe_S_eq_one, ← h]
+    simp only [det_mul, SpecialLinearGroup.det_coe, mul_one, one_mul]
   have had := det_eq_one
-    -- have : IsUnit (C : Matrix (Fin 2) (Fin 2) F ) := by apply?
-    -- apply @det_conj (Fin 2) F _ _ _ --(C : Matrix (Fin 2) (Fin 2) F ) (S : Matrix (Fin 2) (Fin 2) F )
   simp at had
   have d_eq_inv_a : d = a⁻¹ := Eq.symm (DivisionMonoid.inv_eq_of_mul a d had)
   have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
+  have a_ne_zero : a ≠ 0 := by exact left_ne_zero_of_mul_eq_one had
+  have det_eq_one' : det !![a, 0; 0, d] = 1 := by simp [d_eq_inv_a]; rw [mul_inv_cancel₀ a_ne_zero]
   by_cases had' : a - d ≠ 0
   · left
     use a_is_unit.unit
-    have : ∃ C : SL(2,F), C * S * C⁻¹ =  ⟨!![a, b ; 0, d], det_eq_one⟩ := by
+    have isConj₁ : ∃ C : SL(2,F), C * S * C⁻¹ =  ⟨!![a, b ; 0, d], det_eq_one⟩ := by
       use C
-      sorry
-      -- simp [h]
-    rw [← isConj_iff] at this
-    apply IsConj.trans
-    sorry
-    sorry
-    sorry
-  · sorry
-
-    -- apply upper_triangular_isConj_diagonal_of_nonzero_det
-
-
-  --   rw [isConj_comm]
-  --   apply IsConj.trans h
-  --   rw [D_coe_eq, d_eq_inv_a]
-  --   apply upper_triangular_isConj_diagonal_of_nonzero_det
-  --   rw [← d_eq_inv_a]
-  --   exact had'
-  -- · right
-  --   simp [sub_eq_zero] at had'
-  --   sorry
-
-
-#check upper_triangular_isConj_diagonal_of_nonzero_det
-
+      apply SpecialLinearGroup.eq_of
+      simp only [SpecialLinearGroup.coe_mul]
+      rw [h]
+    have isConj₂ :
+      ∃ C : SL(2,F), C * ⟨!![a,b; 0,d], det_eq_one⟩ * C⁻¹ = ⟨!![a,0;0,d], det_eq_one'⟩ := by
+      apply IsConj_coe
+      apply upper_triangular_isConj_diagonal_of_nonzero_det _ had'
+    simp_rw [← isConj_iff, d_eq_inv_a] at isConj₁ isConj₂
+    simp only [D, IsUnit.unit_spec]
+    apply IsConj.trans isConj₂.symm isConj₁.symm
+  · right
+    simp [sub_eq_zero] at had'
+    simp [← had', ← sq] at det_eq_one'
+    rcases det_eq_one' with (a_eq_one | a_eq_neg_one)
+    · left
+      rw [← had', a_eq_one] at h
+      have det_eq_one'' : det !![1, b; 0, 1] = 1 := by norm_num
+      use -b
+      have isConj₁ : ∃ C : SL(2,F), C * (T (-b)) * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
+        apply IsConj_coe
+        exact bottom_triangular_isConj_upper_triangular _
+      have isConj₂ : ∃ C : SL(2,F), C * S * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
+        use C
+        apply SpecialLinearGroup.eq_of
+        simp only [SpecialLinearGroup.coe_mul, h]
+      rw [← isConj_iff] at isConj₁ isConj₂
+      apply IsConj.trans isConj₁ isConj₂.symm
+    · right
+      rw [← had', a_eq_neg_one] at h
+      have det_eq_one'' : det !![-1, b; 0, -1] = 1 := by norm_num
+      have T_eq : - T b = !![-1, 0; -b, -1] := by simp [T]
+      use b
+      have isConj₁ : ∃ C : SL(2,F), C * (-T (b)) * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
+        apply IsConj_coe
+        simp only [T_eq]
+        exact bottom_triangular_isConj_upper_triangular _
+      have isConj₂ : ∃ C : SL(2,F), C * S * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
+        use C
+        apply SpecialLinearGroup.eq_of
+        simp only [SpecialLinearGroup.coe_mul, h]
+      rw [← isConj_iff] at isConj₁ isConj₂
+      apply IsConj.trans isConj₁ isConj₂.symm
 
 
 /- Proposition 1.6.i N_L(T₁) ⊆ H, where T₁ is any subgroup of T with order greater than 1. -/
