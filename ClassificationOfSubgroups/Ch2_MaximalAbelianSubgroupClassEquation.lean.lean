@@ -146,7 +146,7 @@ For some Ai ∈ M and A∗i ∈ M∗ let,
 Ci = ⋃ x ∈ G, x * Aᵢ * x⁻¹, and Cᵢ* = ⋃ x ∈ G, x Aᵢ* x⁻¹
 
 It’s evident that Cᵢ* = Cᵢ \ Z(SL(2,F)) and that there is a Cᵢ corresponding to each
-Cᵢ . Clearly we have the relation, |Cᵢ*| = |Aᵢ*||Clᵢ*| (clearly on pen and paper smh...)
+Cᵢ . Clearly we have the relation, |Cᵢ*| = |Aᵢ*||Clᵢ*|
 -/
 
 

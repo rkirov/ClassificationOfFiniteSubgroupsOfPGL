@@ -1,12 +1,10 @@
 import Mathlib
-import ClassificationOfSubgroups.SpecialCases
+-- import ClassificationOfSubgroups.SpecialCases
 
 
 set_option linter.style.longLine true
 
 universe u
-
-
 
 open Matrix MatrixGroups
 
@@ -16,8 +14,6 @@ variable
   (R : Type u) [CommRing R]
 
 instance : Group SL(2,F) := by infer_instance
-
-local notation:1024 "↑ₘ" A:1024 => ((A : GeneralLinearGroup (Fin 2) F) : Matrix (Fin 2) (Fin 2) F)
 
 lemma Matrix.fin_two_eq { R: Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
   (h₀₀ : M 0 0 = N 0 0)(h₀₁ : M 0 1 = N 0 1)(h₁₀ : M 1 0 = N 1 0)(h₁₁ : M 1 1 = N 1 1) : M = N := by
@@ -37,57 +33,70 @@ lemma SL2_ext (A B : SL(2,F))
 
 namespace SpecialMatrices
 
-def T {F : Type*} [Field F] (τ : F): SL(2,F) :=
+def t {F : Type*} [Field F] (τ : F): SL(2,F) :=
   ⟨!![1, 0; τ, 1], by simp⟩
 
 @[simp]
-lemma T_0_eq_one : T (0 : F) = 1 := by ext <;> rfl
+lemma t_zero_eq_one : t (0 : F) = 1 := by ext <;> rfl
 
-def D {F : Type*} [Field F] (δ : Fˣ) : SL(2, F) :=
+def d {F : Type*} [Field F] (δ : Fˣ) : SL(2, F) :=
   ⟨!![(δ : F), (0 : F); (0 :F) , (δ⁻¹ : F)], by norm_num⟩
 
-lemma D_eq_diagonal (δ : Fˣ) :
-  (D δ : Matrix (Fin 2) (Fin 2) F) = diagonal (fun i ↦ if i.val = 0 then (δ : F) else δ⁻¹) := by
+lemma d_eq_diagonal (δ : Fˣ) :
+  (d δ : Matrix (Fin 2) (Fin 2) F) = diagonal (fun i ↦ if i.val = 0 then (δ : F) else δ⁻¹) := by
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [D]
+  fin_cases i <;> fin_cases j <;> simp [d]
 
 @[simp]
-lemma D_one_eq_one : D (1 : Fˣ) = 1 := by ext <;> simp [D]
+lemma d_one_eq_one : d (1 : Fˣ) = 1 := by ext <;> simp [d]
 
 @[simp]
-lemma D_neg_one_eq_neg_one : D (-1 : Fˣ) = -1 := by ext <;> simp [D, inv_neg_one]
+lemma d_neg_one_eq_neg_one : d (-1 : Fˣ) = -1 := by ext <;> simp [d, inv_neg_one]
 
-lemma D_coe_eq : (D (δ : Fˣ) : Matrix (Fin 2) (Fin 2) F) = !![(δ : F), 0; 0, δ⁻¹] := by
+lemma d_coe_eq : (d (δ : Fˣ) : Matrix (Fin 2) (Fin 2) F) = !![(δ : F), 0; 0, δ⁻¹] := by
   apply Matrix.fin_two_eq
-  repeat' simp [D]
+  repeat' simp [d]
 
-lemma D_0_0_is_unit (δ : Fˣ) : IsUnit ((D δ) 0 0) := by simp [D]
+lemma d_0_0_is_unit (δ : Fˣ) : IsUnit ((d δ) 0 0) := by simp [d]
 
-def W {F : Type*} [Field F] : SL(2, F) :=
+lemma t_eq_d_iff {δ : Fˣ} {τ : F} : d δ = t τ ↔ δ = 1 ∧ τ = 0 := by
+  constructor
+  · intro h
+    have δ_eq_one : d δ 0 0 = 1 := by simp [h, t]
+    simp [d] at δ_eq_one
+    have τ_eq_zero : t τ 1 0 = 0 := by simp [← h, d]
+    simp [t] at τ_eq_zero
+    exact ⟨δ_eq_one, τ_eq_zero⟩
+  · rintro ⟨rfl, rfl⟩
+    simp
+
+def w {F : Type*} [Field F] : SL(2, F) :=
   ⟨!![0,1;-1,0], by norm_num⟩
 
-def DT {F : Type*} [Field F] (δ : Fˣ) (τ : F) : SL(2, F) :=
+def dt {F : Type*} [Field F] (δ : Fˣ) (τ : F) : SL(2, F) :=
   ⟨!![δ, 0; τ * δ⁻¹, δ⁻¹], by norm_num⟩
 
-def DW {F : Type*} [Field F] (δ : Fˣ) : SL(2,F) :=
+def dw {F : Type*} [Field F] (δ : Fˣ) : SL(2,F) :=
   ⟨!![0, δ; -δ⁻¹, 0], by norm_num⟩
 
-lemma D_mul_T_eq_DT (δ : Fˣ) (τ : F) : D δ * T τ = DT δ τ := by ext <;> simp [D, T, DT, mul_comm]
+lemma d_mul_t_eq_dt (δ : Fˣ) (τ : F) : d δ * t τ = dt δ τ := by ext <;> simp [d, t, dt, mul_comm]
 
-lemma D_mul_W_eq_DW (δ : Fˣ) : D δ * W = DW δ := by ext <;> simp [D, W, DW]
-
-@[simp]
-lemma inv_D_eq (δ : Fˣ) : (D δ)⁻¹ = D (δ⁻¹) := by simp [Matrix.SpecialLinearGroup.SL2_inv_expl, D]; rfl
+lemma d_mul_w_eq_dw (δ : Fˣ) : d δ * w = dw δ := by ext <;> simp [d, w, dw]
 
 @[simp]
-lemma inv_T_eq (τ : F) : (T τ)⁻¹ = T (-τ) := by simp [Matrix.SpecialLinearGroup.SL2_inv_expl, T]; rfl
+lemma inv_d_eq (δ : Fˣ) : (d δ)⁻¹ = d (δ⁻¹) := by
+  simp [Matrix.SpecialLinearGroup.SL2_inv_expl, d]; rfl
+
+@[simp]
+lemma inv_t_eq (τ : F) : (t τ)⁻¹ = t (-τ) := by
+  simp [Matrix.SpecialLinearGroup.SL2_inv_expl, t]; rfl
 
 
 end SpecialMatrices
 
 
 /-
-Lemma 1.1. For any ω, ρ ∈ F ∗ and τ, µ ∈ F we have:
+Lemma 1.1. For any δ, ρ ∈ Fˣ and τ, µ ∈ F we have:
 (i) D δ * D ρ = D (δ * ρ),
 (ii) T τ *  T μ = T (τ + µ),
 (iii) D δ * T τ * (D δ)⁻¹ = T (τ * δ⁻²),
@@ -95,20 +104,23 @@ Lemma 1.1. For any ω, ρ ∈ F ∗ and τ, µ ∈ F we have:
 -/
 open SpecialMatrices
 -- (i)
-lemma lemma_1_1_i (δ ρ : Fˣ) : D δ * D ρ = D (δ * ρ) := by ext <;> simp [D, mul_comm]
+lemma lemma_1_1_i (δ ρ : Fˣ) : d δ * d ρ = d (δ * ρ) := by ext <;> simp [d, mul_comm]
 
 -- (ii)
-lemma lemma_1_1_ii (τ μ : F) : T τ * T μ = T (τ + μ) := by ext <;> simp [T]
+lemma lemma_1_1_ii (τ μ : F) : t τ * t μ = t (τ + μ) := by ext <;> simp [t]
 
 -- (iii)
-lemma lemma_1_1_iii (δ : Fˣ) (τ : F) : D δ * T τ * (D δ)⁻¹ = T (τ * δ⁻¹ * δ⁻¹) := by simp; ext <;> simp [T, D, mul_comm]
+lemma lemma_1_1_iii (δ : Fˣ) (τ : F) : d δ * t τ * (d δ)⁻¹ = t (τ * δ⁻¹ * δ⁻¹) := by
+  simp; ext <;> simp [t, d, mul_comm]
 
 -- (iv)
-lemma lemma_1_1_iv (δ : Fˣ) : W * (D δ) * W⁻¹ = (D δ)⁻¹ := by simp; ext <;> simp [D, W]
+lemma lemma_1_1_iv (δ : Fˣ) : w * (d δ) * w⁻¹ = (d δ)⁻¹ := by simp; ext <;> simp [d, w]
+
+namespace SpecialSubgroups
 
 /- Lemma 1.2.1.1-/
-def subgroupGeneratedByD (F : Type*) [Field F] : Subgroup SL(2,F) where
-  carrier := { D δ | δ : Fˣ }
+def D (F : Type*) [Field F] : Subgroup SL(2,F) where
+  carrier := { d δ | δ : Fˣ }
   mul_mem' := by
               intro S Q hS hQ
               simp at *
@@ -125,8 +137,8 @@ def subgroupGeneratedByD (F : Type*) [Field F] : Subgroup SL(2,F) where
               simp [← hS]
 
 /- Lemma 1.2.1.2 -/
-def subgroupGeneratedByT : Subgroup SL(2,F) where
-  carrier := { T τ | τ : F}
+def T (F : Type*) [Field F]: Subgroup SL(2,F) where
+  carrier := { t τ | τ : F }
   mul_mem' := by
               intro S Q hS hQ
               simp at *
@@ -142,8 +154,24 @@ def subgroupGeneratedByT : Subgroup SL(2,F) where
               use (-τ)
               simp [← hτ]
 
-def subgroupGeneratedByDT : Subgroup SL(2,F) where
-  carrier := { D δ * T τ | (δ : Fˣ) (τ : F) }
+lemma D_meet_T_eq_bot : D F ⊓ T F = ⊥ := by
+  ext x
+  constructor
+  · rintro ⟨x_mem_D, x_mem_T⟩
+    obtain ⟨δ, hδ⟩ := x_mem_D
+    obtain ⟨τ, hτ⟩ := x_mem_T
+    rw [← hτ] at hδ
+    rw [t_eq_d_iff] at hδ
+    obtain ⟨-, rfl⟩ := hδ
+    simp [← hτ]
+  · intro h
+    simp at h
+    constructor
+    · simp [h]; exact Subgroup.one_mem (D F)
+    · simp [h]; exact Subgroup.one_mem (T F)
+
+def H (F : Type*) [Field F] : Subgroup SL(2,F) where
+  carrier := { d δ * t τ | (δ : Fˣ) (τ : F) }
   mul_mem' := by
               intro A₁ A₂ hA₁ hA₂
               obtain ⟨δ₁, τ₁, h₁⟩ := hA₁
@@ -151,7 +179,7 @@ def subgroupGeneratedByDT : Subgroup SL(2,F) where
               dsimp
               use (δ₁ * δ₂), (τ₁*δ₂*δ₂ + τ₂)
               rw [← h₁, ← h₂]
-              ext <;> field_simp [D, T]; ring
+              ext <;> field_simp [d, t]; ring
   one_mem' := ⟨1, 0, by simp⟩
   inv_mem' := by
               intro A hA
@@ -159,23 +187,64 @@ def subgroupGeneratedByDT : Subgroup SL(2,F) where
               dsimp
               use δ⁻¹, -τ * δ⁻¹ * δ⁻¹
               rw [← h]
-              simp [D_mul_T_eq_DT, Matrix.SpecialLinearGroup.SL2_inv_expl]
-              ext <;> simp [DT]
+              simp [d_mul_t_eq_dt, Matrix.SpecialLinearGroup.SL2_inv_expl]
+              ext <;> simp [dt]
+
+def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
+  if h : a * d = 1 then ⟨!![a, 0; c, d], by simp [h]⟩ else 1
+
+-- it is in fact a surjection
+lemma mem_H_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
+  x ∈ H F ↔ ∃ a c d, a * d = 1 ∧ (x : Matrix (Fin 2) (Fin 2) F) = !![a, 0; c, d] := by
+  constructor
+  · intro hx
+    obtain ⟨δ, τ, h⟩ := hx
+    use δ, τ * δ⁻¹, δ⁻¹
+    rw [← h]
+    split_ands
+    simp
+    ext; simp [d, t, lower_triangular, mul_comm]
+  · rintro ⟨a, c, d, had, hx⟩
+    have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
+    have a_inv_eq_d : a⁻¹ = d := by exact DivisionMonoid.inv_eq_of_mul a d had
+    use a_is_unit.unit, c * a_is_unit.unit
+    simp [SpecialMatrices.d, t, lower_triangular, had]
+    ext <;> field_simp [a_inv_eq_d, had, hx]; exact Eq.symm (eq_one_div_of_mul_eq_one_right had)
+
+lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
+  x ∈ H F ↔ ∃ a c d, (x : Matrix (Fin 2) (Fin 2) F) = !![a, 0; c, d] := by
+  constructor
+  · intro hx
+    obtain ⟨δ, τ, h⟩ := hx
+    use δ, τ * δ⁻¹, δ⁻¹
+    rw [← h]
+    ext; simp [d, t, lower_triangular, mul_comm]
+  · rintro ⟨a, c, d, hx⟩
+    have had : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by simp
+    simp [hx] at had
+    have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
+    have a_inv_eq_d : a⁻¹ = d := by exact DivisionMonoid.inv_eq_of_mul a d had
+    use a_is_unit.unit, c * a_is_unit.unit
+    simp [SpecialMatrices.d, t, lower_triangular, had]
+    ext <;> field_simp [a_inv_eq_d, had, hx]; exact Eq.symm (eq_one_div_of_mul_eq_one_right had)
+
+
+end SpecialSubgroups
 
 
 /- Lemma 1.2.1.3 -/
-def subgroupOfD_iso_units_of_F : subgroupGeneratedByD F ≃* Fˣ where
-  toFun D := ⟨
-              D.val 0 0,
-              D.val 1 1,
-              by obtain ⟨δ, hδ⟩ := D.property; rw [← hδ]; simp [SpecialMatrices.D],
-              by obtain ⟨δ, hδ⟩ := D.property; rw [← hδ]; simp [SpecialMatrices.D]
+def D_iso_units_of_F (F : Type*) [Field F] : SpecialSubgroups.D F ≃* Fˣ where
+  toFun d := ⟨
+              d.val 0 0,
+              d.val 1 1,
+              by obtain ⟨δ, hδ⟩ := d.property; rw [← hδ]; simp [SpecialMatrices.d],
+              by obtain ⟨δ, hδ⟩ := d.property; rw [← hδ]; simp [SpecialMatrices.d]
               ⟩
-  invFun δ := ⟨D δ, by simp [subgroupGeneratedByD]⟩
+  invFun δ := ⟨d δ, by use δ⟩
   left_inv A := by
                 obtain ⟨δ, hδ⟩ := A.property
                 rw [← Subtype.coe_inj, ← hδ]
-                ext <;> simp [SpecialMatrices.D, ← hδ]
+                ext <;> simp [SpecialMatrices.d, ← hδ]
   right_inv a := by ext; rfl
   map_mul' X Y := by
                 obtain ⟨δ₁, hδ₁⟩ := X.property
@@ -184,41 +253,41 @@ def subgroupOfD_iso_units_of_F : subgroupGeneratedByD F ≃* Fˣ where
                 congr
                 repeat'
                   simp_rw [← hδ₁, ← hδ₂]
-                  simp [SpecialMatrices.D, mul_comm]
+                  simp [SpecialMatrices.d, mul_comm]
 
 /- Lemma 1.2.1.4 { T τ } ≃* F -/
-def subgroupOfT_iso_F : (subgroupGeneratedByT F) ≃* (Multiplicative F) where
+def T_iso_F (F : Type*) [Field F]: SpecialSubgroups.T F ≃* (Multiplicative F) where
   toFun T := T.val 1 0
-  invFun τ := ⟨T τ, by simp [subgroupGeneratedByT]⟩
+  invFun τ := ⟨t τ, by use τ⟩
   left_inv T := by
                 obtain ⟨τ, hτ⟩ := T.property
                 rw [← Subtype.coe_inj, ← hτ]
-                ext <;> simp [SpecialMatrices.T, ← hτ]
-  right_inv τ := by simp [SpecialMatrices.T]
+                ext <;> simp [t, ← hτ]
+  right_inv τ := by simp [t]
   map_mul' X Y := by
                   obtain ⟨τ₁, hτ₁⟩ := X.property
                   obtain ⟨τ₂, hτ₂⟩ := Y.property
                   simp only [Subgroup.coe_mul, Fin.isValue, SpecialLinearGroup.coe_mul]
                   simp_rw [← hτ₁, ← hτ₂]
-                  simp [SpecialMatrices.T]
+                  simp [t]
                   rfl
 
 open Subgroup
 
-/- Lemma 1.2.2.1 T is a normal subgroup of H = DT -/
+/- Lemma 1.2.2.1 T is a normal subgroup of H = D T -/
 
 
 /- Lemma 1.2.2.2 H ⧸ T = D -/
--- def quot_iso_subgroupGeneratedByD {F : Type* } [Field F] : subgroupGeneratedByDT F ⧸ subgroupGeneratedByT F ≃* subgroupGeneratedByD F := by sorry
+-- def quot_iso_subgroupGeneratedByD {F : Type* } [Field F] :
+--   subgroupGeneratedByDT F ⧸ subgroupGeneratedByT F ≃* subgroupGeneratedByD F := by sorry
 
 /- Lemma 1.3. Z(SL(2,F)) = ⟨ -I ⟩ .-/
 def center_of_SL_2_F : center SL(2,F) ≃* rootsOfUnity 2 F  :=
   Matrix.SpecialLinearGroup.center_equiv_rootsOfUnity' 2
 
+-- Lemma 1.4 If p ≠ 2, then SL(2,F) contains a unique element of order 2.
 
-instance : Monoid SL(2,F) := Matrix.SpecialLinearGroup.monoid
-
-instance : Module F (Matrix (Fin 2) (Fin 2) F) := by exact module
+#check Subgroup.normalClosure
 
 @[simp]
 lemma SpecialLinearGroup.coe_coe {n : ℕ}{S : SL(n, F)} :
@@ -293,30 +362,6 @@ lemma minpoly_eq_X_sub_C_implies_matrix_is_diagonal { n R : Type*} [Fintype n] [
     -- This shows M is diagonal
     exact M_eq_diagonal
 
-lemma smul_one_of_minpoly_eq_X_sub_C { R : Type*} {n : ℕ} [ CommRing R ] [NoZeroDivisors R]
-  {s : (Fin n → R) →ₗ[R] Fin n → R } {a : R} (hs : Associated (minpoly R s) (X - C a)) :
-  s = a • 1 := by
-  obtain ⟨unit, hunit⟩ := hs
-  let Ξ := minpoly R s
-  -- The minimal polynomial evaluated at M must be 0
-  have s_eq_smul_one : aeval s Ξ = 0 := minpoly.aeval _ _
-  have Ξ_eq : ∃ u_inv, IsUnit u_inv ∧ Ξ = (X - C a) * u_inv := ⟨unit.inv, by simp [← hunit]⟩
-  -- We rearrange Ξ_eq to isolate Ξ, and plug in Ξ
-  obtain ⟨u_inv, u_inv_is_unit, Ξ_eq⟩ := Ξ_eq
-  rw [Polynomial.isUnit_iff] at u_inv_is_unit --------
-  obtain ⟨u_inv', u_inv'_is_unit, C_u_inv'_eq_u_inv⟩  := u_inv_is_unit
-  have ringHom_u_inv'_is_unit : IsUnit ((algebraMap R ((Fin n → R) →ₗ[R] Fin n → R)) u_inv') :=
-    RingHom.isUnit_map _ u_inv'_is_unit
-  rw [Ξ_eq, aeval_mul, ← C_u_inv'_eq_u_inv, aeval_C,
-    IsUnit.mul_left_eq_zero ringHom_u_inv'_is_unit] at s_eq_smul_one
-  simp [map_sub, aeval_X, aeval_C, sub_eq_zero, algebraMap, Algebra.toRingHom] at s_eq_smul_one
-  -- This shows S is diagonal
-  exact s_eq_smul_one
-
-def GeneralLinearGroup.T [DecidableEq F] (a b d : F) : GL (Fin 2) F :=
-  if h : a * d ≠ 0
-  then GeneralLinearGroup.mk' !![a, b; 0, d] (by simp; exact invertibleOfNonzero h)
-  else 1
 
 lemma exists_sqrt_discriminant [IsAlgClosed F] { a b c : F} :
   ∃ s, s * s = discrim a b c := by
@@ -333,6 +378,16 @@ lemma exists_sqrt_discriminant [IsAlgClosed F] { a b c : F} :
   rw [add_eq_zero_iff_eq_neg, sq] at hs
   rw [hs]
   ring_nf
+
+lemma lower_triangular_iff_top_right_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F} :
+  (∃ a c d, !![a, 0; c, d] = M) ↔ M 0 1 = 0 := by
+  constructor
+  · rintro  ⟨a, b, d, hM⟩
+    simp [← hM]
+  · intro h
+    use M 0 0, M 1 0, M 1 1
+    simp_rw [← h]
+    apply Matrix.fin_two_eq <;> rfl
 
 lemma upper_triangular_iff_bottom_left_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F} :
   (∃ a b d, !![a, b; 0, d] = M) ↔ M 1 0 = 0 := by
@@ -368,18 +423,32 @@ lemma isConj_upper_triangular_iff [DecidableEq F] [IsAlgClosed F]
 lemma Matrix.special_inv_eq {x : F} :
   !![1, 0; x, 1]⁻¹ = !![1, 0; - x, 1] := by simp [inv_def]
 
-lemma Matrix.conj_T_eq {x : F} {a b c d : F} :
-  !![1, 0; x, 1] * !![a, b; c, d] * !![1, 0; -x, 1] =
+lemma exists_root_of_special_poly [IsAlgClosed F] (a b c d : F) (hb : b ≠ 0):
+  ∃ x : F, -b * x * x + (a - d) * x + c = 0 := by
+  let P := C (-b) * X^2 + C (a - d) * X + C c
+  have deg_P_eq_two : degree P = 2 := by
+    dsimp [P]
+    rw [Polynomial.degree_quadratic]
+    simp [hb]
+  have exists_root_of_P := by apply IsAlgClosed.exists_root P (by simp [deg_P_eq_two])
+  obtain ⟨x, hx⟩ := exists_root_of_P
+  use x
+  simp [P] at hx
+  ring_nf at hx ⊢
+  exact hx
+
+lemma Matrix.conj_t_eq {x : F} {a b c d : F} :
+  t x * !![a, b; c, d] * t (-x) =
   !![-b * x + a, b; (-b) * x * x + (a -d) * x + c, b*x + d] := by
-  simp
+  simp [SpecialMatrices.t]
   apply Matrix.fin_two_eq <;> ring_nf
 
 def SpecialLinearGroup.mk' {n : ℕ }(M : Matrix (Fin n) (Fin n) F) (h : det M = 1) : SL(n, F) :=
   ⟨M, h⟩
 
--- Note: I do not IsConj as the the matrix which acts by conjugation has determinant 1
+-- Note: I do not use IsConj as the the matrix which acts by conjugation has determinant 1
 theorem isTriangularizable_of_algClosed [DecidableEq F] [IsAlgClosed F]
-  [NeZero (2 : F)] (M : Matrix (Fin 2) (Fin 2) F) :
+  (M : Matrix (Fin 2) (Fin 2) F) :
   ∃ a b d, ∃ (C : SL(2,F)), (C * M * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] := by
   let α := M 0 0
   let β := M 0 1
@@ -387,33 +456,27 @@ theorem isTriangularizable_of_algClosed [DecidableEq F] [IsAlgClosed F]
   let δ := M 1 1
   have M_coe_eq : M = !![α, β; γ, δ] := by
       apply Matrix.fin_two_eq <;> rfl
-  let a := -β
-  let b := α - δ
-  let c := γ
+  -- Is conjugate to an upper triangular matrix iff there exists a matrix such that
+  -- when conjugated kills the bottom left entry
   rw [isConj_upper_triangular_iff]
-  -- if β ≠ 0 then we solve the quadratic to force the bottom left entry to be 0
+  -- If β ≠ 0 then we solve the quadratic to force the bottom left entry to be 0
   by_cases hβ : β ≠ 0
-  · obtain ⟨s, hs⟩ := exists_sqrt_discriminant (a := a) (b := b) (c := c)
-    let x := (-b + s) / (2 * a)
-    use T x
-    simp
-    simp_rw [M_coe_eq, T, Matrix.conj_T_eq]
-    simp
-    have ha : a ≠ 0 := by simp [hβ, a]
-    rw [← neg_mul, ← neg_mul, mul_assoc, quadratic_eq_zero_iff ha hs.symm]
-    left; rfl
+  · obtain ⟨x, hx⟩ := by apply exists_root_of_special_poly F α β γ δ hβ
+    use t x
+    simp [M_coe_eq, t, Matrix.conj_t_eq]
+    ring_nf at hx ⊢
+    exact hx
   simp at hβ
   -- If β = 0 then we solve the linear polynomial if α - δ ≠ 0
   by_cases had : α - δ ≠ 0
   · let x := -γ / (α - δ)
-    use T x
-    simp
-    simp_rw [M_coe_eq, T, conj_T_eq]
+    use t x
+    simp [M_coe_eq, Matrix.conj_t_eq]
     field_simp [hβ, x]
     ring_nf
   -- If β = 0 and α = δ
-  · use W
-    simp [M_coe_eq, W, inv_def, hβ]
+  · use w
+    simp [M_coe_eq, w, inv_def, hβ]
 
 
 lemma upper_triangular_isConj_diagonal_of_nonzero_det  [DecidableEq F]
@@ -431,13 +494,13 @@ lemma upper_triangular_isConj_jordan {a b : F} (hb : b ≠ 0) :
   apply Matrix.fin_two_eq
   repeat' field_simp
 
-lemma bottom_triangular_isConj_upper_triangular {a b : F} :
+lemma lower_triangular_isConj_upper_triangular {a b : F} :
   ∃ C : SL(2,F), C * !![a, 0; -b, a] * C⁻¹ = !![a, b; 0, a] := by
   have h' : det !![0, -1; (1 : F), 0] = 1 := by simp
   use ⟨!![0,-1;(1 : F),0], h'⟩
   simp
 
-lemma mul_left_eq_mul_right_iff {α : Type* }[Monoid α]{N M : α }(c : αˣ) :
+lemma mul_left_eq_mul_right_iff {α : Type*}[Monoid α]{N M : α }(c : αˣ) :
   ((c : α) * M = N * (c : α)) ↔ M = c⁻¹ * N * c := by
   constructor
   intro h
@@ -453,7 +516,7 @@ lemma det_eq_det_IsConj {n : ℕ}{M N : Matrix (Fin n) (Fin n) R} (h : IsConj N 
   rw [SemiconjBy, mul_left_eq_mul_right_iff] at hc
   rw [hc, Matrix.coe_units_inv, det_conj' c.isUnit N]
 
--- if underlying matrices are the same then the matrices
+-- If underlying matrices are the same then the matrices
 -- a subtypes of the special linear group are the same
 lemma SpecialLinearGroup.eq_of {S L : SL(2,F) } (h : (S : Matrix ( Fin 2) (Fin 2) F)  = L) :
   S = L := by ext <;> simp [h]
@@ -472,20 +535,26 @@ Lemma 1.5.
 Each element of SL(2,F) is conjugate to either
 D δ for some δ ∈ Fˣ, or to  ± T τ for some τ ∈ F.
 -/
-theorem lemma_1_5 [DecidableEq F] [IsAlgClosed F] [NeZero (2 : F)] {S : SL(2, F)} :
-  (∃ δ : Fˣ, IsConj (D δ) S) ∨ (∃ τ : F, IsConj (T τ) S) ∨ (∃ τ : F, IsConj (- T τ) S) := by
+theorem lemma_1_5 [DecidableEq F] [IsAlgClosed F] {S : SL(2, F)} :
+  (∃ δ : Fˣ, IsConj (d δ) S) ∨ (∃ τ : F, IsConj (t τ) S) ∨ (∃ τ : F, IsConj (- t τ) S) := by
+  -- S is conjugate to an upper triangular matrix
   have S_IsConj_upper_triangular :
-    ∃ a b d, ∃ C : SL(2,F), (C *S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
-    @isTriangularizable_of_algClosed F _ _ _ _ (S : Matrix (Fin 2) (Fin 2) F)
+    ∃ a b d, ∃ C : SL(2,F), (C * S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
+    @isTriangularizable_of_algClosed F _ _ _ (S : Matrix (Fin 2) (Fin 2) F)
   have det_coe_S_eq_one : det (S : Matrix (Fin 2) (Fin 2) F ) = 1 := by simp
   obtain ⟨a, b, d, C, h⟩ := S_IsConj_upper_triangular
+  -- Because !![a, b; 0, d] is conjugate to S it also has determinant 1
   have det_eq_one : det !![a, b; 0, d] = 1 := by
     rw [← det_coe_S_eq_one, ← h]
     simp only [det_mul, SpecialLinearGroup.det_coe, mul_one, one_mul]
   have had := det_eq_one
+  -- The determinant being equal to 1 implies a * d = 1
   simp at had
+  -- so the inverse of a is equal to d
   have d_eq_inv_a : d = a⁻¹ := Eq.symm (DivisionMonoid.inv_eq_of_mul a d had)
+  -- Therefore a is a unit
   have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
+  -- Furthermore, a is nonzero
   have a_ne_zero : a ≠ 0 := by exact left_ne_zero_of_mul_eq_one had
   have det_eq_one' : det !![a, 0; 0, d] = 1 := by simp [d_eq_inv_a]; rw [mul_inv_cancel₀ a_ne_zero]
   by_cases had' : a - d ≠ 0
@@ -501,7 +570,8 @@ theorem lemma_1_5 [DecidableEq F] [IsAlgClosed F] [NeZero (2 : F)] {S : SL(2, F)
       apply IsConj_coe
       apply upper_triangular_isConj_diagonal_of_nonzero_det _ had'
     simp_rw [← isConj_iff, d_eq_inv_a] at isConj₁ isConj₂
-    simp only [D, IsUnit.unit_spec]
+    simp only [SpecialMatrices.d, IsUnit.unit_spec]
+    -- conjugation is transitive
     apply IsConj.trans isConj₂.symm isConj₁.symm
   · right
     simp [sub_eq_zero] at had'
@@ -511,9 +581,9 @@ theorem lemma_1_5 [DecidableEq F] [IsAlgClosed F] [NeZero (2 : F)] {S : SL(2, F)
       rw [← had', a_eq_one] at h
       have det_eq_one'' : det !![1, b; 0, 1] = 1 := by norm_num
       use -b
-      have isConj₁ : ∃ C : SL(2,F), C * (T (-b)) * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
+      have isConj₁ : ∃ C : SL(2,F), C * (t (-b)) * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
         apply IsConj_coe
-        exact bottom_triangular_isConj_upper_triangular _
+        exact lower_triangular_isConj_upper_triangular _
       have isConj₂ : ∃ C : SL(2,F), C * S * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
         use C
         apply SpecialLinearGroup.eq_of
@@ -523,28 +593,80 @@ theorem lemma_1_5 [DecidableEq F] [IsAlgClosed F] [NeZero (2 : F)] {S : SL(2, F)
     · right
       rw [← had', a_eq_neg_one] at h
       have det_eq_one'' : det !![-1, b; 0, -1] = 1 := by norm_num
-      have T_eq : - T b = !![-1, 0; -b, -1] := by simp [T]
+      have T_eq : - t b = !![-1, 0; -b, -1] := by simp [t]
       use b
-      have isConj₁ : ∃ C : SL(2,F), C * (-T (b)) * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
+      have isConj₁ : ∃ C : SL(2,F), C * (-t b) * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
         apply IsConj_coe
         simp only [T_eq]
-        exact bottom_triangular_isConj_upper_triangular _
+        exact lower_triangular_isConj_upper_triangular _
       have isConj₂ : ∃ C : SL(2,F), C * S * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
         use C
         apply SpecialLinearGroup.eq_of
         simp only [SpecialLinearGroup.coe_mul, h]
       rw [← isConj_iff] at isConj₁ isConj₂
+      -- conjugation is transitive
       apply IsConj.trans isConj₁ isConj₂.symm
 
+open SpecialSubgroups
+
+
+-- lemma mem_T_iff {x : SL(2,F)} : x ∈ T F ↔ ∃ τ, t τ = x := by
+--   constructor
+--   · intro hx
+--     obtain ⟨τ, hτ⟩ := hx
 
 /- Proposition 1.6.i N_L(T₁) ⊆ H, where T₁ is any subgroup of T with order greater than 1. -/
+lemma proposition_1_6 [DecidableEq F] { T₁ : Subgroup (SL(2,F)) } (hT₁ : 1 < Nat.card T₁ ) (h : T₁ ≤ T F) : normalizer T₁ ≤ H F := by
+  intro x hx
+  rw [mem_normalizer_iff] at hx
+  by_cases h' : ∃ τ, τ ≠ 0 ∧ t τ ∈ T₁
+  · obtain ⟨τ, τ_ne_zero, hτ⟩  := h'
+    specialize hx (t τ)
+    rw [hx] at hτ
+    let α := x.1 0 0
+    let β := x.1 0 1
+    let γ := x.1 1 0
+    let δ := x.1 1 1
+    have x_eq : x = !![α, β; γ, δ] := by apply Matrix.fin_two_eq <;> rfl
+    have : x * t τ * x⁻¹ ∈ T F := by exact h hτ
+    obtain ⟨τ' , hτ'⟩ := this
+    simp [x_eq] at hτ'
+    -- uses decidable equality
+    rw [mem_H_iff_lower_triangular']
+    sorry
+  · push_neg at h'
+    have : T₁ = ⊥ := by
+      rw [eq_bot_iff_forall]
+      intro x hx
+      obtain ⟨τ, rfl⟩ := h hx
+      specialize h' τ
+      rw [not_imp_not] at h'
+      specialize h' hx
+      simp [h']
+    have : Nat.card T₁ = 1 := by simp [this]
+    -- contradiction with assumption that Nat.card T₁ > 1
+    linarith
+
+
+
+#check Subgroup.closure_singleton_one
+#check centralizer
+#check normalizer
+
 
 /- Proposition 1.6.ii C_L(± T τ) = T × Z where τ ≠ 0 -/
+-- lemma proposition_1_6 :
+/-
+Proposition 1.7.
+(i) N_L (D₁) = ⟨D, W⟩, where D₁ is any subgroup of D with order greater than 2.
+-/
 
-/- Proposition 1.7. (i) N_L (D₁) = ⟨D, W⟩, where D₁ is any subgroup of D with order greater than 2.-/
-
-/- Proposition 1.8. Let a and b be conjugate elements in a group G. Then ∃ x ∈ G such that xCG (a)x−1 = CG (b).-/
--- lemma proposition_1_8 { G : Type* } [Group G] (a b : G) (hab : IsConj a b) : ∃ x : G, ConjAct(centralizer { a }) = centralizer { b } := by sorry  :=
+/-
+Proposition 1.8.
+Let a and b be conjugate elements in a group G. Then ∃ x ∈ G such that x C_G(a) x⁻¹ = C_G (b).
+-/
+-- lemma proposition_1_8 { G : Type* } [Group G] (a b : G) (hab : IsConj a b) :
+--    ∃ x : G, ConjAct ( centralizer { a }) = centralizer { b } := by sorry  :=
 
 /-
 Corollary 1.9.

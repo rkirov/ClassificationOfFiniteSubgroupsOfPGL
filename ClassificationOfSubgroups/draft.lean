@@ -1,3 +1,28 @@
+-- def GeneralLinearGroup.T [DecidableEq F] (a b d : F) : GL (Fin 2) F :=
+--   if h : a * d ≠ 0
+--   then GeneralLinearGroup.mk' !![a, b; 0, d] (by simp; exact invertibleOfNonzero h)
+--   else 1
+
+-- lemma smul_one_of_minpoly_eq_X_sub_C { R : Type*} {n : ℕ} [ CommRing R ] [NoZeroDivisors R]
+--   {s : (Fin n → R) →ₗ[R] Fin n → R } {a : R} (hs : Associated (minpoly R s) (X - C a)) :
+--   s = a • 1 := by
+--   obtain ⟨unit, hunit⟩ := hs
+--   let Ξ := minpoly R s
+--   -- The minimal polynomial evaluated at M must be 0
+--   have s_eq_smul_one : aeval s Ξ = 0 := minpoly.aeval _ _
+--   have Ξ_eq : ∃ u_inv, IsUnit u_inv ∧ Ξ = (X - C a) * u_inv := ⟨unit.inv, by simp [← hunit]⟩
+--   -- We rearrange Ξ_eq to isolate Ξ, and plug in Ξ
+--   obtain ⟨u_inv, u_inv_is_unit, Ξ_eq⟩ := Ξ_eq
+--   rw [Polynomial.isUnit_iff] at u_inv_is_unit --------
+--   obtain ⟨u_inv', u_inv'_is_unit, C_u_inv'_eq_u_inv⟩  := u_inv_is_unit
+--   have ringHom_u_inv'_is_unit : IsUnit ((algebraMap R ((Fin n → R) →ₗ[R] Fin n → R)) u_inv') :=
+--     RingHom.isUnit_map _ u_inv'_is_unit
+--   rw [Ξ_eq, aeval_mul, ← C_u_inv'_eq_u_inv, aeval_C,
+--     IsUnit.mul_left_eq_zero ringHom_u_inv'_is_unit] at s_eq_smul_one
+--   simp [map_sub, aeval_X, aeval_C, sub_eq_zero, algebraMap, Algebra.toRingHom] at s_eq_smul_one
+--   -- This shows S is diagonal
+--   exact s_eq_smul_one
+
 
 -- def GeneralLinearGroup.D { F : Type* } [DecidableEq F] [Field F] (a d : F) : GL (Fin 2) F :=
 --   if h : a * d ≠ 0 then (GeneralLinearGroup.mk' (diagonal (fun i => if i = 0 then a else d)) (by simp; exact invertibleOfNonzero h)) else 1
