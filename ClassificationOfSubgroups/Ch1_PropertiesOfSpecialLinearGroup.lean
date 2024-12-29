@@ -1,7 +1,7 @@
 import Mathlib
 -- import ClassificationOfSubgroups.SpecialCases
 
-
+set_option autoImplicit false
 set_option linter.style.longLine true
 
 universe u
@@ -15,19 +15,16 @@ variable
 
 instance : Group SL(2,F) := by infer_instance
 
-lemma Matrix.fin_two_eq { R: Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
+@[ext]
+lemma Matrix.fin_two_ext { R: Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
   (h₀₀ : M 0 0 = N 0 0)(h₀₁ : M 0 1 = N 0 1)(h₁₀ : M 1 0 = N 1 0)(h₁₁ : M 1 1 = N 1 1) : M = N := by
   ext i j
-  fin_cases i <;> fin_cases j
-  · exact h₀₀
-  · exact h₀₁
-  · exact h₁₀
-  · exact h₁₁
+  fin_cases i <;> fin_cases j <;> assumption
 
 @[ext]
-lemma SL2_ext (A B : SL(2,F))
-    (h00 : A.1 0 0 = B.1 0 0) (h01 : A.1 0 1 = B.1 0 1) (h10 : A.1 1 0 = B.1 1 0)
-    (h11 : A.1 1 1 = B.1 1 1) : A = B := by
+lemma SpecialLinearGroup.fin_two_ext (A B : SL(2,F))
+    (h₀₀ : A.1 0 0 = B.1 0 0) (h₀₁ : A.1 0 1 = B.1 0 1) (h₁₀ : A.1 1 0 = B.1 1 0)
+    (h₁₁ : A.1 1 1 = B.1 1 1) : A = B := by
   ext i j
   fin_cases i <;> fin_cases j <;> assumption
 
@@ -40,7 +37,7 @@ def t {F : Type*} [Field F] (τ : F): SL(2,F) :=
 lemma t_zero_eq_one : t (0 : F) = 1 := by ext <;> rfl
 
 @[simp]
-lemma inv_t_eq (τ : F) : (t τ)⁻¹ = t (-τ) := by
+lemma t_inv (τ : F) : (t τ)⁻¹ = t (-τ) := by
   simp [Matrix.SpecialLinearGroup.SL2_inv_expl, t]; rfl
 
 @[simp]
@@ -52,13 +49,12 @@ def d {F : Type*} [Field F] (δ : Fˣ) : SL(2, F) :=
   ⟨!![(δ : F), (0 : F); (0 :F) , (δ⁻¹ : F)], by norm_num⟩
 
 @[simp]
-lemma inv_d_eq (δ : Fˣ) : (d δ)⁻¹ = d (δ⁻¹) := by
+lemma d_inv (δ : Fˣ) : (d δ)⁻¹ = d (δ⁻¹) := by
   simp [Matrix.SpecialLinearGroup.SL2_inv_expl, d]; rfl
 
 lemma d_eq_diagonal (δ : Fˣ) :
   (d δ : Matrix (Fin 2) (Fin 2) F) = diagonal (fun i ↦ if i.val = 0 then (δ : F) else δ⁻¹) := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [d]
+  ext <;> simp [d]
 
 @[simp]
 lemma d_one_eq_one : d (1 : Fˣ) = 1 := by ext <;> simp [d]
@@ -66,8 +62,11 @@ lemma d_one_eq_one : d (1 : Fˣ) = 1 := by ext <;> simp [d]
 @[simp]
 lemma d_neg_one_eq_neg_one : d (-1 : Fˣ) = -1 := by ext <;> simp [d, inv_neg_one]
 
-lemma d_coe_eq : (d (δ : Fˣ) : Matrix (Fin 2) (Fin 2) F) = !![(δ : F), 0; 0, δ⁻¹] := by
-  apply Matrix.fin_two_eq
+@[simp]
+lemma neg_d_eq_d_neg (δ : Fˣ) : - d δ = d (-δ) :=  by ext <;> simp [d, inv_neg]
+
+lemma d_coe_eq { δ : Fˣ} : (d (δ : Fˣ) : Matrix (Fin 2) (Fin 2) F) = !![(δ : F), 0; 0, δ⁻¹] := by
+  apply Matrix.fin_two_ext
   repeat' simp [d]
 
 lemma d_0_0_is_unit (δ : Fˣ) : IsUnit ((d δ) 0 0) := by simp [d]
@@ -86,6 +85,12 @@ lemma t_eq_d_iff {δ : Fˣ} {τ : F} : d δ = t τ ↔ δ = 1 ∧ τ = 0 := by
 def w {F : Type*} [Field F] : SL(2, F) :=
   ⟨!![0,1;-1,0], by norm_num⟩
 
+@[simp]
+lemma w_inv {F : Type*} [Field F] :
+  (w : SL(2,F))⁻¹  = - w := by ext <;> simp [w]
+
+lemma w_mul_w_eq_neg_one: w * w = (-1 : SL(2,F)) := by ext <;> simp [w]
+
 def dt {F : Type*} [Field F] (δ : Fˣ) (τ : F) : SL(2, F) :=
   ⟨!![δ, 0; τ * δ⁻¹, δ⁻¹], by norm_num⟩
 
@@ -96,36 +101,45 @@ lemma d_mul_t_eq_dt (δ : Fˣ) (τ : F) : d δ * t τ = dt δ τ := by ext <;> s
 
 lemma d_mul_w_eq_dw (δ : Fˣ) : d δ * w = dw δ := by ext <;> simp [d, w, dw]
 
-
-
-
-
+@[simp]
+lemma inv_of_d_mul_w (δ : Fˣ) : (d δ * w)⁻¹ = d (-δ) * w := by
+  simp [Matrix.mul_inv_rev]
+  ext <;> simp [d, w, inv_neg]
 
 end SpecialMatrices
 
 
 /-
 Lemma 1.1. For any δ, ρ ∈ Fˣ and τ, µ ∈ F we have:
-(i) D δ * D ρ = D (δ * ρ),
-(ii) T τ *  T μ = T (τ + µ),
-(iii) D δ * T τ * (D δ)⁻¹ = T (τ * δ⁻²),
-(iv) W * D δ * W⁻¹ = (D δ)⁻¹.
+(i) d δ * d ρ = d (δ * ρ),
+(ii) t τ *  t μ = t (τ + µ),
+(iii) d δ * t τ * (d δ)⁻¹ = t (τ * δ⁻²),
+(iv) w * d δ * w⁻¹ = (d δ)⁻¹.
 -/
 open SpecialMatrices
 -- (i)
 @[simp]
-lemma lemma_1_1_i (δ ρ : Fˣ) : d δ * d ρ = d (δ * ρ) := by ext <;> simp [d, mul_comm]
+lemma d_mul_d_eq_d_mul (δ ρ : Fˣ) : d δ * d ρ = d (δ * ρ) := by ext <;> simp [d, mul_comm]
 
 -- (ii)
 @[simp]
-lemma lemma_1_1_ii (τ μ : F) : t τ * t μ = t (τ + μ) := by ext <;> simp [t]
+lemma t_mul_t_eq_t_add (τ μ : F) : t τ * t μ = t (τ + μ) := by ext <;> simp [t]
 
--- (iii)
-lemma lemma_1_1_iii (δ : Fˣ) (τ : F) : d δ * t τ * (d δ)⁻¹ = t (τ * δ⁻¹ * δ⁻¹) := by
+-- Lemma 1.1.iii
+lemma d_mul_t_mul_d_inv_eq_t' (δ : Fˣ) (τ : F) : d δ * t τ * (d δ)⁻¹ = t (τ * δ⁻¹ * δ⁻¹) := by
   simp; ext <;> simp [t, d, mul_comm]
 
 -- (iv)
-lemma lemma_1_1_iv (δ : Fˣ) : w * (d δ) * w⁻¹ = (d δ)⁻¹ := by simp; ext <;> simp [d, w]
+lemma w_mul_d_mul_inv_w_eq_inv_d (δ : Fˣ) : w * (d δ) * w⁻¹ = (d δ)⁻¹ := by
+  simp; ext <;> simp [d, w]
+
+@[simp]
+lemma w_mul_d_eq_d_inv_w  (δ : Fˣ):  w * (d δ) = (d δ)⁻¹ * w :=  by
+  rw [← mul_inv_eq_iff_eq_mul]
+  exact w_mul_d_mul_inv_w_eq_inv_d _ _
+
+@[simp]
+lemma neg_d_mul_w (δ : Fˣ) : -(d δ * w) = d (-δ) * w := by rw [← neg_mul, neg_d_eq_d_neg]
 
 namespace SpecialSubgroups
 
@@ -138,7 +152,8 @@ def D (F : Type*) [Field F] : Subgroup SL(2,F) where
               obtain ⟨δS, hδS⟩ := hS
               obtain ⟨δQ, hδQ⟩ := hQ
               use δS * δQ
-              rw [← hδS, ← hδQ, lemma_1_1_i]
+              rw [← hδS, ← hδQ]
+              simp
   one_mem' := ⟨1, by simp⟩
   inv_mem' := by
               intro S
@@ -156,7 +171,8 @@ def T (F : Type*) [Field F]: Subgroup SL(2,F) where
               obtain ⟨τS, hτS⟩ := hS
               obtain ⟨τQ, hτQ⟩ := hQ
               use τS + τQ
-              rw [← hτS, ← hτQ, lemma_1_1_ii]
+              rw [← hτS, ← hτQ]
+              simp
   one_mem' := ⟨0, by simp⟩
   inv_mem' := by
               intro S hS
@@ -184,22 +200,48 @@ lemma D_meet_T_eq_bot : D F ⊓ T F = ⊥ := by
 def H (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ * t τ | (δ : Fˣ) (τ : F) }
   mul_mem' := by
-              intro A₁ A₂ hA₁ hA₂
-              obtain ⟨δ₁, τ₁, h₁⟩ := hA₁
-              obtain ⟨δ₂, τ₂, h₂⟩ := hA₂
-              dsimp
+              rintro A₁ A₂ ⟨δ₁, τ₁, h₁⟩ ⟨δ₂, τ₂, h₂⟩
               use (δ₁ * δ₂), (τ₁*δ₂*δ₂ + τ₂)
               rw [← h₁, ← h₂]
-              ext <;> field_simp [d, t]; ring
+              ext
+              · simp [d, t]
+              · simp [d, t]
+              · field_simp [d, t]; ring
+              · simp [d, t, mul_comm]
   one_mem' := ⟨1, 0, by simp⟩
   inv_mem' := by
-              intro A hA
-              obtain ⟨δ, τ, h⟩ := hA
-              dsimp
+              rintro A ⟨δ, τ, h⟩
               use δ⁻¹, -τ * δ⁻¹ * δ⁻¹
               rw [← h]
               simp [d_mul_t_eq_dt, Matrix.SpecialLinearGroup.SL2_inv_expl]
               ext <;> simp [dt]
+
+
+def DW : Subgroup SL(2,F) where
+  carrier := { d δ | δ : Fˣ} ∪ { d δ * w | δ : Fˣ}
+  mul_mem' := by
+    rintro x y (⟨δ₁, rfl⟩ | ⟨δ₁, rfl⟩) (⟨δ₂, rfl⟩ | ⟨δ₂, rfl⟩)
+    · rw [d_mul_d_eq_d_mul]
+      left
+      use δ₁ * δ₂
+    · rw [← mul_assoc, d_mul_d_eq_d_mul]
+      right
+      use δ₁ * δ₂
+    · rw [mul_assoc, w_mul_d_eq_d_inv_w, d_inv, ← mul_assoc, d_mul_d_eq_d_mul]
+      right
+      use δ₁ * δ₂⁻¹
+    · rw [mul_assoc, ← mul_assoc w, w_mul_d_eq_d_inv_w, mul_assoc _ w, w_mul_w_eq_neg_one,
+       d_inv, ← mul_assoc, d_mul_d_eq_d_mul, mul_neg_one, neg_d_eq_d_neg]
+      left
+      use -(δ₁ * δ₂⁻¹)
+  one_mem' := by left; rw [← d_one_eq_one]; use 1
+  inv_mem' := by
+    intro x h
+    simp at h
+    rcases h with (⟨δ, rfl⟩ | ⟨δ, rfl⟩)
+    · simp
+    · simp
+
 
 def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
   if h : a * d = 1 then ⟨!![a, 0; c, d], by simp [h]⟩ else 1
@@ -214,7 +256,7 @@ lemma mem_H_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
     rw [← h]
     split_ands
     simp
-    ext; simp [d, t, lower_triangular, mul_comm]
+    ext <;> simp [d, t, mul_comm]
   · rintro ⟨a, c, d, had, hx⟩
     have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
     have a_inv_eq_d : a⁻¹ = d := by exact DivisionMonoid.inv_eq_of_mul a d had
@@ -229,7 +271,7 @@ lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
     obtain ⟨δ, τ, h⟩ := hx
     use δ, τ * δ⁻¹, δ⁻¹
     rw [← h]
-    ext; simp [d, t, lower_triangular, mul_comm]
+    ext <;> simp [d, t, mul_comm]
   · rintro ⟨a, c, d, hx⟩
     have had : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by simp
     simp [← hx] at had
@@ -308,8 +350,12 @@ lemma neg_one_neq_one [NeZero (2 : F)] : (1 : SL(2,F)) ≠ (-1 : SL(2,F)) := by
   have two_ne_zero : (2 : F) ≠ 0 := by exact two_ne_zero
   contradiction
 
-lemma get_entries (x : SL(2,F)) : ∃ α β γ δ, (x : Matrix (Fin 2) (Fin 2) F) = !![α, β; γ, δ] := by
+lemma get_entries (x : SL(2,F)) : ∃ α β γ δ,
+  α = x.1 0 0 ∧ β = x.1 0 1 ∧ γ = x.1 1 0 ∧ δ = x.1 1 1 ∧
+  (x : Matrix (Fin 2) (Fin 2) F) = !![α, β; γ, δ] := by
   use x.1 0 0, x.1 0 1, x.1 1 0, x.1 1 1
+  split_ands
+  repeat' rfl
   apply Matrix.fin_two_eq <;> rfl
 
 
@@ -436,21 +482,22 @@ lemma minpoly_eq_X_sub_C_implies_matrix_is_diagonal { n R : Type*} [Fintype n] [
     exact M_eq_diagonal
 
 
-lemma exists_sqrt_discriminant [IsAlgClosed F] { a b c : F} :
-  ∃ s, s * s = discrim a b c := by
-  rw [discrim]
-  let P := C 1 * X^2 + C 0 * X + C (- (b^2 - 4 * a * c))
-  have deg_P_eq_two : degree P = 2 := by
-    dsimp [P]
-    rw [Polynomial.degree_quadratic]
-    exact one_ne_zero
-  have exists_root_of_P := by apply IsAlgClosed.exists_root P (by simp [deg_P_eq_two])
-  obtain ⟨s, hs⟩ := exists_root_of_P
-  use s
-  simp [P] at hs
-  rw [add_eq_zero_iff_eq_neg, sq] at hs
-  rw [hs]
-  ring_nf
+
+-- lemma exists_sqrt_discriminant [IsAlgClosed F] { a b c : F} :
+--   ∃ s, s * s = discrim a b c := by
+--   rw [discrim]
+--   let P := C 1 * X^2 + C 0 * X + C (- (b^2 - 4 * a * c))
+--   have deg_P_eq_two : degree P = 2 := by
+--     dsimp [P]
+--     rw [Polynomial.degree_quadratic]
+--     exact one_ne_zero
+--   have exists_root_of_P := by apply IsAlgClosed.exists_root P (by simp [deg_P_eq_two])
+--   obtain ⟨s, hs⟩ := exists_root_of_P
+--   use s
+--   simp [P] at hs
+--   rw [add_eq_zero_iff_eq_neg, sq] at hs
+--   rw [hs]
+--   ring_nf
 
 lemma lower_triangular_iff_top_right_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F} :
   (∃ a c d, !![a, 0; c, d] = M) ↔ M 0 1 = 0 := by
@@ -471,6 +518,54 @@ lemma upper_triangular_iff_bottom_left_entry_eq_zero {M : Matrix (Fin 2) (Fin 2)
     use M 0 0, M 0 1, M 1 1
     simp_rw [← h]
     apply Matrix.fin_two_eq <;> rfl
+
+lemma det_eq_mul_diag_of_upper_triangular (S : SL(2,F)) (hγ : S.1 1 0  = 0) :
+  S.1 0 0 * S.1 1 1 = 1 := by
+  have det_eq_one : det (S.val) = 1 := by simp
+  simp only [det_fin_two, hγ, mul_zero, sub_zero] at det_eq_one
+  exact det_eq_one
+
+lemma det_eq_mul_diag_of_lower_triangular (S : SL(2,F)) (hβ : S.1 0 1 = 0) :
+  S.1  0 0 * S.1 1 1 = 1 := by
+  have det_eq_one : det (S.val) = 1 := by simp
+  simp only [det_fin_two, hβ, zero_mul, sub_zero] at det_eq_one
+  exact det_eq_one
+
+
+lemma SL2_diagonal_iff (S : SL(2,F)) : S.1 0 1 = 0 ∧ S.1 1 0 = 0 ↔ ∃ δ : Fˣ, d δ = S := by
+  constructor
+  · rintro ⟨hβ, hγ⟩
+    rcases get_entries F S with ⟨α, β, γ, δ, hα, -, -, hδ, -⟩
+    have det_eq_mul_diagonal := det_eq_mul_diag_of_lower_triangular F S hβ
+    have α_is_unit : IsUnit α := isUnit_of_mul_eq_one α δ (hα ▸ hδ ▸ det_eq_mul_diagonal)
+    have δ_is_unit : IsUnit δ := isUnit_of_mul_eq_one_right α δ (hα ▸ hδ ▸ det_eq_mul_diagonal)
+    have δ_ne_zero : S.1 1 1 ≠ 0 := by exact IsUnit.ne_zero <| hδ.symm ▸ δ_is_unit
+    use α_is_unit.unit
+    rw [mul_eq_one_iff_eq_inv₀ δ_ne_zero] at det_eq_mul_diagonal
+    ext <;> simp [d, hα, hβ, hγ, det_eq_mul_diagonal]
+  · rintro ⟨δ, h⟩
+    rw [SL2_ext_iff] at h
+    rcases h with ⟨-, h₁, h₂, -⟩
+    split_ands <;> simp [d, ← h₁, ← h₂]
+
+lemma SL2_shear_iff (S : SL(2,F)) : S.1 0 0 = S.1 1 1 ∧ S.1 0 1 = 0 ↔ (∃ τ, t τ = S) ∨ ∃ τ, -t τ = S := by
+  constructor
+  · rintro ⟨α_eq_δ, β_eq_zero⟩
+    have α_eq_one_or_neg_one := α_eq_δ.symm ▸ det_eq_mul_diag_of_lower_triangular F S β_eq_zero
+    rw [← sq, sq_eq_one_iff] at α_eq_one_or_neg_one
+    rcases α_eq_one_or_neg_one with (α_eq_one | α_eq_neg_one)
+    · left
+      use S.1 1 0
+      ext <;> simp [t, α_eq_one, β_eq_zero, α_eq_δ ▸ α_eq_one]
+    · right
+      use - S.1 1 0
+      ext <;> simp [t, α_eq_neg_one, β_eq_zero, α_eq_δ ▸ α_eq_neg_one]
+  · rintro (⟨τ,h⟩ | ⟨τ, h⟩)
+    repeat' rw [SL2_ext_iff] at h; rcases h with ⟨hα, hβ, -, hδ⟩
+    · simp [← hα, ← hδ, ← hβ, t]
+    · simp [← hα, ← hδ, ← hβ, t]
+
+
 
 /- A 2×2 matrix, G is conjugate to an upper triangular if there exists an invertible matrix
  such that when conjugated the bottom left entry is annhilated
@@ -516,7 +611,7 @@ lemma Matrix.conj_t_eq {x : F} {a b c d : F} :
   simp [SpecialMatrices.t]
   apply Matrix.fin_two_eq <;> ring_nf
 
-def SpecialLinearGroup.mk' {n : ℕ }(M : Matrix (Fin n) (Fin n) F) (h : det M = 1) : SL(n, F) :=
+def SpecialLinearGroup.mk' {n : ℕ}(M : Matrix (Fin n) (Fin n) F) (h : det M = 1) : SL(n, F) :=
   ⟨M, h⟩
 
 -- Note: I do not use IsConj as the the matrix which acts by conjugation has determinant 1
@@ -608,7 +703,7 @@ Lemma 1.5.
 Each element of SL(2,F) is conjugate to either
 D δ for some δ ∈ Fˣ, or to  ± T τ for some τ ∈ F.
 -/
-theorem lemma_1_5 [DecidableEq F] [IsAlgClosed F] {S : SL(2, F)} :
+theorem SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t [DecidableEq F] [IsAlgClosed F] {S : SL(2, F)} :
   (∃ δ : Fˣ, IsConj (d δ) S) ∨ (∃ τ : F, IsConj (t τ) S) ∨ (∃ τ : F, IsConj (- t τ) S) := by
   -- S is conjugate to an upper triangular matrix
   have S_IsConj_upper_triangular :
@@ -688,12 +783,14 @@ open SpecialSubgroups
 --   · intro hx
 --     obtain ⟨τ, hτ⟩ := hx
 
-/- Proposition 1.6.i N_L(T₁) ⊆ H, where T₁ is any subgroup of T with order greater than 1. -/
-lemma proposition_1_6 [DecidableEq F] { T₁ : Subgroup (SL(2,F)) } (hT₁ : 1 < Nat.card T₁ ) (h : T₁ ≤ T F) :
-  normalizer T₁ ≤ H F := by
+/-
+Proposition 1.6.i
+N_L(T₁) ⊆ H, where T₁ is any subgroup of T with order greater than 1. -/
+lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
+ (hT₀ : 1 < Nat.card T₀ ) (h : T₀ ≤ T F) : normalizer T₀ ≤ H F := by
   intro x hx
   rw [mem_normalizer_iff] at hx
-  by_cases h' : ∃ τ, τ ≠ 0 ∧ t τ ∈ T₁
+  by_cases h' : ∃ τ, τ ≠ 0 ∧ t τ ∈ T₀
   · obtain ⟨τ, τ_ne_zero, hτ⟩  := h'
     specialize hx (t τ)
     rw [hx] at hτ
@@ -717,7 +814,7 @@ lemma proposition_1_6 [DecidableEq F] { T₁ : Subgroup (SL(2,F)) } (hT₁ : 1 <
     simp [x_eq]
     exact β_eq_zero
   · push_neg at h'
-    have : T₁ = ⊥ := by
+    have T₀_eq_bot : T₀ = ⊥ := by
       rw [eq_bot_iff_forall]
       intro x hx
       obtain ⟨τ, rfl⟩ := h hx
@@ -725,8 +822,8 @@ lemma proposition_1_6 [DecidableEq F] { T₁ : Subgroup (SL(2,F)) } (hT₁ : 1 <
       rw [not_imp_not] at h'
       specialize h' hx
       simp [h']
-    have : Nat.card T₁ = 1 := by simp [this]
-    -- contradiction with assumption that Nat.card T₁ > 1
+    have : Nat.card T₀ = 1 := by simp [T₀_eq_bot]
+    -- contradiction with the assumption that Nat.card T₁ > 1
     linarith
 
 
@@ -786,11 +883,8 @@ lemma Z_meet_T_eq_ZT : Z F ⊔ T F = ZT F := by
 --   inv_mem' :=  by sorry
 
 
-#check Subgroup.mul
--- Z F ⊔ T F
-#check Subgroup.prod
-lemma Commutative_ZT : IsCommutative  (ZT F) := by
-  -- rw [@sup_eq_closure_mul]
+
+lemma IsCommutative_ZT : IsCommutative  (ZT F) := by
   refine le_centralizer_iff_isCommutative.mp ?_
   rintro x (⟨τ₁, rfl⟩ | ⟨τ₁, rfl⟩)
   repeat
@@ -800,17 +894,29 @@ lemma Commutative_ZT : IsCommutative  (ZT F) := by
 
 
 /- Proposition 1.6.ii C_L(± T τ) = T × Z where τ ≠ 0 -/
-def proposition_1_6_ii {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = ZT F := by
+def centralizer_t_eq_TZ {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = ZT F := by
   ext x
   constructor
   · intro hx
     simp [mem_centralizer_iff] at hx
-    -- top right entry is zero and determinant is one
-    -- join of two subgroups is commutative
-    -- mem centralizer if top left entry is zero
-    sorry
-    -- rw [Subgroup.mem_sup]
-  · rintro (⟨τ₁, rfl⟩ | ⟨τ₁, rfl⟩)
+    rw [SL2_ext_iff] at hx
+    simp [t] at hx
+    obtain ⟨top_right, -, bottom_left, -⟩ := hx
+    rcases get_entries F x with ⟨α, β, γ, δ, hα, hβ, -, hδ, x_eq⟩
+    simp [x_eq, hτ] at top_right bottom_left
+    rw [add_comm γ] at bottom_left
+    have α_eq_δ : τ * α = τ * δ := by rw [mul_comm τ δ, eq_iff_eq_of_add_eq_add bottom_left]
+    rw [mul_eq_mul_left_iff, or_iff_not_imp_right] at α_eq_δ
+    specialize α_eq_δ hτ
+    simp [ZT]
+    -- is a shear matrix if diagonal entries are equal and top right entry is zero
+    rw [← SL2_shear_iff]
+    constructor
+    -- diagonal entries are equal
+    · rw [← hα, ← hδ, α_eq_δ]
+    -- top right entry is zero
+    · rw [← hβ, top_right]
+  · rintro (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
     repeat
     rw [mem_centralizer_iff]
     intro y hy
@@ -818,24 +924,68 @@ def proposition_1_6_ii {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = ZT F :
     rw [hy]
     simp [add_comm]
 
-
-    -- needs commutative groups
-    -- rw [Subgroup.mem_sup] at hx
-
 /-
 Proposition 1.7.
 (i) N_L (D₁) = ⟨D, W⟩, where D₁ is any subgroup of D with order greater than 2.
 -/
+lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
+ (hD₀ : 2 < Nat.card D₀ ) (h : D₀ ≤ T F) : normalizer D₀ ≤ DW F := by sorry
+
+open MulAction
+
+def conjugate {G : Type*} [Group G] (x : G) (H : Subgroup G) : Subgroup G where
+  carrier := {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}
+  one_mem' := by
+    dsimp
+    use 1
+    constructor
+    exact H.one_mem
+    group
+  inv_mem' := by
+    dsimp
+    rintro - ⟨h, h_in, rfl⟩
+    use h⁻¹, H.inv_mem h_in
+    group
+  mul_mem' := by
+    dsimp
+    rintro - - ⟨h, h_in, rfl⟩ ⟨k, k_in, rfl⟩
+    use h*k, H.mul_mem h_in k_in
+    group
 
 /-
 Proposition 1.8.
 Let a and b be conjugate elements in a group G. Then ∃ x ∈ G such that x C_G(a) x⁻¹ = C_G (b).
 -/
--- lemma proposition_1_8 { G : Type* } [Group G] (a b : G) (hab : IsConj a b) :
---    ∃ x : G, ConjAct ( centralizer { a }) = centralizer { b } := by sorry  :=
+lemma proposition_1_8 { G : Type* } [Group G] (a b : G) (hab : IsConj a b) :
+  ∃ x : G, conjugate x ( centralizer { a }) = centralizer { b } := by
+  rw [isConj_iff] at hab
+  obtain ⟨c, hc⟩ := hab
+  use c
+  simp [conjugate, centralizer]
+  ext y
+  constructor
+  · rintro ⟨y', y'_in_cen, hy'⟩
+    rw [Set.mem_centralizer_iff]
+    rintro m ⟨rfl⟩
+    have : a * y' = y' * a := by exact y'_in_cen a rfl
+    rw [hy', ← hc]
+    group
+    rw [mul_assoc c a, this]
+    group
+  · intro hy
+    simp
+    simp [Set.mem_centralizer_iff] at hy
+    have : y = b * y * b⁻¹ := by rw [hy]; group
+    simp [← hc] at this
+    use a * c⁻¹ * y * c * a⁻¹
+    split_ands
+    · sorry
+    · nth_rewrite 1 [this]; group
+
+
 
 /-
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
 -/
-lemma corollary_1_9 (S : SL(2,F)) (hx : x ∉ center SL(2,F)): IsCommutative (centralizer { S }) := by sorry
+lemma corollary_1_9 (S : SL(2,F)) (hx : S ∉ center SL(2,F)): IsCommutative (centralizer { S }) := by sorry
