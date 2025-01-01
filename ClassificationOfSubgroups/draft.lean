@@ -1,3 +1,19 @@
+-- lemma exists_sqrt_discriminant [IsAlgClosed F] { a b c : F} :
+--   ∃ s, s * s = discrim a b c := by
+--   rw [discrim]
+--   let P := C 1 * X^2 + C 0 * X + C (- (b^2 - 4 * a * c))
+--   have deg_P_eq_two : degree P = 2 := by
+--     dsimp [P]
+--     rw [Polynomial.degree_quadratic]
+--     exact one_ne_zero
+--   have exists_root_of_P := by apply IsAlgClosed.exists_root P (by simp [deg_P_eq_two])
+--   obtain ⟨s, hs⟩ := exists_root_of_P
+--   use s
+--   simp [P] at hs
+--   rw [add_eq_zero_iff_eq_neg, sq] at hs
+--   rw [hs]
+--   ring_nf
+
 -- def GeneralLinearGroup.T [DecidableEq F] (a b d : F) : GL (Fin 2) F :=
 --   if h : a * d ≠ 0
 --   then GeneralLinearGroup.mk' !![a, b; 0, d] (by simp; exact invertibleOfNonzero h)

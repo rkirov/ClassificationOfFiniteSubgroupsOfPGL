@@ -93,7 +93,7 @@ theorem theorem_2_3_i
 --   (hB : B ∈ MaximalAbelianSubgroups G)
 --   (A_neq_B: A ≠ B)
 --   (hG : center SL(2,F) ≤ G) :
---   ((A) ⊓ (B)) = ((center SL(2,F))) := by sorry
+--   ((A) ⊓ (B)) = ((center (⊤ : Subgroup SL(2,F)))) := by sorry
 
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
@@ -111,7 +111,7 @@ theorem theorem_2_3_iv_a (A : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups G)
 theorem theorem_2_3_iv_b (A : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) (hNA : A.normalizer.index = 2)
   (x : A) : ∃ y ∈ A.normalizer.carrier \ A, y * x * y⁻¹ = x⁻¹ := by sorry
 
-/- Theorem 2.3 (v a) Let Q be a Sylow p-subgroup of G. If Q 6= {IG }, then there is a cyclic subgroup K of G such that NG (Q) = QK.  -/
+/- Theorem 2.3 (v a) Let Q be a Sylow p-subgroup of G. If Q = { I_G }, then there is a cyclic subgroup K of G such that N_G (Q) = Q K.  -/
 -- def theorem_2_6_v_a { p : ℕ }
 --   (hp : Nat.Prime p)
 --   (Q : Sylow p G)
