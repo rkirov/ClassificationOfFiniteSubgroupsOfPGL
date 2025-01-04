@@ -18,13 +18,13 @@ variable
 instance : Group SL(2,F) := by infer_instance
 
 @[ext]
-lemma Matrix.fin_two_ext { R: Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
+lemma Matrix.fin_two_ext { R : Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
   (h₀₀ : M 0 0 = N 0 0)(h₀₁ : M 0 1 = N 0 1)(h₁₀ : M 1 0 = N 1 0)(h₁₁ : M 1 1 = N 1 1) : M = N := by
   ext i j
   fin_cases i <;> fin_cases j <;> assumption
 
 @[ext]
-lemma SpecialLinearGroup.fin_two_ext (A B : SL(2,F))
+lemma SpecialLinearGroup.fin_two_ext (A B : SL(2,R))
     (h₀₀ : A.1 0 0 = B.1 0 0) (h₀₁ : A.1 0 1 = B.1 0 1) (h₁₀ : A.1 1 0 = B.1 1 0)
     (h₁₁ : A.1 1 1 = B.1 1 1) : A = B := by
   ext i j
@@ -186,6 +186,8 @@ def T (F : Type*) [Field F]: Subgroup SL(2,F) where
               use (-τ)
               simp [← hτ]
 
+
+
 lemma D_meet_T_eq_bot : D F ⊓ T F = ⊥ := by
   ext x
   constructor
@@ -221,6 +223,45 @@ def H (F : Type*) [Field F] : Subgroup SL(2,F) where
               simp [d_mul_t_eq_dt, Matrix.SpecialLinearGroup.SL2_inv_expl]
               ext <;> simp [dt]
 
+lemma T_leq_H : T F ≤ H F := by
+  rintro x ⟨τ, rfl⟩
+  rw [H, mem_mk, Set.mem_setOf_eq]
+  use 1, τ
+  rw [d_one_eq_one, one_mul]
+
+/- Lemma 1.2.2.1 T is a normal subgroup of H = D T -/
+lemma T_normal_subgroupOf_H : ((T F).subgroupOf (H F)).Normal := by
+  rw [← @normalizer_eq_top]
+  ext x
+  constructor
+  · intro _hx
+    exact mem_top _
+  · intro hx
+    rw [← @subgroupOf_self] at hx
+    rw [@mem_subgroupOf] at hx
+    obtain ⟨δ, τ, hx⟩ := hx
+    rw [@mem_normalizer_iff'']
+    intro t'
+    constructor
+    · rintro ⟨τ', hτ'⟩
+      rw [mem_subgroupOf]
+      dsimp at hτ' ⊢
+      rw [← hx, ← hτ', _root_.mul_inv_rev, t_inv,
+        inv_d_eq_d_inv, mul_assoc, mul_assoc (t (-τ)), ← mul_assoc (t τ'),
+        ← mul_assoc (d δ⁻¹), ← mul_assoc (d δ⁻¹), d_eq_inv_d_inv F δ,
+        d_mul_t_mul_d_inv_eq_t', t_mul_t_eq_t_add, t_mul_t_eq_t_add]
+      rw [T, inv_inv, neg_add_cancel_comm_assoc, mem_mk, Set.mem_setOf_eq]
+      use τ' * (δ : F) * (δ : F)
+    · rintro ⟨τ', hτ'⟩
+      rw [mem_subgroupOf]
+      dsimp at hτ' ⊢
+      have hτ : (t' : SL(2,F)) = (x : SL(2,F)) * t τ' * (x : SL(2,F))⁻¹ := by rw [hτ']; group
+      rw [hτ, ← hx]
+      rw [_root_.mul_inv_rev, t_inv, inv_d_eq_d_inv, mul_assoc (d δ), t_mul_t_eq_t_add,
+         mul_assoc (d δ), ← mul_assoc (t (τ + τ')), t_mul_t_eq_t_add, ← mul_assoc,
+         ← inv_d_eq_d_inv, d_mul_t_mul_d_inv_eq_t', add_neg_cancel_comm, Units.val_inv_eq_inv_val]
+      use τ' * (δ : F)⁻¹ * (δ :F)⁻¹
+
 def DW : Subgroup SL(2,F) where
   carrier := { d δ | δ : Fˣ} ∪ { d δ * w | δ : Fˣ}
   mul_mem' := by
@@ -246,12 +287,6 @@ def DW : Subgroup SL(2,F) where
     · simp
     · simp
 
-def Z : Subgroup SL(2,F) := closure {(-1 : SL(2,F))}
-
-end SpecialSubgroups
-
-open SpecialSubgroups
-
 lemma D_leq_DW : D F ≤ DW F := by
   rintro x ⟨δ, rfl⟩
   rw [DW, mem_mk, Set.mem_union, Set.mem_setOf_eq]
@@ -268,7 +303,51 @@ lemma Dw_leq_DW : (D F : Set SL(2,F)) * ({w} : Set SL(2,F)) ⊆ (DW F :  Set SL(
   rw [Set.mem_singleton_iff] at hw
   rw [hw]
 
+def Z : Subgroup SL(2,R) := closure {(-1 : SL(2,R))}
 
+lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} := by
+  ext x
+  constructor
+  · intro hx
+    rw [← zpowers_eq_closure, SetLike.mem_coe, mem_zpowers_iff] at hx
+    obtain ⟨k, rfl⟩ := hx
+    rw [Set.mem_insert_iff, Set.mem_singleton_iff]
+    by_cases hk : Even k
+    · left
+      apply Even.neg_one_zpow hk
+    · right;
+      rw [Int.not_even_iff_odd] at hk
+      -- simp [Odd.neg_pow_zpow hk (-1 : SL(2,F))]
+      -- For some reason it picks the special case of the theorem for
+      -- Even.neg_one_zpow.{u_2}
+      -- {α : Type u_2} [DivisionMonoid α] [HasDistribNeg α] {n : ℤ} (h : Even n) : (-1) ^ n = 1
+      sorry
+  · intro hx
+    rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+    rcases hx with (rfl | rfl)
+    · rw [SetLike.mem_coe, mem_closure_singleton]
+      use 2
+      apply Even.neg_one_zpow (by norm_num)
+    · rw [SetLike.mem_coe]
+      exact mem_closure_singleton_self (-1)
+
+@[simp]
+lemma set_Z_eq : (Z R : Set SL(2,R)) = {1, -1} := by
+  dsimp [Z]
+  rw [closure_neg_one_eq]
+
+@[simp]
+lemma Z_carrier_eq : (Z R).carrier = {1, -1} := by
+  rw [← set_Z_eq]
+  rfl
+
+@[simp]
+lemma mem_Z_iff {x : SL(2,R)}: x ∈ Z R ↔ x = 1 ∨ x = -1 := by
+  rw [← mem_carrier, Z_carrier_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+
+end SpecialSubgroups
+
+open SpecialSubgroups
 
 def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
   if h : a * d = 1 then ⟨!![a, 0; c, d], by simp [h]⟩ else 1
@@ -350,70 +429,41 @@ def T_iso_F (F : Type*) [Field F]: SpecialSubgroups.T F ≃* (Multiplicative F) 
     rfl
 
 
-lemma T_leq_H : T F ≤ H F := by
-  rintro x ⟨τ, rfl⟩
-  rw [H, mem_mk, Set.mem_setOf_eq]
-  use 1, τ
-  rw [d_one_eq_one, one_mul]
 
-/- Lemma 1.2.2.1 T is a normal subgroup of H = D T -/
-lemma T_normal_subgroupOf_H : ((T F).subgroupOf (H F)).Normal := by
-  rw [← @normalizer_eq_top]
-  ext x
-  constructor
-  · intro _hx
-    exact mem_top _
-  · intro hx
-    rw [← @subgroupOf_self] at hx
-    rw [@mem_subgroupOf] at hx
-    obtain ⟨δ, τ, hx⟩ := hx
-    rw [@mem_normalizer_iff'']
-    intro t'
-    constructor
-    · rintro ⟨τ', hτ'⟩
-      rw [mem_subgroupOf]
-      dsimp at hτ' ⊢
-      rw [← hx, ← hτ', _root_.mul_inv_rev, t_inv,
-        inv_d_eq_d_inv, mul_assoc, mul_assoc (t (-τ)), ← mul_assoc (t τ'),
-        ← mul_assoc (d δ⁻¹), ← mul_assoc (d δ⁻¹), d_eq_inv_d_inv F δ,
-        d_mul_t_mul_d_inv_eq_t', t_mul_t_eq_t_add, t_mul_t_eq_t_add]
-      rw [T, inv_inv, neg_add_cancel_comm_assoc, mem_mk, Set.mem_setOf_eq]
-      use τ' * (δ : F) * (δ : F)
-    · rintro ⟨τ', hτ'⟩
-      rw [mem_subgroupOf]
-      dsimp at hτ' ⊢
-      have hτ : (t' : SL(2,F)) = (x : SL(2,F)) * t τ' * (x : SL(2,F))⁻¹ := by rw [hτ']; group
-      rw [hτ, ← hx]
-      rw [_root_.mul_inv_rev, t_inv, inv_d_eq_d_inv, mul_assoc (d δ), t_mul_t_eq_t_add,
-         mul_assoc (d δ), ← mul_assoc (t (τ + τ')), t_mul_t_eq_t_add, ← mul_assoc,
-         ← inv_d_eq_d_inv, d_mul_t_mul_d_inv_eq_t', add_neg_cancel_comm, Units.val_inv_eq_inv_val]
-      use τ' * (δ : F)⁻¹ * (δ :F)⁻¹
 
 /- Lemma 1.2.2.2 H ⧸ T = D -/
 -- def quot_iso_subgroupGeneratedByD {F : Type* } [Field F] :
 --   H F ⧸ T F ≃* D F := by sorry -- needs HasQuotient
 
 /- Lemma 1.3. Z(SL(2,F)) = ⟨ -I ⟩ .-/
-def center_of_SL_2_F : center SL(2,F) ≃* rootsOfUnity 2 F  :=
-  Matrix.SpecialLinearGroup.center_equiv_rootsOfUnity' 2
+-- def center_of_SL_2_F : center SL(2,F) ≃* rootsOfUnity 2 F  :=
+--   Matrix.SpecialLinearGroup.center_equiv_rootsOfUnity' 2
 
-def rootsOfUnity2_iso_Z : rootsOfUnity 2 F ≃* Z F where
-  toFun z := by sorry--⟨!![z.val.val , (0 : F); (0 : F), z.val.val], by sorry⟩
-  invFun := by sorry
-  left_inv := by sorry
-  right_inv := by sorry
-  map_mul' := by sorry
+lemma center_SL2_F_eq_Z {R : Type*}  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
+  ext x
+  constructor
+  · intro hx
+    rw [SpecialLinearGroup.mem_center_iff] at hx
+    obtain ⟨z, z_pow_two_eq_one, hz⟩ := hx
+    simp at z_pow_two_eq_one hz ⊢
+    rcases z_pow_two_eq_one with (rfl | rfl)
+    · left
+      ext <;> simp [← hz]
+    · right
+      ext <;> simp [← hz]
+  · simp
+    rintro (rfl | rfl) <;> simp [mem_center_iff]
 
 lemma neg_one_neq_one [NeZero (2 : F)] : (1 : SL(2,F)) ≠ (-1 : SL(2,F)) := by
   intro h
   have neg_one_eq_one : (1 : SL(2,F)).1 0 0 = (-1 : SL(2,F)).1 0 0 := by nth_rewrite 1 [h]; rfl
   simp at neg_one_eq_one
   symm at neg_one_eq_one
-  let inst : Nontrivial F := by exact CommGroupWithZero.toNontrivial
+  let inst : Nontrivial F := CommGroupWithZero.toNontrivial
   rw [neg_one_eq_one_iff] at neg_one_eq_one
-  let inst : CharP F 2 := by exact ringChar.eq_iff.mp neg_one_eq_one
-  have two_eq_zero : (2 : F) = 0 := by rw [CharTwo.two_eq_zero]
-  have two_ne_zero : (2 : F) ≠ 0 := by exact two_ne_zero
+  let inst : CharP F 2 := ringChar.eq_iff.mp neg_one_eq_one
+  have two_eq_zero : (2 : F) = 0 := CharTwo.two_eq_zero
+  have two_ne_zero : (2 : F) ≠ 0 := two_ne_zero
   contradiction
 
 lemma get_entries (x : SL(2,F)) : ∃ α β γ δ,
@@ -887,31 +937,8 @@ open Monoid
 
 #check Even.neg_one_zpow
 
-lemma closure_neg_one_eq : (closure {(-1 :SL(2,F))} : Set SL(2,F)) = {1, -1} := by
-  ext x
-  constructor
-  · intro hx
-    rw [← zpowers_eq_closure, SetLike.mem_coe, mem_zpowers_iff] at hx
-    obtain ⟨k, rfl⟩ := hx
-    rw [Set.mem_insert_iff, Set.mem_singleton_iff]
-    by_cases hk : Even k
-    · left
-      apply Even.neg_one_zpow hk
-    · right;
-      rw [Int.not_even_iff_odd] at hk
-      -- simp [Odd.neg_pow_zpow hk (-1 : SL(2,F))]
-      -- For some reason it picks the special case of the theorem for
-      -- Even.neg_one_zpow.{u_2}
-      -- {α : Type u_2} [DivisionMonoid α] [HasDistribNeg α] {n : ℤ} (h : Even n) : (-1) ^ n = 1
-      sorry
-  · intro hx
-    rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
-    rcases hx with (rfl | rfl)
-    · rw [SetLike.mem_coe, mem_closure_singleton]
-      use 2
-      apply Even.neg_one_zpow (by norm_num)
-    · rw [SetLike.mem_coe]
-      exact mem_closure_singleton_self (-1)
+
+
 
 
 
@@ -1160,26 +1187,39 @@ def conjugate (x : G) (H : Subgroup G) : Subgroup G where
 lemma foo (x : G) (H : Subgroup G) : conjugate x H = MulAut.conj x • H := by
   ext y
   constructor
-  · sorry
-  · sorry
+  · rintro ⟨z, z_in_H, rfl⟩
+    rw [@mem_smul_pointwise_iff_exists]
+    use z
+    split_ands
+    · assumption
+    · rw [MulAut.smul_def, MulAut.conj_apply]
+  · rintro ⟨z, z_in_H, hz⟩
+    simp at hz
+    rw [← hz]
+    simp [conjugate]
+    simp at z_in_H
+    exact z_in_H
+
+
 
 /-
 Proposition 1.8.
 Let a and b be conjugate elements in a group G. Then ∃ x ∈ G such that x C_G(a) x⁻¹ = C_G (b).
 -/
 lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
-  ∃ x : G, conjugate x ( centralizer { a }) = centralizer { b } := by
+  ∃ x : G, MulAut.conj x • ( centralizer { a }) = centralizer { b } := by
   rw [isConj_iff] at hab
   obtain ⟨x, hc⟩ := hab
   use x
-  simp [conjugate, centralizer, MulAut.conj]
   ext y
+  simp [centralizer, MulAut.conj]
   constructor
   · rintro ⟨y', y'_in_cen, hy'⟩
+    simp at hy' y'_in_cen ⊢
     rw [Set.mem_centralizer_iff]
     rintro m ⟨rfl⟩
     have : a * y' = y' * a := by exact y'_in_cen a rfl
-    rw [hy', ← hc]
+    rw [← hy', ← hc]
     group
     rw [mul_assoc x a, this]
     group
@@ -1189,16 +1229,21 @@ lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
     simp [← hc] at this hy
     use a * x⁻¹ * y * x * a⁻¹
     split_ands
-    · rw [Set.mem_centralizer_iff]
+    · simp
+      rw [Set.mem_centralizer_iff]
       simp_rw [Set.mem_singleton_iff, forall_eq, inv_mul_cancel_right]
       nth_rewrite 1 [← mul_one a, ← inv_mul_cancel x]
       have helper: a * (x⁻¹ * x) * (a * x⁻¹ * y * x * a⁻¹) =
         a * x⁻¹ * (x * a * x⁻¹ * y * x * a⁻¹) := by group
       rw [helper, hy]
       group
-    · nth_rewrite 1 [this]; group
+    · simp
+      group at hy ⊢
+      rw [hy]
+      group
 
 #check conj_smul_le_of_le
+-- #check conj_iso
 
 
 -- lemma smul_equiv_conjugation (x : G): conjugation x
@@ -1211,6 +1256,12 @@ lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
 --   map_mul' := sorry
 
 #check inv_mul_cancel
+
+open MulAction Pointwise
+
+-- def conj_iso (x : G) (H : Subgroup SL(2,F)) : ((MulAut.conj (ConjAct.ofConjAct x)) H) ≃* H := sorry
+
+#check Subgroup.map
 /-
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
