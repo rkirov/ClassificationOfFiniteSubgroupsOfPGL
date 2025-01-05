@@ -184,7 +184,9 @@ theorem centralizer_meet_G_of_noncentral_in_MaximalAbelianSubgroups [IsAlgClosed
 
 namespace MaximalAbelianSubgroup
 
-theorem subset_centralizer_meet {G : Type*} [Group G] (M H : Subgroup G) (hM : M ∈ MaximalAbelianSubgroups H) (x : G) (x_in_M : x ∈ M) : (M : Set G) ⊆ centralizer {x} ⊓ H := by
+theorem subset_centralizer_meet {G : Type*} [Group G] (M H : Subgroup G)
+  (hM : M ∈ MaximalAbelianSubgroups H) (x : G) (x_in_M : x ∈ M) :
+  (M : Set G) ⊆ centralizer {x} ⊓ H := by
   intro y y_in_M
   simp [MaximalAbelianSubgroups, IsMaximalAbelian, maximal_iff] at hM
   obtain ⟨⟨hM, -⟩, M_le_H⟩ := hM
@@ -227,8 +229,8 @@ lemma not_le_of_ne {G : Type*} [Group G] (A B H : Subgroup G)
   contradiction
 
 omit [Finite G] in
-lemma le_cen_of_mem {G : Type*} [Group G] (A H : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups H) (x : G)
-  (x_in_A : x ∈ A) : A ≤ centralizer {x} := by
+lemma le_cen_of_mem {G : Type*} [Group G] (A H : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups H)
+  (x : G) (x_in_A : x ∈ A) : A ≤ centralizer {x} := by
   intro a a_in_A
   obtain ⟨⟨A_IsCommutative', -⟩, A_le_G⟩ := hA
   have hA : IsCommutative (A ⊓ H) := IsCommutative_of_IsCommutative_subgroupOf A H A_IsCommutative'
@@ -259,8 +261,6 @@ lemma lt_cen_meet_G {G : Type*} [Group G] (A B H : Subgroup G) (hA : A ∈ Maxim
     · exact hA.right
     · exact hB.right
 
-#check Lattice
-
 open Pointwise
 
 def center_mul  {G : Type* } [Group G] (H : Subgroup G) : Subgroup G where
@@ -269,7 +269,6 @@ def center_mul  {G : Type* } [Group G] (H : Subgroup G) : Subgroup G where
     intro x y ⟨z₁, hz₁, a₁, ha₁, h₁⟩ ⟨z₂, hz₂, a₂, ha₂, h₂⟩
     simp at h₁ h₂
     rw [← h₁, ← h₂, mul_assoc, ← mul_assoc a₁, Eq.symm (hz₂.comm a₁)]
-    -- rw [@Set.mem_mul]
     use z₁ * z₂
     split_ands
     · exact mul_mem hz₁ hz₂
@@ -302,6 +301,11 @@ lemma center_mul_eq_mul_center {G : Type* } [Group G] (H : Subgroup G) :
   (H : Set G) * (center G) = (center G) * H := by
   exact set_mul_normal_comm (↑H) (center G)
 
+-- lemma center_mul_IsComm {G : Type* } [Group G] (H : Subgroup G) :
+--   IsCommutative (center G ⊔ H) := by
+--   rw [@IsCommutative_iff]
+
+
 lemma sup_center_carrier_eq_mul {G : Type* } [Group G] (H : Subgroup G) :
   (((H ⊔ center G) : Subgroup G) : Set G) = (H : Set G) * center G := by
   exact mul_normal H (center G)
@@ -319,53 +323,49 @@ lemma sup_center_carrier_eq_mul {G : Type* } [Group G] (H : Subgroup G) :
   -- · intro hx
   --   rw [@mul_normal]
   --   exact hx
+lemma center_mul_subset_center_mul {G : Type*} [Group G] (A : Subgroup G) :
+  ((center G) :  Set G) * A ⊆ (center_mul A) := by simp [center_mul]
 
-lemma IsComm_of_center_join_IsComm {G : Type* } [Group G] (A : Subgroup G) (hA : IsCommutative A) : IsCommutative (A ⊔ center G) :=  by
+lemma IsComm_of_center_join_IsComm {G : Type* } [Group G] (H : Subgroup G)
+  (hH : IsCommutative H) : IsCommutative (center G ⊔ H) :=  by
   rw [IsCommutative_iff]
   rintro ⟨x, hx⟩ ⟨y, hy⟩
-  -- simp [← @mem_carrier, sup_center_carrier_eq_mul] at hy
-  sorry
+  rw [@sup_eq_closure_mul, mem_closure] at hx hy
+  specialize hx (center_mul H) (center_mul_subset_center_mul H)
+  specialize hy (center_mul H) (center_mul_subset_center_mul H)
+  rcases hx with ⟨z₁, hz₁, h₁, hh₁, h₁'⟩
+  rcases hy with ⟨z₂, hz₂, h₂, hh₂, h₂'⟩
+  simp at hz₁ hz₂ h₁' h₂' ⊢
+  rw [← h₁', ← h₂', mul_assoc, ← mul_assoc h₁, Eq.symm (hz₂.comm h₁),
+   mul_assoc z₂, mul_assoc z₂, ← mul_assoc h₂, Eq.symm (hz₁.comm h₂),
+   @mul_comm_of_mem_isCommutative G _ H hH h₁ h₂ hh₁ hh₂, ← mul_assoc,
+   Eq.symm (hz₂.comm z₁)]
+  group
 
 
-
-
-
-
-
-
-
-
-lemma center_le {G : Type*} [Group G] (A B H : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups H)
-  (hH : center G < H) : center G ≤ A := by
+lemma center_le (G : Type*) [Group G] (A H : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups H)
+  (hH : center G ≤ H) : center G ≤ A := by
   by_contra h
   rw [@SetLike.not_le_iff_exists] at h
+  -- We will yield that K is less than or equal to A
   have contr := hA.left.right
-  let K := (A ⊔ center G).subgroupOf H
-  have K_IsComm : IsCommutative K := by sorry
-  specialize contr
-  sorry
-  -- have center_IsCommutative : IsCommutative (center G) := by exact center.isCommutative G
-  -- obtain ⟨⟨A_IsComm, A_maximal⟩, -⟩ := hA
-  -- let Z' := (center G).subgroupOf H
-  -- have Z_IsComm : IsCommutative Z' := by exact subgroupOf_isCommutative (center G)
-  -- by_cases h : A.subgroupOf H ≤ Z'
-  -- · specialize A_maximal Z_IsComm h
-  --   simp [Z', ← @map_subtype_le_map_subtype, inf_of_le_left <| le_of_lt hH] at A_maximal
-  --   exact A_maximal.left
-  -- -- · rw? at h
-  --   -- obtain ⟨z, z_in_A, z_not_in_Z⟩ := h
-  -- ·
-  --   sorry
-
-
-     --((center G).subgroupOf H)
-  -- apply transitivity for a contradiction
-
-
-
-
-
-
+  let K := (center G ⊔ A).subgroupOf H
+  have A_IsComm : IsCommutative A :=
+    inf_of_le_left hA.right ▸ IsCommutative_of_IsCommutative_subgroupOf A H hA.left.left
+  have A_join_cen_IsComm : IsCommutative (center G ⊔ A) := IsComm_of_center_join_IsComm _ A_IsComm
+  have K_IsComm : IsCommutative K := subgroupOf_isCommutative (center G ⊔ A)
+  have A_le_cen_join_A : A.subgroupOf H ≤ (center G ⊔ A).subgroupOf H := by
+    simp [← map_subtype_le_map_subtype, hA.right]
+  specialize contr K_IsComm A_le_cen_join_A
+  obtain ⟨z, hz, z_not_in_A⟩ := h
+  have z_in_H : z ∈ H := by apply hH hz
+  have : ¬ K ≤ A.subgroupOf H := by
+    simp [K, @SetLike.not_le_iff_exists]
+    use z, z_in_H
+    split_ands
+    · simp [@mem_subgroupOf]; exact mem_sup_left hz
+    · simp [@mem_subgroupOf]; exact z_not_in_A
+  contradiction
 
 end MaximalAbelianSubgroup
 
@@ -373,9 +373,10 @@ end MaximalAbelianSubgroup
 open MaximalAbelianSubgroup
 
 /- Theorem 2.3 (ii) For any two distinct subgroups A and B of M, we have A ∩ B = Z. -/
-theorem theorem_2_6_ii [IsAlgClosed F] [DecidableEq F] (A B : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
-  (hB : B ∈ MaximalAbelianSubgroups G) (A_ne_B: A ≠ B) (hG : center SL(2,F) ≤ G) :
-  A ⊓ B = center SL(2,F) := by
+omit [Finite G] in
+theorem theorem_2_6_ii [IsAlgClosed F] [DecidableEq F] (A B : Subgroup SL(2,F))
+  (hA : A ∈ MaximalAbelianSubgroups G) (hB : B ∈ MaximalAbelianSubgroups G) (A_ne_B: A ≠ B)
+  (hG : center SL(2,F) ≤ G) : A ⊓ B = center SL(2,F) := by
   ext x
   constructor
   · rintro ⟨x_in_A, x_in_B⟩
@@ -383,7 +384,7 @@ theorem theorem_2_6_ii [IsAlgClosed F] [DecidableEq F] (A B : Subgroup SL(2,F)) 
     by_cases hx : x ∈ G.carrier \ (center SL(2,F))
     · have cen_meet_G_in_MaximalAbelianSubgroups :=
         centralizer_meet_G_of_noncentral_in_MaximalAbelianSubgroups F G x hx
-      obtain ⟨⟨cen_meet_G_IsCommutative, _h⟩, cen_meet_G_le_G⟩ :=
+      obtain ⟨⟨cen_meet_G_IsCommutative, _h⟩, -⟩ :=
         cen_meet_G_in_MaximalAbelianSubgroups
       simp at cen_meet_G_IsCommutative
       have cen_meet_G_le_A : centralizer {x} ⊓ G ≤ A := by
@@ -404,14 +405,9 @@ theorem theorem_2_6_ii [IsAlgClosed F] [DecidableEq F] (A B : Subgroup SL(2,F)) 
       specialize hx (hA.right x_in_A)
       exact hx
   · intro hx
-    sorry
-
-
-
-
-
-
-
+    have cen_le_A := @center_le SL(2,F) _ A G hA hG
+    have cen_le_B := @center_le SL(2,F) _ B G hB hG
+    exact le_inf cen_le_A cen_le_B hx
 
 
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
