@@ -49,8 +49,8 @@ open Subgroup
 
 def IsMaximalAbelian (G : Type*) [Group G] (H : Subgroup G) : Prop := Maximal (IsCommutative) H
 
-def MaximalAbelianSubgroups' { G : Type*} [Group G](H : Subgroup G) : Set (Subgroup H) :=
-  { K : Subgroup H | @IsMaximalAbelian H _ K}
+-- def MaximalAbelianSubgroups' { G : Type*} [Group G](H : Subgroup G) : Set (Subgroup H) :=
+--   { K : Subgroup H | @IsMaximalAbelian H _ K}
 
 def MaximalAbelianSubgroups { L : Type*} [Group L] (G : Subgroup L) : Set (Subgroup L) :=
   { K : Subgroup L | IsMaximalAbelian G (K.subgroupOf G) ∧ K ≤ G}
@@ -69,6 +69,7 @@ instance : Group SL(2,F) := by infer_instance
 
 /- Let G be an arbitrary finite subgroup of SL(2, F) containing Z(SL(2, F)) -/
 variable {G : Type*} (G : Subgroup (SL(2,F))) [Finite G] (hG : center (SL(2, F)) ≤ G)
+
 
 namespace IsPGroup
 
@@ -89,7 +90,7 @@ lemma p_dvd_card_center {H : Type*} {p : ℕ} (hp:  Nat.Prime p) [Group H] [Fini
 end IsPGroup
 
 /- Lemma 2.2: Every finite subgroup of a multiplicative group of a field is cyclic. -/
-lemma lemma_2_2 (H : Subgroup Fˣ) [Finite H]: IsCyclic H := subgroup_units_cyclic H
+lemma lemma_2_2 (H : Subgroup Fˣ) [Finite H] : IsCyclic H := subgroup_units_cyclic H
 
 open SpecialSubgroups
 
@@ -97,23 +98,6 @@ lemma mem_centralizer_self {G : Type*} [Group G] (x : G) : x ∈ centralizer {x}
   rintro y ⟨rfl⟩
   rfl
 
-lemma IsCommutative_iff {G : Type*} [Group G] (H : Subgroup G) :
-  IsCommutative H ↔ ∀ x y : H, x * y = y * x := by
-  constructor
-  · intro h x y
-    have := @mul_comm_of_mem_isCommutative G _ H h x y (by simp) (by simp)
-    exact SetLike.coe_eq_coe.mp this
-  · intro h
-    rw [← @le_centralizer_iff_isCommutative]
-    intro y hy
-    rw [mem_centralizer_iff]
-    intro x hx
-    simp at hx
-    specialize h ⟨x, hx⟩ ⟨y, hy⟩
-    simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq] at h
-    exact h
-
--- lemma Subgroup.coe_mul
 lemma inf_IsCommutative_of_IsCommutative_left {G : Type*} [ Group G] (H K : Subgroup G)
   (hH : IsCommutative H) : IsCommutative (H ⊓ K) := by
   rw [IsCommutative_iff]
@@ -139,11 +123,6 @@ lemma IsCommutative_of_IsCommutative_subgroupOf {G : Type*} [ Group G ] (H K : S
   specialize hH ⟨⟨x, x_in_K⟩, x_in_H_subgroupOf_K⟩ ⟨⟨y, y_in_K⟩, y_in_H_subgroupOf_K⟩
   simp [SetLike.coe_eq_coe] at hH
   exact SetLike.coe_eq_coe.mp hH
-
-
-
-#check subgroupOf_isCommutative
-
 
 lemma ne_union_left_of_ne {X : Type*} (A B : Set X)(not_B_le_A : ¬ B ≤ A) : A ⊂ A ∪ B := by
   rw [Set.ssubset_def]
@@ -301,28 +280,10 @@ lemma center_mul_eq_mul_center {G : Type* } [Group G] (H : Subgroup G) :
   (H : Set G) * (center G) = (center G) * H := by
   exact set_mul_normal_comm (↑H) (center G)
 
--- lemma center_mul_IsComm {G : Type* } [Group G] (H : Subgroup G) :
---   IsCommutative (center G ⊔ H) := by
---   rw [@IsCommutative_iff]
-
-
 lemma sup_center_carrier_eq_mul {G : Type* } [Group G] (H : Subgroup G) :
   (((H ⊔ center G) : Subgroup G) : Set G) = (H : Set G) * center G := by
   exact mul_normal H (center G)
-  -- ext x
-  -- constructor
-  -- · intro hx
-  --   rw [@SetLike.mem_coe] at hx
-  --   rw [@sup_eq_closure_mul] at hx
-  --   rw [mem_closure] at hx
-  --   have H_mul_cen_subs : (H : Set G) * (center G) ⊆ (center_mul H) := by simp [center_mul, center_mul_eq_mul_center]
-  --   specialize hx (center_mul H) H_mul_cen_subs
-  --   simp [center_mul] at hx
-  --   rw [center_mul_eq_mul_center]
-  --   exact hx
-  -- · intro hx
-  --   rw [@mul_normal]
-  --   exact hx
+
 lemma center_mul_subset_center_mul {G : Type*} [Group G] (A : Subgroup G) :
   ((center G) :  Set G) * A ⊆ (center_mul A) := by simp [center_mul]
 
@@ -360,12 +321,35 @@ lemma center_le (G : Type*) [Group G] (A H : Subgroup G) (hA : A ∈ MaximalAbel
   obtain ⟨z, hz, z_not_in_A⟩ := h
   have z_in_H : z ∈ H := by apply hH hz
   have : ¬ K ≤ A.subgroupOf H := by
-    simp [K, @SetLike.not_le_iff_exists]
+    simp [K, SetLike.not_le_iff_exists]
     use z, z_in_H
     split_ands
     · simp [@mem_subgroupOf]; exact mem_sup_left hz
     · simp [@mem_subgroupOf]; exact z_not_in_A
   contradiction
+
+
+omit [Finite G] in
+lemma singleton_of_cen_eq_G (G : Type*) [Group G] (H : Subgroup G) (hH : H = center G) :
+  MaximalAbelianSubgroups H = {center G} := by
+  ext A
+  have cen_le_G : center G ≤ H := by exact le_of_eq_of_le (id (Eq.symm hH)) fun ⦃x⦄ a ↦ a
+  constructor
+  · intro hA
+    have cen_le_A := @center_le G _ A H hA cen_le_G
+    have A_le_cen := hH ▸ hA.right
+    -- exact could not finish it off
+    have A_eq_cen : A = center G := le_antisymm A_le_cen cen_le_A
+    simp [A_eq_cen]
+  · rintro ⟨rfl⟩
+    simp [MaximalAbelianSubgroups, IsMaximalAbelian]
+    split_ands
+    · exact subgroupOf_isCommutative (center G)
+    · intro A _A_IsComm _cen_le_A
+      simp_rw [← hH]
+      simp only [subgroupOf_self, le_top]
+    exact cen_le_G
+
 
 end MaximalAbelianSubgroup
 
@@ -374,9 +358,9 @@ open MaximalAbelianSubgroup
 
 /- Theorem 2.3 (ii) For any two distinct subgroups A and B of M, we have A ∩ B = Z. -/
 omit [Finite G] in
-theorem theorem_2_6_ii [IsAlgClosed F] [DecidableEq F] (A B : Subgroup SL(2,F))
-  (hA : A ∈ MaximalAbelianSubgroups G) (hB : B ∈ MaximalAbelianSubgroups G) (A_ne_B: A ≠ B)
-  (hG : center SL(2,F) ≤ G) : A ⊓ B = center SL(2,F) := by
+theorem center_eq_meet_of_ne_MaximalAbelianSubgroups [IsAlgClosed F] [DecidableEq F]
+  (A B : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hB : B ∈ MaximalAbelianSubgroups G)
+  (A_ne_B: A ≠ B)(hG : center SL(2,F) ≤ G) : A ⊓ B = center SL(2,F) := by
   ext x
   constructor
   · rintro ⟨x_in_A, x_in_B⟩
@@ -409,21 +393,50 @@ theorem theorem_2_6_ii [IsAlgClosed F] [DecidableEq F] (A B : Subgroup SL(2,F))
     have cen_le_B := @center_le SL(2,F) _ B G hB hG
     exact le_inf cen_le_A cen_le_B hx
 
+-- lemma NeZero_neg_CharP [CharP F p]: ∀ (x : F), NeZero x ↔ p • (1 : F) ≠ x := by sorry
 
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
 of G. -/
--- theorem theorem_2_6_iii_a
---   (A : Subgroup G)
---   (hA : A ∈ MaximalAbelianSubgroups G)
---   (h : ¬ (IsCyclic A ∧ Nat.Coprime (Nat.card A) p)) :
+omit [Finite G] in
+theorem theorem_2_6_iii_a {p : ℕ} (hp : Nat.Prime p) [C : CharP F p] (A : Subgroup SL(2,F))
+  (hA : A ∈ MaximalAbelianSubgroups G) (hG : G = center SL(2,F)) :
+  IsCyclic A ∧ Nat.Coprime (Nat.card A) p := by
+  rw [@singleton_of_cen_eq_G SL(2,F) _ G hG] at hA
+  simp at hA
+  rw [center_SL2_F_eq_Z] at hA
+  rw [hA]
+  split_ands
+  · exact Z_IsCyclic F
+  · by_cases h : p ≠ 2
+    · have two_ne_zero : (2 : F) ≠ 0 := by
+        intro h'
+        have : ((2 : ℕ ) : F) = (2 : F) := by rfl
+        rw [← this, @CharP.cast_eq_zero_iff F _ p C 2,
+         Nat.prime_dvd_prime_iff_eq hp Nat.prime_two] at h'
+        contradiction
+      have NeZero_two : NeZero (2 : F) := { out := two_ne_zero }
+      rw [card_Z_eq_two_of_two_ne_zero]
+      rw [@Nat.coprime_two_left]
+      exact Nat.Prime.odd_of_ne_two hp h
+    · simp at h
+      let C' : CharP F 2 := by exact CharP.congr p h
+      have two_eq_zero : (2 : F) = 0 := by refine CharTwo.two_eq_zero
+      rw [card_Z_eq_one_of_two_eq_zero F two_eq_zero]
+      exact Nat.gcd_one_left p
+
+open ElementaryAbelian
+--  (h : ¬ (IsCyclic A ∧ Nat.Coprime (Nat.card A) p))
 --   ∃ p : ℕ, Nat.Prime p → ∃ Q : Sylow p G, ElementaryAbelian.IsElementaryAbelian  p  Q.toSubgroup → Nonempty (A ≃* (Q.toSubgroup.prod (center SL(2,F)))) := by sorry
+-- theorem theorem_2_6_iii_b {p : ℕ} [Fact (Nat.Prime p)] [C : CharP F p] (A : Subgroup SL(2,F))
+--   (hA : A ∈ MaximalAbelianSubgroups G) (hG : G ≠ center SL(2,F)) :
+--   (IsCyclic A ∧ Nat.Coprime (Nat.card A) p) ∨ (∃ T₀ : Subgroup SL(2,F), IsElementaryAbelian p Q) := sorry
 
 /- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [NG (A) : A] ≤ 2. -/
-theorem theorem_2_3_iv_a (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) : A.normalizer.index ≤ 2 := by sorry
+theorem theorem_2_3_iv_a {p : ℕ}(A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) : A.normalizer.index ≤ 2 := by sorry
 
 /- Theorem 2.3 (iv b) Furthermore, if [NG (A) : A] = 2, then there is an element y of NG (A)\A such that, yxy⁻¹ = x⁻¹  for all x ∈ A. -/
-theorem theorem_2_3_iv_b (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) (hNA : A.normalizer.index = 2)
+theorem theorem_2_3_iv_b {p : ℕ }(A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) (hNA : A.normalizer.index = 2)
   (x : A) : ∃ y ∈ A.normalizer.carrier \ A, y * x * y⁻¹ = x⁻¹ := by sorry
 
 /- Theorem 2.3 (v a) Let Q be a Sylow p-subgroup of G. If Q = { I_G }, then there is a cyclic subgroup K of G such that N_G (Q) = Q K.  -/

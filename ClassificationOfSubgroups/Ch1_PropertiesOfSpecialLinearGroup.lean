@@ -305,6 +305,16 @@ lemma Dw_leq_DW : (D F : Set SL(2,F)) * ({w} : Set SL(2,F)) ⊆ (DW F :  Set SL(
 
 def Z : Subgroup SL(2,R) := closure {(-1 : SL(2,R))}
 
+lemma get_entries (x : SL(2,F)) : ∃ α β γ δ,
+  α = x.1 0 0 ∧ β = x.1 0 1 ∧ γ = x.1 1 0 ∧ δ = x.1 1 1 ∧
+  (x : Matrix (Fin 2) (Fin 2) F) = !![α, β; γ, δ] := by
+  use x.1 0 0, x.1 0 1, x.1 1 0, x.1 1 1
+  split_ands
+  repeat' rfl
+  ext <;> rfl
+
+lemma neg_one_mem_Z : (-1 : SL(2,F)) ∈ Z F := by simp [Z]
+
 lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} := by
   ext x
   constructor
@@ -331,6 +341,50 @@ lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} :=
     · rw [SetLike.mem_coe]
       exact mem_closure_singleton_self (-1)
 
+
+lemma IsCommutative_iff {G : Type*} [Group G] (H : Subgroup G) :
+  IsCommutative H ↔ ∀ x y : H, x * y = y * x := by
+  constructor
+  · intro h x y
+    have := @mul_comm_of_mem_isCommutative G _ H h x y (by simp) (by simp)
+    exact SetLike.coe_eq_coe.mp this
+  · intro h
+    rw [← @le_centralizer_iff_isCommutative]
+    intro y hy
+    rw [mem_centralizer_iff]
+    intro x hx
+    simp at hx
+    specialize h ⟨x, hx⟩ ⟨y, hy⟩
+    simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq] at h
+    exact h
+
+@[simp]
+lemma neg_one_neq_one_of_two_ne_zero [NeZero (2 : F)] : (1 : SL(2,F)) ≠ (-1 : SL(2,F)) := by
+  intro h
+  have neg_one_eq_one : (1 : SL(2,F)).1 0 0 = (-1 : SL(2,F)).1 0 0 := by nth_rewrite 1 [h]; rfl
+  simp at neg_one_eq_one
+  symm at neg_one_eq_one
+  let inst : Nontrivial F := CommGroupWithZero.toNontrivial
+  rw [neg_one_eq_one_iff] at neg_one_eq_one
+  let inst : CharP F 2 := ringChar.eq_iff.mp neg_one_eq_one
+  have two_eq_zero : (2 : F) = 0 := CharTwo.two_eq_zero
+  have two_ne_zero : (2 : F) ≠ 0 := two_ne_zero
+  contradiction
+
+lemma Field.one_eq_neg_one_of_two_eq_zero (two_eq_zero : (2 : F) = 0) : 1 = (-1 : F) := by
+  rw [← one_add_one_eq_two, add_eq_zero_iff_neg_eq'] at two_eq_zero
+  exact two_eq_zero.symm
+
+
+lemma SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero (two_eq_zero : (2 : F) = 0) :
+  1 = (-1 : SL(2,F)) := by
+  ext
+  <;> simp [Field.one_eq_neg_one_of_two_eq_zero]
+  <;> exact Field.one_eq_neg_one_of_two_eq_zero F two_eq_zero
+
+
+#check isCyclic_of_subsingleton
+
 @[simp]
 lemma set_Z_eq : (Z R : Set SL(2,R)) = {1, -1} := by
   dsimp [Z]
@@ -344,6 +398,98 @@ lemma Z_carrier_eq : (Z R).carrier = {1, -1} := by
 @[simp]
 lemma mem_Z_iff {x : SL(2,R)}: x ∈ Z R ↔ x = 1 ∨ x = -1 := by
   rw [← mem_carrier, Z_carrier_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+
+-- lemma foo : ↥(Z F) = {1, -1} := by sorry
+
+instance : Finite (Z F) := by
+  simp [← @SetLike.coe_sort_coe]
+  exact Finite.Set.finite_insert 1 {-1}
+
+
+lemma card_Z_eq_two_of_two_ne_zero [NeZero (2 : F)]: Nat.card (Z F) = 2 := by
+  rw [@Nat.card_eq_two_iff]
+  -- have neg_one_mem_Z : (-1 : SL(2,F)) ∈ Z F := by simp [Z]
+  use 1, ⟨-1, neg_one_mem_Z F⟩
+  split_ands
+  · intro h
+    rw [Subtype.ext_val_iff] at h
+    -- -1 ≠ 1 for characteristic different to 2
+    simp at h
+  · rw [@Set.eq_univ_iff_forall]
+    rintro ⟨z, hz⟩
+    simp at hz
+    rcases hz with (rfl | rfl) <;> simp
+
+lemma card_Z_eq_one_of_two_eq_zero (two_eq_zero : (2 : F) = 0) : Nat.card (Z F) = 1 := by
+  rw [@card_eq_one]
+  ext x
+  simp [(SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero F two_eq_zero).symm]
+
+lemma card_Z_le_two : Nat.card (Z F) ≤ 2 := by
+  by_cases h : (2 : F) = 0
+  · rw [card_Z_eq_one_of_two_eq_zero _ h]
+    linarith
+  · let inst : NeZero (2 : F) := { out := h }
+    rw [card_Z_eq_two_of_two_ne_zero]
+
+
+
+lemma orderOf_neg_one_eq_two [NeZero (2 : F)]: orderOf (-1 : SL(2,F)) = 2 := by
+  have order_dvd_two : (orderOf (-1 : SL(2,F))) ∣ 2 ∧ 2 ≠ 0 := by
+    split_ands
+    rw [orderOf_dvd_iff_pow_eq_one ]; simp
+    simp
+  have order_neq_one : (orderOf (-1 : SL(2,F))) ≠ 1 := by
+    simp only [ne_eq, orderOf_eq_one_iff]
+    rw [← ne_eq]
+    symm
+    apply neg_one_neq_one_of_two_ne_zero
+  rw [← Nat.mem_divisors, Nat.Prime.divisors Nat.prime_two, Finset.mem_insert] at order_dvd_two
+  rcases order_dvd_two with (order_eq_one | order_eq_two)
+  · contradiction
+  · rw [Finset.mem_singleton] at order_eq_two
+    exact order_eq_two
+
+-- Lemma 1.4 If p ≠ 2, then SL(2,F) contains a unique element of order 2.
+lemma exists_unique_orderOf_eq_two [NeZero (2 : F)] : ∃! x : SL(2,F), orderOf x = 2 := by
+  use -1
+  split_ands
+  · exact orderOf_neg_one_eq_two F
+  -- Now we show it is the unique element of order two
+  intro x hx
+  rcases get_entries F x with ⟨α, β, γ, _δ, _x_eq⟩
+  simp [propext (orderOf_eq_iff (Nat.le.step Nat.le.refl))] at hx
+  obtain ⟨hx₁, hx₂⟩ := hx
+  rw [sq, mul_eq_one_iff_eq_inv'] at hx₁
+  rw [SpecialLinearGroup.fin_two_ext_iff] at hx₁
+  simp [adjugate_fin_two] at hx₁
+  obtain ⟨α_eq_δ, β_eq_neg_β, γ_eq_neg_γ, -⟩ := hx₁
+  rw [eq_neg_iff_add_eq_zero, ← two_mul] at β_eq_neg_β γ_eq_neg_γ
+  have β_eq_zero : x.1 0 1 = 0 := eq_zero_of_ne_zero_of_mul_left_eq_zero two_ne_zero β_eq_neg_β
+  have γ_eq_zero : x.1 1 0 = 0 := eq_zero_of_ne_zero_of_mul_left_eq_zero two_ne_zero γ_eq_neg_γ
+  have det_x_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 :=  by simp
+  rw [det_fin_two, β_eq_zero, zero_mul, sub_zero, α_eq_δ, mul_self_eq_one_iff] at det_x_eq_one
+  rcases det_x_eq_one with (δ_eq_one | δ_eq_neg_one )
+  have α_eq_δ := α_eq_δ
+  · rw [δ_eq_one] at α_eq_δ
+    have x_eq_one : x = 1 := by ext <;> simp [α_eq_δ, β_eq_zero, γ_eq_zero, δ_eq_one]
+    specialize hx₂ 1 (by norm_num) (by norm_num)
+    rw [pow_one] at hx₂
+    contradiction
+  · rw [δ_eq_neg_one] at α_eq_δ
+    ext <;> simp [α_eq_δ, β_eq_zero, γ_eq_zero, δ_eq_neg_one]
+
+lemma Z_IsCyclic : IsCyclic (Z F) := by
+  apply isCyclic_iff_exists_ofOrder_eq_natCard.mpr ?_
+  by_cases h : NeZero (2 : F)
+  · rw [card_Z_eq_two_of_two_ne_zero]
+    use ⟨-1, neg_one_mem_Z F⟩
+    simp
+    exact orderOf_neg_one_eq_two F
+  · have two_eq_zero : (2 : F) = 0 := by exact not_neZero.mp h
+    rw [card_Z_eq_one_of_two_eq_zero F two_eq_zero]
+    simp only [orderOf_eq_one_iff, exists_eq]
+
 
 end SpecialSubgroups
 
@@ -411,6 +557,14 @@ def D_iso_units_of_F (F : Type*) [Field F] : SpecialSubgroups.D F ≃* Fˣ where
                   simp_rw [← hδ₁, ← hδ₂]
                   simp [SpecialMatrices.d, mul_comm]
 
+lemma D_IsComm : IsCommutative (D F) := by
+  rw [IsCommutative_iff]
+  rintro ⟨x, ⟨δ₁, hδ₁⟩⟩ ⟨y, ⟨δ₂, hδ₂⟩⟩
+  simp [@Subtype.ext_val_iff]
+  rw [← hδ₁, ← hδ₂]
+  simp [mul_comm]
+
+
 /- Lemma 1.2.1.4 { T τ } ≃* F -/
 def T_iso_F (F : Type*) [Field F]: SpecialSubgroups.T F ≃* (Multiplicative F) where
   toFun T := T.val 1 0
@@ -428,8 +582,12 @@ def T_iso_F (F : Type*) [Field F]: SpecialSubgroups.T F ≃* (Multiplicative F) 
     simp [t]
     rfl
 
-
-
+lemma T_IsComm : IsCommutative (T F) := by
+  rw [IsCommutative_iff]
+  rintro ⟨x, ⟨τ₁, hτ₁⟩⟩ ⟨y, ⟨τ₂, hτ₂⟩⟩
+  simp [@Subtype.ext_val_iff]
+  rw [← hτ₁, ← hτ₂]
+  simp [add_comm]
 
 /- Lemma 1.2.2.2 H ⧸ T = D -/
 -- def quot_iso_subgroupGeneratedByD {F : Type* } [Field F] :
@@ -454,69 +612,6 @@ lemma center_SL2_F_eq_Z {R : Type*}  [CommRing R] [NoZeroDivisors R]: center SL(
   · simp
     rintro (rfl | rfl) <;> simp [mem_center_iff]
 
-lemma neg_one_neq_one [NeZero (2 : F)] : (1 : SL(2,F)) ≠ (-1 : SL(2,F)) := by
-  intro h
-  have neg_one_eq_one : (1 : SL(2,F)).1 0 0 = (-1 : SL(2,F)).1 0 0 := by nth_rewrite 1 [h]; rfl
-  simp at neg_one_eq_one
-  symm at neg_one_eq_one
-  let inst : Nontrivial F := CommGroupWithZero.toNontrivial
-  rw [neg_one_eq_one_iff] at neg_one_eq_one
-  let inst : CharP F 2 := ringChar.eq_iff.mp neg_one_eq_one
-  have two_eq_zero : (2 : F) = 0 := CharTwo.two_eq_zero
-  have two_ne_zero : (2 : F) ≠ 0 := two_ne_zero
-  contradiction
-
-lemma get_entries (x : SL(2,F)) : ∃ α β γ δ,
-  α = x.1 0 0 ∧ β = x.1 0 1 ∧ γ = x.1 1 0 ∧ δ = x.1 1 1 ∧
-  (x : Matrix (Fin 2) (Fin 2) F) = !![α, β; γ, δ] := by
-  use x.1 0 0, x.1 0 1, x.1 1 0, x.1 1 1
-  split_ands
-  repeat' rfl
-  ext <;> rfl
-
-
--- Lemma 1.4 If p ≠ 2, then SL(2,F) contains a unique element of order 2.
-lemma lemma_1_4 [NeZero (2 : F)] : ∃! x : SL(2,F), orderOf x = 2 := by
-  use -1
-  split_ands
-  · dsimp
-    have order_dvd_two : (orderOf (-1 : SL(2,F))) ∣ 2 ∧ 2 ≠ 0 := by
-      split_ands
-      rw [orderOf_dvd_iff_pow_eq_one ]; simp
-      simp
-    have order_neq_one : (orderOf (-1 : SL(2,F))) ≠ 1 := by
-      simp only [ne_eq, orderOf_eq_one_iff]
-      rw [← ne_eq]
-      symm
-      apply neg_one_neq_one
-    rw [← Nat.mem_divisors, Nat.Prime.divisors Nat.prime_two, Finset.mem_insert] at order_dvd_two
-    rcases order_dvd_two with (order_eq_one | order_eq_two)
-    · contradiction
-    · rw [Finset.mem_singleton] at order_eq_two
-      exact order_eq_two
-  -- Now we show it is the unique element of order two
-  intro x hx
-  rcases get_entries F x with ⟨α, β, γ, _δ, _x_eq⟩
-  simp [propext (orderOf_eq_iff (Nat.le.step Nat.le.refl))] at hx
-  obtain ⟨hx₁, hx₂⟩ := hx
-  rw [sq, mul_eq_one_iff_eq_inv'] at hx₁
-  rw [SpecialLinearGroup.fin_two_ext_iff] at hx₁
-  simp [adjugate_fin_two] at hx₁
-  obtain ⟨α_eq_δ, β_eq_neg_β, γ_eq_neg_γ, -⟩ := hx₁
-  rw [eq_neg_iff_add_eq_zero, ← two_mul] at β_eq_neg_β γ_eq_neg_γ
-  have β_eq_zero : x.1 0 1 = 0 := eq_zero_of_ne_zero_of_mul_left_eq_zero two_ne_zero β_eq_neg_β
-  have γ_eq_zero : x.1 1 0 = 0 := eq_zero_of_ne_zero_of_mul_left_eq_zero two_ne_zero γ_eq_neg_γ
-  have det_x_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 :=  by simp
-  rw [det_fin_two, β_eq_zero, zero_mul, sub_zero, α_eq_δ, mul_self_eq_one_iff] at det_x_eq_one
-  rcases det_x_eq_one with (δ_eq_one | δ_eq_neg_one )
-  have α_eq_δ := α_eq_δ
-  · rw [δ_eq_one] at α_eq_δ
-    have x_eq_one : x = 1 := by ext <;> simp [α_eq_δ, β_eq_zero, γ_eq_zero, δ_eq_one]
-    specialize hx₂ 1 (by norm_num) (by norm_num)
-    rw [pow_one] at hx₂
-    contradiction
-  · rw [δ_eq_neg_one] at α_eq_δ
-    ext <;> simp [α_eq_δ, β_eq_zero, γ_eq_zero, δ_eq_neg_one]
 
 
 @[simp]
@@ -932,14 +1027,9 @@ def ZT : Subgroup SL(2,F) where
     rintro x (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
     repeat' simp
 
-
 open Monoid
 
 #check Even.neg_one_zpow
-
-
-
-
 
 
 lemma Z_mul_T_subset_ZT :
@@ -1016,9 +1106,7 @@ open Pointwise
 --     -- rw [insert, Finset.mem_insert]
 --   inv_mem' :=  by sorry
 
-
-
-lemma IsCommutative_ZT : IsCommutative  (ZT F) := by
+lemma IsCommutative_ZT : IsCommutative (ZT F) := by
   refine le_centralizer_iff_isCommutative.mp ?_
   rintro x (⟨τ₁, rfl⟩ | ⟨τ₁, rfl⟩)
   repeat
@@ -1026,6 +1114,8 @@ lemma IsCommutative_ZT : IsCommutative  (ZT F) := by
   rintro y (⟨τ₂, rfl⟩ | ⟨τ₂, rfl⟩)
   repeat' simp [add_comm]
 
+lemma centralizer_neg_eq_centralizer {x : SL(2,F)} : centralizer {x} = centralizer {-x} := by
+  ext; constructor <;> simp [mem_centralizer_iff_commutator_eq_one]
 
 /- Proposition 1.6.ii C_L(± T τ) = T × Z where τ ≠ 0 -/
 def centralizer_t_eq_TZ {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = ZT F := by
@@ -1062,9 +1152,11 @@ theorem val_eq_neg_one {F : Type* } [Field F] {a : Fˣ} : (a : F) = -1 ↔ a = (
   rw [Units.ext_iff, Units.coe_neg_one];
 
 
-lemma ex_of_card_D_gt_two {D₀ : Subgroup SL(2,F) }(hD₀ : 2 < Nat.card D₀)  (D₀_leq_D : D₀ ≤ D F): ∃ δ : Fˣ, (δ : F) ≠ 1 ∧ (δ : F) ≠ -1 ∧ d δ ∈ D₀ := by
+lemma ex_of_card_D_gt_two {D₀ : Subgroup SL(2,F) }(hD₀ : 2 < Nat.card D₀) (D₀_leq_D : D₀ ≤ D F) :
+  ∃ δ : Fˣ, (δ : F) ≠ 1 ∧ (δ : F) ≠ -1 ∧ d δ ∈ D₀ := by
   by_contra! h
-  have D₀_leq : D₀.carrier ⊆ {1, -1} := by
+  have D₀_le_Z : D₀.carrier ≤ Z F := by
+    simp
     intro x hx
     obtain ⟨δ, rfl⟩ := D₀_leq_D hx
     rw [Set.mem_insert_iff]
@@ -1080,16 +1172,9 @@ lemma ex_of_card_D_gt_two {D₀ : Subgroup SL(2,F) }(hD₀ : 2 < Nat.card D₀) 
       · rw [← ne_eq] at h₀ h₁
         specialize h δ h₀ h₁
         contradiction
-  -- have : Nat.card D₀ = Finset.card (D₀.carrier) := by sorry
-  have card_D₀_leq_two  : Nat.card D₀ ≤ Finset.card {1, -1} := by
-    sorry
-  simp at card_D₀_leq_two
+  have card_D₀_leq_two : Nat.card D₀ ≤ 2 :=
+    le_trans (Subgroup.card_le_of_le D₀_le_Z) (card_Z_le_two _)
   linarith
-
--- need these theorems
--- #check Finset.card_le_of_subset
-
--- #check Finset.eq_iff_card_le_of_subset
 
 
 lemma mem_D_iff {S : SL(2,F)} : S ∈ D F ↔ ∃ δ : Fˣ, d δ = S := by rfl
@@ -1147,8 +1232,7 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
     rw [det_eq_zero] at det_eq_one
     absurd zero_ne_one det_eq_one
     trivial
-  · -- SL2_diagonal_iff
-    apply Dw_leq_DW
+  · apply Dw_leq_DW
     rw [mem_D_w_iff, ← SL2_antidiagonal_iff]
     simp_rw [← hα, ← hδ, α_eq_zero, δ_eq_zero]
     trivial
@@ -1162,45 +1246,39 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
     absurd zero_ne_one det_eq_one
     trivial
 
+lemma Field.self_eq_inv_iff (x : F) (x_ne_zero : x ≠ 0) : x = x⁻¹ ↔ x = 1 ∨ x = - 1 := by
+  rw [← sq_eq_one_iff, sq, propext (mul_eq_one_iff_eq_inv₀ x_ne_zero)]
+
+lemma Units.val_neg_one : ((-1 : Fˣ) : F) = -1 := by simp only [Units.val_neg, val_one]
+
+lemma Units.val_eq_neg_one (x : Fˣ) : (x : F) = -1 ↔ x = (-1 : Fˣ) := by
+  rw [← Units.val_neg_one, eq_iff]
+
+lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ ≠ -1) :
+  centralizer {d δ} = D F := by
+  ext x
+  constructor
+  · intro hx
+    simp [mem_centralizer_iff] at hx
+    rcases get_entries F x with ⟨a, b, c, d, _ha, hb', hc', _hd, x_eq⟩
+    simp [SpecialLinearGroup.fin_two_ext_iff, SpecialMatrices.d, x_eq] at hx
+    obtain ⟨-, hb, hc, -⟩ := hx
+    have δ_ne_zero : (δ : F) ≠ 0 := Units.ne_zero δ
+    have δ_ne_δ_inv : (δ : F) ≠ δ⁻¹ := by
+      intro h
+      rw [Field.self_eq_inv_iff F _ δ_ne_zero] at h
+      simp_rw [Units.val_eq_one, Units.val_eq_neg_one] at h
+      absurd not_or.mpr ⟨δ_ne_one, δ_ne_neg_one⟩ h
+      trivial
+    rw [mul_comm, mul_eq_mul_left_iff] at hb hc
+    replace hb := Or.resolve_left hb δ_ne_δ_inv
+    replace hc := Or.resolve_left hc δ_ne_δ_inv.symm
+    rw [mem_D_iff, ← SL2_diagonal_iff]
+    simp [hb, hc, ← hb', ← hc']
+  · rintro ⟨δ', rfl⟩
+    simp [mem_centralizer_iff, mul_comm]
 
 open MulAction
-
-def conjugate (x : G) (H : Subgroup G) : Subgroup G where
-  carrier := {a : G | ∃ h, h ∈ H ∧ a = x * h * x⁻¹}
-  one_mem' := by
-    dsimp
-    use 1
-    constructor
-    exact H.one_mem
-    group
-  inv_mem' := by
-    dsimp
-    rintro - ⟨h, h_in, rfl⟩
-    use h⁻¹, H.inv_mem h_in
-    group
-  mul_mem' := by
-    dsimp
-    rintro - - ⟨h, h_in, rfl⟩ ⟨k, k_in, rfl⟩
-    use h*k, H.mul_mem h_in k_in
-    group
-
-lemma foo (x : G) (H : Subgroup G) : conjugate x H = MulAut.conj x • H := by
-  ext y
-  constructor
-  · rintro ⟨z, z_in_H, rfl⟩
-    rw [@mem_smul_pointwise_iff_exists]
-    use z
-    split_ands
-    · assumption
-    · rw [MulAut.smul_def, MulAut.conj_apply]
-  · rintro ⟨z, z_in_H, hz⟩
-    simp at hz
-    rw [← hz]
-    simp [conjugate]
-    simp at z_in_H
-    exact z_in_H
-
-
 
 /-
 Proposition 1.8.
@@ -1242,44 +1320,71 @@ lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
       rw [hy]
       group
 
-#check conj_smul_le_of_le
--- #check conj_iso
-
-
--- lemma smul_equiv_conjugation (x : G): conjugation x
-
--- def conjugate_Subgroup_iso {G : Type*} [Group G] (x : G) (H : Subgroup G): conjugate x H ≃* H where
---   toFun := fun a => x⁻¹ * a * x
---   invFun := sorry
---   left_inv := sorry
---   right_inv := sorry
---   map_mul' := sorry
-
-#check inv_mul_cancel
-
 open MulAction Pointwise
 
--- def conj_iso (x : G) (H : Subgroup SL(2,F)) : ((MulAut.conj (ConjAct.ofConjAct x)) H) ≃* H := sorry
+lemma conjugate_IsComm_of_IsComm' {G : Type*} [Group G] (c : G)(H K : Subgroup G)
+  (hK : IsCommutative K)(h : MulAut.conj c • K = H) : IsCommutative H := by
+  rw [IsCommutative_iff]
+  rintro ⟨x, hx⟩ ⟨y, hy⟩
+  rw [le_antisymm_iff] at h
+  obtain ⟨- , H_le_conj_K⟩ := h
+  rcases H_le_conj_K hx with ⟨c₁, hc₁, eq_x⟩
+  rcases H_le_conj_K hy with ⟨c₂, hc₂, eq_y⟩
+  simp at eq_x eq_y
+  have := @mul_comm_of_mem_isCommutative G _ K _ c₁ c₂ hc₁ hc₂
+  simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq]
+  rw [← eq_x, ← eq_y]
+  group
+  simp
+  rw [mul_assoc, this]
+  group
 
-#check Subgroup.map
+lemma conjugate_IsComm_of_IsComm {G : Type*} [Group G] (c : G)(K : Subgroup G)
+  (hK : IsCommutative K) : IsCommutative (MulAut.conj c • K) := by
+  let H := MulAut.conj c • K
+  have H_eq : MulAut.conj c • K = H := rfl
+  exact @conjugate_IsComm_of_IsComm' G _ c H K hK H_eq
+
+lemma MulAut.conj_smul_symm {G : Type*} [Group G] (H K : Subgroup G) (c : G)
+ (h : MulAut.conj c • H = K) : ∃ c' : G, MulAut.conj c' • K = H := ⟨c⁻¹, by simp [← h]⟩
+
 /-
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
 -/
-lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](S : SL(2,F)) (hx : S ∉ center SL(2,F)):
-  IsCommutative (centralizer { S }) := by
+lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](S : SL(2,F))
+  (hx : S ∉ center SL(2,F)) : IsCommutative (centralizer { S }) := by
   rcases SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t F S with
     (⟨δ, S_IsConj_d⟩ | ⟨τ, S_IsConj_t⟩ | ⟨τ, S_IsConj_neg_t⟩ )
   · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (d δ) S S_IsConj_d
-    rw [← centralizer_S_eq]
-    sorry
+    have δ_ne_one : δ ≠ 1 := by
+      rintro rfl
+      simp at S_IsConj_d
+      rw [← S_IsConj_d, center_SL2_F_eq_Z] at hx
+      simp at hx
+    have δ_ne_neg_one : δ ≠ -1 := by
+      rintro rfl
+      simp at S_IsConj_d
+      rw [← S_IsConj_d, center_SL2_F_eq_Z] at hx
+      simp at hx
+    rw [← centralizer_S_eq, centralizer_d_eq_D _ _ δ_ne_one δ_ne_neg_one]
+    apply conjugate_IsComm_of_IsComm
+    exact D_IsComm F
   · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (t τ) S S_IsConj_t
-    rw [← centralizer_S_eq]
-    sorry
+    have τ_ne_zero : τ ≠ 0 := by
+      rintro rfl
+      simp at S_IsConj_t
+      rw [← S_IsConj_t, center_SL2_F_eq_Z] at hx
+      simp at hx
+    rw [← centralizer_S_eq, centralizer_t_eq_TZ F τ_ne_zero]
+    apply conjugate_IsComm_of_IsComm
+    exact IsCommutative_ZT F
   · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-t τ) S S_IsConj_neg_t
-    rw [← centralizer_S_eq]
-    sorry
-
-#check ConjAct
-
-#check SMulCommClass
+    have τ_ne_zero : τ ≠ 0 := by
+      rintro rfl
+      simp at S_IsConj_neg_t
+      rw [← S_IsConj_neg_t, center_SL2_F_eq_Z] at hx
+      simp at hx
+    rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_t_eq_TZ F τ_ne_zero]
+    apply conjugate_IsComm_of_IsComm
+    exact IsCommutative_ZT F
