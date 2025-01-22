@@ -535,7 +535,7 @@ lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
 
 
 /- Lemma 1.2.1.3 -/
-def D_iso_units_of_F (F : Type*) [Field F] : SpecialSubgroups.D F ≃* Fˣ where
+def D_iso_units (F : Type*) [Field F] : SpecialSubgroups.D F ≃* Fˣ where
   toFun d := ⟨
               d.val 0 0,
               d.val 1 1,
@@ -697,19 +697,20 @@ lemma upper_triangular_iff_bottom_left_entry_eq_zero {M : Matrix (Fin 2) (Fin 2)
     ext <;> rfl
 
 lemma det_eq_mul_diag_of_upper_triangular (S : SL(2,F)) (hγ : S.1 1 0  = 0) :
-  S.1 0 0 * S.1 1 1 = 1 := by
+  S 0 0 * S 1 1 = 1 := by
   have det_eq_one : det (S.val) = 1 := by simp
   simp only [det_fin_two, hγ, mul_zero, sub_zero] at det_eq_one
   exact det_eq_one
 
 lemma det_eq_mul_diag_of_lower_triangular (S : SL(2,F)) (hβ : S.1 0 1 = 0) :
-  S.1  0 0 * S.1 1 1 = 1 := by
+  S 0 0 * S 1 1 = 1 := by
   have det_eq_one : det (S.val) = 1 := by simp
   simp only [det_fin_two, hβ, zero_mul, sub_zero] at det_eq_one
   exact det_eq_one
 
 
-lemma SL2_diagonal_iff (S : SL(2,F)) : S 0 1 = 0 ∧ S 1 0 = 0 ↔ ∃ δ : Fˣ, d δ = S := by
+lemma SpecialLinearGroup.fin_two_diagonal_iff (S : SL(2,F)) :
+  S 0 1 = 0 ∧ S 1 0 = 0 ↔ ∃ δ : Fˣ, d δ = S := by
   constructor
   · rintro ⟨hβ, hγ⟩
     rcases get_entries F S with ⟨α, β, γ, δ, hα, -, -, hδ, -⟩
@@ -725,7 +726,8 @@ lemma SL2_diagonal_iff (S : SL(2,F)) : S 0 1 = 0 ∧ S 1 0 = 0 ↔ ∃ δ : Fˣ,
     rcases h with ⟨-, h₁, h₂, -⟩
     split_ands <;> simp [d, ← h₁, ← h₂]
 
-lemma SL2_antidiagonal_iff (S : SL(2,F)) : S 0 0 = 0 ∧ S 1 1 = 0 ↔ ∃ δ : Fˣ, (d δ) * w = S := by
+lemma SpecialLinearGroup.fin_two_antidiagonal_iff (S : SL(2,F)) :
+  S 0 0 = 0 ∧ S 1 1 = 0 ↔ ∃ δ : Fˣ, (d δ) * w = S := by
   constructor
   · rintro ⟨hα, hδ⟩
     have det_eq_one : det (S : Matrix (Fin 2) (Fin 2) F) = 1 := by rw [SpecialLinearGroup.det_coe]
@@ -743,8 +745,8 @@ lemma SL2_antidiagonal_iff (S : SL(2,F)) : S 0 0 = 0 ∧ S 1 1 = 0 ↔ ∃ δ : 
     simp [d, w]
 
 
-lemma SL2_shear_iff (S : SL(2,F)) :
-  S.1 0 0 = S.1 1 1 ∧ S.1 0 1 = 0 ↔ (∃ τ, t τ = S) ∨ ∃ τ, -t τ = S := by
+lemma SpecialLinearGroup.fin_two_shear_iff (S : SL(2,F)) :
+  S 0 0 = S 1 1 ∧ S 0 1 = 0 ↔ (∃ τ, t τ = S) ∨ ∃ τ, -t τ = S := by
   constructor
   · rintro ⟨α_eq_δ, β_eq_zero⟩
     have α_eq_one_or_neg_one := α_eq_δ.symm ▸ det_eq_mul_diag_of_lower_triangular F S β_eq_zero
@@ -1016,7 +1018,7 @@ lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
     -- contradiction with the assumption that Nat.card T₁ > 1
     linarith
 
-def ZT : Subgroup SL(2,F) where
+def TZ : Subgroup SL(2,F) where
   carrier := { t τ | τ : F } ∪ { - t τ | τ : F }
   mul_mem' := by
     rintro x y (⟨τ₁, rfl⟩ | ⟨τ₁, rfl⟩) (⟨τ₂, rfl⟩ | ⟨τ₂, rfl⟩)
@@ -1027,51 +1029,128 @@ def ZT : Subgroup SL(2,F) where
     rintro x (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
     repeat' simp
 
+open Pointwise
+
+def TZ' : Subgroup SL(2,F) where
+  carrier := T F * Z F
+  mul_mem' := by
+    rintro a b ⟨t₁, ht₁, ⟨z₁, hz₁, rfl⟩⟩ ⟨t₂, ht₂, ⟨z₂, hz₂, rfl⟩⟩
+    simp only [SetLike.mem_coe] at ht₁ ht₂ hz₁ hz₂ ⊢
+    group
+    have hz₁' := hz₁
+    simp [← center_SL2_F_eq_Z ] at hz₁'
+    rw [mul_assoc t₁, (mem_center_iff.mp hz₁' t₂).symm]
+    group
+    use t₁ * t₂
+    constructor
+    · exact Subgroup.mul_mem _ ht₁ ht₂
+    use z₁ * z₂
+    constructor
+    · exact Subgroup.mul_mem _ hz₁ hz₂
+    group
+  one_mem' := by
+    use 1
+    constructor
+    · use 0, t_zero_eq_one F
+    use 1
+    constructor
+    · simp
+    group
+  inv_mem' := by
+    rintro x ⟨t, ht, ⟨z, hz, rfl⟩⟩
+    simp at ht
+    have hz' := hz
+    simp [← center_SL2_F_eq_Z] at hz
+    simp only [_root_.mul_inv_rev,
+       (mem_center_iff.mp ((Subgroup.inv_mem_iff (center SL(2, F))).mpr hz) t⁻¹).symm]
+    use t⁻¹
+    constructor
+    · simp [ht]
+    use z⁻¹
+    constructor
+    · exact (Subgroup.inv_mem_iff (Z F)).mpr hz'
+    group
+
+lemma TZ_eq_TZ' {F : Type*} [Field F] : TZ' F = TZ F := by
+  ext x
+  constructor
+  · rintro ⟨t, ht, z, hz, rfl⟩
+    simp at hz ht
+    obtain ⟨τ, rfl⟩ := ht
+    -- z = 1 or z = -1
+    rcases hz with (rfl | rfl)
+    · left
+      use τ
+      simp
+    · right
+      use τ
+      simp
+  · intro hx
+    rcases hx with (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
+    · use t τ
+      constructor
+      · use τ
+      use 1
+      constructor
+      · simp
+      · simp
+    · use t τ
+      constructor
+      · use τ
+      use -1
+      constructor
+      · simp
+      · simp
+
 open Monoid
 
-#check Even.neg_one_zpow
 
 
-lemma Z_mul_T_subset_ZT :
-  ((Z F) : Set SL(2,F)) * ((T F) : Set SL(2,F)) ⊆ ((ZT F) : Set SL(2,F)) := by
-  rintro x ⟨z, hz, t', ht', hτ, h⟩
+lemma T_mul_Z_subset_TZ :
+  ((T F) : Set SL(2,F)) * ((Z F) : Set SL(2,F)) ⊆ ((TZ F) : Set SL(2,F)) := by
+  rintro x ⟨t', ht', z, hz, hτ, h⟩
   obtain ⟨τ, rfl⟩ := ht'
   dsimp [Z] at hz
   dsimp
   rw [closure_neg_one_eq] at hz
-  simp [ZT]
-  rw [@Set.mem_insert_iff, Set.mem_singleton_iff] at hz
+  simp [TZ]
+  rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
   rcases hz with (rfl | rfl)
   left
   use τ
-  rw [one_mul]
+  rw [mul_one]
   right
   use τ
-  rw [neg_mul, one_mul]
+  simp
 
-lemma Z_meet_T_eq_ZT : Z F ⊔ T F = ZT F := by
+-- lemma T_mul_Z_eq_TZ : ((T F) : Set SL(2,F)) * ((Z F) : Set SL(2,F)) = ((TZ F) : Set SL(2,F)) := by
+--   apply le_antisymm
+--   apply T_mul_Z_subset_TZ
+--   simp [TZ]
+
+
+lemma T_join_Z_eq_TZ : T F ⊔ Z F = TZ F := by
   ext x
   constructor
   · intro hx
-    rw [@sup_eq_closure_mul] at hx
-    rw [@mem_closure] at hx
-    exact hx (ZT F) (Z_mul_T_subset_ZT F)
-  · rintro (⟨τ, rfl⟩ | ⟨τ, rfl⟩) <;> rw [@sup_eq_closure_mul]
-    · have mem_Z_mul_T : t τ ∈ ((Z F) : Set SL(2,F)) * (T F) := by
+    rw [sup_eq_closure_mul, mem_closure] at hx
+    exact hx (TZ F) (T_mul_Z_subset_TZ F)
+  · rintro (⟨τ, rfl⟩ | ⟨τ, rfl⟩) <;> rw [sup_eq_closure_mul]
+    · have mem_Z_mul_T : t τ ∈ ((T F) : Set SL(2,F)) * (Z F) := by
         rw [Set.mem_mul]
-        use 1
+        use t τ
         split_ands
         simp [Z, closure_neg_one_eq]
-        use t τ
-        split_ands <;> simp [T]
+        use τ
+        simp
       apply Subgroup.subset_closure mem_Z_mul_T
-    · have mem_Z_mul_T : -t τ ∈ ((Z F) : Set SL(2,F)) * (T F) := by
+    · have mem_Z_mul_T : -t τ ∈ ((T F) : Set SL(2,F)) * (Z F) := by
         rw [Set.mem_mul]
-        use -1
+        use t τ
         split_ands
         simp [Z, closure_neg_one_eq]
-        use t τ
-        split_ands <;> simp [T]
+        use τ
+        simp
       apply Subgroup.subset_closure mem_Z_mul_T
 
 
@@ -1106,7 +1185,7 @@ open Pointwise
 --     -- rw [insert, Finset.mem_insert]
 --   inv_mem' :=  by sorry
 
-lemma IsCommutative_ZT : IsCommutative (ZT F) := by
+lemma IsCommutative_TZ : IsCommutative (TZ F) := by
   refine le_centralizer_iff_isCommutative.mp ?_
   rintro x (⟨τ₁, rfl⟩ | ⟨τ₁, rfl⟩)
   repeat
@@ -1118,7 +1197,7 @@ lemma centralizer_neg_eq_centralizer {x : SL(2,F)} : centralizer {x} = centraliz
   ext; constructor <;> simp [mem_centralizer_iff_commutator_eq_one]
 
 /- Proposition 1.6.ii C_L(± T τ) = T × Z where τ ≠ 0 -/
-def centralizer_t_eq_TZ {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = ZT F := by
+def centralizer_t_eq_TZ {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = TZ F := by
   ext x
   constructor
   · intro hx
@@ -1132,9 +1211,9 @@ def centralizer_t_eq_TZ {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = ZT F 
     have α_eq_δ : τ * α = τ * δ := by rw [mul_comm τ δ, eq_iff_eq_of_add_eq_add bottom_left]
     rw [mul_eq_mul_left_iff, or_iff_not_imp_right] at α_eq_δ
     specialize α_eq_δ hτ
-    simp [ZT]
+    simp [TZ]
     -- is a shear matrix if diagonal entries are equal and top right entry is zero
-    rw [← SL2_shear_iff]
+    rw [← SpecialLinearGroup.fin_two_shear_iff]
     constructor
     -- diagonal entries are equal
     · rw [← hα, ← hδ, α_eq_δ]
@@ -1201,7 +1280,7 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
   specialize hx (d δ')
   rw [hx] at hδ'
   have mem_D := D₀_leq_D hδ'
-  rw [mem_D_iff, ← SL2_diagonal_iff] at mem_D
+  rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff] at mem_D
   rcases get_entries F x with ⟨α, β, γ, δ, hα, hβ, hγ, hδ, x_eq⟩
   rcases mem_D with ⟨top_right, bottom_left⟩
   simp [d, x_eq] at top_right bottom_left
@@ -1233,11 +1312,11 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
     absurd zero_ne_one det_eq_one
     trivial
   · apply Dw_leq_DW
-    rw [mem_D_w_iff, ← SL2_antidiagonal_iff]
+    rw [mem_D_w_iff, ← SpecialLinearGroup.fin_two_antidiagonal_iff]
     simp_rw [← hα, ← hδ, α_eq_zero, δ_eq_zero]
     trivial
   · apply D_leq_DW
-    rw [mem_D_iff, ← SL2_diagonal_iff]
+    rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff]
     simp_rw [← hβ, ← hγ, β_eq_zero, γ_eq_zero]
     trivial
   · have det_eq_zero : det (x : Matrix (Fin 2) (Fin 2) F) = 0 := by
@@ -1273,19 +1352,27 @@ lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ �
     rw [mul_comm, mul_eq_mul_left_iff] at hb hc
     replace hb := Or.resolve_left hb δ_ne_δ_inv
     replace hc := Or.resolve_left hc δ_ne_δ_inv.symm
-    rw [mem_D_iff, ← SL2_diagonal_iff]
+    rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff]
     simp [hb, hc, ← hb', ← hc']
   · rintro ⟨δ', rfl⟩
     simp [mem_centralizer_iff, mul_comm]
 
-open MulAction
+lemma centralizer_d_eq_D' (δ : Fˣ) (hd: d δ ∉ center SL(2,F)) : centralizer {d δ} = D F := by
+  simp [center_SL2_F_eq_Z, ← ne_eq] at hd
+  apply centralizer_d_eq_D F δ
+  · rintro rfl
+    simp at hd
+  · rintro rfl
+    simp at hd
+
+open MulAction MulAut
 
 /-
 Proposition 1.8.
 Let a and b be conjugate elements in a group G. Then ∃ x ∈ G such that x C_G(a) x⁻¹ = C_G (b).
 -/
 lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
-  ∃ x : G, MulAut.conj x • ( centralizer { a }) = centralizer { b } := by
+  ∃ x : G, conj x • (centralizer { a }) = centralizer { b } := by
   rw [isConj_iff] at hab
   obtain ⟨x, hc⟩ := hab
   use x
@@ -1320,10 +1407,9 @@ lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
       rw [hy]
       group
 
-open MulAction Pointwise
 
 lemma conjugate_IsComm_of_IsComm' {G : Type*} [Group G] (c : G)(H K : Subgroup G)
-  (hK : IsCommutative K)(h : MulAut.conj c • K = H) : IsCommutative H := by
+  (hK : IsCommutative K)(h : conj c • K = H) : IsCommutative H := by
   rw [IsCommutative_iff]
   rintro ⟨x, hx⟩ ⟨y, hy⟩
   rw [le_antisymm_iff] at h
@@ -1340,51 +1426,52 @@ lemma conjugate_IsComm_of_IsComm' {G : Type*} [Group G] (c : G)(H K : Subgroup G
   group
 
 lemma conjugate_IsComm_of_IsComm {G : Type*} [Group G] (c : G)(K : Subgroup G)
-  (hK : IsCommutative K) : IsCommutative (MulAut.conj c • K) := by
-  let H := MulAut.conj c • K
+  (hK : IsCommutative K) : IsCommutative (conj c • K) := by
+  let H := conj c • K
   have H_eq : MulAut.conj c • K = H := rfl
   exact @conjugate_IsComm_of_IsComm' G _ c H K hK H_eq
 
 lemma MulAut.conj_smul_symm {G : Type*} [Group G] (H K : Subgroup G) (c : G)
- (h : MulAut.conj c • H = K) : ∃ c' : G, MulAut.conj c' • K = H := ⟨c⁻¹, by simp [← h]⟩
+ (h : conj c • H = K) : ∃ c' : G, conj c' • K = H := ⟨c⁻¹, by simp [← h]⟩
+
 
 /-
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
 -/
-lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](S : SL(2,F))
-  (hx : S ∉ center SL(2,F)) : IsCommutative (centralizer { S }) := by
-  rcases SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t F S with
-    (⟨δ, S_IsConj_d⟩ | ⟨τ, S_IsConj_t⟩ | ⟨τ, S_IsConj_neg_t⟩ )
-  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (d δ) S S_IsConj_d
+lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](x : SL(2,F))
+  (hx : x ∉ center SL(2,F)) : IsCommutative (centralizer { x }) := by
+  rcases SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t F x with
+    (⟨δ, x_IsConj_d⟩ | ⟨τ, x_IsConj_t⟩ | ⟨τ, x_IsConj_neg_t⟩ )
+  · obtain ⟨x, centralizer_x_eq⟩ := conjugate_centralizers_of_IsConj (d δ) x x_IsConj_d
     have δ_ne_one : δ ≠ 1 := by
       rintro rfl
-      simp at S_IsConj_d
-      rw [← S_IsConj_d, center_SL2_F_eq_Z] at hx
+      simp at x_IsConj_d
+      rw [← x_IsConj_d, center_SL2_F_eq_Z] at hx
       simp at hx
     have δ_ne_neg_one : δ ≠ -1 := by
       rintro rfl
-      simp at S_IsConj_d
-      rw [← S_IsConj_d, center_SL2_F_eq_Z] at hx
+      simp at x_IsConj_d
+      rw [← x_IsConj_d, center_SL2_F_eq_Z] at hx
       simp at hx
-    rw [← centralizer_S_eq, centralizer_d_eq_D _ _ δ_ne_one δ_ne_neg_one]
+    rw [← centralizer_x_eq, centralizer_d_eq_D _ _ δ_ne_one δ_ne_neg_one]
     apply conjugate_IsComm_of_IsComm
     exact D_IsComm F
-  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (t τ) S S_IsConj_t
+  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (t τ) x x_IsConj_t
     have τ_ne_zero : τ ≠ 0 := by
       rintro rfl
-      simp at S_IsConj_t
-      rw [← S_IsConj_t, center_SL2_F_eq_Z] at hx
+      simp at x_IsConj_t
+      rw [← x_IsConj_t, center_SL2_F_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq, centralizer_t_eq_TZ F τ_ne_zero]
     apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_ZT F
-  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-t τ) S S_IsConj_neg_t
+    exact IsCommutative_TZ F
+  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-t τ) x x_IsConj_neg_t
     have τ_ne_zero : τ ≠ 0 := by
       rintro rfl
-      simp at S_IsConj_neg_t
-      rw [← S_IsConj_neg_t, center_SL2_F_eq_Z] at hx
+      simp at x_IsConj_neg_t
+      rw [← x_IsConj_neg_t, center_SL2_F_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_t_eq_TZ F τ_ne_zero]
     apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_ZT F
+    exact IsCommutative_TZ F
