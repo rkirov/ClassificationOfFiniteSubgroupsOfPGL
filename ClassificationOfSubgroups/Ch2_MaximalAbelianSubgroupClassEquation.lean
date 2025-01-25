@@ -4,6 +4,7 @@ import ClassificationOfSubgroups.Ch1_PropertiesOfSpecialLinearGroup
 
 set_option linter.style.longLine true
 set_option autoImplicit false
+set_option maxHeartbeats 0
 
 -- /home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfSubgroups/ClassificationOfSubgroups/Ch1_PropertiesOfSpecialLinearGroup.lean
 -- namespace test
@@ -703,8 +704,259 @@ lemma conj_inv_conj_eq (G : Subgroup SL(2,F)) (c : SL(2,F)):
   simp only [smul_inf, ← center_SL2_F_eq_Z, conj_center_eq_center SL(2,F) c⁻¹, smul_sup]
   simp
 
-def conj_foo (c : SL(2,F)) (H : Subgroup SL(2,F)) : (conj c • H :) ≃* (H:) := by exact
-  (equivSMul (conj c) H).symm
+theorem IsCyclic_and_card_coprime_CharP_of_IsConj_d
+  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
+  [hG₀ : Finite G] (A : Subgroup SL(2,F)) (x : SL(2,F)) (x_not_in_center : x ∉ center SL(2,F))
+  (A_eq_centra : A = centralizer {x} ⊓ G ) (δ : Fˣ) (x_IsConj_d : IsConj (d δ) x ) :
+  (IsCyclic A ∧ Nat.Coprime (Nat.card A) p) := by
+  simp [center_SL2_F_eq_Z] at x_not_in_center
+  have δ_ne_one : δ ≠ 1 := by rintro rfl; simp_all
+  have δ_ne_neg_one : δ ≠ -1 := by rintro rfl; simp_all
+  obtain ⟨c, c_smul_D_eq_centralizer⟩ :=
+      conjugate_centralizers_of_IsConj (SpecialMatrices.d δ) x x_IsConj_d
+  rw [centralizer_d_eq_D F δ δ_ne_one δ_ne_neg_one] at c_smul_D_eq_centralizer
+  -- A = conj c • D ⊓ G ≤ conj c • D F
+  have A_le_conj_D :=
+      le_trans (le_of_eq A_eq_centra) <|
+      le_trans inf_le_left (le_of_eq c_smul_D_eq_centralizer.symm)
+  -- to prove A has cardinality coprime to p we construct the following homomorphism
+  -- compose the monoid homomorphisms of inclusions and isomorphisms
+  let f₁ : A →* (conj c • D F:) := inclusion A_le_conj_D
+  let f₂ : (conj c • D F:) →* D F := (MulEquiv.subgroupMap (conj c) (D F)).symm.toMonoidHom
+  let f₃ : (D F) →* Fˣ := (D_iso_units F).toMonoidHom
+  let f : A →* Fˣ := f₃.comp (f₂.comp f₁)
+  -- f is injective
+  have f_inj : Injective f := by
+    dsimp [f]
+    apply Injective.comp
+    exact MulEquiv.injective (D_iso_units F)
+    apply Injective.comp
+    -- we construct the monoid homomorphism from the isomorphism
+    exact MulEquiv.injective (MulEquiv.subgroupMap (conj c) (D F)).symm
+    -- we construct the inclusion monoid homomorphism
+    exact inclusion_injective A_le_conj_D
+  -- to prove A is cyclic we construct the following homomorphism
+  -- `F *← Fˣ *← A`
+  let f' : A →* F := (coeHom F).comp f
+  have f'_inj : Injective f' := by
+    dsimp [f']
+    apply Injective.comp
+    exact Units.coeHom_injective
+    exact f_inj
+  let inst : Finite A := A_eq_centra  ▸ Set.Finite.subset hG₀ inf_le_right
+  split_ands
+    -- A is cyclic as it is finite and there exists a monoid monomorphism into F
+  · exact isCyclic_of_subgroup_isDomain f' f'_inj
+    -- cardinality of A is coprime to p, the characteristic of F as Fˣ has no element of order p
+    -- after looking at the frobenius endomorphism
+  · exact @coprime_card_fin_subgroup_of_inj_hom_group_iso_units F SL(2,F) _ p _ _ _ A _ f f_inj
+
+lemma centra_eq_conj_TZ_of_IsConj_t_or_IsConj_neg_t [IsAlgClosed F] [DecidableEq F]
+  (A : Subgroup SL(2,F)) (τ : F) (x : SL(2,F))
+  (x_IsConj_t_or_neg_t : IsConj (t τ) x ∨ IsConj (- t τ) x)
+  (x_in_G : x ∈ G.carrier) (x_not_in_center : x ∉ center SL(2,F)) (hx : centralizer {x} ⊓ G = A) :
+  ∃ c : SL(2,F), conj c • TZ F = centralizer {x} := by
+  simp [center_SL2_F_eq_Z, ← ne_eq] at x_not_in_center
+  obtain ⟨x_ne_one, x_ne_neg_one⟩ := x_not_in_center
+  have τ_ne_zero : τ ≠ 0 := by
+    rintro rfl
+    simp at x_IsConj_t_or_neg_t
+    symm at x_IsConj_t_or_neg_t
+    rcases x_IsConj_t_or_neg_t with (rfl | rfl) <;> contradiction
+  rcases x_IsConj_t_or_neg_t with (x_IsConj_t | x_IsConj_neg_t)
+  · obtain ⟨c, c_smul_TZ_eq_centralizer⟩ :=
+      conjugate_centralizers_of_IsConj (SpecialMatrices.t τ) x x_IsConj_t
+    rw [centralizer_t_eq_TZ F τ_ne_zero] at c_smul_TZ_eq_centralizer
+    exact Exists.intro c c_smul_TZ_eq_centralizer
+  · obtain ⟨c, c_smul_TZ_eq_centralizer⟩ :=
+      conjugate_centralizers_of_IsConj (- SpecialMatrices.t τ) x x_IsConj_neg_t
+    rw [← centralizer_neg_eq_centralizer,
+      centralizer_t_eq_TZ F τ_ne_zero] at c_smul_TZ_eq_centralizer
+    exact Exists.intro c c_smul_TZ_eq_centralizer
+
+lemma IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian {G : Type*} [Group G]
+  (H K : Subgroup G) {p : ℕ} [Fact (Nat.Prime p)] (hH : IsElementaryAbelian p H) :
+  IsElementaryAbelian p (H.subgroupOf K) := by
+  refine ⟨?IsCommutative, ?orderOf_eq_p⟩
+  case IsCommutative =>
+    let IsCommutative_H : IsCommutative H := hH.left
+    refine subgroupOf_isCommutative H
+  case orderOf_eq_p =>
+    rintro ⟨h, hh⟩ h_ne_one
+    have h_in_H := hh
+    simp [mem_subgroupOf] at h_in_H
+    have h_ne_one' : ⟨(h : G), h_in_H⟩ ≠ (1 : H) := by
+      simp
+      rintro rfl
+      simp_all
+    have order_of_eq_p' := hH.right ⟨(h : G), h_in_H⟩ h_ne_one'
+    simp [← order_of_eq_p']
+
+
+theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
+  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] [hG₀ : Finite G]
+  (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
+  (center_le_G : center SL(2,F) ≤ G) (center_lt_A : center SL(2,F) < A) (x : SL(2,F))
+  (x_in_G : x ∈ G.carrier) (x_not_in_center : x ∉ center SL(2,F)) (A_eq_centra : A = centralizer {x} ⊓ G) (τ : F)
+  (x_IsConj_t_or_neg_t : IsConj (t τ) x ∨ IsConj (- t τ) x) :
+  (∃ Q : Subgroup SL(2,F), Finite Q ∧ Q ≤ G ∧ A = Q ⊔ Z F ∧ (IsElementaryAbelian p Q) ∧ (∃ S : Sylow p G, Q.subgroupOf G = S)) := by
+  -- centralizer {x} = conj c • TZ F
+  obtain ⟨c, c_smul_TZ_eq_centralizer ⟩:=
+    @centra_eq_conj_TZ_of_IsConj_t_or_IsConj_neg_t F _ G _ _ A τ x x_IsConj_t_or_neg_t x_in_G x_not_in_center A_eq_centra.symm
+  have A_eq_conj_T_join_Z_meet_G : A = (conj c • (T F ⊔ Z F)) ⊓ G := by
+      rw [A_eq_centra, T_join_Z_eq_TZ, c_smul_TZ_eq_centralizer]
+  -- from the subgroup equality and conjugacy isomorphisms
+  -- we construct the isomorphisms and compose all of them
+  -- `A = conj c • (T F ⊔ Z F) ⊓ G `
+  let f₁ := (MulEquiv.subgroupCongr A_eq_conj_T_join_Z_meet_G)
+  -- `(conj c • T F ⊔ Z F) ⊓ G = ((conj c • (T F ⊔ Z F)) ⊓ G) ≃* A`
+  let f₂ := (MulEquiv.subgroupCongr (conj_T_join_Z_meet_G_eq_conj_T_meet_G_join_Z F center_le_G c))
+  -- `conj c⁻¹ • ((conj c • T F ⊔ G) ⊓ Z F) ≃* conj c • T F ⊓ G ⊔ Z F`
+  let f₃ := (equivSMul (conj c⁻¹) (conj c • T F ⊓ G ⊔ Z F))
+  -- `(T F ⊔ conj c⁻¹ • G) ⊓ Z F = conj c⁻¹ • ((conj c • T F ⊔ G) ⊓ Z F)`
+  let f₄ := MulEquiv.subgroupCongr (conj_inv_conj_eq F G c)
+  -- Compose all isomorphism together to get the desired isomorphism
+  let φ : A ≃* ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :) := ((f₁.trans f₂).trans f₃).trans f₄
+  -- the monoid homomorphism composed by the pull back composed with
+  -- the inclusion of A into SL(2,F)
+  let f : ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :) →* SL(2,F) := A.subtype.comp (φ.symm.toMonoidHom)
+  have f_inj : Injective f := by
+    apply Injective.comp (Subtype.val_injective) <| MulEquiv.injective φ.symm
+  -- pull back `T F ⊓ conj c⁻¹ • G ` along the monoid homomorphism
+  let Q := Subgroup.map f ((T F ⊓ conj c⁻¹ • G :).subgroupOf ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :))
+  -- necessary for proving Q is p-Sylow
+  let Q_fin : Finite Q := by
+    apply Set.Finite.image
+    apply Set.Finite.preimage
+    · exact Injective.injOn fun ⦃a₁ a₂⦄ a ↦ a
+    apply Set.Finite.preimage
+    · simp [Set.injOn_subtype_val]
+    · apply Set.Finite.inf_of_right
+      exact Set.Finite.of_surjOn
+          (⇑((MulDistribMulAction.toMonoidEnd (MulAut SL(2, F)) SL(2, F)) (conj c⁻¹)))
+          (fun ⦃a⦄ a ↦ a) hG₀
+  have IsElementaryAbelian_Q : IsElementaryAbelian p Q := by
+    refine ⟨?IsCommutative_Q, ?orderOf_eq_p⟩
+    case IsCommutative_Q =>
+      let CommInst₁ : IsCommutative (T F ⊓ conj c⁻¹ • G) :=
+        inf_IsCommutative_of_IsCommutative_left (T F) (conj c⁻¹ • G) (IsCommutative_T F)
+      let CommInst₂ : IsCommutative ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)) :=
+        subgroupOf_isCommutative _
+      exact Subgroup.map_isCommutative _ _
+      -- Every element is order `p`
+    case orderOf_eq_p =>
+      rintro ⟨q, t₀, t₀_in_subgroupOf, hf⟩ q_ne_one
+      obtain ⟨⟨τ₀, hτ₀⟩, t₀_in_conj_G⟩ := t₀_in_subgroupOf
+      have : ((1 : (T F ⊓ conj c⁻¹ • G ⊔ Z F :)) : SL(2,F)) = 1 := rfl
+      -- τ ≠ 0, as otherwise f q = 1 → q = 1; a contradiction
+      have τ₀_ne_zero : τ₀ ≠ 0 := by
+        intro τ_eq_zero
+        simp [τ_eq_zero] at hτ₀
+        rw [← this, ← Subtype.ext_iff] at hτ₀
+        simp [← hτ₀] at hf
+        simp [← hf] at q_ne_one
+      have orderOf_t₀_eq_p := @order_t_eq_char F _ p _ _ τ₀ τ₀_ne_zero
+      simp [hτ₀] at orderOf_t₀_eq_p
+      -- by injectivity of f the orders must be the same
+      have orderOf_q_eq_p : orderOf q = p :=
+        hf.symm ▸ orderOf_t₀_eq_p ▸ orderOf_injective f f_inj t₀
+      rw [← orderOf_q_eq_p]
+      exact orderOf_mk q (Exists.intro t₀ ⟨⟨Exists.intro τ₀ hτ₀, t₀_in_conj_G⟩, hf⟩)
+  -- Show Q satisfies the desired properties
+  use Q
+  refine ⟨?Q_is_finite, ?Q_le_G, ?A_eq_Q_join_Z, ?IsElementaryAbelian, ?IsPSylow⟩
+  -- Q is finite as it is the image of a subgroup of a finite group T F ⊓ conj c⁻¹ • G ⊔ Z F
+  case Q_is_finite => exact Q_fin
+  -- Q ≤ A ≤ G, have to extract data before it is sent through the inclusion
+  case Q_le_G =>
+    let Q₀ := ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+    have h₁: Subgroup.map φ.symm.toMonoidHom Q₀ ≤ ⊤ := le_top
+    have h₂ : Subgroup.map A.subtype (Subgroup.map φ.symm.toMonoidHom Q₀) ≤ Subgroup.map A.subtype ⊤ :=
+      map_subtype_le_map_subtype.mpr h₁
+    have eq_A : Subgroup.map A.subtype ⊤ = A := by ext; simp
+    rw [eq_A, Subgroup.map_map] at h₂
+    exact le_trans h₂ hA.right
+  -- pushing Q ⊔ Z through f⁻¹ will yield (T F ⊓ conj c⁻¹ • G ⊔ Z which is isomorphic to A
+  case A_eq_Q_join_Z =>
+    have ker_f_eq_bot : f.ker = ⊥ := by
+      exact (MonoidHom.ker_eq_bot_iff f).mpr f_inj
+    have Z_le_A : Z F ≤ A := (le_of_lt ((@center_SL2_F_eq_Z F _ _).symm ▸ center_lt_A))
+    have Z_le_range : Z F ≤ f.range := by
+      intro z hz
+      use (φ.toMonoidHom ⟨z, Z_le_A hz⟩)
+      simp [f]
+    have map_eq_map_iff := ker_f_eq_bot ▸
+      @map_eq_map_iff (T F ⊓ conj c⁻¹ • G ⊔ Z F:) _ SL(2,F) _ f (Subgroup.comap f (Z F)) ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+    -- Manually check that every element in Z is preserved under f
+    have key :
+      Subgroup.map φ.symm.toMonoidHom (((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))) = (Z F).subgroupOf A := by
+      ext z
+      -- easier than unpacking all layers of conjugation and isomorphisms
+      constructor
+      · intro hz
+        simp at hz
+        obtain ⟨a, ha, a_mem_Z, rfl⟩ := hz
+        simp [mem_subgroupOf] at a_mem_Z ⊢
+        rcases a_mem_Z with (rfl | rfl)
+        · left; rfl
+        · right
+          simp [φ, f₁, f₂, f₃, f₄]
+      · intro hz
+        simp [mem_subgroupOf] at hz ⊢
+        rcases hz with (rfl | h)
+        · left; rfl
+        · right
+          have z_eq_neg_one : z = ⟨-1, Z_le_A <| neg_one_mem_Z F⟩ := by
+            simp only [← h, Subtype.coe_eta]
+          simp [z_eq_neg_one]
+          have Z_le_join : Z F ≤ T F ⊓ (conj c)⁻¹ • G ⊔ Z F := le_sup_right
+          use Z_le_join <| neg_one_mem_Z F
+          simp [Subtype.ext_iff, φ, f₁, f₂, f₃, f₄]
+    have comap_Z_eq_Z : Subgroup.comap f (Z F) = (Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F) := by
+      rw [← sup_bot_eq (Subgroup.comap f (Z F)),
+      ← sup_bot_eq ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)),
+      ← map_eq_map_iff, map_comap_eq, inf_of_le_right Z_le_range,
+      ← Subgroup.map_map, key, subgroupOf_map_subtype, left_eq_inf]
+      exact Z_le_A
+    have Q_le_range : Q ≤ f.range := by
+      exact map_le_range f ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+    have A_le_range : A ≤ f.range := by
+      intro a ha
+      use (φ.toMonoidHom ⟨a, ha⟩)
+      simp [f]
+    apply le_antisymm
+    · rw [← comap_le_comap_of_le_range A_le_range,
+        ← comap_sup_eq_of_le_range f Q_le_range Z_le_range,
+        comap_map_eq_self_of_injective f_inj, comap_Z_eq_Z,
+        sup_subgroupOf_eq ?h1 ?h2]
+      rw [subgroupOf_self]
+      exact le_top
+      case h1 => exact SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
+      case h2 => exact SemilatticeSup.le_sup_right (T F ⊓ conj c⁻¹ • G) (Z F)
+    · have Q_join_Z_le_range : Q ⊔ Z F ≤ f.range := sup_le Q_le_range Z_le_range
+      rw [← comap_le_comap_of_le_range Q_join_Z_le_range,
+        ← comap_sup_eq_of_le_range f Q_le_range Z_le_range]
+      rw [comap_map_eq_self_of_injective f_inj]
+      rw [comap_Z_eq_Z, sup_subgroupOf_eq ?h1 ?h2]
+      rw [subgroupOf_self]
+      case h1 => exact SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
+      case h2 => exact SemilatticeSup.le_sup_right (T F ⊓ conj c⁻¹ • G) (Z F)
+      intro q _hq
+      simp [f]
+  -- Q is commutative because it is the image of a subgroup of a commutative group
+  case IsElementaryAbelian => exact IsElementaryAbelian_Q
+  -- Is p-Sylow
+  case IsPSylow =>
+    have ex_Sylow := @IsPGroup.exists_le_sylow p G _ (Q.subgroupOf G)
+    let subgroupOf_fin : Finite (Q.subgroupOf G) := by
+      apply Set.Finite.preimage
+      · exact Injective.injOn fun ⦃a₁ a₂⦄ a ↦ a
+      exact Set.toFinite (Q.subgroupOf G).carrier
+    have IsElementaryAbelian_Q_subgroupOf_G := @IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian SL(2,F) _ Q G p _ IsElementaryAbelian_Q
+    have bot_lt_Q_subgroupOf_G : ⊥ > Q.subgroupOf G := by sorry
+    have := @IsPGroup_of_IsElementaryAbelian G _ p hp'.out (Q.subgroupOf G) _ IsElementaryAbelian_Q_subgroupOf_G bot_lt_Q_subgroupOf_G
+    sorry
+
 
 theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_center_ne
   [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] [hG₀ : Finite G]
@@ -724,213 +976,20 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
   -- Once shown A = centralizer {x} ⊓ G and recalling x is conjugate to d δ or ± t τ
   -- We show the centralizer in each of these cases is conjugate to finite
   -- commutative subgroups of either D or TZ
-  simp [center_SL2_F_eq_Z, ← ne_eq] at x_not_in_center
-  obtain ⟨x_ne_one, x_ne_neg_one⟩ := x_not_in_center
-  let inst : Finite A := A_eq_centra  ▸ Set.Finite.subset hG₀ inf_le_right
   rcases SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t F x with
-    (⟨δ, x_IsConj_d⟩ | ⟨τ, x_IsConj_t⟩ | ⟨τ, x_IsConj_neg_t⟩)
+    (⟨δ, x_IsConj_d⟩ | x_IsConj_t_or_neg_t)
   -- x is conjugate to d δ
   · left
-    have δ_ne_one : δ ≠ 1 := by rintro rfl; simp_all
-    have δ_ne_neg_one : δ ≠ -1 := by rintro rfl; simp_all
-    obtain ⟨c, c_smul_D_eq_centralizer⟩ :=
-      conjugate_centralizers_of_IsConj (SpecialMatrices.d δ) x x_IsConj_d
-    rw [centralizer_d_eq_D F δ δ_ne_one δ_ne_neg_one] at c_smul_D_eq_centralizer
-    -- A = centralizer {x} ⊓ G ≤ centralizer {x}
-    -- for some x ∈ G \ center SL(2,F)
-    -- centralizer {x} is equal to MulAut conj c • centralizer {d δ}, so
-    -- centralizer {x} is isomorphic to centralizer {d δ} equals D
-    -- which itself is isomorphic to Fˣ
-    -- given A is a finite subgroup of a group isomorphic to F
-    -- A is Cyclic
-    -- A is a subgroup of conj c • (D F)
-    have A_le_conj_D :=
-      le_trans (le_of_eq A_eq_centra) <|
-      le_trans inf_le_left (le_of_eq c_smul_D_eq_centralizer.symm)
-    -- compose the monoid homomorphisms of inclusions and isomorphisms
-    -- `Fˣ *←  D F ←* conj • (D F) *← A`
-    let f : A →* Fˣ :=
-      ((D_iso_units F).toMonoidHom.comp
-      (((MulEquiv.subgroupMap (conj c) (D F)).symm.toMonoidHom).comp
-      (inclusion A_le_conj_D)))
-    have hf : Function.Injective f := by
-      dsimp [f]
-      apply Injective.comp
-      exact MulEquiv.injective (D_iso_units F)
-      apply Injective.comp
-      -- we construct the monoid homomorphism from the isomorphism
-      exact MulEquiv.injective (MulEquiv.subgroupMap (conj c) (D F)).symm
-      -- we construct the inclusion monoid homomorphism
-      exact inclusion_injective A_le_conj_D
-    -- `F *← Fˣ *← A`
-    let f' : A →* F := (coeHom F).comp f
-    have hf' : Injective f' := by
-      dsimp [f']
-      apply Injective.comp
-      exact Units.coeHom_injective
-      exact hf
-    split_ands
-    -- A is cyclic as it is finite and there exists a monoid monomorphism into F
-    · exact isCyclic_of_subgroup_isDomain f' hf'
-    -- cardinality of A is coprime to p, the characteristic of F as Fˣ has no element of order p
-    -- after looking at the frobenius endomorphism
-    · exact @coprime_card_fin_subgroup_of_inj_hom_group_iso_units F SL(2,F) _ p _ _ _ A _ f hf
+    exact @IsCyclic_and_card_coprime_CharP_of_IsConj_d F _ G _ _ p _ _ _ A x x_not_in_center A_eq_centra δ x_IsConj_d
   -- x is conjugate to t τ
   · right
-    have τ_ne_zero : τ ≠ 0 := by
-      rintro rfl
-      simp at x_IsConj_t
-      symm at x_IsConj_t
-      contradiction
-    obtain ⟨c, c_smul_TZ_eq_centralizer⟩ :=
-      conjugate_centralizers_of_IsConj (SpecialMatrices.t τ) x x_IsConj_t
-    rw [centralizer_t_eq_TZ F τ_ne_zero] at c_smul_TZ_eq_centralizer
-    have A_eq_conj_T_join_Z_meet_G : A = (conj c • (T F ⊔ Z F)) ⊓ G := by
-      rw [A_eq_centra, T_join_Z_eq_TZ, c_smul_TZ_eq_centralizer]
-    -- define isomorphism between A and (T F ⊔ Z F) ⊓ G = (T F ⊓ G) ⊔ Z F and
-    have Z_eq_Z_meet_G : Z F = Z F ⊓ G :=
-      ((@center_SL2_F_eq_Z F _ _).symm) ▸ left_eq_inf.mpr center_le_G
-    -- but before we can define the isomorphism we need the key result
-    let center_normal : (center SL(2, F)).Normal := normal_of_characteristic (center SL(2, F))
-    -- from the subgroup equality and conjugacy isomorphisms
-    -- we construct the isomorphisms and compose all of them
-    -- `A = conj c • (T F ⊔ Z F) ⊓ G `
-    let f₁ := (MulEquiv.subgroupCongr A_eq_conj_T_join_Z_meet_G)
-    -- `(conj c • T F ⊔ Z F) ⊓ G = ((conj c • (T F ⊔ Z F)) ⊓ G) ≃* A`
-    let f₂ := (MulEquiv.subgroupCongr (conj_T_join_Z_meet_G_eq_conj_T_meet_G_join_Z F center_le_G c))
-    -- `conj c⁻¹ • ((conj c • T F ⊔ G) ⊓ Z F) ≃* conj c • T F ⊓ G ⊔ Z F`
-    let f₃ := (equivSMul (conj c⁻¹) (conj c • T F ⊓ G ⊔ Z F))
-    -- `(T F ⊔ conj c⁻¹ • G) ⊓ Z F = conj c⁻¹ • ((conj c • T F ⊔ G) ⊓ Z F)`
-    let f₄ := MulEquiv.subgroupCongr (conj_inv_conj_eq F G c)
-    -- Compose all isomorphism together to get the desired isomorphism
-    let φ : A ≃* ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :) := ((f₁.trans f₂).trans f₃).trans f₄
-    -- the monoid homomorphism composed by the pull back composed with
-    -- the inclusion of A into SL(2,F)
-    -- might be worth using comap?
-    let f : ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :) →* SL(2,F) := A.subtype.comp (φ.symm.toMonoidHom)
-    have f_inj : Injective f := by
-      apply Injective.comp (Subtype.val_injective) <| MulEquiv.injective φ.symm
-    -- have : T F ⊓ conj c⁻¹ • G ≤ (T F ⊓ conj c⁻¹ • G) ⊔ Z F := SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
-    -- pull back `T F ⊓ conj c⁻¹ • G ` along the monoid homomorphism
-    let Q := Subgroup.map f ((T F ⊓ conj c⁻¹ • G :).subgroupOf ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :))
-    use Q
-    refine ⟨?Q_is_finite, ?Q_le_G, ?A_eq_Q_join_Z, ?IsCommutative_Q, ?orderOf_eq_p⟩
-    -- Q is finite as it is the image of a subgroup of a finite group T F ⊓ conj c⁻¹ • G ⊔ Z F
-    case Q_is_finite =>
-      apply Set.Finite.image
-      apply Set.Finite.preimage
-      · exact Injective.injOn fun ⦃a₁ a₂⦄ a ↦ a
-      apply Set.Finite.preimage
-      · simp [Set.injOn_subtype_val]
-      · apply Set.Finite.inf_of_right
-        exact Set.Finite.of_surjOn
-            (⇑((MulDistribMulAction.toMonoidEnd (MulAut SL(2, F)) SL(2, F)) (conj c⁻¹)))
-            (fun ⦃a⦄ a ↦ a) hG₀
-    -- Q ≤ A ≤ G, have to extract data before it is sent through the inclusion
-    case Q_le_G =>
-      let Q₀ := ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
-      have h₁: Subgroup.map φ.symm.toMonoidHom Q₀ ≤ ⊤ := by
-        exact fun ⦃x⦄ a ↦ trivial
-      have h₂ : Subgroup.map A.subtype (Subgroup.map φ.symm.toMonoidHom Q₀) ≤ Subgroup.map A.subtype ⊤ :=
-        map_subtype_le_map_subtype.mpr h₁
-      have eq_A : Subgroup.map A.subtype ⊤ = A := by ext; simp
-      rw [eq_A, Subgroup.map_map] at h₂
-      exact le_trans h₂ hA.right
-    -- pushing Q ⊔ Z through f⁻¹ will yield (T F ⊓ conj c⁻¹ • G ⊔ Z which is isomorphic to A
-    case A_eq_Q_join_Z =>
-      have ker_f_eq_bot : f.ker = ⊥ := by
-        exact (MonoidHom.ker_eq_bot_iff f).mpr f_inj
-      have Z_le_A : Z F ≤ A := (le_of_lt ((@center_SL2_F_eq_Z F _ _).symm ▸ center_lt_A))
-      have Z_le_range : Z F ≤ f.range := by
-        intro z hz
-        use (φ.toMonoidHom ⟨z, Z_le_A hz⟩)
-        simp [f]
-      have map_eq_map_iff := ker_f_eq_bot ▸
-        @map_eq_map_iff (T F ⊓ conj c⁻¹ • G ⊔ Z F:) _ SL(2,F) _ f (Subgroup.comap f (Z F)) ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
-      -- Manually check that every element in Z is preserved
-      have key :
-        Subgroup.map φ.symm.toMonoidHom (((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))) = (Z F).subgroupOf A := by
-        ext z
-        -- easier than unpacking all layers of conjugation and isomorphisms
-        constructor
-        · intro hz
-          simp at hz
-          obtain ⟨a, ha, a_mem_Z, rfl⟩ := hz
-          simp [mem_subgroupOf] at a_mem_Z ⊢
-          rcases a_mem_Z with (rfl | rfl)
-          · left; rfl
-          · right
-            simp [φ, f₁, f₂, f₃, f₄]
-        · intro hz
-          simp [mem_subgroupOf] at hz ⊢
-          rcases hz with (rfl | h)
-          · left; rfl
-          · right
-            have z_eq_neg_one : z = ⟨-1, Z_le_A <| neg_one_mem_Z F⟩ := by
-              simp only [← h, Subtype.coe_eta]
-            simp [z_eq_neg_one]
-            have Z_le_join : Z F ≤ T F ⊓ (conj c)⁻¹ • G ⊔ Z F := le_sup_right
-            use Z_le_join <| neg_one_mem_Z F
-            simp [Subtype.ext_iff, φ, f₁, f₂, f₃, f₄]
-      have comap_Z_eq_Z : Subgroup.comap f (Z F) = (Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F) := by
-        rw [← sup_bot_eq (Subgroup.comap f (Z F)),
-        ← sup_bot_eq ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)),
-         ← map_eq_map_iff, map_comap_eq, inf_of_le_right Z_le_range,
-         ← Subgroup.map_map, key, subgroupOf_map_subtype, left_eq_inf]
-        exact Z_le_A
-      have Q_le_range : Q ≤ f.range := by
-        exact map_le_range f ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
-      have A_le_range : A ≤ f.range := by
-        intro a ha
-        use (φ.toMonoidHom ⟨a, ha⟩)
-        simp [f]
-      apply le_antisymm
-      · rw [← comap_le_comap_of_le_range A_le_range,
-          ← comap_sup_eq_of_le_range f Q_le_range Z_le_range,
-          comap_map_eq_self_of_injective f_inj, comap_Z_eq_Z,
-          sup_subgroupOf_eq ?h1 ?h2]
-        rw [subgroupOf_self]
-        exact le_top
-        case h1 => exact SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
-        case h2 => exact SemilatticeSup.le_sup_right (T F ⊓ conj c⁻¹ • G) (Z F)
-      · have Q_join_Z_le_range : Q ⊔ Z F ≤ f.range := sup_le Q_le_range Z_le_range
-        rw [← comap_le_comap_of_le_range Q_join_Z_le_range,
-          ← comap_sup_eq_of_le_range f Q_le_range Z_le_range]
-        rw [comap_map_eq_self_of_injective f_inj]
-        rw [comap_Z_eq_Z, sup_subgroupOf_eq ?h1 ?h2]
-        rw [subgroupOf_self]
-        case h1 => exact SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
-        case h2 => exact SemilatticeSup.le_sup_right (T F ⊓ conj c⁻¹ • G) (Z F)
-        intro q hq
-        simp [f]
-    -- Q is commutative because it is the image of a subgroup of a commutative group
-    case IsCommutative_Q =>
-      let CommInst₁ : IsCommutative (T F ⊓ conj c⁻¹ • G) :=
-        inf_IsCommutative_of_IsCommutative_left (T F) (conj c⁻¹ • G) (IsCommutative_T F)
-      let CommInst₂ : IsCommutative ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)) :=
-        subgroupOf_isCommutative _
-      exact Subgroup.map_isCommutative _ _
-    -- Every element is order `p`
-    case orderOf_eq_p =>
-      rintro ⟨q, t₀, t₀_in_subgroupOf, hf⟩ q_ne_one
-      obtain ⟨⟨τ₀, hτ₀⟩, t₀_in_conj_G⟩ := t₀_in_subgroupOf
-      have : ((1 : (T F ⊓ conj c⁻¹ • G ⊔ Z F :)) : SL(2,F)) = 1 := rfl
-      -- τ ≠ 0, as otherwise f q = 1 → q = 1; a contradiction
-      have τ₀_ne_zero : τ₀ ≠ 0 := by
-        intro τ_eq_zero
-        simp [τ_eq_zero] at hτ₀
-        rw [← this, ← Subtype.ext_iff] at hτ₀
-        simp [← hτ₀] at hf
-        simp [← hf] at q_ne_one
-      have orderOf_t₀_eq_p := @order_t_eq_char F _ p _ _ τ₀ τ₀_ne_zero
-      simp [hτ₀] at orderOf_t₀_eq_p
-      -- by injectivity of f the orders must be the same
-      have orderOf_q_eq_p : orderOf q = p :=
-        hf.symm ▸ orderOf_t₀_eq_p ▸ orderOf_injective f f_inj t₀
-      rw [← orderOf_q_eq_p]
-      exact orderOf_mk q (Exists.intro t₀ ⟨⟨Exists.intro τ₀ hτ₀, t₀_in_conj_G⟩, hf⟩)
-  -- x is conjugate to -t τ
-  · sorry
+    have x_IsConj_t_or_neg_t : ∃ τ, IsConj (t τ) x ∨ IsConj (-t τ) x := by
+      rcases x_IsConj_t_or_neg_t with (⟨τ, hτ⟩ | ⟨τ, hτ⟩) <;> use τ
+      exact Or.inl hτ
+      exact Or.inr hτ
+    obtain ⟨τ, x_IsConj_t_or_neg_t⟩ := x_IsConj_t_or_neg_t
+    sorry
+    -- exact @IsCyclic_and_card_coprime_CharP_of_IsConj_t_or_neg_t F _ G _ _ p _ _ _ A hA center_le_G center_ne_G center_lt_A x x_in_G x_not_in_center A_eq_centra τ x_IsConj_t_or_neg_t
 
 #check IsPGroup.exists_le_sylow
 

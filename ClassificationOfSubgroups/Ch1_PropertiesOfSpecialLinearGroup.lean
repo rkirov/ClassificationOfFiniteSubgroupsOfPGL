@@ -938,8 +938,6 @@ lemma conjugate_IsComm_of_IsComm {G : Type*} [Group G] (c : G)(K : Subgroup G)
 
 lemma MulAut.conj_smul_symm {G : Type*} [Group G] (H K : Subgroup G) (c : G)
  (h : conj c • H = K) : ∃ c' : G, conj c' • K = H := ⟨c⁻¹, by simp [← h]⟩
-
-
 /-
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
