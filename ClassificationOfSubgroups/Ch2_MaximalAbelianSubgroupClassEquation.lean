@@ -123,7 +123,7 @@ open Matrix MatrixGroups Subgroup MaximalAbelian MulAut
 instance : Group SL(2,F) := by infer_instance
 
 /- Let G be an arbitrary finite subgroup of SL(2, F) containing Z(SL(2, F)) -/
-variable {G : Type*} (G : Subgroup (SL(2,F))) [Finite G] (center_le_G : center (SL(2, F)) ≤ G)
+variable {G : Type*} (G : Subgroup (SL(2,F))) (center_le_G : center (SL(2, F)) ≤ G)
 
 
 namespace IsPGroup
@@ -153,15 +153,6 @@ open SpecialSubgroups
 
 def f (D₀ : Subgroup SL(2,F)) (hD₀ : D₀ ≤ D F) : D₀ →* F :=
   (Units.coeHom F).comp ((D_iso_units F).toMonoidHom.comp (inclusion hD₀))
-  -- toFun := fun d₀ ↦ d₀.1 0 0
-  -- map_one' := by simp
-  -- map_mul' := by
-  --   rintro ⟨x, x_in_D₀⟩ ⟨y, y_in_D₀⟩
-  --   rcases hD₀ x_in_D₀ with ⟨δ₁, rfl⟩
-  --   rcases hD₀ y_in_D₀ with ⟨δ₁, rfl⟩
-  --   simp [SpecialMatrices.d]
-
--- #check (MulEquiv.subgroupMap (conj x) H).symm.toMonoidHom
 
 lemma Injective_f (D₀ : Subgroup SL(2,F)) (hD₀ : D₀ ≤ D F) [Finite D₀] :
   Function.Injective (f F D₀ hD₀) := by
@@ -217,7 +208,7 @@ lemma ne_union_left_of_ne {X : Type*} (A B : Set X)(not_B_le_A : ¬ B ≤ A) : A
   contradiction
 
 
-omit [Finite G] in
+
 /- Theorem 2.3 (i) If x ∈ G\Z then we have CG (x) ∈ M. -/
 theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral [IsAlgClosed F] [DecidableEq F]
   (x : SL(2,F))
@@ -288,7 +279,7 @@ lemma not_le_of_ne {G : Type*} [Group G] (A B H : Subgroup G)
   rw [A_meet_G_eq_A, B_meet_G_eq_B] at contr
   contradiction
 
-omit [Finite G] in
+
 lemma le_cen_of_mem {G : Type*} [Group G] (A H : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups H)
   (x : G) (x_in_A : x ∈ A) : A ≤ centralizer {x} := by
   intro a a_in_A
@@ -410,7 +401,6 @@ lemma center_le (G : Type*) [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbel
   contradiction
 
 
-omit [Finite G] in
 lemma singleton_of_cen_eq_G (G : Type*) [Group G] (H : Subgroup G) (hH : H = center G) :
   MaximalAbelianSubgroups H = {center G} := by
   ext A
@@ -449,7 +439,6 @@ end MaximalAbelianSubgroup
 open MaximalAbelianSubgroup
 
 /- Theorem 2.3 (ii) For any two distinct subgroups A and B of M, we have A ∩ B = Z. -/
-omit [Finite G] in
 theorem center_eq_meet_of_ne_MaximalAbelianSubgroups [IsAlgClosed F] [DecidableEq F]
   (A B : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hB : B ∈ MaximalAbelianSubgroups G)
   (A_ne_B: A ≠ B)(hG : center SL(2,F) ≤ G) : A ⊓ B = center SL(2,F) := by
@@ -490,7 +479,6 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups [IsAlgClosed F] [DecidableE
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
 of G. -/
-omit [Finite G] in
 theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {p : ℕ} (hp : Nat.Prime p) [C : CharP F p]
  (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hG : G = center SL(2,F)) :
   IsCyclic A ∧ Nat.Coprime (Nat.card A) p := by
@@ -544,10 +532,8 @@ lemma center_not_mem [IsAlgClosed F] [DecidableEq F] (G : Subgroup SL(2,F)) (hG 
   · absurd h' h.right
     trivial
 
-open SpecialSubgroups
+open SpecialSubgroups SpecialMatrices
 
-
-omit [Finite G] in
 lemma eq_centralizer_meet_of_center_lt [IsAlgClosed F] [DecidableEq F]
   (A : Subgroup SL(2,F)) (center_lt : center SL(2,F) < A) (hA : A ∈ MaximalAbelianSubgroups G) :
   ∃ x : SL(2,F), x ∈ G.carrier \ center SL(2,F) ∧ A = centralizer {x} ⊓ G := by
@@ -569,15 +555,9 @@ lemma eq_centralizer_meet_of_center_lt [IsAlgClosed F] [DecidableEq F]
   exact ⟨x, hx, le_antisymm A_le_centralizer_meet_G centralizer_meet_G_le_A⟩
 
 
--- def g (x : SL(2,F)) (G A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) : A →* F where
---   toFun := fun a ↦
---   map_one' := by sorry
---   map_mul' := by sorry
 
-#check (D_iso_units F).toMonoidHom
 open MulAction Pointwise
 
--- def foo  {G : Type*} [Group G] (x : G) (H : Subgroup G): (MulAut.conj x • H) →* H := by sorry
 theorem Units.coeHom_injective {M : Type*} [Monoid M] : Function.Injective (Units.coeHom M) := by
   intro x y h
   rw [Units.coeHom_apply, Units.coeHom_apply, ← Units.ext_iff] at h
@@ -682,59 +662,56 @@ lemma conj_ZT_eq_conj_Z_join_T {F : Type*} [Field F] (c : SL(2,F)):
     rw [mul_assoc c, mul_assoc t, ← mem_center_iff.mp hz c⁻¹]
     group
 
-def conj_T_meet_G_eq_T_conj_G {F : Type*} [Field F] (c : SL(2,F)) (G : Subgroup SL(2,F)) (hG : center SL(2,F) ≤ G) :
-  (conj c • T F ⊓ G:) ≃* (T F ⊓ conj c⁻¹ • G:) where
-  toFun :=
-    fun ⟨x, x_in_conj, x_in_G⟩ =>
-      ⟨c⁻¹ * x * c,
-      by
-      rw [mem_inf]
-      obtain ⟨t, ht, h⟩ := x_in_conj
-      simp at h
-      constructor
-      · rw [← h]
-        group
-        exact ht
-      · simp [pointwise_smul_def]
-        exact x_in_G
-      ⟩
-  invFun :=
-    fun ⟨t, ht, t_in_conj⟩ =>
-      ⟨c * t * c⁻¹,
-      by
-      rw [mem_inf]
-      obtain ⟨g, g_in_G, h⟩ := t_in_conj
-      simp at h
-      constructor
-      · simp [pointwise_smul_def]
-        exact ht
-      · rw [← h]
-        group
-        exact g_in_G
-      ⟩
-  left_inv := sorry
-  right_inv := sorry
-  map_mul' := sorry
+lemma conj_center_eq_center (G : Type*) [Group G] (c : G) :
+  conj c • center G = center G := smul_normal c (center G)
 
-  -- ext x
-  -- constructor
-  -- · rintro ⟨⟨t, ht, h⟩, x_in_G⟩
-  --   simp at h x_in_G
-  --   have key : t = c⁻¹ * x * c := by rw [← h]; group
+lemma Z_eq_Z_meet_G (G : Subgroup SL(2,F)) (center_le_G : center SL(2,F) ≤ G) :
+  Z F = Z F ⊓ G := ((@center_SL2_F_eq_Z F _ _).symm) ▸ left_eq_inf.mpr center_le_G
+
+lemma conj_T_join_Z_meet_G_eq_conj_T_meet_G_join_Z {G : Subgroup SL(2,F)}
+  (center_le_G : center SL(2,F) ≤ G) (c : SL(2,F)):
+  (conj c • (T F ⊔ Z F)) ⊓ G = conj c • T F ⊓ G ⊔ Z F := calc
+  (conj c • (T F ⊔ Z F)) ⊓ G = (conj c • T F ⊔ Z F) ⊓ G := by
+    simp [smul_sup, ← center_SL2_F_eq_Z, conj_center_eq_center SL(2,F) c]
+  (conj c • T F ⊔ Z F) ⊓ G = (conj c • T F ⊓ G) ⊔ (Z F ⊓ G) := by
+        ext y
+        rw [← SetLike.mem_coe, ← Z_eq_Z_meet_G F G center_le_G, ← center_SL2_F_eq_Z,
+          Subgroup.coe_inf, Subgroup.mul_normal (N := center SL(2,F)), ← SetLike.mem_coe,
+          Subgroup.mul_normal (N := center SL(2,F)), Subgroup.coe_inf]
+        constructor
+        · rintro ⟨⟨t, t_in_T, z, hz, rfl⟩, y_in_G⟩
+          simp at y_in_G ⊢
+          use t
+          split_ands
+          · exact t_in_T
+          · rw [← mul_one t, ← mul_inv_cancel z, ← mul_assoc]
+            exact Subgroup.mul_mem _ y_in_G <| (Subgroup.inv_mem_iff G).mpr (center_le_G hz)
+          use z
+        · rintro ⟨t, ⟨t_in_T, t_in_G⟩, z, z_in_Z, rfl⟩
+          simp
+          split_ands
+          · use t
+            split_ands
+            exact t_in_T
+            use z
+          exact Subgroup.mul_mem _ t_in_G <| center_le_G z_in_Z
+      _ = (conj c • T F ⊓ G) ⊔ Z F := by rw [← Z_eq_Z_meet_G F G center_le_G]
 
 
+lemma conj_inv_conj_eq (G : Subgroup SL(2,F)) (c : SL(2,F)):
+  conj c⁻¹ • ((conj c • T F ⊓ G) ⊔ Z F) = (T F ⊓ conj c⁻¹ • G) ⊔ Z F := by
+  simp only [smul_inf, ← center_SL2_F_eq_Z, conj_center_eq_center SL(2,F) c⁻¹, smul_sup]
+  simp
 
-
-
-  --   sorry
-  -- · sorry
-
+def conj_foo (c : SL(2,F)) (H : Subgroup SL(2,F)) : (conj c • H :) ≃* (H:) := by exact
+  (equivSMul (conj c) H).symm
 
 theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_center_ne
-  [IsAlgClosed F] [DecidableEq F]  {p : ℕ} [Fact (Nat.Prime p)] [hC : CharP F p] [hG : Finite G]
+  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] [hG₀ : Finite G]
   (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
   (center_le_G : center SL(2,F) ≤ G) (center_ne_G : G ≠ center SL(2,F)) :
-  (IsCyclic A ∧ Nat.Coprime (Nat.card A) p) ∨
+  (IsCyclic A ∧ Nat.Coprime (Nat.card A) p)
+  ∨
   (∃ Q₀ : Subgroup SL(2,F), Finite Q₀ ∧ Q₀ ≤ G ∧ A = Q₀ ⊔ Z F ∧ IsElementaryAbelian p Q₀) := by
   have center_ne_A : center SL(2,F) ≠ A :=
     Ne.symm (ne_of_mem_of_not_mem hA (center_not_mem F G center_ne_G.symm))
@@ -749,7 +726,7 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
   -- commutative subgroups of either D or TZ
   simp [center_SL2_F_eq_Z, ← ne_eq] at x_not_in_center
   obtain ⟨x_ne_one, x_ne_neg_one⟩ := x_not_in_center
-  let inst : Finite A := A_eq_centra  ▸ Set.Finite.subset hG inf_le_right
+  let inst : Finite A := A_eq_centra  ▸ Set.Finite.subset hG₀ inf_le_right
   rcases SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t F x with
     (⟨δ, x_IsConj_d⟩ | ⟨τ, x_IsConj_t⟩ | ⟨τ, x_IsConj_neg_t⟩)
   -- x is conjugate to d δ
@@ -793,7 +770,7 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
       exact Units.coeHom_injective
       exact hf
     split_ands
-    -- A is cyclic as it is it is finite and there exists an injective monoid homomorphism into F
+    -- A is cyclic as it is finite and there exists a monoid monomorphism into F
     · exact isCyclic_of_subgroup_isDomain f' hf'
     -- cardinality of A is coprime to p, the characteristic of F as Fˣ has no element of order p
     -- after looking at the frobenius endomorphism
@@ -808,87 +785,158 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
     obtain ⟨c, c_smul_TZ_eq_centralizer⟩ :=
       conjugate_centralizers_of_IsConj (SpecialMatrices.t τ) x x_IsConj_t
     rw [centralizer_t_eq_TZ F τ_ne_zero] at c_smul_TZ_eq_centralizer
-    have A_eq_conj_TZ_meet_G : A = (conj c • (T F ⊔ Z F)) ⊓ G := by
+    have A_eq_conj_T_join_Z_meet_G : A = (conj c • (T F ⊔ Z F)) ⊓ G := by
       rw [A_eq_centra, T_join_Z_eq_TZ, c_smul_TZ_eq_centralizer]
-    -- rw [← T_join_Z_eq_TZ F] at A_le_conj_TZ
-    -- -- contruct monoid homomorphism from A →* T F ⊔ Z F
-    -- let f : A →* (T F ⊔ Z F :) :=
-    --   (MulEquiv.subgroupMap (conj c) (T F ⊔ Z F)).symm.toMonoidHom.comp (inclusion A_le_conj_TZ)
-    -- image of A under f yields a finite subgroup of T F ⊔ Z T
-    -- show that a finite subgroup of T F ⊔ Z T is of the form Q ⊔ Z T
-    -- for Q with the desired properties
-    have := centralizer_t_eq_TZ F τ_ne_zero
-    rw [← T_join_Z_eq_TZ F] at this
-    -- A = centralizer {x} ⊓ G
-    -- centralizer {x} = conj c • centralizer {t τ}
-    -- centralizer {t τ} = Z ⊓ T
-    -- image of top element through the homorphism f : A →* T F ⊔ Z F
-    -- is a finite subgroup of T F ⊔ Z F
-    -- let T₀Z := Subgroup.map f ⊤
-    -- have fin_T₀Z : Finite T₀Z := Finite.Set.finite_image ⊤ f
     -- define isomorphism between A and (T F ⊔ Z F) ⊓ G = (T F ⊓ G) ⊔ Z F and
     have Z_eq_Z_meet_G : Z F = Z F ⊓ G :=
       ((@center_SL2_F_eq_Z F _ _).symm) ▸ left_eq_inf.mpr center_le_G
     -- but before we can define the isomorphism we need the key result
     let center_normal : (center SL(2, F)).Normal := normal_of_characteristic (center SL(2, F))
-    have key : (T F ⊔ Z F) ⊓ G = (T F ⊓ G) ⊔ Z F := calc
-      (T F ⊔ Z F) ⊓ G = (T F ⊓ G) ⊔ (Z F ⊓ G) := by
-        ext y
-        rw [← SetLike.mem_coe, ← Z_eq_Z_meet_G, ← center_SL2_F_eq_Z, Subgroup.coe_inf,
-          Subgroup.mul_normal (H := T F) (N := center SL(2,F)), ← SetLike.mem_coe,
-          Subgroup.mul_normal (H := T F ⊓ G) (N := center SL(2,F)), Subgroup.coe_inf]
+    -- from the subgroup equality and conjugacy isomorphisms
+    -- we construct the isomorphisms and compose all of them
+    -- `A = conj c • (T F ⊔ Z F) ⊓ G `
+    let f₁ := (MulEquiv.subgroupCongr A_eq_conj_T_join_Z_meet_G)
+    -- `(conj c • T F ⊔ Z F) ⊓ G = ((conj c • (T F ⊔ Z F)) ⊓ G) ≃* A`
+    let f₂ := (MulEquiv.subgroupCongr (conj_T_join_Z_meet_G_eq_conj_T_meet_G_join_Z F center_le_G c))
+    -- `conj c⁻¹ • ((conj c • T F ⊔ G) ⊓ Z F) ≃* conj c • T F ⊓ G ⊔ Z F`
+    let f₃ := (equivSMul (conj c⁻¹) (conj c • T F ⊓ G ⊔ Z F))
+    -- `(T F ⊔ conj c⁻¹ • G) ⊓ Z F = conj c⁻¹ • ((conj c • T F ⊔ G) ⊓ Z F)`
+    let f₄ := MulEquiv.subgroupCongr (conj_inv_conj_eq F G c)
+    -- Compose all isomorphism together to get the desired isomorphism
+    let φ : A ≃* ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :) := ((f₁.trans f₂).trans f₃).trans f₄
+    -- the monoid homomorphism composed by the pull back composed with
+    -- the inclusion of A into SL(2,F)
+    -- might be worth using comap?
+    let f : ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :) →* SL(2,F) := A.subtype.comp (φ.symm.toMonoidHom)
+    have f_inj : Injective f := by
+      apply Injective.comp (Subtype.val_injective) <| MulEquiv.injective φ.symm
+    -- have : T F ⊓ conj c⁻¹ • G ≤ (T F ⊓ conj c⁻¹ • G) ⊔ Z F := SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
+    -- pull back `T F ⊓ conj c⁻¹ • G ` along the monoid homomorphism
+    let Q := Subgroup.map f ((T F ⊓ conj c⁻¹ • G :).subgroupOf ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :))
+    use Q
+    refine ⟨?Q_is_finite, ?Q_le_G, ?A_eq_Q_join_Z, ?IsCommutative_Q, ?orderOf_eq_p⟩
+    -- Q is finite as it is the image of a subgroup of a finite group T F ⊓ conj c⁻¹ • G ⊔ Z F
+    case Q_is_finite =>
+      apply Set.Finite.image
+      apply Set.Finite.preimage
+      · exact Injective.injOn fun ⦃a₁ a₂⦄ a ↦ a
+      apply Set.Finite.preimage
+      · simp [Set.injOn_subtype_val]
+      · apply Set.Finite.inf_of_right
+        exact Set.Finite.of_surjOn
+            (⇑((MulDistribMulAction.toMonoidEnd (MulAut SL(2, F)) SL(2, F)) (conj c⁻¹)))
+            (fun ⦃a⦄ a ↦ a) hG₀
+    -- Q ≤ A ≤ G, have to extract data before it is sent through the inclusion
+    case Q_le_G =>
+      let Q₀ := ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+      have h₁: Subgroup.map φ.symm.toMonoidHom Q₀ ≤ ⊤ := by
+        exact fun ⦃x⦄ a ↦ trivial
+      have h₂ : Subgroup.map A.subtype (Subgroup.map φ.symm.toMonoidHom Q₀) ≤ Subgroup.map A.subtype ⊤ :=
+        map_subtype_le_map_subtype.mpr h₁
+      have eq_A : Subgroup.map A.subtype ⊤ = A := by ext; simp
+      rw [eq_A, Subgroup.map_map] at h₂
+      exact le_trans h₂ hA.right
+    -- pushing Q ⊔ Z through f⁻¹ will yield (T F ⊓ conj c⁻¹ • G ⊔ Z which is isomorphic to A
+    case A_eq_Q_join_Z =>
+      have ker_f_eq_bot : f.ker = ⊥ := by
+        exact (MonoidHom.ker_eq_bot_iff f).mpr f_inj
+      have Z_le_A : Z F ≤ A := (le_of_lt ((@center_SL2_F_eq_Z F _ _).symm ▸ center_lt_A))
+      have Z_le_range : Z F ≤ f.range := by
+        intro z hz
+        use (φ.toMonoidHom ⟨z, Z_le_A hz⟩)
+        simp [f]
+      have map_eq_map_iff := ker_f_eq_bot ▸
+        @map_eq_map_iff (T F ⊓ conj c⁻¹ • G ⊔ Z F:) _ SL(2,F) _ f (Subgroup.comap f (Z F)) ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+      -- Manually check that every element in Z is preserved
+      have key :
+        Subgroup.map φ.symm.toMonoidHom (((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))) = (Z F).subgroupOf A := by
+        ext z
+        -- easier than unpacking all layers of conjugation and isomorphisms
         constructor
-        · rintro ⟨⟨t, t_in_T, z, hz, rfl⟩, y_in_G⟩
-          simp at y_in_G ⊢
-          use t
-          constructor
-          · constructor
-            · exact t_in_T
-            · rw [← mul_one t, ← mul_inv_cancel z, ← mul_assoc]
-              exact Subgroup.mul_mem _ y_in_G <| (Subgroup.inv_mem_iff G).mpr (center_le_G hz)
-          use z
-        · rintro ⟨t, ⟨t_in_T, t_in_G⟩, z, z_in_Z, rfl⟩
-          simp
-          constructor
-          · use t
-            constructor
-            exact t_in_T
-            use z
-          exact Subgroup.mul_mem _ t_in_G <| center_le_G z_in_Z
-      _ = (T F ⊓ G) ⊔ Z F := by rw [← Z_eq_Z_meet_G]
-    -- from the subgroup equality we construct an isomorphism and compose all of them
-    -- `((T F ⊓ G) ⊔ Z F:) ≃* ((T F ⊔ Z F) ⊓ G :) ≃* ((conj c • (T F ⊔ Z F)) ⊓ G) ≃* A`
-    let f' : A ≃* ((T F ⊓ G) ⊔ Z F:) := sorry
-      --(MulEquiv.subgroupCongr key).trans ((MulEquiv.subgroupMap (conj c) (D F)).symm).trans (MulEquiv.subgroupCongr A_eq_conj_TZ_meet_G)
-    -- We push T F ⊓ G which is a subgroup of T F ⊓ G ⊔ Z F through
-    -- the inverse monoid homomorphism to get the subgroup Q isomorphic to T₀ < T F
-    -- which is an Elementary Abelian subgroup.
-    --     rw [sup_eq_sup_iff_left]
-    --     constructor
-    --     · exact le_trans inf_le_left le_sup_right
-    --     · refine le_trans ?_ le_sup_right
-    --       exact (le_of_eq (inf_of_le_left <| (@center_SL2_F_eq_Z F _ _) ▸ center_le_G).symm)
-    -- have : Z F ⊓ G = Z F  := inf_of_le_left <| (@center_SL2_F_eq_Z F _ _) ▸ center_le_G
-
-    sorry
+        · intro hz
+          simp at hz
+          obtain ⟨a, ha, a_mem_Z, rfl⟩ := hz
+          simp [mem_subgroupOf] at a_mem_Z ⊢
+          rcases a_mem_Z with (rfl | rfl)
+          · left; rfl
+          · right
+            simp [φ, f₁, f₂, f₃, f₄]
+        · intro hz
+          simp [mem_subgroupOf] at hz ⊢
+          rcases hz with (rfl | h)
+          · left; rfl
+          · right
+            have z_eq_neg_one : z = ⟨-1, Z_le_A <| neg_one_mem_Z F⟩ := by
+              simp only [← h, Subtype.coe_eta]
+            simp [z_eq_neg_one]
+            have Z_le_join : Z F ≤ T F ⊓ (conj c)⁻¹ • G ⊔ Z F := le_sup_right
+            use Z_le_join <| neg_one_mem_Z F
+            simp [Subtype.ext_iff, φ, f₁, f₂, f₃, f₄]
+      have comap_Z_eq_Z : Subgroup.comap f (Z F) = (Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F) := by
+        rw [← sup_bot_eq (Subgroup.comap f (Z F)),
+        ← sup_bot_eq ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)),
+         ← map_eq_map_iff, map_comap_eq, inf_of_le_right Z_le_range,
+         ← Subgroup.map_map, key, subgroupOf_map_subtype, left_eq_inf]
+        exact Z_le_A
+      have Q_le_range : Q ≤ f.range := by
+        exact map_le_range f ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+      have A_le_range : A ≤ f.range := by
+        intro a ha
+        use (φ.toMonoidHom ⟨a, ha⟩)
+        simp [f]
+      apply le_antisymm
+      · rw [← comap_le_comap_of_le_range A_le_range,
+          ← comap_sup_eq_of_le_range f Q_le_range Z_le_range,
+          comap_map_eq_self_of_injective f_inj, comap_Z_eq_Z,
+          sup_subgroupOf_eq ?h1 ?h2]
+        rw [subgroupOf_self]
+        exact le_top
+        case h1 => exact SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
+        case h2 => exact SemilatticeSup.le_sup_right (T F ⊓ conj c⁻¹ • G) (Z F)
+      · have Q_join_Z_le_range : Q ⊔ Z F ≤ f.range := sup_le Q_le_range Z_le_range
+        rw [← comap_le_comap_of_le_range Q_join_Z_le_range,
+          ← comap_sup_eq_of_le_range f Q_le_range Z_le_range]
+        rw [comap_map_eq_self_of_injective f_inj]
+        rw [comap_Z_eq_Z, sup_subgroupOf_eq ?h1 ?h2]
+        rw [subgroupOf_self]
+        case h1 => exact SemilatticeSup.le_sup_left (T F ⊓ conj c⁻¹ • G) (Z F)
+        case h2 => exact SemilatticeSup.le_sup_right (T F ⊓ conj c⁻¹ • G) (Z F)
+        intro q hq
+        simp [f]
+    -- Q is commutative because it is the image of a subgroup of a commutative group
+    case IsCommutative_Q =>
+      let CommInst₁ : IsCommutative (T F ⊓ conj c⁻¹ • G) :=
+        inf_IsCommutative_of_IsCommutative_left (T F) (conj c⁻¹ • G) (IsCommutative_T F)
+      let CommInst₂ : IsCommutative ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)) :=
+        subgroupOf_isCommutative _
+      exact Subgroup.map_isCommutative _ _
+    -- Every element is order `p`
+    case orderOf_eq_p =>
+      rintro ⟨q, t₀, t₀_in_subgroupOf, hf⟩ q_ne_one
+      obtain ⟨⟨τ₀, hτ₀⟩, t₀_in_conj_G⟩ := t₀_in_subgroupOf
+      have : ((1 : (T F ⊓ conj c⁻¹ • G ⊔ Z F :)) : SL(2,F)) = 1 := rfl
+      -- τ ≠ 0, as otherwise f q = 1 → q = 1; a contradiction
+      have τ₀_ne_zero : τ₀ ≠ 0 := by
+        intro τ_eq_zero
+        simp [τ_eq_zero] at hτ₀
+        rw [← this, ← Subtype.ext_iff] at hτ₀
+        simp [← hτ₀] at hf
+        simp [← hf] at q_ne_one
+      have orderOf_t₀_eq_p := @order_t_eq_char F _ p _ _ τ₀ τ₀_ne_zero
+      simp [hτ₀] at orderOf_t₀_eq_p
+      -- by injectivity of f the orders must be the same
+      have orderOf_q_eq_p : orderOf q = p :=
+        hf.symm ▸ orderOf_t₀_eq_p ▸ orderOf_injective f f_inj t₀
+      rw [← orderOf_q_eq_p]
+      exact orderOf_mk q (Exists.intro t₀ ⟨⟨Exists.intro τ₀ hτ₀, t₀_in_conj_G⟩, hf⟩)
   -- x is conjugate to -t τ
   · sorry
 
+#check IsPGroup.exists_le_sylow
 
 
-#check Subgroup.mul_mem
-#check iSup_inf_eq
-#check Fintype.card_units
-#check MonoidHom.comp
-#check Subgroup.inclusion_injective
-#check MulEquiv.comp_left_injective
-#check le_of_eq
-#check isCyclic_of_subgroup_isDomain
-#check Function.Injective
 
-#check Nat.coprime_mul_iff_left
-
-/- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N G (A) : A] ≤ 2. -/
+/- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
 theorem index_normalizer_le_two {p : ℕ}(A : Subgroup SL(2,F)) (center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) : (A.subgroupOf G).normalizer.index ≤ 2 := by
   by_cases h : Nat.card A ≤ 2
   · have A_eq_Z : A = Z F := by
@@ -903,6 +951,11 @@ theorem index_normalizer_le_two {p : ℕ}(A : Subgroup SL(2,F)) (center_le_G : c
       sorry
     sorry
   · sorry
+
+#check IsPGroup.exists_le_sylow
+#check comap_inf
+
+#check Sylow
 
 #check le_normalizer_of_normal
 #check Normal
@@ -931,7 +984,6 @@ theorem theorem_2_6_v_b { p : ℕ }
   K ∈ MaximalAbelianSubgroups G := by
   sorry
 
-#check MulAut
 /- Conjugacy of Maximal Abelian subgroups -/
 /-
 Definition. The set Ci = Clᵢ = {x Aᵢx⁻¹ : x ∈ G} is called the conjugacy class of

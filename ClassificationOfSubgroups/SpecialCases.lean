@@ -2,7 +2,6 @@ import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
 
 
 
-
 namespace SpecialCases
 
 open scoped MatrixGroups
@@ -15,8 +14,6 @@ variable (n : Type u) [Fintype n] [DecidableEq n] (F : Type v) [Field F]
 
 @[inherit_doc]
 scoped[MatrixGroups] notation "GL(" n ", " R ")" => Matrix.GeneralLinearGroup (Fin n) R
-
-#check Matrix.inv_def
 
 -- theorem coe_mk (A : Matrix n n R) (h : IsUnit (det A)) : ↑(⟨A, h.1, h.2, h.3⟩ : GeneralLinearGroup n R) = A :=
 --   rfl
