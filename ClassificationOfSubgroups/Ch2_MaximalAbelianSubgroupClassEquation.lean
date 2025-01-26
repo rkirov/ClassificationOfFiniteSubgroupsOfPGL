@@ -507,8 +507,6 @@ theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {p : ℕ} (hp : Nat.Prime p
       exact Nat.gcd_one_left p
 
 open ElementaryAbelian
---  (h : ¬ (IsCyclic A ∧ Nat.Coprime (Nat.card A) p))
---   ∃ p : ℕ, Nat.Prime p → ∃ Q : Sylow p G, ElementaryAbelian.IsElementaryAbelian  p  Q.toSubgroup → Nonempty (A ≃* (Q.toSubgroup.prod (center SL(2,F)))) := by sorry
 
 lemma center_not_mem [IsAlgClosed F] [DecidableEq F] (G : Subgroup SL(2,F)) (hG : center SL(2,F) ≠ G) : center SL(2,F) ∉ MaximalAbelianSubgroups G := by
   intro h
@@ -794,12 +792,19 @@ lemma IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian {G : Type*} [Group G
 
 
 theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
-  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] [hG₀ : Finite G]
-  (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
+  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
+  [hG₀ : Finite G] (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
   (center_le_G : center SL(2,F) ≤ G) (center_lt_A : center SL(2,F) < A) (x : SL(2,F))
-  (x_in_G : x ∈ G.carrier) (x_not_in_center : x ∉ center SL(2,F)) (A_eq_centra : A = centralizer {x} ⊓ G) (τ : F)
+  (x_in_G : x ∈ G.carrier) (x_not_in_center : x ∉ center SL(2,F))
+  (A_eq_centra : A = centralizer {x} ⊓ G) (τ : F)
   (x_IsConj_t_or_neg_t : IsConj (t τ) x ∨ IsConj (- t τ) x) :
-  (∃ Q : Subgroup SL(2,F), Finite Q ∧ Q ≤ G ∧ A = Q ⊔ Z F ∧ (IsElementaryAbelian p Q) ∧ (∃ S : Sylow p G, Q.subgroupOf G = S)) := by
+  ∃ Q : Subgroup SL(2,F),
+  Nontrivial Q ∧
+  Finite Q ∧
+  Q ≤ G ∧
+  A = Q ⊔ Z F ∧
+  IsElementaryAbelian p Q ∧
+  ∃ S : Sylow p G, Q.subgroupOf G = S := by
   -- centralizer {x} = conj c • TZ F
   obtain ⟨c, c_smul_TZ_eq_centralizer ⟩:=
     @centra_eq_conj_TZ_of_IsConj_t_or_IsConj_neg_t F _ G _ _ A τ x x_IsConj_t_or_neg_t x_in_G x_not_in_center A_eq_centra.symm
@@ -825,7 +830,31 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
   -- pull back `T F ⊓ conj c⁻¹ • G ` along the monoid homomorphism
   let Q := Subgroup.map f ((T F ⊓ conj c⁻¹ • G :).subgroupOf ((T F ⊓ conj c⁻¹ • G) ⊔ Z F :))
   -- necessary for proving Q is p-Sylow
-  let Q_fin : Finite Q := by
+  have nontrivial_Q : Nontrivial Q := by
+    refine (nontrivial_iff_ne_bot Q).mpr ?_
+    intro Q_eq_bot
+    simp only [Q] at Q_eq_bot
+    -- injective map has trivial kernel
+    rw [(map_eq_bot_iff_of_injective ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+          f_inj)] at Q_eq_bot
+    have : T F ⊓ conj c⁻¹ • G ≤ T F ⊓ conj c⁻¹ • G ⊔ Z F := le_sup_left
+    rw [← bot_subgroupOf, subgroupOf_inj, bot_inf_eq, inf_of_le_left this] at Q_eq_bot
+    -- if T F ⊓ conj c⁻¹ • G = ⊥ then there is an isomorphism from A to Z
+    -- the different sizes of the cardinality provide a contradiction
+    rw [Q_eq_bot, bot_sup_eq, ← center_SL2_F_eq_Z] at φ
+    have card_A_le_two : Nat.card A ≤ Nat.card (center SL(2,F)) := le_of_eq (Nat.card_eq_of_bijective φ <| MulEquiv.bijective φ)
+    let fin_center : Finite (center SL(2,F)) := by
+      rw [center_SL2_F_eq_Z]
+      exact instFiniteSubtypeSpecialLinearGroupFinOfNatNatMemSubgroupZ F
+    let Fintype_center : Fintype (center SL(2,F)) := by exact Fintype.ofFinite ↥(center SL(2, F))
+    let fin_A : Finite A := Set.Finite.subset hG₀ hA.right
+    let Fintype_A : Fintype A := by exact Fintype.ofFinite ↥A
+    have card_center_lt_card_A : Nat.card (center SL(2,F)) < Nat.card A := by
+      calc Nat.card (center SL(2,F)) = Fintype.card (center SL(2,F)) := Nat.card_eq_fintype_card
+      _ < Fintype.card A := Set.card_lt_card center_lt_A
+      _ = Nat.card A := Fintype.card_eq_nat_card
+    linarith
+  have Q_fin : Finite Q := by
     apply Set.Finite.image
     apply Set.Finite.preimage
     · exact Injective.injOn fun ⦃a₁ a₂⦄ a ↦ a
@@ -864,7 +893,8 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
       exact orderOf_mk q (Exists.intro t₀ ⟨⟨Exists.intro τ₀ hτ₀, t₀_in_conj_G⟩, hf⟩)
   -- Show Q satisfies the desired properties
   use Q
-  refine ⟨?Q_is_finite, ?Q_le_G, ?A_eq_Q_join_Z, ?IsElementaryAbelian, ?IsPSylow⟩
+  refine ⟨?Q_is_nontrivial, ?Q_is_finite, ?Q_le_G, ?A_eq_Q_join_Z, ?IsElementaryAbelian, ?IsPSylow⟩
+  case Q_is_nontrivial => exact nontrivial_Q
   -- Q is finite as it is the image of a subgroup of a finite group T F ⊓ conj c⁻¹ • G ⊔ Z F
   case Q_is_finite => exact Q_fin
   -- Q ≤ A ≤ G, have to extract data before it is sent through the inclusion
@@ -947,15 +977,31 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
   case IsElementaryAbelian => exact IsElementaryAbelian_Q
   -- Is p-Sylow
   case IsPSylow =>
-    have ex_Sylow := @IsPGroup.exists_le_sylow p G _ (Q.subgroupOf G)
     let subgroupOf_fin : Finite (Q.subgroupOf G) := by
       apply Set.Finite.preimage
       · exact Injective.injOn fun ⦃a₁ a₂⦄ a ↦ a
       exact Set.toFinite (Q.subgroupOf G).carrier
     have IsElementaryAbelian_Q_subgroupOf_G := @IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian SL(2,F) _ Q G p _ IsElementaryAbelian_Q
-    have bot_lt_Q_subgroupOf_G : ⊥ > Q.subgroupOf G := by sorry
-    have := @IsPGroup_of_IsElementaryAbelian G _ p hp'.out (Q.subgroupOf G) _ IsElementaryAbelian_Q_subgroupOf_G bot_lt_Q_subgroupOf_G
-    sorry
+    have bot_lt_Q_subgroupOf_G : ⊥ < Q.subgroupOf G := by sorry
+    have IsPGroup_Q_subgroupOf_G:= @IsPGroup_of_IsElementaryAbelian G _ p hp'.out (Q.subgroupOf G) _ IsElementaryAbelian_Q_subgroupOf_G bot_lt_Q_subgroupOf_G
+    have ex_Sylow := @IsPGroup.exists_le_sylow p G _ (Q.subgroupOf G) IsPGroup_Q_subgroupOf_G
+    obtain ⟨S, hS⟩ := ex_Sylow
+    use S
+    refine le_antisymm ?Q_le_S ?S_le_Q
+    case Q_le_S =>
+      exact hS
+    case S_le_Q =>
+      -- have x_ne_one : x ≠ 1 := by
+      --   rintro rfl; simp_all [center_SL2_F_eq_Z]
+      -- let nontrivial_G : Nontrivial G := (nontrivial_iff_exists_ne_one G).mpr ⟨x, x_in_G, x_ne_one⟩
+
+      have := @IsPGroup.p_dvd_card_center S p hp'.out _ _
+      have : p ∣ Nat.card (center S) := by sorry
+
+      sorry
+    -- case S_le_Q => sorry
+    -- case Q_le_S => sorry
+
 
 
 theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_center_ne
