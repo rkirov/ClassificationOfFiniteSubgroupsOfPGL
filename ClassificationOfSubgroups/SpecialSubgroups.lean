@@ -262,6 +262,25 @@ instance : Finite (Z F) := by
   simp [← @SetLike.coe_sort_coe]
   exact Finite.Set.finite_insert 1 {-1}
 
+lemma center_SL2_F_eq_Z {R : Type*}  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
+  ext x
+  constructor
+  · intro hx
+    rw [SpecialLinearGroup.mem_center_iff] at hx
+    obtain ⟨z, z_pow_two_eq_one, hz⟩ := hx
+    simp at z_pow_two_eq_one hz ⊢
+    rcases z_pow_two_eq_one with (rfl | rfl)
+    · left
+      ext <;> simp [← hz]
+    · right
+      ext <;> simp [← hz]
+  · simp
+    rintro (rfl | rfl) <;> simp [mem_center_iff]
+
+instance : Finite (center SL(2,F)) := by
+  rw [center_SL2_F_eq_Z]
+  exact instFiniteSubtypeSpecialLinearGroupFinOfNatNatMemSubgroupZ F
+
 
 lemma card_Z_eq_two_of_two_ne_zero [NeZero (2 : F)]: Nat.card (Z F) = 2 := by
   rw [@Nat.card_eq_two_iff]
@@ -345,6 +364,8 @@ lemma Z_IsCyclic : IsCyclic (Z F) := by
   · have two_eq_zero : (2 : F) = 0 := by exact not_neZero.mp h
     rw [card_Z_eq_one_of_two_eq_zero F two_eq_zero]
     simp only [orderOf_eq_one_iff, exists_eq]
+
+
 
 end Center
 

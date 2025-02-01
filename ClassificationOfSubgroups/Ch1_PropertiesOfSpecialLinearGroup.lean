@@ -138,20 +138,7 @@ lemma IsCommutative_T : IsCommutative (T F) := by
 -- def center_of_SL_2_F : center SL(2,F) ≃* rootsOfUnity 2 F  :=
 --   Matrix.SpecialLinearGroup.center_equiv_rootsOfUnity' 2
 
-lemma center_SL2_F_eq_Z {R : Type*}  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
-  ext x
-  constructor
-  · intro hx
-    rw [SpecialLinearGroup.mem_center_iff] at hx
-    obtain ⟨z, z_pow_two_eq_one, hz⟩ := hx
-    simp at z_pow_two_eq_one hz ⊢
-    rcases z_pow_two_eq_one with (rfl | rfl)
-    · left
-      ext <;> simp [← hz]
-    · right
-      ext <;> simp [← hz]
-  · simp
-    rintro (rfl | rfl) <;> simp [mem_center_iff]
+
 
 
 
