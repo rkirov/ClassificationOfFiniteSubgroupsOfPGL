@@ -1032,61 +1032,64 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
         refine Injective.comp ?h1 ?h2
         · exact subtype_injective G
         · exact subtype_injective S.toSubgroup
+      let inst₁ : CommRing F := by exact Field.toCommRing
+      let inst₂ : NoZeroDivisors F := by exact IsLeftCancelMulZero.to_noZeroDivisors F
       have card_center_lt_card_center_S : Fintype.card ((center SL(2,F)) : Set SL(2,F)) < Fintype.card ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
         by_cases hp : p = 2
+        · calc
+          Fintype.card (center SL(2, F)) = 1 := by sorry--rw [center_SL2_F_eq_Z]
+          _ < Fintype.card ↑↑(Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) := by sorry
         · sorry
-        · sorry
-      have : Set.ncard ((center SL(2,F)) : Set SL(2,F)) < Set.ncard ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
+      have ncard_center_lt_ncard_center_S : Set.ncard ((center SL(2,F)) : Set SL(2,F)) < Set.ncard ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
         sorry
-      have := Set.exists_mem_not_mem_of_ncard_lt_ncard this
-      
+      obtain ⟨s, s_in_center_S, s_not_in_center⟩ := Set.exists_mem_not_mem_of_ncard_lt_ncard ncard_center_lt_ncard_center_S
       -- above is attempt to prove by steps
-      have : ∃ s ∈ (center S), (s : SL(2,F)) ∉ center SL(2,F) := by
-        rw [center_SL2_F_eq_Z]
-        apply Set.exists_mem_not_mem_of_ncard_lt_ncard
-        · by_cases hp : p = 2
-          · have two_eq_zero : (2 : F) = 0 := by
-              rw [hp] at hC
-              exact CharTwo.two_eq_zero
-            simp only [hp] at p_le_card_center_S
-            calc
-            (Set.ncard fun (e : S) ↦ ((Z F): Set SL(2,F)) ↑↑e) = 1 := by
-              simp only [set_Z_eq, ← SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero F two_eq_zero,
-                Set.mem_singleton_iff, Set.insert_eq_of_mem, Set.ncard_eq_one]
-              use 1
-              ext y; simp
-              constructor
-              · intro h
-                rw [Set.mem_def, ← Set.mem_def (s := {1})] at h
-                simp at h
-                rw [h]
-              · rintro rfl
-                simp [Set.mem_def]
-                rfl
-            _ < 2 := by norm_num
-            _ ≤ Nat.card (center S) := p_le_card_center_S
-            _ = ((center S) : Set S).ncard := by
-              rw [← Set.Nat.card_coe_set_eq, SetLike.coe_sort_coe]
-          · have three_le_p : 3 ≤ p := Nat.Prime.three_le_of_ne_two hp'.out hp
-            let two_ne_zero : NeZero (2 : F) := by
-                rw [← ne_eq] at hp
-                refine { out := ?out }
-                intro two_eq_zero
-                sorry
-            calc
-            (Set.ncard fun (e : S) ↦ ((Z F): Set SL(2,F)) ↑↑e)  = Nat.card (Z F) := by
-              rw [← Set.Nat.card_coe_set_eq]
-              sorry
-            _ = 2 := by apply card_Z_eq_two_of_two_ne_zero F
-            _ < 3 := by norm_num
-            _ ≤ p := by apply three_le_p
-            _ ≤ ((center S) : Set S).ncard := by
-              rw [← Set.Nat.card_coe_set_eq, SetLike.coe_sort_coe]
-              exact p_le_card_center_S
+      -- have : ∃ s ∈ (center S), (s : SL(2,F)) ∉ center SL(2,F) := by
+      --   rw [center_SL2_F_eq_Z]
+      --   apply Set.exists_mem_not_mem_of_ncard_lt_ncard
+      --   · by_cases hp : p = 2
+      --     · have two_eq_zero : (2 : F) = 0 := by
+      --         rw [hp] at hC
+      --         exact CharTwo.two_eq_zero
+      --       simp only [hp] at p_le_card_center_S
+      --       calc
+      --       (Set.ncard fun (e : S) ↦ ((Z F): Set SL(2,F)) ↑↑e) = 1 := by
+      --         simp only [set_Z_eq, ← SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero F two_eq_zero,
+      --           Set.mem_singleton_iff, Set.insert_eq_of_mem, Set.ncard_eq_one]
+      --         use 1
+      --         ext y; simp
+      --         constructor
+      --         · intro h
+      --           rw [Set.mem_def, ← Set.mem_def (s := {1})] at h
+      --           simp at h
+      --           rw [h]
+      --         · rintro rfl
+      --           simp [Set.mem_def]
+      --           rfl
+      --       _ < 2 := by norm_num
+      --       _ ≤ Nat.card (center S) := p_le_card_center_S
+      --       _ = ((center S) : Set S).ncard := by
+      --         rw [← Set.Nat.card_coe_set_eq, SetLike.coe_sort_coe]
+      --     · have three_le_p : 3 ≤ p := Nat.Prime.three_le_of_ne_two hp'.out hp
+      --       let two_ne_zero : NeZero (2 : F) := by
+      --           rw [← ne_eq] at hp
+      --           refine { out := ?out }
+      --           intro two_eq_zero
+      --           sorry
+      --       calc
+      --       (Set.ncard fun (e : S) ↦ ((Z F): Set SL(2,F)) ↑↑e)  = Nat.card (Z F) := by
+      --         rw [← Set.Nat.card_coe_set_eq]
+      --         sorry
+      --       _ = 2 := by apply card_Z_eq_two_of_two_ne_zero F
+      --       _ < 3 := by norm_num
+      --       _ ≤ p := by apply three_le_p
+      --       _ ≤ ((center S) : Set S).ncard := by
+      --         rw [← Set.Nat.card_coe_set_eq, SetLike.coe_sort_coe]
+      --         exact p_le_card_center_S
 
-        · let fin_Z : Finite (Z F) := by exact
-          instFiniteSubtypeSpecialLinearGroupFinOfNatNatMemSubgroupZ F
-          sorry
+      --   · let fin_Z : Finite (Z F) := by exact
+      --     instFiniteSubtypeSpecialLinearGroupFinOfNatNatMemSubgroupZ F
+      --     sorry
       sorry
 
 

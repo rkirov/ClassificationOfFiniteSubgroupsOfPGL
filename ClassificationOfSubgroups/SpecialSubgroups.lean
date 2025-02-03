@@ -262,7 +262,7 @@ instance : Finite (Z F) := by
   simp [← @SetLike.coe_sort_coe]
   exact Finite.Set.finite_insert 1 {-1}
 
-lemma center_SL2_F_eq_Z {R : Type*}  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
+lemma center_SL2_F_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
   ext x
   constructor
   · intro hx
@@ -278,7 +278,7 @@ lemma center_SL2_F_eq_Z {R : Type*}  [CommRing R] [NoZeroDivisors R]: center SL(
     rintro (rfl | rfl) <;> simp [mem_center_iff]
 
 instance : Finite (center SL(2,F)) := by
-  rw [center_SL2_F_eq_Z]
+  rw [center_SL2_F_eq_Z F]
   exact instFiniteSubtypeSpecialLinearGroupFinOfNatNatMemSubgroupZ F
 
 
