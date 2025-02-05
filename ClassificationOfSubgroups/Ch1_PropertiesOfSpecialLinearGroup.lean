@@ -200,7 +200,7 @@ lemma minpoly_eq_X_sub_C_implies_matrix_is_diagonal { n R : Type*} [Fintype n] [
     (hM : minpoly R M = (X - C a)) : M = diagonal (fun _ ↦ a) := by
     -- The minimal polynomial evaluated at M must be 0
     have M_eq_diagonal : aeval (M : Matrix n n R) (minpoly R M) = 0 := minpoly.aeval _ _
-    simp [hM, algebraMap, Algebra.toRingHom, sub_eq_zero] at M_eq_diagonal
+    simp [hM, algebraMap, sub_eq_zero] at M_eq_diagonal
     -- This shows M is diagonal
     exact M_eq_diagonal
 

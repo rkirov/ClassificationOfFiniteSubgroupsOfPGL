@@ -100,7 +100,7 @@ lemma T_leq_H : T F ≤ H F := by
 
 /- Lemma 1.2.2.1 T is a normal subgroup of H = D T -/
 lemma T_normal_subgroupOf_H : ((T F).subgroupOf (H F)).Normal := by
-  rw [← @normalizer_eq_top]
+  rw [← normalizer_eq_top_iff]
   ext x
   constructor
   · intro _hx
@@ -355,7 +355,7 @@ lemma exists_unique_orderOf_eq_two [NeZero (2 : F)] : ∃! x : SL(2,F), orderOf 
     ext <;> simp [α_eq_δ, β_eq_zero, γ_eq_zero, δ_eq_neg_one]
 
 lemma Z_IsCyclic : IsCyclic (Z F) := by
-  apply isCyclic_iff_exists_ofOrder_eq_natCard.mpr ?_
+  apply isCyclic_iff_exists_orderOf_eq_natCard.mpr ?_
   by_cases h : NeZero (2 : F)
   · rw [card_Z_eq_two_of_two_ne_zero]
     use ⟨-1, neg_one_mem_Z F⟩

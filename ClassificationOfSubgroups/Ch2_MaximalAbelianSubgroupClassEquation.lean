@@ -387,7 +387,7 @@ lemma center_le (G : Type*) [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbel
   have A_IsComm : IsCommutative A :=
     inf_of_le_left hA.right ▸ IsCommutative_of_IsCommutative_subgroupOf A H hA.left.left
   have A_join_cen_IsComm : IsCommutative (center G ⊔ A) := IsComm_of_center_join_IsComm _ A_IsComm
-  have K_IsComm : IsCommutative K := subgroupOf_isCommutative (center G ⊔ A)
+  have K_IsComm : IsCommutative K := @subgroupOf_isCommutative G _ H (center G ⊔ A) _
   have A_le_cen_join_A : A.subgroupOf H ≤ (center G ⊔ A).subgroupOf H := by
     simp [← map_subtype_le_map_subtype, hA.right]
   specialize contr K_IsComm A_le_cen_join_A
@@ -416,7 +416,7 @@ lemma singleton_of_cen_eq_G (G : Type*) [Group G] (H : Subgroup G) (hH : H = cen
   · rintro ⟨rfl⟩
     simp [MaximalAbelianSubgroups, IsMaximalAbelian]
     split_ands
-    · exact subgroupOf_isCommutative (center G)
+    · exact subgroupOf_isCommutative H (center G)
     · intro A _A_IsComm _cen_le_A
       simp_rw [← hH]
       simp only [subgroupOf_self, le_top]
@@ -778,7 +778,7 @@ lemma IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian {G : Type*} [Group G
   refine ⟨?IsCommutative, ?orderOf_eq_p⟩
   case IsCommutative =>
     let IsCommutative_H : IsCommutative H := hH.left
-    refine subgroupOf_isCommutative H
+    exact subgroupOf_isCommutative K H
   case orderOf_eq_p =>
     rintro ⟨h, hh⟩ h_ne_one
     have h_in_H := hh
@@ -886,7 +886,7 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
       let CommInst₁ : IsCommutative (T F ⊓ conj c⁻¹ • G) :=
         inf_IsCommutative_of_IsCommutative_left (T F) (conj c⁻¹ • G) (IsCommutative_T F)
       let CommInst₂ : IsCommutative ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)) :=
-        subgroupOf_isCommutative _
+        subgroupOf_isCommutative _ _
       exact Subgroup.map_isCommutative _ _
       -- Every element is order `p`
     case orderOf_eq_p =>
@@ -927,6 +927,7 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
     have map_eq_map_iff := ker_f_eq_bot ▸
       @map_eq_map_iff (T F ⊓ conj c⁻¹ • G ⊔ Z F:) _ SL(2,F) _ f (Subgroup.comap f (Z F)) ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
     -- Manually check that every element in Z is preserved under f
+    let inst : Nonempty ↥(T F ⊓ (conj c)⁻¹ • G ⊔ Z F) := One.instNonempty
     have key :
       Subgroup.map φ.symm.toMonoidHom (((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))) = (Z F).subgroupOf A := by
       ext z
@@ -1146,7 +1147,7 @@ theorem index_normalizer_le_two {p : ℕ}(A : Subgroup SL(2,F)) (center_le_G : c
       case Z_le_A => exact (@center_SL2_F_eq_Z F _ _) ▸ center_le SL(2,F) G A hA center_le_G
     simp [A_eq_Z]
     have : Subgroup.Normal ((Z F).subgroupOf G) := by
-      rw [← @normalizer_eq_top]
+      -- rw [← @normalizer_eq_top]
       sorry
     sorry
   · sorry
