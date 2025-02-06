@@ -179,7 +179,6 @@ def inject : SpecialLinearGroup (Fin n) R ⧸ Subgroup.center (SpecialLinearGrou
 
 def PSL_inj_PGL : PSL(n, F) →* PGL(n, F) where
   toFun := fun S =>
-
     sorry
   map_one' := sorry
   map_mul' := sorry
