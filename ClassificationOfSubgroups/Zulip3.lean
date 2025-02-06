@@ -1,16 +1,62 @@
 import Mathlib
 
-open MulAction Subgroup Pointwise MulAut
+def sum_of_first_n_odd_nat : ℕ → ℕ
+| 0 => 0
+| (Nat.succ n) => sum_of_first_n_odd_nat n + (2*n+1)
 
 
-variable {G : Type*} [Group G] (x : G) (H : Subgroup G)
+-- Ask AI if it can find the useful theorem
+#leansearch "multiply out square of sum?"
 
-#check conj x • (centralizer {x})
+-- The following seems sensible
+#check add_mul_self_eq
 
--- and
+-- We check naturals are a commutative semiring
+#synth CommSemiring ℕ
 
-#check conj x • H
+-- Naturals are indeed a commutative semiring
 
--- why can `conj x • H` not be promoted to its own type?
+-- If you don't want to use AI then use loogle, a glorified maths search engine + regex(ish)
+#loogle
 
-def foonction {G : Type*} [Group G] (x : G) (H : Subgroup G): ↥(conj x • H) →* H := by sorry
+
+theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : (sum_of_first_n_odd_nat n) = n * n := by
+  induction n
+  -- Prove the base case.
+  case zero =>
+    rw [mul_zero, sum_of_first_n_odd_nat]
+  -- Prove the induction step.
+  case succ d hd =>
+    rw [sum_of_first_n_odd_nat]
+    -- Apply the induction hypothesis
+    rw [hd]
+    -- Multiply out the square of sum
+    rw [add_mul_self_eq]
+    -- We finish it off by hand
+    rw [mul_one, mul_one, add_assoc]
+
+theorem closed_eq_sum_of_first_n_odd_nat' (n : ℕ) : (sum_of_first_n_odd_nat n) = n * n := by
+  induction n
+  -- Prove the base case.
+  case zero =>
+    rw [Nat.mul_zero, sum_of_first_n_odd_nat]
+  -- Prove the induction step.
+  case succ d hd =>
+    rw [sum_of_first_n_odd_nat]
+    -- Apply the induction hypothesis
+    rw [hd]
+    -- Multiply out the square of sum
+    rw [add_mul_self_eq]
+    -- Now we ask lean to find the (semi)ring normal form of LHS and RHS  and compare them
+    ring
+
+
+#eval sum_of_first_n_odd_nat 0
+
+#eval sum_of_first_n_odd_nat 1
+
+#eval sum_of_first_n_odd_nat 2
+
+#eval sum_of_first_n_odd_nat 3
+
+#eval sum_of_first_n_odd_nat 4

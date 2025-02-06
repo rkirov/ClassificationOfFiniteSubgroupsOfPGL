@@ -16,18 +16,6 @@ variable (n : Type u) [DecidableEq n] [Fintype n] (R : Type v) [CommRing R] (F :
 
 variable (i j : n) (c : R)
 
-namespace ProjectiveGeneralLinearGroup
-
-/-- A projective general linear group is the quotient of a special linear group by its center. -/
-abbrev ProjectiveGeneralLinearGroup : Type _ :=
-    GL n R ⧸ Subgroup.center (GL n R)
-
-/-- `PGL n R` is the projective special linear group `(GL n R)/ Z(GL(n R))`. -/
-scoped[MatrixGroups] notation "PGL"  => Matrix.ProjectiveGeneralLinearGroup
-
-end ProjectiveGeneralLinearGroup
-
-
 namespace SpecialLinearGroup
 
 scoped[MatrixGroups] notation "SL"  => Matrix.SpecialLinearGroup
@@ -35,14 +23,11 @@ scoped[MatrixGroups] notation "SL"  => Matrix.SpecialLinearGroup
 def transvection (hij : i ≠ j) : SL n R :=
   ⟨Matrix.transvection i j c, (det_transvection_of_ne i j hij (c : R))⟩
 
-
-
 end SpecialLinearGroup
 
 namespace TransvectionStruct
 
 def toSL (t : TransvectionStruct n R) : SL n R := ⟨t.toMatrix, by simp⟩
-
 
 def toGL (t : TransvectionStruct n R) : GL n R := t.toSL
 
@@ -51,7 +36,7 @@ end TransvectionStruct
 namespace GeneralLinearGroup
 
 def transvection (hij : i ≠ j) : GL n R :=
-  (SpecialLinearGroup.transvection n R i j c hij).coeToGL
+  (SpecialLinearGroup.transvection n R i j c hij).toGL
 
 def scalar (r : Rˣ) : GL n R :=
   Units.map (Matrix.scalar n).toMonoidHom r
@@ -124,8 +109,6 @@ theorem mem_center_general_linear_group_iff {M : GL n R} : M ∈ Subgroup.center
 
 end Center
 
-
-
 instance hasInv : Inv (GeneralLinearGroup n R) :=
   ⟨fun A => ⟨
     ((det A)⁻¹ • adjugate A.1),
@@ -141,7 +124,44 @@ instance hasInv : Inv (GeneralLinearGroup n R) :=
 
 -- instance hasInv : Inv (GeneralLinearGroup n R) := by exact Units.instInv
 
-
 end GeneralLinearGroup
+
+namespace ProjectiveGeneralLinearGroup
+
+variable (n : Type u) [DecidableEq n] [Fintype n] (R : Type v) [CommRing R]
+
+/-- A projective general linear group is the quotient of a special linear group by its center. -/
+abbrev ProjectiveGeneralLinearGroup : Type _ :=
+    GL n R ⧸ Subgroup.center (GL n R)
+
+
+variable (n : ℕ)
+
+
+/-- `PGL n R` is the projective special linear group `(GL n R)/ Z(GL(n R))`. -/
+notation "PGL(" n ", " R ")" => ProjectiveGeneralLinearGroup (Fin n) R
+
+
+notation "PSL(" n ", " R ")" => Matrix.ProjectiveSpecialLinearGroup (Fin n) R
+
+end ProjectiveGeneralLinearGroup
+
+
+
+namespace Isomorphism
+
+open ProjectiveGeneralLinearGroup
+
+
+#leansearch "PSL?"
+
+-- #check Matrix.ProjectiveSpecialLinearGroup
+
+variable (n : ℕ) (F : Type u) [Field F] [IsAlgClosed F]
+
+-- We define the isomorphism between the projective general linear group and the projective special linear group
+-- def iso : PGL(n,F) = PSL(n,F) := sorry
+
+end Isomorphism
 
 end Matrix

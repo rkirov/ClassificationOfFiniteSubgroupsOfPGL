@@ -3,4 +3,5 @@
 import ClassificationOfSubgroups.Endomorphism
 import ClassificationOfSubgroups.SpecialMatrices
 import ClassificationOfSubgroups.SpecialSubgroups
-
+import ClassificationOfSubgroups.Ch1_PropertiesOfSpecialLinearGroup
+import ClassificationOfSubgroups.Ch2_MaximalAbelianSubgroupClassEquation
