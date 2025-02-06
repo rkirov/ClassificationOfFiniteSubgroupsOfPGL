@@ -1,0 +1,196 @@
+\chapter{Introduction}\label{Ch1_Introduction}
+
+This section briefly outlines some standard group theory results which perhaps may not have been covered in a first course in Group Theory. Since they are not the main focus of this paper, most of the proofs have been omitted. A more
+
+\section{Some Elementary Theorems}
+
+The following theorems are all well-known fundamental results in group theory. If the reader is interested in the proofs, they can be found in Hungerford \cite{hungerford}.
+
+\begin{lagrange}\label{lagrange} \textit{Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$.} \\
+\end{lagrange} 
+
+\begin{1stiso}\label{1stiso} \textit{Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/Ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/Ker \; \phi \cong G'.$$} \\
+\end{1stiso} 
+
+\vspace{-10mm}
+
+\begin{2ndiso}\label{2ndiso} \textit{Let $H$ and $N$ be subgroups of $G$, and $N \vartriangleleft G$. Then, $$H/H \cap N \cong HN/N.$$} \\
+\end{2ndiso} 
+
+\vspace{-10mm}
+
+\begin{3rdiso}\label{3rdiso} \textit{Let $H$ and $K$ be normal subgroups of $G$ and $K \subset H$. Then $H/K$ is a normal subgroup of $G/K$ and, $$(G/K)/(H/K) \cong G/H.$$} \\
+\end{3rdiso} 
+
+\vspace{-10mm}
+
+\begin{cauchy}\label{cauchy} \textit{If the order of a finite group $G$ is divisible by a prime number $p$, then $G$ has an element of order $p$.} \\
+\end{cauchy} 
+
+\section{Sylow Theory}
+
+In 1872, Norweigian mathematician Peter Ludwig Sylow published his theorems regarding the number of subgroups of a fixed order that a given finite group contains. Today these are collectively known as the Sylow Theorems and play a vital role in determining the structure of finite groups. I will use the results of these theorems several times throughout this paper and I state them here without proof. If the reader would like to read further, the proofs can be found in most introductory texts on group theory, such as Bhattacharya \cite{bhattacharya}, except Corollary \ref{5thsylow} which can be found in Alperin and Bell \cite[p.64]{alperin} . \\
+
+\begin{definition} Let $G$ be a finite group and $p$ a prime, a \textbf{Sylow $\pmb{p}$-subgroup} of $G$ is a subgroup of order $p^r$, where $p^{r+1}$ does not divide the order of $G$. \\
+\\
+Let $p$ be a prime. A group $G$ is called a \textbf{$\pmb{p}$-group} if the order of each of it's elements is a power of $p$. Similarly, a subgroup $H$ of $G$ is called a \textbf{$\pmb{p}$-subgroup} if the order of each of it's elements is a power of $p$.
+\end{definition}
+
+In each of the following results, $G$ is a finite group of order $p^r m$, where $p$ is a prime which does not divide $m$. \\
+\\
+\makebox[\textwidth][s]{\textbf{First Sylow Theorem.} \textit{If $p^k$ divides $|G|$, then $G$ has a subgroup of order $p^k$.}} \\
+
+\begin{2ndsylow} \textit{All Sylow $p$-subgroups of G are conjugate.} \\
+\end{2ndsylow}
+
+\begin{3rdsylow} \textit{The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 ($mod $p)$.} \\
+\end{3rdsylow}
+
+\begin{corollary}\label{4thsylow} \textit{A Sylow $p$-subgroup of $G$ is unique if and only if it is normal.} \\
+\end{corollary}
+
+\begin{corollary}\label{5thsylow} \textit{Any $p$-subgroup of $G$ is contained in a Sylow $p$-subgroup.} \\
+\end{corollary}
+
+\section{Group Action}
+
+\begin{definition-non} Let $G$ be a group and $X$ be a set. Then $G$ is said to \textbf{act} on $X$ if there is a map $\phi : G \times X \rightarrow X$, with $\phi(a,x)$ denoted by $a^*x$, such that for $a,b \in G$ and $x \in X$, the following 2 properties hold:
+\begin{align*} &(i) \quad a\,^*(b\,^*x) = (ab)^*x,
+\\  &(ii) \quad I_G\,^*x = x.
+\end{align*}
+
+The map $\phi$ is called the \textbf{group action} of $G$ on $X$.
+\end{definition-non}
+
+\begin{definition-non} Let $G$ be a group acting on a set $X$ and let $x \in X$. Then the set,
+\begin{align*} Stab(x) = \{ g \in G  :  gx = x \},
+\end{align*}
+is called the \textbf{stabiliser} of $x$ in $G$. Each $g$ in $S_G(x)$ is said to \textbf{fix} $x$, whilst $x$ is said to be a \textbf{fixed point} of each $g$ in $S_G(x)$. Also, the set,
+\begin{align*} \text{Orb}(x) = \{ gx : g \in G \},
+\end{align*}
+is called the \textbf{orbit} of $x$ in $G$.  
+\end{definition-non} 
+
+The orbit and the stabiliser of an element are closely related. The following theorem is a consequence of this relationship and it will be useful throughout this paper. \\
+
+\begin{orbstab} \textit{Let $G$ be a finite group acting on a set $X$. Then for each $x \in X$}, $$|G| = |\text{Orb}(x)| |\text{Stab}(x)|.$$ \\
+\end{orbstab}
+
+The following standard theorem will all play a vital roll later on.
+
+\begin{theorem}\label{symhomoker} Let $G$ be a group and $H$ a subgroup of $G$ of finite index $n$. Then there is a homomorphism $\phi : G \longrightarrow S_n$ such that,
+\begin{align*} ker(\phi) = \bigcap\limits_{x \in G} x H x^{-1}.
+\end{align*}
+\end{theorem}
+
+\begin{proof} See \cite[p.110]{bhattacharya} for proof.
+\end{proof}
+
+\section{Conjugation}
+
+\begin{definition-non}
+Let $G$ be a group and $a$ an element of $G$. An element $b \in G$ is said to be \textbf{conjugate} to $a$ if $b=xax^{-1}$ for some $x \in G$. \\
+\\
+Let $H_1$ be a proper subgroup of $G$ and fix $x \in G \setminus H_1$. The set $H_2 = \{g \in G : g= xh_1x^{-1}$, $\forall h_1 \in H_1\}$ is said to be a \textbf{conjugate subgroup} of $H_1$. We write $H_2 = xH_1x^{-1}$. It is trivial to show that $H_2$ is a subgroup of $G$.
+\end{definition-non}
+
+Conjugation plays an important roll thoughout the paper, in particularly the following properties about conjugate elements and subgroups.
+
+\begin{proposition}\label{conjugateprop} Let $a$, $b$ be conjugate elements of a group $G$ and $A$, $B$ be conjugate subgroups of $G$. Then the following properites hold: \vspace{3mm} \\
+(i) If either $a$ or $b$ has finite order, then both $a$ and $b$ have the same order. \vspace{3mm} \\
+(ii) $A \cong B$. \\
+\end{proposition}
+
+\begin{proof}
+(i) Since $a$ and $b$ are conjugate elements in $G$, $b = xax^{-1}$ for some $x \in G$. Suppose that $b$ has finite order and $b^k = I_G$ for some $k \in \mathbb{Z}^+$,
+\begin{equation*} I_G = b^k = (xax^{-1})^k = xa^{k}x^{-1} \Rightarrow a^k = I_G.
+\end{equation*}
+Alternatively suppose that $a$ has finite order and $a^k = I_G$ for some $k \in \mathbb{Z}^+$,
+\begin{equation*} a^k = I_G \Rightarrow I_G = xa^{k}x^{-1} = (xax^{-1})^k = b^k.
+\end{equation*}
+Thus $a^k = I_G \iff b^k = I_G$. Thus $a$ and $b$ have the same order. \\
+\\
+(ii) Since $A$ and $B$ are conjugate, there exists some $x \in G$ such that $B=xAx^{-1}$. Define the map $\phi$ by,
+\begin{align*}
+\phi:A &\longrightarrow xAx^{-1}, \\
+a_1 &\longmapsto xa_1x^{-1} \tag{$\forall \; a_1 \in A$}. \end{align*}
+
+We show that $\phi$ is a homomorphism between $A$ and $B=xAx^{-1}$.
+
+\begin{equation*}
+\phi(a_1a_2) = xa_1a_2x^{-1} = ( xa_1x^{-1})( xa_2x^{-1}) = \phi(a_1) \phi(a_2).
+\end{equation*}
+\\
+Now consider an arbitrary $k \in ker(\phi)$.
+
+\begin{equation*}
+k \in ker(\phi) \iff \phi(k) = I_G \iff  xkx^{-1} = I_G \iff k = I_G.
+\end{equation*}
+\\
+So $ker(\phi) = \{ I_G \}$ which means $\phi$ is injective. Now let $b_1 \in B = xAx^{-1}$. Thus $b_1 = xa_1x^{-1}$ for some $a_1 \in A$. Since $a_1 \in A$, $\phi(a_1) = xa_1x^{-1} = b_1$ and so $\phi$ is surjective. Thus $\phi$ is an isomorphism and $A$ and $B$ are isomorphic.
+
+\end{proof}
+
+The final part of this proposition is an important result which shows that since conjugate subgroups are isomorphic, conjugation preserves group structure and properties. In particular, conjugate subgroups have the same cardinality and if one is abelian or cyclic, then so is the other.
+
+\section{Automorphism}
+
+\begin{definition-non} An \textbf{automorphism} of a group $G$ is a isomorphism from $G$ onto itself. The set of all automorphisms of $G$ forms a group under composition and is denoted by $Aut(G)$.\\
+\\
+An \textbf{inner automorphism} is an automorphism whereby $G$ acts on itself by conjugation. That is, each $g \in G$ induces a map, $i_g : G \rightarrow G$, where $i_g(x) = g x g^{-1}$ for each $x \in G$. The set of all inner automorphisms is denoted by $Inn(G)$ and is a normal subgroup of $Aut(G)$ (For proof of this see \cite[p.104]{bhattacharya}.
+\end{definition}
+
+\section{Direct Product}
+
+\begin{definition} If $G_1, G_2,...,G_n$ are groups, we define a coordinate operation on the Cartesian product $G_1 \times G_2 \times...\times G_n$ as follows:
+\begin{align*} (a_1, a_2, ..., a_n) (b_1, b_2, ..., b_n) = (a_1 b_1, a_2 b_2, ..., a_n b_n),
+\end{align*}
+where $a_i, b_i \in G_i$. It is easy to verify that $G_1 \times G_2 \times...\times G_n$ is a group under this operation. This group is called the \textbf{direct product} of $G_1, G_2,...,G_n$.
+\end{definition}
+
+\begin{lemma} \label{directproductN} Let $A$ and $B$ be normal subgroups of $G$ with $A \cap B = \{ I_G \}$. Then $AB \cong A \times B$.
+\end{lemma}
+
+\begin{proof}
+
+First note that the elements of $A$ commute with the elements of $B$, since $\forall \; a \in A$ and $b \in B$,
+\begin{align*} aba^{-1}b^{-1} &=  a(ba^{-1}b^{-1}) \in A, \tag{since $A \vartriangleleft G$}
+\\ aba^{-1}b^{-1} &=  (aba^{-1})b^{-1} \in B. \tag{since $B \vartriangleleft G$}
+\end{align*}
+
+Therefore $aba^{-1}b^{-1} \in A \cap B = \{ I_G \}$, and $ab = ba$. \\
+\\
+Define the operation $*$ on $A \times B$ by $(a_1 , b_1)*(a_2 , b_2) = (a_1 a_2 , b_1 b_2)$. Now define the map $\phi$ by,
+\begin{align*}
+\phi:A \times B &\longrightarrow AB, \\
+(a,b) &\longmapsto ab \tag{$\forall \; a \in A, \; b\in B$}. \end{align*}
+
+We show that $\phi$ is a homomorphism between $A \times B$ and $AB$.
+\vspace{-0.5mm}
+\begin{align*}
+\phi((a_1,  b_1)*(a_2, b_2)) &= \phi (a_1 a_2 , b_1 b_2) \\
+&=  a_1 a_2  b_1 b_2 \\
+&=  a_1 b_1 a_2 b_2  \\
+&= \phi(a_1 , b_1) \phi(a_2 , b_2). \end{align*}
+
+Thus $\phi$ is a homomorphism and clearly surjective. It remains to show that it is injective. 
+\vspace{-0.5mm}
+\begin{align*} \phi(a_1 , b_1) &= \phi(a_2 , b_2), \\
+a_1 b_1 &= a_2 b_2, \\
+a_1 b_1 b_2^{-1} &= a_2, \\
+b_1 b_2^{-1} &= a_1^{-1} a_2 \in A \cap B.
+\end{align*}
+
+Since $A \cap B = \{ I_G \}$, we have $b_1 b_2^{-1} = I_G = a_1^{-1} a_2$ and so $b_1 = b_2$, $a_1 = a_2$ and $\phi$ is injective. So $\phi$ is an isomorphism and $AB \cong A \times B$.
+\\
+\end{proof}
+
+\begin{lemma}\label{directproductZ} Let $A$ and $B$ be subgroups of $G$. If $A \cap B = \{ I_G \}$ and $ab = ba$ $\forall a \in A$, $b \in B$. Then $AB \cong A \times B$.
+\end{lemma}
+
+\begin{proof} Since $A$ and $B$ commute, the argument outlined in Lemma \ref{directproductN} also holds here.
+\end{proof}
+
+% \newpage
+
+

@@ -1,6 +1,11 @@
-import Mathlib
-import ClassificationOfSubgroups.SpecialMatrices
 import ClassificationOfSubgroups.SpecialSubgroups
+import Mathlib.Algebra.GroupWithZero.Conj
+import Mathlib.FieldTheory.IsAlgClosed.Basic
+import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
+import Mathlib.RingTheory.Artinian.Instances
+import Mathlib.RingTheory.FiniteLength
+
 
 set_option autoImplicit false
 set_option linter.style.longLine true
@@ -27,7 +32,7 @@ lemma IsCommutative_iff {G : Type*} [Group G] (H : Subgroup G) :
     have := @mul_comm_of_mem_isCommutative G _ H h x y (by simp) (by simp)
     exact SetLike.coe_eq_coe.mp this
   · intro h
-    rw [← @le_centralizer_iff_isCommutative]
+    rw [← le_centralizer_iff_isCommutative]
     intro y hy
     rw [mem_centralizer_iff]
     intro x hx
@@ -965,3 +970,5 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
     rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_t_eq_TZ F τ_ne_zero]
     apply conjugate_IsComm_of_IsComm
     exact IsCommutative_TZ F
+
+#min_imports

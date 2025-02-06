@@ -1,4 +1,7 @@
-import Mathlib
+import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.Data.Fintype.Parity
+import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
+import Mathlib.RingTheory.Henselian
 
 open Matrix MatrixGroups Subgroup Pointwise
 
@@ -154,7 +157,7 @@ lemma d_mul_w_eq_dw (δ : Fˣ) : d δ * w = dw δ := by ext <;> simp [d, w, dw]
 
 @[simp]
 lemma inv_of_d_mul_w (δ : Fˣ) : (d δ * w)⁻¹ = d (-δ) * w := by
-  simp [Matrix.mul_inv_rev]
+  simp [mul_inv_rev]
   ext <;> simp [d, w, inv_neg]
 
 -- (iv)
@@ -172,3 +175,5 @@ lemma neg_d_mul_w (δ : Fˣ) : -(d δ * w) = d (-δ) * w := by rw [← neg_mul, 
 end Interactions
 
 end SpecialMatrices
+
+#min_imports

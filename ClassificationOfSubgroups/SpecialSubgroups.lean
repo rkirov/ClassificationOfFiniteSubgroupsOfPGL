@@ -1,5 +1,7 @@
-import Mathlib
 import ClassificationOfSubgroups.SpecialMatrices
+import Mathlib.Algebra.Category.Grp.Images
+import Mathlib.Analysis.Normed.Field.Lemmas
+import Mathlib.Order.CompletePartialOrder
 
 open Matrix MatrixGroups Subgroup Pointwise SpecialMatrices
 
@@ -366,7 +368,8 @@ lemma Z_IsCyclic : IsCyclic (Z F) := by
     simp only [orderOf_eq_one_iff, exists_eq]
 
 
-
 end Center
 
 end SpecialSubgroups
+
+#min_imports

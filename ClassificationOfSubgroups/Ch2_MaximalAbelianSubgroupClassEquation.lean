@@ -1,5 +1,8 @@
-import Mathlib
 import ClassificationOfSubgroups.Ch1_PropertiesOfSpecialLinearGroup
+import Mathlib.Algebra.Order.Star.Basic
+import Mathlib.Data.Nat.Factorization.PrimePow
+import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.GroupTheory.Sylow
 
 
 set_option linter.style.longLine true
@@ -1203,3 +1206,5 @@ Ci = ⋃ x ∈ G, x * Aᵢ * x⁻¹, and Cᵢ* = ⋃ x ∈ G, x Aᵢ* x⁻¹
 It’s evident that Cᵢ* = Cᵢ \ Z(SL(2,F)) and that there is a Cᵢ corresponding to each
 Cᵢ . Clearly we have the relation, |Cᵢ*| = |Aᵢ*||Clᵢ*|
 -/
+
+#min_imports

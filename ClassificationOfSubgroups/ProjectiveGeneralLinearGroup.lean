@@ -137,15 +137,25 @@ abbrev ProjectiveGeneralLinearGroup : Type _ :=
 
 variable (n : ℕ)
 
-
 /-- `PGL n R` is the projective special linear group `(GL n R)/ Z(GL(n R))`. -/
 notation "PGL(" n ", " R ")" => ProjectiveGeneralLinearGroup (Fin n) R
 
-
-notation "PSL(" n ", " R ")" => Matrix.ProjectiveSpecialLinearGroup (Fin n) R
-
 end ProjectiveGeneralLinearGroup
 
+
+open Matrix LinearMap
+
+open scoped MatrixGroups
+
+
+variable (n : Type u) [DecidableEq n] [Fintype n] (R : Type v) [CommRing R]
+
+/-- A projective special linear group is the quotient of a special linear group by its center. -/
+abbrev ProjectiveSpecialLinearGroup : Type _ :=
+    SpecialLinearGroup n R ⧸ Subgroup.center (SpecialLinearGroup n R)
+
+/-- `PSL(n, R)` is the projective special linear group `SL(n, R)/Z(SL(n, R))`. -/
+scoped[MatrixGroups] notation "PSL(" n ", " R ")" => Matrix.ProjectiveSpecialLinearGroup (Fin n) R
 
 
 namespace Isomorphism
@@ -153,14 +163,36 @@ namespace Isomorphism
 open ProjectiveGeneralLinearGroup
 
 
-#leansearch "PSL?"
-
--- #check Matrix.ProjectiveSpecialLinearGroup
-
 variable (n : ℕ) (F : Type u) [Field F] [IsAlgClosed F]
 
+#leansearch "MulEquiv from bijective homomorphism?"
+
+#check MulEquiv.ofBijective
+
+#check MulEquiv.ofBijective_apply
+
+def inject : SpecialLinearGroup (Fin n) R ⧸ Subgroup.center (SpecialLinearGroup (Fin n) R) →* GL (Fin n) R ⧸ Subgroup.center (GL (Fin n) R) where
+  toFun := fun S =>
+    sorry
+  map_one' := sorry
+  map_mul' := sorry
+
+def PSL_inj_PGL : PSL(n, F) →* PGL(n, F) where
+  toFun := fun S =>
+
+    sorry
+  map_one' := sorry
+  map_mul' := sorry
+
 -- We define the isomorphism between the projective general linear group and the projective special linear group
--- def iso : PGL(n,F) = PSL(n,F) := sorry
+def iso : PGL(n,F) ≃* PSL(n,F) where
+  toFun := fun G =>
+    sorry
+  invFun := fun S => sorry
+  left_inv := sorry
+  right_inv := sorry
+  map_mul' := sorry
+
 
 end Isomorphism
 

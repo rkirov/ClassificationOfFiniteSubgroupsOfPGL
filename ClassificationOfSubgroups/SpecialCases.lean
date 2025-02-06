@@ -1,7 +1,6 @@
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
 
 
-
 namespace SpecialCases
 
 open scoped MatrixGroups

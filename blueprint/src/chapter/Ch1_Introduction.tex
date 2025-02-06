@@ -1,0 +1,170 @@
+\chapter{Introduction}\label{Ch1_Introduction}
+
+\section{What is the formalization of mathematics?}
+
+Formalization of mathematics is the art of teaching a computer what a piece of mathematics means, that is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. 
+
+TODO:
+
+- Brief explanation of type theory and curry-howard isomorphism.
+
+- Example of formal proof and comparison with informal proof.
+
+
+\begin{minted}{lean}
+theorem add_comm (a b : Nat) : a + b = b + a :=
+  Nat.add_comm a b
+\end{minted}
+
+
+\section{Fermat's Last Theorem}
+
+TODO:
+
+-History of Fermat's Equation
+
+-Problem statements
+
+-Developments in number theory that lead to the resolution of the conjecture.
+
+
+\section{Formalizing Fermat's Last Theorem}
+
+Following the sequence of success stories ranging from the Liquid Tensor Experiment to the formalization of the Polynomial Freiman-Rusza conjecture. 
+
+Prof. Kevin Buzzard from Imperial College London has received a five-year grant that will allow him to lead the formalization of Fermat's Last Theorem. This grant kicked in in October of 2024. 
+
+At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project.
+
+Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task.
+
+TODO:
+
+- Current goal of the formalization
+
+- Explain somewhat the modern approach and the highly sought after Modularity Lifting Theorem.
+
+- My task: Classification of finite subgroups of $\textrm{PGL}_2(\bar{\F}_p)$
+
+
+
+\section{Classification of finite subgroups of $\textrm{PGL}_2(\overline{\mathbb{F}_p})$}
+
+TODO:
+
+-Why are the finite subgroups of  $\textrm{PGL}_2(\bar{\F}_p)$ relevant to number theory: i.e: Automorphic forms, Galois representations, etc.
+
+
+The primary concern of this project is to formalise Theorem 2.47 of [DTT] which states:
+
+\begin{enumerate}
+    \item If $H$ is finite subgroup of $\textrm{PGL}_2(\C)$ then $H$ is isomorphic to one of the following groups: the cyclic group $C_n$ of order $n$ ($n \in \Z_{>0}$), the dihedral group $D_{2n}$ of order $2n$ ($n \in \Z_{>1}$), $A_4$, $S_4$ or $A_5$.
+\item If $H$ is a finite subgroup of $\textrm{PGL}_2(\overline{\F}_p)$ then one of the following holds:
+\begin{enumerate}
+    \item $H$ is conjugate to a subgroup of the upper triangular matrices;
+    \item $H$ is conjugate to $\textrm{PGL}_2(\F_{\ell^r})$ and $\textrm{PSL}_2(\F_{\ell^{r}})$ for some $r \in \Z_{>0}$;
+    \item $H$ is isomorphic to $A_4$, $S_4$, $A_5$ or the dihedral group $D_{2r}$ of order $2r$ for some $r \in \Z_{>1}$ not divisible by $\ell$
+
+\end{enumerate}
+    Where $\ell$ is assumed to be an odd prime.
+\end{enumerate}
+
+
+By definition the Projective General Linear Group is:
+
+\begin{equation}
+    \textrm{PGL}_n(F) = \bigslant{\textrm{GL}_n(F)}{Z(\textrm{GL}_n(F))} = \bigslant{\text{GL}_n(F)}{F^\times I}
+\end{equation}
+
+Similarly, the Projective Special Linear Group is:
+
+\begin{equation}
+    \textrm{PSL}_n(F) = \bigslant{\textrm{SL}_2(F)}{Z(\textrm{SL}_2(F))} = \bigslant{\textrm{SL}_2(F)}{\langle -I\rangle}
+\end{equation}
+
+
+
+When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct an isomorphism between the projective special linear group and the projective general linear group.
+
+Let $\varphi : \textrm{PSL}_n(F) \rightarrow \textrm{PGL}_n(F)$ be the injection of $\textrm{PSL}_n(F)$ into $\textrm{PGL}_n(F)$ defined by
+\[
+ S \; \langle -I\rangle \mapsto i(S) \;  (F^\times I) 
+\]
+
+where $i : \textrm{SL}_n(F) \hookrightarrow \textrm{GL}_n(F)$ is the natural injection of the special linear group into the general linear group.
+
+This injection is well-defined for any characteristic, as taking different representatives yields the same result, and furthermore, when $\textrm{char}(F) \ne 2$ and $F$ is algebraically closed $\varphi$ defines an isomorphism.
+
+\[\begin{tikzcd}
+	{\textrm{SL}_n(F)} && {\textrm{GL}_n(F)} \\
+	&& {} \\
+	{\textrm{PSL}_n(F)} && {\textrm{PGL}_n(F)}
+	\arrow["i", from=1-1, to=1-3]
+	\arrow["{\textrm{can}_{\langle-I\rangle}}"', from=1-1, to=3-1]
+	\arrow["{\textrm{can}_{F^\times I}}", from=1-3, to=3-3]
+	\arrow[dotted, from=3-1, to=3-3]
+\end{tikzcd}\]
+
+\begin{proof}
+\begin{itemize}
+    \item We show $\varphi$ is well-defined:
+
+Let $S, S' \in \textrm{SL}_n(F)$, suppose $S \langle -I\rangle = S'\langle -I\rangle$ then because $SS'^{-1} \in \langle -I\rangle \iff SS'^{-1} = \pm I$ we have the following chain of set equalities
+
+\begin{align*}
+    \varphi(S \langle -I \rangle) 
+    &= S (F^\times I)\\
+    &= S' (F^\times I) \qquad \parbox[c]{0.5
+    \linewidth}{because $S = \pm I S$ and $\pm I \in F^\times I$}\\
+    &= \varphi(S' \langle -I\rangle)
+\end{align*}
+
+\item When $\textrm{char}(F) \ne 2$ and $F$ is algebraically closed, we show $\varphi$ in fact defines an isomorphism:
+
+Given $\varphi$ is an injection, we only need show that $\varphi$ is multiplicative and surjective.
+\begin{itemize}
+    \item $\varphi$ is multiplicative:
+
+    Let $S \langle-I\rangle, Q\langle-I\rangle \in \textrm{PSL}_n(F)$ where $S, Q \in \textrm{SL}_n(F)$ then
+
+    \begin{align*}
+    \varphi(S \langle-I\rangle  Q\langle-I\rangle ) &= \varphi(SQ \langle -I\rangle) \quad \parbox[c]{0.4\linewidth}{by the normality of $\langle -I \rangle$}\\
+    &= i(SQ) F^\times I\\
+    &= i(S) i(Q) F^\times I \quad  \parbox[c]{0.4\linewidth}{as a group injection defines a homomorphism}\\
+    &= i(S) (F^\times I) \cdot i(Q)(F^\times I) \quad \parbox[c] {0.4\linewidth}{ by the normality of $F^\times I$}\\
+    &= \varphi(S) \varphi(Q)
+    \end{align*}
+    
+    \item $\varphi$ is surjective:
+
+    Let $G \; (F^\times I) = [G] \in \textrm{PGL}_n(F)$, then $G \in \textrm{GL}_n(F)$ we can find a representative of $[G']$, that lies within the special linear group.
+    Given elements of the special linear group are matrices with determinant equal to one, we must scale $G$ to a suitable factor to yield a representative which lies within $\textrm{SL}_n(F)$. Suppose $\det(G) \ne 1$ and let
+    \[
+    P(X) := X^n - \det(G) \in F[X]
+    \]
+    By assumption, $F$ is algebraically closed so there exists a root $\alpha \ne 0\in F$ such that 
+    \[
+    \alpha^n - \det(G) = 0 \iff \alpha^n = \det(G)
+    \]
+    We can define
+    \[
+    G' := \frac{1}{\alpha} \cdot G \quad \text{where} \quad \det(G') = \frac{1}{\alpha^n} \det(G) = 1.
+    \]
+    Thus $G' \in \textrm{SL}_n(F) \leq \textrm{GL}_n(F)$ and given $G' = \frac{1}{\alpha} G$ we have that $G'  \; (F^\times I) = G \; (F^\times I)$.
+    
+    Therefore, $\varphi(G') = i(G') (F^\times I) = G' (F^\times I) = G (F^\times I)$.
+\end{itemize}
+
+
+\end{itemize}
+
+\end{proof}
+
+This isomorphism will be essential to the classification of finite subgroups of $\textrm{PGL}_2(\bar{\F}_p)$, as we only need understand a smaller structure to get to our endgoal.
+
+
+\section{Christopher Butler's exposition}
+
+Following the result in the previous section, we can now proceed to classify the finite subgroups of $\textrm{PGL}_2(\bar{\F}_p)$ by classifying the finite subgroups of $\textrm{PSL}_2(\bar{\F}_p)$. In turn, one can begin classifying the finite subgroups of $\textrm{PSL}_2(F)$ by classifying the finite subgroups of $\textrm{SL}_2(F)$ and then considering what happens after the center is quotiented out; which given $Z(\textrm{SL}_2(F)) = \langle -I\rangle$ should the $\textrm{char}(F) \ne 2$ then this will at most shrink the size of the subgroup by two. 
+
+For the case, where $\textrm{char}(F) = 2$, given $1 = -1$ in this field it then follows that $I = -I \iff I + I =  2 \cdot I = 0 \cdot I = 0$
