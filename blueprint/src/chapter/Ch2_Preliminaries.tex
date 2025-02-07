@@ -6,26 +6,26 @@ This section briefly outlines some standard group theory results which perhaps m
 
 The following theorems are all well-known fundamental results in group theory. If the reader is interested in the proofs, they can be found in Hungerford \cite{hungerford}.
 
-\begin{lagrange}\label{lagrange} \textit{Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$.} \\
-\end{lagrange} 
+\begin{theorem}\label{lagrange} \textit{Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$.} \\
+\end{theorem} 
 
-\begin{1stiso}\label{1stiso} \textit{Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/Ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/Ker \; \phi \cong G'.$$} \\
-\end{1stiso} 
-
-\vspace{-10mm}
-
-\begin{2ndiso}\label{2ndiso} \textit{Let $H$ and $N$ be subgroups of $G$, and $N \vartriangleleft G$. Then, $$H/H \cap N \cong HN/N.$$} \\
-\end{2ndiso} 
+\begin{theorem}\label{1stiso} \textit{Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/Ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/Ker \; \phi \cong G'.$$} \\
+\end{theorem} 
 
 \vspace{-10mm}
 
-\begin{3rdiso}\label{3rdiso} \textit{Let $H$ and $K$ be normal subgroups of $G$ and $K \subset H$. Then $H/K$ is a normal subgroup of $G/K$ and, $$(G/K)/(H/K) \cong G/H.$$} \\
-\end{3rdiso} 
+\begin{theorem}\label{2ndiso} \textit{Let $H$ and $N$ be subgroups of $G$, and $N \vartriangleleft G$. Then, $$H/H \cap N \cong HN/N.$$} \\
+\end{theorem} 
 
 \vspace{-10mm}
 
-\begin{cauchy}\label{cauchy} \textit{If the order of a finite group $G$ is divisible by a prime number $p$, then $G$ has an element of order $p$.} \\
-\end{cauchy} 
+\begin{theorem}\label{3rdiso} \textit{Let $H$ and $K$ be normal subgroups of $G$ and $K \subset H$. Then $H/K$ is a normal subgroup of $G/K$ and, $$(G/K)/(H/K) \cong G/H.$$} \\
+\end{theorem} 
+
+\vspace{-10mm}
+
+\begin{theorem}\label{cauchy} \textit{If the order of a finite group $G$ is divisible by a prime number $p$, then $G$ has an element of order $p$.} \\
+\end{theorem} 
 
 \section{Sylow Theory}
 
@@ -54,15 +54,15 @@ In each of the following results, $G$ is a finite group of order $p^r m$, where 
 
 \section{Group Action}
 
-\begin{definition-non} Let $G$ be a group and $X$ be a set. Then $G$ is said to \textbf{act} on $X$ if there is a map $\phi : G \times X \rightarrow X$, with $\phi(a,x)$ denoted by $a^*x$, such that for $a,b \in G$ and $x \in X$, the following 2 properties hold:
+\begin{definition} Let $G$ be a group and $X$ be a set. Then $G$ is said to \textbf{act} on $X$ if there is a map $\phi : G \times X \rightarrow X$, with $\phi(a,x)$ denoted by $a^*x$, such that for $a,b \in G$ and $x \in X$, the following 2 properties hold:
 \begin{align*} &(i) \quad a\,^*(b\,^*x) = (ab)^*x,
 \\  &(ii) \quad I_G\,^*x = x.
 \end{align*}
 
 The map $\phi$ is called the \textbf{group action} of $G$ on $X$.
-\end{definition-non}
+\end{definition}
 
-\begin{definition-non} Let $G$ be a group acting on a set $X$ and let $x \in X$. Then the set,
+\begin{definition} Let $G$ be a group acting on a set $X$ and let $x \in X$. Then the set,
 \begin{align*} Stab(x) = \{ g \in G  :  gx = x \},
 \end{align*}
 is called the \textbf{stabiliser} of $x$ in $G$. Each $g$ in $S_G(x)$ is said to \textbf{fix} $x$, whilst $x$ is said to be a \textbf{fixed point} of each $g$ in $S_G(x)$. Also, the set,
