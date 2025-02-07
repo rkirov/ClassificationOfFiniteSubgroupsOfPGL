@@ -261,7 +261,7 @@ lemma mem_Z_iff {x : SL(2,R)}: x ∈ Z R ↔ x = 1 ∨ x = -1 := by
 -- lemma foo : ↥(Z F) = {1, -1} := by sorry
 
 instance : Finite (Z F) := by
-  simp [← @SetLike.coe_sort_coe]
+  simp [← SetLike.coe_sort_coe]
   exact Finite.Set.finite_insert 1 {-1}
 
 lemma center_SL2_F_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by

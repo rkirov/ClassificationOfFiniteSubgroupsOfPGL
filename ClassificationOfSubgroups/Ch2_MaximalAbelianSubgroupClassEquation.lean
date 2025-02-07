@@ -8,6 +8,7 @@ import Mathlib.GroupTheory.Sylow
 set_option linter.style.longLine true
 set_option autoImplicit false
 set_option maxHeartbeats 0
+set_option synthInstance.maxHeartbeats 0
 
 -- /home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfSubgroups/ClassificationOfSubgroups/Ch1_PropertiesOfSpecialLinearGroup.lean
 -- namespace test
@@ -505,7 +506,7 @@ theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {p : ℕ} (hp : Nat.Prime p
       exact Nat.Prime.odd_of_ne_two hp h
     · simp at h
       let C' : CharP F 2 := by exact CharP.congr p h
-      have two_eq_zero : (2 : F) = 0 := by refine CharTwo.two_eq_zero
+      have two_eq_zero : (2 : F) = 0 := CharTwo.two_eq_zero
       rw [card_Z_eq_one_of_two_eq_zero F two_eq_zero]
       exact Nat.gcd_one_left p
 
@@ -802,6 +803,123 @@ theorem Nat.Prime.three_le_of_ne_two {p : ℕ} (hp : Nat.Prime p) (p_ne_two : p 
   have one_lt_p := hp.one_lt
   linarith
 
+lemma card_center_lt_card_center_Sylow {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] (G : Subgroup SL(2,F)) [Finite G] (S : Sylow p G)
+  (p_le_card_center_S : p ≤ Nat.card ↥(center S)) :
+  ∃ x ∈ (Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)), x ∉ center SL(2,F) := by
+  let fintype_G : Fintype G := by exact Fintype.ofFinite ↥G
+  let fintype_center_S : Fintype (center S) := by exact Fintype.ofFinite ↥(center S)
+  let fintype_set_center_S :
+    Fintype (center SL(2, F)) := by exact Fintype.ofFinite ↥(center SL(2, F))
+  let fintype_map :
+        Fintype
+          ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
+        rw [Subgroup.coe_map, MonoidHom.coe_comp]
+        exact Fintype.ofFinite ↑(⇑G.subtype ∘ ⇑(S.toSubgroup).subtype '' ↑(center S))
+  let fintype_image :
+        Fintype
+          ↑((⇑(G.subtype.comp S.toSubgroup.subtype) '' (center S)) : Set SL(2,F)) := fintype_map
+  have : Fintype.card
+        ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) =
+          Fintype.card (center S) := by
+        apply Set.card_image_of_injective
+        rw [MonoidHom.coe_comp]
+        refine Injective.comp ?h1 ?h2
+        · exact subtype_injective G
+        · exact subtype_injective S.toSubgroup
+  let inst₁ : CommRing F := Field.toCommRing
+  let inst₂ : NoZeroDivisors F := IsLeftCancelMulZero.to_noZeroDivisors F
+  have card_center_lt_card_center_S :
+    Fintype.card ((center SL(2,F)) : Set SL(2,F)) <
+      Fintype.card
+        ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
+    by_cases hp : p = 2
+    · calc
+      Fintype.card (center SL(2, F)) = Nat.card (center SL(2,F)) := Fintype.card_eq_nat_card
+      _ = 1 := by
+        rw [center_SL2_F_eq_Z, card_Z_eq_one_of_two_eq_zero];
+        simp only [hp] at hC
+        exact CharTwo.two_eq_zero
+      _ < 2 := by norm_num
+      _ ≤ Nat.card ↥(center S) := hp ▸ p_le_card_center_S
+      _ = Fintype.card (center S) := Nat.card_eq_fintype_card
+      _ = Fintype.card ↑↑(Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) := by
+        symm
+        apply Set.card_image_of_injective
+        rw [MonoidHom.coe_comp]
+        apply Injective.comp
+        exact subtype_injective G
+        exact subtype_injective _
+    · let two_ne_zero : NeZero (2 : F) := by sorry
+      calc
+      Fintype.card (center SL(2, F)) = Nat.card (center SL(2,F)) := Fintype.card_eq_nat_card
+      _ = 2 := by rw [center_SL2_F_eq_Z, card_Z_eq_two_of_two_ne_zero]
+      _ < 3 := by norm_num
+      _ ≤ p := Nat.Prime.three_le_of_ne_two hp'.out hp
+      _ ≤ Nat.card ↥(center S) := p_le_card_center_S
+      _ = Fintype.card (center S) := Nat.card_eq_fintype_card
+      _ = Fintype.card ↑↑(Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) := by
+        symm
+        apply Set.card_image_of_injective
+        rw [MonoidHom.coe_comp]
+        apply Injective.comp
+        exact subtype_injective G
+        exact subtype_injective _
+  have coe₁ :
+    Set.ncard ((center SL(2,F)) : Set SL(2,F)) = Fintype.card (center SL(2, F)) := by
+      rw [Fintype.card_eq_nat_card]; rfl
+  have coe₂ :
+    Set.ncard ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F))
+      = Fintype.card
+          ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
+            rw [Fintype.card_eq_nat_card]; rfl
+  have ncard_center_lt_ncard_center_S : Set.ncard ((center SL(2,F)) : Set SL(2,F)) <
+    Set.ncard ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
+        rw [coe₁, coe₂]
+        exact card_center_lt_card_center_S
+  exact Set.exists_mem_not_mem_of_ncard_lt_ncard ncard_center_lt_ncard_center_S
+
+theorem mul_center_eq_left  {G: Type*} [Group G] (S Q : Subgroup SL(2,F))(Q_le_S : Q ≤ S)
+  (h' : (1 : SL(2,F)) = -1 ∨ -1 ∉ S) (hSQ : S.carrier * center SL(2,F)  = Q.carrier * center SL(2,F)) : S = Q := by
+  ext x
+  constructor
+  · intro x_in_S
+    have key : x * 1 ∈ S.carrier * center SL(2,F) := by
+      use x, x_in_S, 1, Subgroup.one_mem _
+    simp [hSQ] at key
+    obtain ⟨q, q_in_Q, z, z_in_center, hx⟩ := key
+    simp [center_SL2_F_eq_Z] at z_in_center
+    rcases z_in_center with (rfl | rfl)
+    · simp at hx
+      simp [← hx]
+      exact q_in_Q
+    · rcases h' with (one_eq_neg_one | h')
+      · rw [one_eq_neg_one] at hx
+        simp at hx
+        rw [← hx]
+        exact q_in_Q
+      -- order of every element must divide p^n and 2 does not divide p^n
+      · have neg_one_in_S : q⁻¹ * x ∈ S := by
+          refine Subgroup.mul_mem S ?q_inv_in_S x_in_S
+          apply Subgroup.inv_mem
+          apply Q_le_S q_in_Q
+        have : -1 = q⁻¹ * x := by rw [← hx]; group
+        rw [← this] at neg_one_in_S
+        contradiction
+  · intro x_in_Q
+    exact Q_le_S x_in_Q
+
+lemma ne_zero_two_of_char_ne_two {p : ℕ} [hp' : Fact (Nat.Prime p)]
+  [hC : CharP F p] (p_ne_two : p ≠ 2) : NeZero (2 : F) := by
+  refine { out := ?_ }
+  intro two_eq_zero
+  have : (1 : F) ≠ 0 := by exact one_ne_zero
+  let char_eq_two : CharP F 2 := by
+    exact CharTwo.of_one_ne_zero_of_two_eq_zero this two_eq_zero
+  have two_dvd_p : (p : F) = 0 := by exact CharP.cast_eq_zero F p
+  rw [char_eq_two.cast_eq_zero_iff'] at two_dvd_p
+  have two_eq_p : p = 2 := ((Nat.prime_dvd_prime_iff_eq Nat.prime_two hp'.out).mp two_dvd_p).symm
+  contradiction
+
 theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
   [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
   [hG₀ : Finite G] (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
@@ -853,7 +971,8 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
     -- if T F ⊓ conj c⁻¹ • G = ⊥ then there is an isomorphism from A to Z
     -- the different sizes of the cardinality provide a contradiction
     rw [Q_eq_bot, bot_sup_eq, ← center_SL2_F_eq_Z] at φ
-    have card_A_le_two : Nat.card A ≤ Nat.card (center SL(2,F)) := le_of_eq (Nat.card_eq_of_bijective φ <| MulEquiv.bijective φ)
+    have card_A_le_two : Nat.card A ≤ Nat.card (center SL(2,F)) :=
+      le_of_eq (Nat.card_eq_of_bijective φ <| MulEquiv.bijective φ)
     let fin_center : Finite (center SL(2,F)) := by
       rw [center_SL2_F_eq_Z]
       exact instFiniteSubtypeSpecialLinearGroupFinOfNatNatMemSubgroupZ F
@@ -868,7 +987,8 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
   have Q_le_G : Q ≤ G := by
     let Q₀ := ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
     have h₁: Subgroup.map φ.symm.toMonoidHom Q₀ ≤ ⊤ := le_top
-    have h₂ : Subgroup.map A.subtype (Subgroup.map φ.symm.toMonoidHom Q₀) ≤ Subgroup.map A.subtype ⊤ :=
+    have h₂ :
+      Subgroup.map A.subtype (Subgroup.map φ.symm.toMonoidHom Q₀) ≤ Subgroup.map A.subtype ⊤ :=
       map_subtype_le_map_subtype.mpr h₁
     have eq_A : Subgroup.map A.subtype ⊤ = A := by ext; simp
     rw [eq_A, Subgroup.map_map] at h₂
@@ -883,6 +1003,24 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
       exact Set.Finite.of_surjOn
           (⇑((MulDistribMulAction.toMonoidEnd (MulAut SL(2, F)) SL(2, F)) (conj c⁻¹)))
           (fun ⦃a⦄ a ↦ a) hG₀
+  have orderOf_eq_p : ∀ (h : ↥Q), h ≠ 1 → orderOf h = p := by
+    rintro ⟨q, t₀, t₀_in_subgroupOf, hf⟩ q_ne_one
+    obtain ⟨⟨τ₀, hτ₀⟩, t₀_in_conj_G⟩ := t₀_in_subgroupOf
+    have : ((1 : (T F ⊓ conj c⁻¹ • G ⊔ Z F :)) : SL(2,F)) = 1 := rfl
+    -- τ ≠ 0, as otherwise f q = 1 → q = 1; a contradiction
+    have τ₀_ne_zero : τ₀ ≠ 0 := by
+      intro τ_eq_zero
+      simp [τ_eq_zero] at hτ₀
+      rw [← this, ← Subtype.ext_iff] at hτ₀
+      simp [← hτ₀] at hf
+      simp [← hf] at q_ne_one
+    have orderOf_t₀_eq_p := @order_t_eq_char F _ p _ _ τ₀ τ₀_ne_zero
+    simp [hτ₀] at orderOf_t₀_eq_p
+    -- By injectivity of f the orders must be the same
+    have orderOf_q_eq_p : orderOf q = p :=
+      hf.symm ▸ orderOf_t₀_eq_p ▸ orderOf_injective f f_inj t₀
+    rw [← orderOf_q_eq_p]
+    exact orderOf_mk q (Exists.intro t₀ ⟨⟨Exists.intro τ₀ hτ₀, t₀_in_conj_G⟩, hf⟩)
   have IsElementaryAbelian_Q : IsElementaryAbelian p Q := by
     refine ⟨?IsCommutative_Q, ?orderOf_eq_p⟩
     case IsCommutative_Q =>
@@ -891,35 +1029,10 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
       let CommInst₂ : IsCommutative ((T F ⊓ conj c⁻¹ • G).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F)) :=
         subgroupOf_isCommutative _ _
       exact Subgroup.map_isCommutative _ _
-      -- Every element is order `p`
-    case orderOf_eq_p =>
-      rintro ⟨q, t₀, t₀_in_subgroupOf, hf⟩ q_ne_one
-      obtain ⟨⟨τ₀, hτ₀⟩, t₀_in_conj_G⟩ := t₀_in_subgroupOf
-      have : ((1 : (T F ⊓ conj c⁻¹ • G ⊔ Z F :)) : SL(2,F)) = 1 := rfl
-      -- τ ≠ 0, as otherwise f q = 1 → q = 1; a contradiction
-      have τ₀_ne_zero : τ₀ ≠ 0 := by
-        intro τ_eq_zero
-        simp [τ_eq_zero] at hτ₀
-        rw [← this, ← Subtype.ext_iff] at hτ₀
-        simp [← hτ₀] at hf
-        simp [← hf] at q_ne_one
-      have orderOf_t₀_eq_p := @order_t_eq_char F _ p _ _ τ₀ τ₀_ne_zero
-      simp [hτ₀] at orderOf_t₀_eq_p
-      -- by injectivity of f the orders must be the same
-      have orderOf_q_eq_p : orderOf q = p :=
-        hf.symm ▸ orderOf_t₀_eq_p ▸ orderOf_injective f f_inj t₀
-      rw [← orderOf_q_eq_p]
-      exact orderOf_mk q (Exists.intro t₀ ⟨⟨Exists.intro τ₀ hτ₀, t₀_in_conj_G⟩, hf⟩)
-  -- Show Q satisfies the desired properties
-  use Q
-  refine ⟨?Q_is_nontrivial, ?Q_is_finite, ?Q_le_G, ?A_eq_Q_join_Z, ?IsElementaryAbelian, ?IsPSylow⟩
-  case Q_is_nontrivial => exact nontrivial_Q
-  -- Q is finite as it is the image of a subgroup of a finite group T F ⊓ conj c⁻¹ • G ⊔ Z F
-  case Q_is_finite => exact Q_fin
-  -- Q ≤ A ≤ G, have to extract data before it is sent through the inclusion
-  case Q_le_G => exact Q_le_G
-  -- pushing Q ⊔ Z through f⁻¹ will yield (T F ⊓ conj c⁻¹ • G ⊔ Z which is isomorphic to A
-  case A_eq_Q_join_Z =>
+      -- Every element is order p
+    case orderOf_eq_p => exact orderOf_eq_p
+  -- We show A is the join of Q and Z
+  have A_eq_Q_join_Z : A = Q ⊔ Z F := by
     have ker_f_eq_bot : f.ker = ⊥ := by
       exact (MonoidHom.ker_eq_bot_iff f).mpr f_inj
     have Z_le_A : Z F ≤ A := (le_of_lt ((@center_SL2_F_eq_Z F _ _).symm ▸ center_lt_A))
@@ -928,11 +1041,13 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
       use (φ.toMonoidHom ⟨z, Z_le_A hz⟩)
       simp [f]
     have map_eq_map_iff := ker_f_eq_bot ▸
-      @map_eq_map_iff (T F ⊓ conj c⁻¹ • G ⊔ Z F:) _ SL(2,F) _ f (Subgroup.comap f (Z F)) ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
+      @map_eq_map_iff (T F ⊓ conj c⁻¹ • G ⊔ Z F:) _ SL(2,F)
+        _ f (Subgroup.comap f (Z F)) ((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))
     -- Manually check that every element in Z is preserved under f
     let inst : Nonempty ↥(T F ⊓ (conj c)⁻¹ • G ⊔ Z F) := One.instNonempty
     have key :
-      Subgroup.map φ.symm.toMonoidHom (((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))) = (Z F).subgroupOf A := by
+      Subgroup.map φ.symm.toMonoidHom (((Z F).subgroupOf (T F ⊓ conj c⁻¹ • G ⊔ Z F))) =
+        (Z F).subgroupOf A := by
       ext z
       -- easier than unpacking all layers of conjugation and isomorphisms
       constructor
@@ -986,6 +1101,16 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
       case h2 => exact SemilatticeSup.le_sup_right (T F ⊓ conj c⁻¹ • G) (Z F)
       intro q _hq
       simp [f]
+  -- Show Q satisfies the desired properties
+  use Q
+  refine ⟨?Q_is_nontrivial, ?Q_is_finite, ?Q_le_G, ?A_eq_Q_join_Z, ?IsElementaryAbelian, ?IsPSylow⟩
+  case Q_is_nontrivial => exact nontrivial_Q
+  -- Q is finite as it is the image of a subgroup of a finite group T F ⊓ conj c⁻¹ • G ⊔ Z F
+  case Q_is_finite => exact Q_fin
+  -- Q ≤ A ≤ G, have to extract data before it is sent through the inclusion
+  case Q_le_G => exact Q_le_G
+  -- pushing Q ⊔ Z through f⁻¹ will yield (T F ⊓ conj c⁻¹ • G ⊔ Z which is isomorphic to A
+  case A_eq_Q_join_Z => exact A_eq_Q_join_Z
   -- Q is commutative because it is the image of a subgroup of a commutative group
   case IsElementaryAbelian => exact IsElementaryAbelian_Q
   -- Is p-Sylow
@@ -1006,7 +1131,8 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
       rw [← nontrivial_iff_ne_bot]
       exact nontrivial_Q_subgroupOf_G
     have IsPGroup_Q_subgroupOf_G:=
-      @IsPGroup_of_IsElementaryAbelian G _ p hp'.out (Q.subgroupOf G) _ IsElementaryAbelian_Q_subgroupOf_G bot_lt_Q_subgroupOf_G
+      @IsPGroup_of_IsElementaryAbelian
+        G _ p hp'.out (Q.subgroupOf G) _ IsElementaryAbelian_Q_subgroupOf_G bot_lt_Q_subgroupOf_G
     have exists_Sylow := @IsPGroup.exists_le_sylow p G _ (Q.subgroupOf G) IsPGroup_Q_subgroupOf_G
     obtain ⟨S, hS⟩ := exists_Sylow
     use S
@@ -1014,7 +1140,7 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
     case Q_le_S =>
       exact hS
     case S_le_Q =>
-      -- as Q is nontrivial, S must be nontrivial as there is an injection from Q to S
+      -- As Q is nontrivial, S must be nontrivial as there is an injection from Q to S
       have nontrivial_S : Nontrivial S := Injective.nontrivial (inclusion_injective hS)
       let nonempty_center_S : Nonempty (center S) := One.instNonempty
       have zero_lt_card_center_S : 0 < Nat.card (center S) := Nat.card_pos
@@ -1022,96 +1148,150 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
         @IsPGroup.p_dvd_card_center S p hp'.out _ _ nontrivial_S S.isPGroup'
       have p_le_card_center_S : p ≤ Nat.card (center S) := by
         apply Nat.le_of_dvd zero_lt_card_center_S p_dvd_card_center_S
-      -- center of S equals the centralizer of S joined with S
-      let fintype_G : Fintype G := by exact Fintype.ofFinite ↥G
-      let fintype_center_S : Fintype (center S) := by exact Fintype.ofFinite ↥(center S)
-      let fintype_set_center_S : Fintype (center SL(2, F)) := by exact Fintype.ofFinite ↥(center SL(2, F))
-      let fintype_map : Fintype ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
-        rw [Subgroup.coe_map, MonoidHom.coe_comp]
-        exact Fintype.ofFinite ↑(⇑G.subtype ∘ ⇑(S.toSubgroup).subtype '' ↑(center S))
-      let fintype_image : Fintype ↑((⇑(G.subtype.comp S.toSubgroup.subtype) '' (center S)) : Set SL(2,F)) := by exact fintype_map
-      have : Fintype.card ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) = Fintype.card (center S) := by
-        apply Set.card_image_of_injective
-        rw [@MonoidHom.coe_comp]
-        refine Injective.comp ?h1 ?h2
-        · exact subtype_injective G
-        · exact subtype_injective S.toSubgroup
-      let inst₁ : CommRing F := by exact Field.toCommRing
-      let inst₂ : NoZeroDivisors F := by exact IsLeftCancelMulZero.to_noZeroDivisors F
-      have card_center_lt_card_center_S : Fintype.card ((center SL(2,F)) : Set SL(2,F)) < Fintype.card ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
+      -- Given the cardinality of `center S` is greater than cardinality of `center SL(2,F)`,
+      -- there must exist an element of center S that does not lie in SL(2,F)
+      obtain ⟨y, y_in_center_S, y_not_in_center⟩ :=
+        @card_center_lt_card_center_Sylow F _ p _ _ G _ S p_le_card_center_S
+      let inst : CommGroup (center S) := by exact IsCommutative.commGroup (center S)
+      have y_commutes_in_S : ∀ w : S, w * y = y * w := by
+        intro w
+        simp only [mem_map] at y_in_center_S
+        obtain ⟨y', y'_in_center, rfl⟩ := y_in_center_S
+        have w_eq : (G.subtype.comp S.toSubgroup.subtype) w = ((w : G) : SL(2,F)) := rfl
+        -- Pull back w through the inclusion
+        rw [← w_eq, ← MonoidHom.map_mul, ← MonoidHom.map_mul]
+        congr 1
+        rw [mem_center_iff] at y'_in_center
+        exact y'_in_center _
+      have S_join_Z_le_centra_meet_G : ((Subgroup.map G.subtype S.toSubgroup) ⊔ Z F :) ≤ centralizer {y} ⊓ G := by
+        intro w hw
+        rw [← center_SL2_F_eq_Z, ← SetLike.mem_coe,  mul_normal (N := center SL(2,F))] at hw
+        obtain ⟨s', hs, z, z_in_center, rfl⟩ := hw
+        simp at hs
+        obtain ⟨s'_in_G, s''_in_S⟩ := hs
+        simp
+        split_ands
+        · simp [mem_centralizer_iff]
+          -- Coerce the following equality
+          have y_commutes_with_s :
+            y * (⟨(⟨s', s'_in_G⟩ : G), s''_in_S⟩ : S) =
+              (⟨(⟨s', s'_in_G⟩ : G), s''_in_S⟩ : S)  * y := by
+            symm; exact y_commutes_in_S _
+          simp at y_commutes_with_s
+          simp [mem_center_iff] at z_in_center
+          rw [mul_assoc, ← z_in_center y, ← mul_assoc, y_commutes_with_s]
+          group
+        · exact (Subgroup.mul_mem_cancel_right G (center_le_G z_in_center)).mpr s'_in_G
+      have Q_le_range_inclusion_G : Q ≤ G.subtype.range := by simp only [range_subtype, Q_le_G]
+      have Q_le_map_S : Q ≤ (Subgroup.map G.subtype S.toSubgroup) := by
+        rw [← comap_le_comap_of_le_range Q_le_range_inclusion_G]
+        apply le_trans hS
+        exact le_comap_map G.subtype ↑S
+      -- A = Q ⊔ Z ≤ S ⊔ Z = centralizer {y} ⊓ G
+      -- so by the maximality of A and because S ⊔ Z = centralizer {y} ⊓ G is commutative
+      -- Q ⊔ Z = S ⊔ Z and Q ≤ S which implies Q = S
+      have Q_join_Z_le_S_join_Z : Q ⊔ Z F ≤ (Subgroup.map G.subtype S.toSubgroup) ⊔ Z F :=
+        sup_le_sup_right Q_le_map_S (Z F)
+      have y_in_G : y ∈ G := by
+        simp only [mem_map] at y_in_center_S
+        obtain ⟨w, w_in_center_S, hw⟩ := y_in_center_S
+        simp at hw
+        rw [← hw]
+        simp only [← SetLike.mem_coe, Subtype.coe_prop]
+      have y_in_G_sdif_center_SL : y ∈ G.carrier \ ↑(center SL(2, F)) := by
+        split_ands
+        · exact y_in_G
+        · exact y_not_in_center
+      have centra_y_meet_G_in_MaxAbSub :=
+        @centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral
+          F _ G _ _ y y_in_G_sdif_center_SL
+      have A_le_centra_meet_G : A ≤ centralizer {y} ⊓ G := by
+        apply le_trans <| le_of_eq A_eq_Q_join_Z
+        apply le_trans Q_join_Z_le_S_join_Z
+        exact S_join_Z_le_centra_meet_G
+      have A_le_range : A ≤ G.subtype.range := by simp; exact hA.right
+      have A_subgroupOf_G_le_centra_meet_G_subgroupOf_G :
+        A.subgroupOf G ≤ (centralizer {y} ⊓ G).subgroupOf G := by
+        simp only [subgroupOf, comap_le_comap_of_le_range A_le_range]
+        exact A_le_centra_meet_G
+      have IsCommutative_centra_y_meet_G : IsCommutative ((centralizer {y} ⊓ G)) := by
+        apply inf_IsCommutative_of_IsCommutative_left
+        apply IsCommutative_centralizer_of_not_mem_center _ _ y_not_in_center
+      -- A subgroup of commutative group is commutative
+      have IsCommutative_centra_y_meet_G_subgroupOf_G :
+        IsCommutative ((centralizer {y} ⊓ G).subgroupOf G) := by
+        exact subgroupOf_isCommutative G (centralizer {y} ⊓ G)
+      have centra_meet_G_le_range : centralizer {y} ⊓ G ≤ G.subtype.range := by simp
+      -- By the maximality of A we have that in fact A = centralizer {y} ⊓ G
+      have A_eq_centra_y_meet_G : A = centralizer {y} ⊓ G := by
+        apply le_antisymm
+        · exact A_le_centra_meet_G
+        · have centra_meet_G_le_A := @hA.left.right
+            ((centralizer {y} ⊓ G).subgroupOf G)
+              IsCommutative_centra_y_meet_G_subgroupOf_G
+                A_subgroupOf_G_le_centra_meet_G_subgroupOf_G
+          simp only [← comap_le_comap_of_le_range centra_meet_G_le_range]
+          exact centra_meet_G_le_A
+      -- From this equality we have that Q ⊔ Z = S ⊔ Z
+      have Q_join_Z_eq_S_join_Z : Q ⊔ Z F = (Subgroup.map G.subtype S.toSubgroup) ⊔ Z F := by
+        apply le_antisymm
+        · exact Q_join_Z_le_S_join_Z
+        · rw [← A_eq_Q_join_Z]
+          apply le_trans
+          exact S_join_Z_le_centra_meet_G
+          exact le_of_eq A_eq_centra_y_meet_G.symm
+      simp only [← center_SL2_F_eq_Z,
+        ← SetLike.coe_set_eq, mul_normal (N := center SL(2,F))] at Q_join_Z_eq_S_join_Z
+      -- This statement is key to show that from S ⊔ Z = Q ⊔ Z and S ≤ Q we have that S = Q
+      have h' : (1 : SL(2,F)) = (-1 : SL(2,F)) ∨ -1 ∉ (Subgroup.map G.subtype S.toSubgroup) := by
         by_cases hp : p = 2
-        · calc
-          Fintype.card (center SL(2, F)) = 1 := by sorry--rw [center_SL2_F_eq_Z]
-          _ < Fintype.card ↑↑(Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) := by sorry
-        · sorry
-      have ncard_center_lt_ncard_center_S : Set.ncard ((center SL(2,F)) : Set SL(2,F)) < Set.ncard ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
-        sorry
-      obtain ⟨s, s_in_center_S, s_not_in_center⟩ := Set.exists_mem_not_mem_of_ncard_lt_ncard ncard_center_lt_ncard_center_S
-      -- above is attempt to prove by steps
-      -- have : ∃ s ∈ (center S), (s : SL(2,F)) ∉ center SL(2,F) := by
-      --   rw [center_SL2_F_eq_Z]
-      --   apply Set.exists_mem_not_mem_of_ncard_lt_ncard
-      --   · by_cases hp : p = 2
-      --     · have two_eq_zero : (2 : F) = 0 := by
-      --         rw [hp] at hC
-      --         exact CharTwo.two_eq_zero
-      --       simp only [hp] at p_le_card_center_S
-      --       calc
-      --       (Set.ncard fun (e : S) ↦ ((Z F): Set SL(2,F)) ↑↑e) = 1 := by
-      --         simp only [set_Z_eq, ← SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero F two_eq_zero,
-      --           Set.mem_singleton_iff, Set.insert_eq_of_mem, Set.ncard_eq_one]
-      --         use 1
-      --         ext y; simp
-      --         constructor
-      --         · intro h
-      --           rw [Set.mem_def, ← Set.mem_def (s := {1})] at h
-      --           simp at h
-      --           rw [h]
-      --         · rintro rfl
-      --           simp [Set.mem_def]
-      --           rfl
-      --       _ < 2 := by norm_num
-      --       _ ≤ Nat.card (center S) := p_le_card_center_S
-      --       _ = ((center S) : Set S).ncard := by
-      --         rw [← Set.Nat.card_coe_set_eq, SetLike.coe_sort_coe]
-      --     · have three_le_p : 3 ≤ p := Nat.Prime.three_le_of_ne_two hp'.out hp
-      --       let two_ne_zero : NeZero (2 : F) := by
-      --           rw [← ne_eq] at hp
-      --           refine { out := ?out }
-      --           intro two_eq_zero
-      --           sorry
-      --       calc
-      --       (Set.ncard fun (e : S) ↦ ((Z F): Set SL(2,F)) ↑↑e)  = Nat.card (Z F) := by
-      --         rw [← Set.Nat.card_coe_set_eq]
-      --         sorry
-      --       _ = 2 := by apply card_Z_eq_two_of_two_ne_zero F
-      --       _ < 3 := by norm_num
-      --       _ ≤ p := by apply three_le_p
-      --       _ ≤ ((center S) : Set S).ncard := by
-      --         rw [← Set.Nat.card_coe_set_eq, SetLike.coe_sort_coe]
-      --         exact p_le_card_center_S
+        -- In char F = 2, -1 = 1
+        · left
+          apply SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero
+          simp only [hp] at hC
+          apply CharTwo.two_eq_zero
+        -- Order of every element is p but -1 has order 2
+        · right
+          rw [← ne_eq] at hp
+          have ne_zero_two : NeZero (2 : F) := @ne_zero_two_of_char_ne_two F _ p hp' hC hp
+          intro neg_one_in_S
+          have order_neg_one_eq_two : orderOf (-1 : SL(2,F)) = 2 := orderOf_neg_one_eq_two _
+          have two_dvd_pow_p :=
+            @Subgroup.orderOf_dvd_natCard
+              SL(2,F) _ (Subgroup.map G.subtype S.toSubgroup) (-1) neg_one_in_S
+          have card_image_eq : Nat.card (Subgroup.map G.subtype S) = Nat.card S.toSubgroup := by
+            apply card_map_of_injective <| subtype_injective G
+          rw [order_neg_one_eq_two, card_image_eq, Sylow.card_eq_multiplicity] at two_dvd_pow_p
+          have two_dvd_p : 2 ∣ p := Nat.Prime.dvd_of_dvd_pow Nat.prime_two two_dvd_pow_p
+          have two_eq_p : p = 2 :=
+            ((Nat.prime_dvd_prime_iff_eq Nat.prime_two hp'.out).mp two_dvd_p).symm
+          contradiction
+      apply le_of_eq
+      have := @mul_center_eq_left
+        F _ G _ (Subgroup.map G.subtype S) Q Q_le_map_S h' Q_join_Z_eq_S_join_Z.symm
+      have ker_G_subtype_le_S : G.subtype.ker ≤ S :=
+        calc
+        G.subtype.ker = ⊥ := ker_subtype G
+        _ ≤ S := by apply bot_le
+      simp only [subgroupOf, ← this]
+      rw [comap_map_eq_self ker_G_subtype_le_S]
 
-      --   · let fin_Z : Finite (Z F) := by exact
-      --     instFiniteSubtypeSpecialLinearGroupFinOfNatNatMemSubgroupZ F
-      --     sorry
-      sorry
-
-
-#check Nat.Prime.three_le_of_ne_two
-#check Set.Nat.card_coe_set_eq
--- #check Nat.card_coe_set_eq
--- (Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S))
-#check center_le_centralizer
-#check lt_of_le_of_ne
-#check center_le_centralizer
 
 theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_center_ne
-  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] [hG₀ : Finite G]
-  (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
+  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
+  [hG₀ : Finite G] (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
   (center_le_G : center SL(2,F) ≤ G) (center_ne_G : G ≠ center SL(2,F)) :
   (IsCyclic A ∧ Nat.Coprime (Nat.card A) p)
   ∨
-  (∃ Q₀ : Subgroup SL(2,F), Finite Q₀ ∧ Q₀ ≤ G ∧ A = Q₀ ⊔ Z F ∧ IsElementaryAbelian p Q₀) := by
+  (
+  ∃ Q : Subgroup SL(2,F),
+  Nontrivial Q ∧
+  Finite Q ∧
+  Q ≤ G ∧
+  A = Q ⊔ Z F ∧
+  IsElementaryAbelian p Q ∧
+  ∃ S : Sylow p G, Q.subgroupOf G = S
+  ) := by
   have center_ne_A : center SL(2,F) ≠ A :=
     Ne.symm (ne_of_mem_of_not_mem hA (center_not_mem F G center_ne_G.symm))
   have center_lt_A : center SL(2,F) < A :=
@@ -1127,7 +1307,8 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
     (⟨δ, x_IsConj_d⟩ | x_IsConj_t_or_neg_t)
   -- x is conjugate to d δ
   · left
-    exact @IsCyclic_and_card_coprime_CharP_of_IsConj_d F _ G _ _ p _ _ _ A x x_not_in_center A_eq_centra δ x_IsConj_d
+    exact @IsCyclic_and_card_coprime_CharP_of_IsConj_d
+      F _ G _ _ p _ _ _ A x x_not_in_center A_eq_centra δ x_IsConj_d
   -- x is conjugate to t τ
   · right
     have x_IsConj_t_or_neg_t : ∃ τ, IsConj (t τ) x ∨ IsConj (-t τ) x := by
@@ -1135,8 +1316,9 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
       exact Or.inl hτ
       exact Or.inr hτ
     obtain ⟨τ, x_IsConj_t_or_neg_t⟩ := x_IsConj_t_or_neg_t
-    sorry
-    -- exact @IsCyclic_and_card_coprime_CharP_of_IsConj_t_or_neg_t F _ G _ _ p _ _ _ A hA center_le_G center_ne_G center_lt_A x x_in_G x_not_in_center A_eq_centra τ x_IsConj_t_or_neg_t
+    exact
+      A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t F G A hA center_le_G center_lt_A x x_in_G
+        x_not_in_center A_eq_centra τ x_IsConj_t_or_neg_t
 
 
 /- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
