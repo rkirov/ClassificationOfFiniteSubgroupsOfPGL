@@ -6,9 +6,19 @@
 
 \documentclass{report}
 
-\usepackage{amssymb, amsthm, amsmath}
+\usepackage{amssymb, amsthm, amsmath, amsfonts}
 \usepackage{hyperref}
 \usepackage[showmore, dep_graph]{blueprint}
+
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.svg,.png,.jpg}
+\usepackage[capitalize]{cleveref}
+% \usepackage[showmore,dep_graph, project=../../, dep_by=chapter]{blueprint}
+%%\usepackage[dep_graph, coverage, project=../project, dep_by=section]{blueprint}
+
+\usepackage{tikz-cd}
+\usepackage{tikz}
+\usepackage{minted}
 
 
 \input{preamble/common}
