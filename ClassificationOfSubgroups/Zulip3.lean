@@ -2,7 +2,11 @@ import Mathlib
 
 def sum_of_first_n_odd_nat : ℕ → ℕ
 | 0 => 0
-| (Nat.succ n) => sum_of_first_n_odd_nat n + (2*n+1)
+| n + 1 => sum_of_first_n_odd_nat n + (2*n + 1)
+
+#eval sum_of_first_n_odd_nat 1
+
+-- 0 + 1 + 3 + 5 + 7 + 8
 
 
 -- Ask AI if it can find the useful theorem
@@ -15,6 +19,9 @@ def sum_of_first_n_odd_nat : ℕ → ℕ
 #synth CommSemiring ℕ
 
 -- Naturals are indeed a commutative semiring
+
+
+
 
 -- If you don't want to use AI then use loogle, a glorified maths search engine + regex(ish)
 #loogle
@@ -60,3 +67,7 @@ theorem closed_eq_sum_of_first_n_odd_nat' (n : ℕ) : (sum_of_first_n_odd_nat n)
 #eval sum_of_first_n_odd_nat 3
 
 #eval sum_of_first_n_odd_nat 4
+
+#eval sum_of_first_n_odd_nat 5
+
+#eval sum_of_first_n_odd_nat 6

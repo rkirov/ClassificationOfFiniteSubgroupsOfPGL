@@ -173,7 +173,7 @@ variable (n : ℕ) (F : Type u) [Field F] [IsAlgClosed F]
 
 open Subgroup
 
-def PSL_inject_into_PGL : SpecialLinearGroup (Fin n) R ⧸ center (SpecialLinearGroup (Fin n) R) →* GL (Fin n) R ⧸ center (GL (Fin n) R) where
+def MonoidHom_PSL_into_PGL : SpecialLinearGroup (Fin n) R ⧸ center (SpecialLinearGroup (Fin n) R) →* GL (Fin n) R ⧸ center (GL (Fin n) R) where
   toFun S := by
     obtain s := @S.exists_rep.choose
     obtain hs := @S.exists_rep.choose_spec
