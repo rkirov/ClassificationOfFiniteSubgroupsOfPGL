@@ -171,7 +171,9 @@ variable (n : ℕ) (F : Type u) [Field F] [IsAlgClosed F]
 
 #check MulEquiv.ofBijective_apply
 
-def inject : SpecialLinearGroup (Fin n) R ⧸ Subgroup.center (SpecialLinearGroup (Fin n) R) →* GL (Fin n) R ⧸ Subgroup.center (GL (Fin n) R) where
+open Subgroup
+
+def PSL_inject_into_PGL : SpecialLinearGroup (Fin n) R ⧸ center (SpecialLinearGroup (Fin n) R) →* GL (Fin n) R ⧸ center (GL (Fin n) R) where
   toFun := fun S => sorry
   map_one' := sorry
   map_mul' := sorry
