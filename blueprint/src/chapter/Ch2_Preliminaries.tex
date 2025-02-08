@@ -31,22 +31,41 @@ The following theorems are all well-known fundamental results in group theory. I
 
 In 1872, Norweigian mathematician Peter Ludwig Sylow published his theorems regarding the number of subgroups of a fixed order that a given finite group contains. Today these are collectively known as the Sylow Theorems and play a vital role in determining the structure of finite groups. I will use the results of these theorems several times throughout this paper and I state them here without proof. If the reader would like to read further, the proofs can be found in most introductory texts on group theory, such as Bhattacharya \cite{bhattacharya}, except Corollary \ref{5thsylow} which can be found in Alperin and Bell \cite[p.64]{alperin} . \\
 
-\begin{definition} Let $G$ be a finite group and $p$ a prime, a \textbf{Sylow $\pmb{p}$-subgroup} of $G$ is a subgroup of order $p^r$, where $p^{r+1}$ does not divide the order of $G$. \\
+
+\begin{definition}
+\lean{Sylow}
+\leanok 
+Let $G$ be a finite group and $p$ a prime, a \textbf{Sylow $\pmb{p}$-subgroup} of $G$ is a subgroup of order $p^r$, where $p^{r+1}$ does not divide the order of $G$. \\
 \\
 Let $p$ be a prime. A group $G$ is called a \textbf{$\pmb{p}$-group} if the order of each of it's elements is a power of $p$. Similarly, a subgroup $H$ of $G$ is called a \textbf{$\pmb{p}$-subgroup} if the order of each of it's elements is a power of $p$.
 \end{definition}
 
 In each of the following results, $G$ is a finite group of order $p^r m$, where $p$ is a prime which does not divide $m$. \\
 \\
+
+\begin{theorem}
+\lean{Sylow.exists_subgroup_card_pow_prime}
+\leanok
 \makebox[\textwidth][s]{\textbf{First Sylow Theorem.} \textit{If $p^k$ divides $|G|$, then $G$ has a subgroup of order $p^k$.}} \\
 
-\begin{2ndsylow} \textit{All Sylow $p$-subgroups of G are conjugate.} \\
-\end{2ndsylow}
+\end{theorem}
 
-\begin{3rdsylow} \textit{The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 ($mod $p)$.} \\
-\end{3rdsylow}
+\begin{theorem} 
+\lean{Sylow.equiv.proof_1}
+\leanok
+\textit{All Sylow $p$-subgroups of G are conjugate.} \\
+\end{theorem}
 
-\begin{corollary}\label{4thsylow} \textit{A Sylow $p$-subgroup of $G$ is unique if and only if it is normal.} \\
+\begin{theorem} 
+\lean{card_sylow_modEq_one}
+\leanok
+\textit{The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 ($mod $p)$.} \\
+\end{theorem}
+
+\begin{corollary}
+\lean{Sylow.unique_of_normal}
+\leanok    
+\label{4thsylow} \textit{A Sylow $p$-subgroup of $G$ is unique if and only if it is normal.} \\
 \end{corollary}
 
 \begin{corollary}\label{5thsylow} \textit{Any $p$-subgroup of $G$ is contained in a Sylow $p$-subgroup.} \\

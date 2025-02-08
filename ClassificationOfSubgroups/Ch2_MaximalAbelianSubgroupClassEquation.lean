@@ -803,6 +803,18 @@ theorem Nat.Prime.three_le_of_ne_two {p : ℕ} (hp : Nat.Prime p) (p_ne_two : p 
   have one_lt_p := hp.one_lt
   linarith
 
+lemma ne_zero_two_of_char_ne_two {p : ℕ} [hp' : Fact (Nat.Prime p)]
+  [hC : CharP F p] (p_ne_two : p ≠ 2) : NeZero (2 : F) := by
+  refine { out := ?_ }
+  intro two_eq_zero
+  have one_ne_zero : (1 : F) ≠ 0 := one_ne_zero
+  let char_eq_two : CharP F 2 := by
+    exact CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero two_eq_zero
+  have two_dvd_p : (p : F) = 0 := by exact CharP.cast_eq_zero F p
+  rw [char_eq_two.cast_eq_zero_iff'] at two_dvd_p
+  have two_eq_p : p = 2 := ((Nat.prime_dvd_prime_iff_eq Nat.prime_two hp'.out).mp two_dvd_p).symm
+  contradiction
+
 lemma card_center_lt_card_center_Sylow {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] (G : Subgroup SL(2,F)) [Finite G] (S : Sylow p G)
   (p_le_card_center_S : p ≤ Nat.card ↥(center S)) :
   ∃ x ∈ (Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)), x ∉ center SL(2,F) := by
@@ -849,7 +861,7 @@ lemma card_center_lt_card_center_Sylow {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC 
         apply Injective.comp
         exact subtype_injective G
         exact subtype_injective _
-    · let two_ne_zero : NeZero (2 : F) := by sorry
+    · let two_ne_zero : NeZero (2 : F) := ne_zero_two_of_char_ne_two F hp
       calc
       Fintype.card (center SL(2, F)) = Nat.card (center SL(2,F)) := Fintype.card_eq_nat_card
       _ = 2 := by rw [center_SL2_F_eq_Z, card_Z_eq_two_of_two_ne_zero]
@@ -908,17 +920,15 @@ theorem mul_center_eq_left  {G: Type*} [Group G] (S Q : Subgroup SL(2,F))(Q_le_S
   · intro x_in_Q
     exact Q_le_S x_in_Q
 
-lemma ne_zero_two_of_char_ne_two {p : ℕ} [hp' : Fact (Nat.Prime p)]
-  [hC : CharP F p] (p_ne_two : p ≠ 2) : NeZero (2 : F) := by
-  refine { out := ?_ }
-  intro two_eq_zero
-  have : (1 : F) ≠ 0 := by exact one_ne_zero
-  let char_eq_two : CharP F 2 := by
-    exact CharTwo.of_one_ne_zero_of_two_eq_zero this two_eq_zero
-  have two_dvd_p : (p : F) = 0 := by exact CharP.cast_eq_zero F p
-  rw [char_eq_two.cast_eq_zero_iff'] at two_dvd_p
-  have two_eq_p : p = 2 := ((Nat.prime_dvd_prime_iff_eq Nat.prime_two hp'.out).mp two_dvd_p).symm
-  contradiction
+#check Sylow
+
+#check Sylow.equiv
+
+#check card_sylow_modEq_one
+
+#leansearch "Sylow's third theorem?"
+
+#check Sylow.unique_of_normal
 
 theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t
   [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
