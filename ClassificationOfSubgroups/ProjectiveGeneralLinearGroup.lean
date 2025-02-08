@@ -172,8 +172,7 @@ variable (n : ℕ) (F : Type u) [Field F] [IsAlgClosed F]
 #check MulEquiv.ofBijective_apply
 
 def inject : SpecialLinearGroup (Fin n) R ⧸ Subgroup.center (SpecialLinearGroup (Fin n) R) →* GL (Fin n) R ⧸ Subgroup.center (GL (Fin n) R) where
-  toFun := fun S =>
-    sorry
+  toFun := fun S => sorry
   map_one' := sorry
   map_mul' := sorry
 
@@ -192,6 +191,9 @@ def iso : PGL(n,F) ≃* PSL(n,F) where
   right_inv := sorry
   map_mul' := sorry
 
+#leansearch "representative of equivalence class?"
+
+#check Algebra.Module.quotTorsionOfEquivSpanSingleton
 
 end Isomorphism
 
