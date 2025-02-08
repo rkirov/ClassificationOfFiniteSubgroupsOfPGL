@@ -174,12 +174,18 @@ variable (n : ℕ) (F : Type u) [Field F] [IsAlgClosed F]
 open Subgroup
 
 def PSL_inject_into_PGL : SpecialLinearGroup (Fin n) R ⧸ center (SpecialLinearGroup (Fin n) R) →* GL (Fin n) R ⧸ center (GL (Fin n) R) where
-  toFun := fun S => sorry
+  toFun S := by
+    obtain s := @S.exists_rep.choose
+    obtain hs := @S.exists_rep.choose_spec
+    let g := s.toGL
+    sorry
   map_one' := sorry
   map_mul' := sorry
 
 def PSL_inj_PGL : PSL(n, F) →* PGL(n, F) where
   toFun := fun S =>
+
+
     sorry
   map_one' := sorry
   map_mul' := sorry
