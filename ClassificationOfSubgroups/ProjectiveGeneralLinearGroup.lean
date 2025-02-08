@@ -193,7 +193,6 @@ def iso : PGL(n,F) ≃* PSL(n,F) where
 
 #leansearch "representative of equivalence class?"
 
-#check Algebra.Module.quotTorsionOfEquivSpanSingleton
 
 end Isomorphism
 
