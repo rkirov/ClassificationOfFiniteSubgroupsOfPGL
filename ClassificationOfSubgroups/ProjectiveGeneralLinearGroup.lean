@@ -178,6 +178,8 @@ def PSL_inject_into_PGL : SpecialLinearGroup (Fin n) R ⧸ center (SpecialLinear
     obtain s := @S.exists_rep.choose
     obtain hs := @S.exists_rep.choose_spec
     let g := s.toGL
+    let G := QuotientGroup.mk' (center (GL (Fin n) R)) S.exists_rep.choose.toGL
+    --ideally use G
     sorry
   map_one' := sorry
   map_mul' := sorry
