@@ -232,9 +232,7 @@ lemma lift_scalar_matrix_eq_one {n F : Type*} [hn₁ : Fintype n] [DecidableEq n
   rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
   use c
 
--- #leansearch "smul matrix equals multiplication by scalar matrix?"
-
-instance (n R : Type*) [Fintype n] [DecidableEq n][CommRing R] :
+instance (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   IsScalarTower Rˣ (GL n R) (GL n R) := by
   refine IsScalarTower.of_smul_one_mul ?_
   intro r g
