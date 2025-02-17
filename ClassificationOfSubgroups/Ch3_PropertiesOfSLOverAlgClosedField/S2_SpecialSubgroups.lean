@@ -237,6 +237,11 @@ lemma get_entries (x : SL(2,F)) : ∃ α β γ δ,
 
 lemma neg_one_mem_Z : (-1 : SL(2,F)) ∈ Z F := by simp [Z]
 
+
+lemma Odd.neg_one_zpow {α : Type*} [Group α] [HasDistribNeg α] {n : ℤ} (h : Odd n) : (-1 : α) ^ n = -1 := by
+  rw [← neg_eq_iff_eq_neg, ← neg_one_mul, Commute.neg_one_left, mul_zpow_self]
+  exact Even.neg_one_zpow <| Odd.add_one h
+
 lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} := by
   ext x
   constructor
@@ -248,13 +253,8 @@ lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} :=
     · left
       apply Even.neg_one_zpow hk
     · right;
-      rw [Int.not_even_iff_odd] at hk
-      -- simp [Odd.neg_pow_zpow hk (-1 : SL(2,F))]
-      -- For some reason it picks the special case of the theorem for
-      -- Even.neg_one_zpow.{u_2}
-      -- {α : Type u_2} [DivisionMonoid α] [HasDistribNeg α] {n : ℤ} (h : Even n) : (-1) ^ n = 1
-
-      sorry
+      rw [Int.not_even_iff_odd, ] at hk
+      exact Odd.neg_one_zpow hk
   · intro hx
     rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
     rcases hx with (rfl | rfl)
@@ -263,8 +263,6 @@ lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} :=
       apply Even.neg_one_zpow (by norm_num)
     · rw [SetLike.mem_coe]
       exact mem_closure_singleton_self (-1)
-
-
 
 
 @[simp]

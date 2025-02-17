@@ -253,7 +253,9 @@ lemma singleton_of_cen_eq_G (G : Type*) [Group G] (H : Subgroup G) (hH : H = cen
 
 open scoped MatrixGroups
 
-lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F)) (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G): A = center SL(2,F) := by
+lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
+  (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G):
+  A = center SL(2,F) := by
   have cen_le_A := center_le SL(2,F) G A hA center_le_G
   have card_cen_eq_two : Nat.card (center SL(2,F)) = 2 := by sorry
   refine le_antisymm ?A_le_cen ?cen_le_A
@@ -266,8 +268,8 @@ lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F)) (c
 
 
 /- Theorem 2.3 (i) If x ∈ G\Z then we have CG (x) ∈ M. -/
-theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
-  (G : Subgroup SL(2,F)) (x : SL(2,F))
+theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} [Field F]
+  [IsAlgClosed F] [DecidableEq F] (G : Subgroup SL(2,F)) (x : SL(2,F))
   (hx : x ∈ (G.carrier \ (center SL(2,F)))) :
   centralizer {x} ⊓ G ∈ MaximalAbelianSubgroups G := by
   obtain ⟨x_in_G, x_not_in_Z⟩ := hx
@@ -295,8 +297,8 @@ theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} 
 
 
 /- Theorem 2.3 (ii) For any two distinct subgroups A and B of M, we have A ∩ B = Z. -/
-theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
-  (A B G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
+theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAlgClosed F]
+  [DecidableEq F] (A B G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
   (hB : B ∈ MaximalAbelianSubgroups G) (A_ne_B: A ≠ B)(hG : center SL(2,F) ≤ G) :
   A ⊓ B = center SL(2,F) := by
   ext x
@@ -331,14 +333,14 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAl
     have cen_le_B := @center_le SL(2,F) _ G B hB hG
     exact le_inf cen_le_A cen_le_B hx
 
--- lemma NeZero_neg_CharP [CharP F p]: ∀ (x : F), NeZero x ↔ p • (1 : F) ≠ x := by sorry
+-- lemma NeZero_neg_CharP [CharP F p] : ∀ (x : F), NeZero x ↔ p • (1 : F) ≠ x := by sorry
 
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
 of G. -/
-theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {F : Type*} [Field F] {p : ℕ} (hp : Nat.Prime p) [C : CharP F p]
- (A G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hG : G = center SL(2,F)) :
-  IsCyclic A ∧ Nat.Coprime (Nat.card A) p := by
+theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {F : Type*} [Field F] {p : ℕ}
+  (hp : Nat.Prime p) [C : CharP F p] (A G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
+  (hG : G = center SL(2,F)) : IsCyclic A ∧ Nat.Coprime (Nat.card A) p := by
   rw [@singleton_of_cen_eq_G SL(2,F) _ G hG] at hA
   simp at hA
   rw [center_SL2_F_eq_Z] at hA
@@ -421,11 +423,6 @@ theorem Units.coeHom_injective {M : Type*} [Monoid M] : Function.Injective (Unit
   exact h
 
 open Function Units
-
--- lemma order_fin_subgroup_units_eq_pow_char_sub_one { p : ℕ} (hp : Prime p) [CharP F p] (G : Subgroup SL(2,F)) (hc : conj c • D F = centralizer {x}) :
--- If a subgroup/group H is Elementary Abelian then the order of H is p ^ n for some n
--- ⟨t₁⟩ ≤ H of order p and is furthermore normal as H is abelian. Therefore, H ⧸ ⟨ t₁⟩  has order Nat.card H / p.
--- We can continue this process, take an element t₂ ≠ 1 of H ⧸ ⟨ t₁ ⟩ this element has order p and thus
 
 lemma order_ne_char (F : Type*) [Field F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] :
   ∀ x : Fˣ, orderOf x ≠ p := by
@@ -554,8 +551,9 @@ lemma conj_inv_conj_eq (F : Type*) [Field F](G : Subgroup SL(2,F)) (c : SL(2,F))
 
 theorem IsCyclic_and_card_coprime_CharP_of_IsConj_d {F : Type*} [Field F]
   [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
-  (G : Subgroup SL(2,F)) [hG₀ : Finite G] (A : Subgroup SL(2,F)) (x : SL(2,F)) (x_not_in_center : x ∉ center SL(2,F))
-  (A_eq_centra : A = centralizer {x} ⊓ G ) (δ : Fˣ) (x_IsConj_d : IsConj (d δ) x ) :
+  (G : Subgroup SL(2,F)) [hG₀ : Finite G] (A : Subgroup SL(2,F)) (x : SL(2,F))
+  (x_not_in_center : x ∉ center SL(2,F)) (A_eq_centra : A = centralizer {x} ⊓ G )
+  (δ : Fˣ) (x_IsConj_d : IsConj (d δ) x ) :
   (IsCyclic A ∧ Nat.Coprime (Nat.card A) p) := by
   simp [center_SL2_F_eq_Z] at x_not_in_center
   have δ_ne_one : δ ≠ 1 := by rintro rfl; simp_all
@@ -645,8 +643,8 @@ lemma ne_zero_two_of_char_ne_two (F : Type*) [Field F] {p : ℕ} [hp' : Fact (Na
   have two_eq_p : p = 2 := ((Nat.prime_dvd_prime_iff_eq Nat.prime_two hp'.out).mp two_dvd_p).symm
   contradiction
 
-lemma card_center_lt_card_center_Sylow (F : Type*) [Field F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
-  (G : Subgroup SL(2,F)) [Finite G] (S : Sylow p G)
+lemma card_center_lt_card_center_Sylow (F : Type*) [Field F] {p : ℕ} [hp' : Fact (Nat.Prime p)]
+  [hC : CharP F p] (G : Subgroup SL(2,F)) [Finite G] (S : Sylow p G)
   (p_le_card_center_S : p ≤ Nat.card ↥(center S)) :
   ∃ x ∈ (Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)), x ∉ center SL(2,F) := by
   let fintype_G : Fintype G := by exact Fintype.ofFinite ↥G
@@ -768,7 +766,8 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t {F : Type*} [Field F]
   ∃ S : Sylow p G, Q.subgroupOf G = S := by
   -- centralizer {x} = conj c • TZ F
   obtain ⟨c, c_smul_TZ_eq_centralizer ⟩:=
-    @centra_eq_conj_TZ_of_IsConj_t_or_IsConj_neg_t F _ _ _ A _ _ x x_IsConj_t_or_neg_t x_in_G x_not_in_center A_eq_centra.symm
+    centra_eq_conj_TZ_of_IsConj_t_or_IsConj_neg_t
+      A G τ x x_IsConj_t_or_neg_t x_in_G x_not_in_center A_eq_centra.symm
   have A_eq_conj_T_join_Z_meet_G : A = (conj c • (T F ⊔ Z F)) ⊓ G := by
       rw [A_eq_centra, T_join_Z_eq_TZ, c_smul_TZ_eq_centralizer]
   -- from the subgroup equality and conjugacy isomorphisms
@@ -995,7 +994,8 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t {F : Type*} [Field F]
         congr 1
         rw [mem_center_iff] at y'_in_center
         exact y'_in_center _
-      have S_join_Z_le_centra_meet_G : ((Subgroup.map G.subtype S.toSubgroup) ⊔ Z F :) ≤ centralizer {y} ⊓ G := by
+      have S_join_Z_le_centra_meet_G :
+        ((Subgroup.map G.subtype S.toSubgroup) ⊔ Z F :) ≤ centralizer {y} ⊓ G := by
         intro w hw
         rw [← center_SL2_F_eq_Z, ← SetLike.mem_coe,  mul_normal (N := center SL(2,F))] at hw
         obtain ⟨s', hs, z, z_in_center, rfl⟩ := hw
@@ -1108,11 +1108,11 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t {F : Type*} [Field F]
       rw [comap_map_eq_self ker_G_subtype_le_S]
 
 
-theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_center_ne {F : Type*} [Field F]
-  [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
-  (G : Subgroup SL(2,F))[hG₀ : Finite G] (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
-  (center_le_G : center SL(2,F) ≤ G) (center_ne_G : G ≠ center SL(2,F)) :
-  (IsCyclic A ∧ Nat.Coprime (Nat.card A) p)
+theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_center_ne
+  {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)]
+  [hC : CharP F p] (G : Subgroup SL(2,F))[hG₀ : Finite G] (A : Subgroup SL(2,F))
+  (hA : A ∈ MaximalAbelianSubgroups G) (center_le_G : center SL(2,F) ≤ G)
+  (center_ne_G : G ≠ center SL(2,F)) : (IsCyclic A ∧ Nat.Coprime (Nat.card A) p)
   ∨
   (
   ∃ Q : Subgroup SL(2,F),

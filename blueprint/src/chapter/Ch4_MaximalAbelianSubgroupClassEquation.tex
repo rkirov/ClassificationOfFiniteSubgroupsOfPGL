@@ -1,0 +1,552 @@
+\chapter[The Maximal Abelian Subgroup Class Equation]{The Maximal Abelian Subgroup Class Equation}
+% \chaptermark{The Class Equation}
+
+\section[A finite subgroup of $L$]{A Finite Subgroup of $\pmb{L}$}
+
+We now return to the realm of finite groups and consider $G$ to be an arbitrary finite subgroup of $L$. We will still continue to use $Z$ to denote the centre of $L$, and will use $Z(G)$ whenever we refer to the centre of $G$. \\
+\\
+Observe that if $Z$ is not contained in $G$, then $Z$ must contain a non-identity element, thus $|Z| = 2$ and $p \neq 2$ by Lemma \ref{6.2}. Recall that $L$ has a unique element of order 2 by Lemma \ref{6.2b}, $- I_L$, which is not in $G$, therefore $G$ has no element of order 2. \\
+\\
+By Cauchy's Theorem, which says that if a prime $p$ divides the order of a finite group, then the group contains an element of order $p$, we deduce that 2 does not divide the order of $G$. \\
+\\
+This means that $|G|$ and $|Z|$ are relatively prime, so $G \cap Z = \{ I_L \}$ and we can use Corollary \ref{directproductZ} to show that $GZ \cong G \times Z$. This shows that regardless of whether $G$ contains $Z$ or not, its structure is uniquely determined by $GZ$, so it suffices to only consider the case when $Z \subset G$. 
+
+\section{Maximal Abelian Subgroups}
+
+\begin{definition} Let $H$ and $J$ be subgroups of a group $G$ where $H$ is abelian. $H$ is called \textbf{maximal abelian} if $J$ is not abelian whenever $H \subsetneq J$. \\
+\\
+A group $G$ is said to be \textbf{elementary abelian} if it is abelian and every non-trivial element has order $p$, where $p$ is prime.
+\end{definition}
+
+\begin{notation-non} Let $\mathfrak{M}$ denote the set of all maximal abelian subgroups of $G$.
+\end{notation-non}
+\vspace{3mm}
+
+Maximal abelian subgroups play an important role in determining the structure of $G$. In particular, every element in $G$ must be contained in some maximal abelian subgroup, since every element commutes at least with itself and $Z$. This will allow us to decompose $G$ into the conjugacy classes of these maximal abelian subgroups. Note also that unless $G=Z$, $Z$ is not a maximal abelian subgroup, because for each $x \in G \! \setminus \! Z$, $\langle Z,x \rangle$ is clearly a larger abelian subgroup than $Z$. \\
+\\
+We will shortly prove an important theorem regarding the maximal abelian subgroups of $G$, but in order to do so we require the following two lemmas. \\
+
+\begin{lemma}\label{primecentre}
+If $G$ is a finite group of order $p^m$ where $p$ is prime and $m>0$, then $p$ divides $|Z(G)|$. 
+\end{lemma}
+
+\begin{proof}
+Let $C(x)$ be the set of elements of $G$ which are conjugate in $G$ to $x$, we call this the conjugacy class of $x$. Bhattacharya shows that the set of all conjugacy classes form a partition of $G$ \cite[p.112]{bhattacharya}. Now consider the following rearranged class equation of $G$, where $S$ is a subset of $G$ containing exactly one element from each conjugacy class not contained in $Z(G)$. 
+ 
+\begin{equation} \label{cen2}
+|G| - \sum_{x \in S} [G:N_G(x)] = |Z(G)|.
+\end{equation}
+
+Since $|G| = p^m$, each subgroup of $G$ is of order $p^k$ for some $k \leq m$. In particular each $N_G(x)$ has order $p^k$ and is strictly contained in $G$ since $x \not \in Z(G)$ by assumption. Thus each $[G:N_G(x)] > 1$, and are therefore divisible by $p$. Since $p$ divides the left hand side of (\ref{cen2}), it must also divide the right, thus $p$ divides $|Z(G)|$. 
+
+\end{proof}
+
+\begin{lemma}\label{finsubcyc}
+Every finite subgroup of a multiplicative group of a field is cyclic.
+\end{lemma}
+
+\begin{proof} See \cite[p.41]{suzuki}.
+\end{proof}
+
+\begin{theorem}\label{6.8} Let $G$ be an arbitrary finite subgroup of $L$ containing $Z$. \\
+
+(i) If $x \in G \! \setminus \! Z$ then we have $C_G(x) \in \mathfrak{M}$. \vspace{3mm} \\
+(ii) For any two distinct subgroups $A$ and $B$ of $\mathfrak{M}$, we have
+\begin{align*} A \cap B = Z. \end{align*}
+(iii) An element $A$ of $\mathfrak{M}$ is either a cyclic group whose order is relatively prime to $p$, or of the form $Q \times Z$ where $Q$ is an elementary abelian Sylow $p$-subgroup of $G$. \vspace{3mm} \\
+(iv) If $A \in \mathfrak{M}$ and $|A|$ is relatively prime to $p$, then we have $[N_G(A): A] \leq 2$. Furthermore, if $[N_G(A): A] = 2$, then there is an element $y$ of $N_G(A) \! \setminus \! A$ such that, 
+\vspace{-1mm}
+\begin{align*} yxy^{-1} = x^{-1} \qquad \forall x \in A.\end{align*}
+(v) Let $Q$ be a Sylow $p$-subgroup of $G$. If $Q \neq \{I_G\}$, then there is a cyclic subgroup $K$ of $G$ such that $N_G(Q) = QK$. If $|K| > |Z|$, then $K \in \mathfrak{M}$. \\
+\end{theorem}
+
+\begin{proof} (i) Let $x$ be chosen arbitrarily from $G \! \setminus \! Z$. Then by Corollary \ref{6.5}, $C_L(x)$ is abelian. By definition, $C_G(x) = C_L(x) \cap G$, and using the elementary fact that the intersection of 2 groups is itself a group, we have $C_G(x) < C_L(x)$. Now since every subgroup of an abelian group is abelian, $C_G(x)$ is also abelian. \\
+\\
+Now let $J$ be a maximal abelian subgroup of $G$ containing $C_G(x)$. Since $J$ is abelian and $x \in C_G(x) \subset J$, we have $jx=xj$, $\forall j \in J$, thus $J \subset C_G(x)$. Therefore $J=C_G(x)$ and $C_G(x) \in \mathfrak{M}$. \\
+\\
+(ii) Consider $x \in A \cap B$. Since both $A$ and $B$ are abelian, $x$ commutes with each $a \in A$ and $b \in B$ and thus $C_G(x)$ contains both $A$ and $B$.  If $x \in G \setminus Z$, then $C_G(x) \in \mathfrak{M}$ by (i) and because $A$ and $B$ are distinct we have $A \subsetneq A \cup B \subset C_G(x)$. This contradicts the fact that $A$ is maximum abelian and thus $x \in Z$. Finally, note that Z is contained in every maximal abelian subgroup, since otherwise we would have the contradiction that $\langle A, Z \rangle$ would generate a larger abelian subgroup than $A$. Hence $A \cap B = Z$. \\
+\\
+(iii) First consider the trivial case of $G=Z$. Here $G$ is the only element of $\mathfrak{M}$. If $p \neq 2$ then $|G|=2$ and $G$ is a cyclic group whose order is relatively prime to $p$. If $p=2$ then $G = I_G$ which is trivially a $S_p$-subgroup. \\
+\\
+Now assume $G \neq Z$. Since $Z \not \in \mathfrak{M}$, each $A \in \mathfrak{M}$ contains at least one $x \not \in Z$. By Proposition  \ref{6.3} this $x$ is conjugate to either $d_\omega$ or $\pm t_\lambda$ in $L$. It suffices to only consider these cases: \\
+\\
+ \space $\pmb{x}$ \textbf{conjugate to} $\pmb{d_\omega}$ \textbf{in} $\pmb {L}$. There is a $y \in L$ such that $x = y d_\omega y^{-1}$. Since $x \not \in Z$, we have $d_\omega \not \in Z$, because otherwise we get the contradiction,
+\begin{align*} x =  y d_\omega y^{-1} = d_\omega \in Z.
+\end{align*}
+Thus $\omega \neq \pm 1$. Let $A = C_G(x)$, since $C_G(x) \in \mathfrak{M}$ by part (i). Observe that
+\begin{align*}  C_G(d_\omega) &<  C_L(d_\omega)  \tag{see proof of (i)}
+\\ &= D  \tag{by Lemma \ref{6.4ii}}
+\\ &\cong F^*.  \tag{by Lemma \ref{6.1b}}
+\end{align*}
+
+Since $A$ is conjugate to $C_G(d_\omega)$ by Proposition \ref{conjcent}, we have that $A$ is isomorphic to a finite subgroup of $F^*$ and by Lemma \ref{finsubcyc}, $A$ is cyclic. By Lagrange's Theorem any finite subgroup of $F^*$ has an order which divides $p^m - 1$ for some $m \in \mathbb{Z}^+$, and since $p \nmid (p^m - 1)$, $|A|$ is relatively prime to $p$. \\
+\\
+ \space $\pmb{x}$ \textbf{conjugate to} $\pmb{\pm t_\lambda}$ \textbf{in} $\pmb{L}$. Again let $A = C_G(x) \in \mathfrak{M}$. $A$ is conjugate to $C_G({\pm t_\lambda})$ in $L$ by Proposition \ref{conjcent}. Since $x \notin Z$, we have $\lambda \neq 0$. Observe that
+\begin{align*}  C_G({\pm t_\lambda}) &<  C_L({\pm t_\lambda})
+\\&= T \times Z  \tag{by Lemma \ref{6.4i}}
+\\&\cong F \times Z. \tag{by Lemma \ref{6.1b}}
+\end{align*}
+
+So $A$ is isomorphic to a finite subgroup of $F \times Z$, call it $Q \times Z$. Now $A = Q \times Z \cong QZ$ by Corollary \ref{directproductZ}, which means that an arbitrary element of $A$ is of the form $q_1z_1$, where $q_1 \in Q$, $z_1 \in Z$.
+\begin{align*} q_1z_1q_2z_2 &= q_2z_2 q_1z_1, \tag{$A \in \mathfrak{M}$}
+\\ q_1q_2z_1z_2 &= q_2q_1z_1z_2, \tag{$z_1$, $z_2 \in Z$}
+\\  q_1q_2z_1z_2(z_1z_2)^{-1} &= q_2q_1z_1z_2(z_1z_2)^{-1},
+\\ q_1q_2 &= q_2q_1.
+\end{align*}
+Thus $Q$ is also abelian. Recall from the proof of Proposition \ref{6.3}(ii) that all non-trivial elements of $T$ have order $p$, so each non-trivial element of $Q$ has order $p$ which means that $Q$ is elementary abelian. Thus $Q$ has order $p^m$, for some $m \in \mathbb{Z}^+$. \\
+\\
+Now let $S$ be a Sylow $p$-subgroup containing $Q$. We apply Lemma \ref{primecentre} to determine that $p$ divides $|Z(S)|$, moreover $|Z(S)| \geq p$. \\
+\\
+If $p=2$, then $Z=I_L$ by Lemma \ref{6.2}. So $|Z| = 1$ and hence $|Z(S)| \geq 2 > |Z|$.\\
+If $p > 2$, then  $Z = \langle - I_L \rangle$ also by Lemma \ref{6.2}. So $|Z| = 2$ and again we get $|Z(S)| > 2 = |Z|$. \\
+\\
+So $Z(S)$ must contain at least one element which is not in $Z$, let $y$ be one such element. Let $s_1z_1$ be an arbitrary element of $S \times Z$.
+\begin{align*}
+(s_1z_1)y(s_1z_1)^{-1} &= (s_1z_1)y(z_1^{-1}s_1^{-1})
+\\ &= s_1y(z_1z_1^{-1})s_1^{-1} \tag{since $y \in L$, $z_1 \in Z$}
+\\ &= y(s_1s_1^{-1}) \tag{since $s_1 \in S$, $y \in Z(S)$}
+\\ &= y
+\end{align*}
+
+Thus $s_1z_1 \in C_G(y)$ and since it was chosen arbitrarily, $S \times Z \subset C_G(y)$. Also since $y \in G \! \setminus \! Z$ we have $C_G(y) \in \mathfrak{M}$ by part (i).
+
+\begin{equation*}
+A = Q \times Z \subset S \times Z \subset C_G(y).
+\end{equation*}
+
+Since $A$ and $C_G(y)$ are both in $\mathfrak{M}$ it must be that $A = C_G(y)$. This means $Q = S$ and $Q$ is a Sylow $p$-subgroup of G.\\
+\\
+(iv) If $|A| \leq 2$ then $A=Z=G$. So $A$ is trivially normal in $G$ and $[N_G(A): A] = 1$. \\
+\\
+Now assume that $|A| > 2$. Since $|A|$ is relatively prime to $p$, we have that $A$ is a cyclic group conjugate to a finite subgroup of $D$ in $L$ by the proof of part (iii), call this subgroup ${\widetilde{A}}$. Thus both ${\widetilde{A}}$ and $D$ have orders greater than 2. Applying Proposition \ref{6.4ii} we observe that
+\begin{align}\label{norm1}  N_L({\widetilde{A}}) = \langle D , w \rangle = N_L(D).
+\end{align}
+
+Since $A$ and ${\widetilde{A}}$ are conjugate in $L$, there exists an element $z \in L$ such that $zAz^{-1} = {\widetilde{A}}$. This $z$ determines an inner automorphism of $L$ defined by
+\begin{align*} 
+    i_z: L \longrightarrow L,  \qquad \text{where} \quad  i_z(t) = z t z^{-1}  \quad \forall \; t \in L.
+\end{align*}
+
+Let $i_z(G) = {\widetilde{G}}$ denote the image of $G$ under $i_z$. Since $A$ is a maximal abelain subgroup of $G$ it's a simple task to show that ${\widetilde{A}}$ is a maximal abelian subgroup of ${\widetilde{G}}$ and I will leave this to the reader to verify. We now show that $i_z(N_G(A)) = N_{\widetilde{G}}({\widetilde{A}})$ . Take an arbitrary $g \in N_G(A)$.
+\begin{align*} (z g z^{-1}) {\widetilde{A}} (z g z^{-1})^{-1} &= z g (z^{-1} {\widetilde{A}} z) g^{-1} z^{-1}
+\\ &=  z (g A g^{-1}) z^{-1} \tag{since $zAz^{-1} = {\widetilde{A}}$ }
+\\ &= z A z^{-1} \tag{since $g \in N_G(A)$}
+\\ &= {\widetilde{A}}.
+\end{align*}
+
+So $z g z^{-1} = i_z(g) \in N_{\widetilde{G}}({\widetilde{A}})$ and since it was chosen arbitrarily, $i_z(N_G(A)) \subset N_{\widetilde{G}}({\widetilde{A}})$. Now take an arbitrary $z h z^{-1} \in N_{\widetilde{G}}({\widetilde{A}})$.
+\begin{align*} {\widetilde{A}} &= (z h z^{-1}) {\widetilde{A}} (z h z^{-1})^{-1}
+\\ &= z h (z^{-1} {\widetilde{A}} z) h^{-1} z^{-1}
+\\ &= z h A h^{-1} z^{-1}. \tag{since $A = z^{-1} {\widetilde{A}} z$}
+\end{align*}
+
+Now multiplication on the left by $z^{-1}$ and right by $z$ gives:
+\begin{align*} A = z^{-1} {\widetilde{A}} z = h A h^{-1},
+\end{align*}
+
+so $h \in N_G(A)$. Furthermore, $z h z^{-1}$ and indeed the whole of $N_{\widetilde{G}}({\widetilde{A}})$ is contained in $i_z(N_G(A))$. Thus $ i_z(N_G(A)) = N_{\widetilde{G}}({\widetilde{A}})$. In particular, we have,
+\begin{align}\label{6.8iv1} [N_G(A): A] = [N_{\widetilde{G}}({\widetilde{A}}): {\widetilde{A}}].
+\end{align}
+
+Since ${\widetilde{G}} < L$, the normaliser of ${\widetilde{A}}$ in ${\widetilde{G}}$ is simply the normaliser of ${\widetilde{A}}$ in $L$ restricted to ${\widetilde{G}}$, thus $N_{\widetilde{G}}({\widetilde{A}}) < N_L({\widetilde{A}}) = N_L(D)$ by (\ref{norm1}). Now since $D \vartriangleleft N_L(D)$, the Second Isomorphism Theorem shows that,
+\begin{align}\label{2iso} N_{\widetilde{G}}({\widetilde{A}})/( N_{\widetilde{G}}({\widetilde{A}}) \cap D) \; \cong \; DN_{\widetilde{G}}({\widetilde{A}}) / D.
+\end{align}
+\\
+Clearly ${\widetilde{A}} \subset {\widetilde{G}} \cap D$. We show that this inclusion is infact an equality. Assume that there exists some $d_\omega \in  {\widetilde{G}} \cap D$ which is not in ${\widetilde{A}}$. The group $\langle d_\omega , {\widetilde{A}} \rangle$ is thus an abelian subgroup of ${\widetilde{G}}$, strictly larger than ${\widetilde{A}}$ and contradicting the fact that ${\widetilde{A}}$ is maximal abelian in ${\widetilde{G}}$. Thus ${\widetilde{A}} =  {\widetilde{G}} \cap D$. It is trivial to see that ${\widetilde{A}} \subset N_{\widetilde{G}}({\widetilde{A}}) \cap D$. Also $N_{\widetilde{G}}({\widetilde{A}}) \cap D \subset {\widetilde{G}} \cap D = {\widetilde{A}}$. So,
+\begin{align}\label{parti} {\widetilde{A}} =  N_{\widetilde{G}}({\widetilde{A}}) \cap D.
+\end{align}
+
+Observe also that, 
+\begin{align}\label{index1or2} DN_{\widetilde{G}}({\widetilde{A}}) = \{ D, \langle D, w \rangle \} \subset \langle D, w \rangle = N_L(D).
+\end{align}
+
+Now we piece the preceding results together to give the desired result.
+\begin{align*}  N_{\widetilde{G}}({\widetilde{A}}) / {\widetilde{A}} \; & \cong \;  N_{\widetilde{G}}({\widetilde{A}})/( N_{\widetilde{G}}({\widetilde{A}}) \cap D) \tag{by (\ref{parti})}
+\\ & \cong \; DN_{\widetilde{G}}({\widetilde{A}}) / D \tag{by (\ref{2iso})}
+\\ & \subset N_L(D) / D \tag{by (\ref{index1or2})}
+\\ &= \langle D, w \rangle / D \; \cong \; \mathbb{Z}_2.
+\end{align*}
+
+We have shown that $N_{\widetilde{G}}({\widetilde{A}}) / {\widetilde{A}}$ is isomorphic to a subset of $\mathbb{Z}_2$. Thus by (\ref{6.8iv1}) we have established that, $$[N_G(A): A] = [N_{\widetilde{G}}({\widetilde{A}}): {\widetilde{A}}] \leq 2.$$
+\vspace{-2mm}
+
+For the second part, if $[N_G(A): A] = 2$, then the above argument shows that $N_{\widetilde{G}}({\widetilde{A}}) / {\widetilde{A}} \; \cong \; \mathbb{Z}_2$. Thus $DN_{\widetilde{G}}({\widetilde{A}}) = N_L(D) = \langle D, w \rangle$. This means that $N_{\widetilde{G}}({\widetilde{A}})$ contains some element $wd_\omega$. In fact, since $w d_\omega \not \in D$, we have $w d_\omega \in N_{\widetilde{G}}({\widetilde{A}}) \! \setminus \! {\widetilde{A}}$. Take any element $x \in A$. Since ${\widetilde{A}} = zAz^{-1}$, $zxz^{-1} \in {\widetilde{A}}$, call it $d_\sigma$. Let $y = z^{-1}w d_\omega z$. Since $wd_\omega \in N_{\widetilde{G}}({\widetilde{A}}) \! \setminus \! {\widetilde{A}}$ it follows that $y \in N_G(A)\! \setminus \! A$. We show that this $y$ inverts $x$:
+\begin{align*} yxy^{-1} &= (z^{-1}w d_\omega z)(z^{-1} d_\sigma z)(z^{-1}d^{-1}_\omega w^{-1} z)
+\\ &= z^{-1} w d_\omega  d_\sigma d^{-1}_\omega w^{-1} z
+\\ &=  z^{-1} w  d_\sigma  w^{-1} z 
+\\ &=  z^{-1}  d^{-1}_\sigma z  \tag{by Lemma \ref{6.1}}
+\\ &= x^{-1}.
+\end{align*}
+
+(v) By part (iii), $Q$ is conjugate to a finite subgroup of $T$ in $L$. In fact, without loss of generality we can assume that $Q \subset T$, moreoever $Q \subset T \cap G$. We show that this is in fact an equality by showing that the reverse inclusion also holds. Let $t_\lambda$ be an arbitrary element of $T \cap G$. Then $\langle t_\lambda, Q \rangle$ is a $p$-group of $G$ which must be equal to $Q$ since it is a Sylow $p$-subgroup of $G$. Thus $t_\lambda \in Q$ and
+\begin{align}\label{Q=TNG} Q = T \cap G.
+\end{align}
+
+Since $|Q| > 1$, Proposition \ref{6.4i} gives that $N_G(Q) \subset N_L(Q) \subset H$. So $N_G(Q) \subset H \cap G$. Now take an arbitrarily chosen $d_\omega t_\lambda \in H \cap G$ and $t_\mu \in Q$.
+\begin{align*} (d_\omega t_\lambda) t_\mu (d_\omega t_\lambda)^{-1} &= d_\omega ( t_\lambda t_\mu  t_{-\lambda}) d^{-1}_\omega
+\\ &=  d_\omega t_\mu d^{-1}_\omega \tag{by Lemma \ref{6.1}}
+\\ &= t_\sigma. \tag{where $\sigma = \mu \omega^{-2}$, by Lemma \ref{6.1}}
+\end{align*}
+
+Since it is a product of elements of $G$, $t_\sigma \in T \cap G = Q$ by (\ref{Q=TNG}). Thus $d_\omega t_\lambda \in N_G(Q)$ and indeed the whole of $H \cap G$ is contained in $N_G(Q)$ and
+\begin{align}\label{normQ=HNG} N_G(Q) = H \cap G.
+\end{align}
+
+We now define a map $\phi$ by,
+\begin{align*} \phi : N_G(Q) \longrightarrow D, \qquad \text{where} \quad \! \phi(d_\omega t_\lambda) = d_\omega \quad \forall \; d_\omega t_\lambda \in N_G(Q).
+\end{align*}
+
+Next we determine the kernel of $\phi$.
+\begin{align*} ker(\phi) &= \{ d_\omega t_\lambda \in N_G(Q) : \phi(d_\omega t_\lambda) = I_G \}
+\\ &= N_G(Q) \cap T
+\\ &= H \cap G \cap T \tag{by (\ref{normQ=HNG})}
+\\ &= T \cap G = Q. \tag{by (\ref{Q=TNG})}
+\end{align*}
+
+We show that $\phi$ is a group homomorphism. Take $d_\omega t_\lambda$, $d_\rho t_\mu$ from $ N_G(Q)$.
+\begin{align*} \phi(d_\omega t_\lambda d_\rho t_\mu) &= \phi(d_\omega d_\rho t_\sigma t_\mu) \tag{where $\sigma = \lambda \rho^2$, by Lemma \ref{6.1}}
+\\ &= d_\omega d_\rho
+\\ &= \phi(d_\omega t_\lambda) \phi(d_\rho t_\mu).
+\end{align*}
+
+Thus by the First Isomorphism Theorem,
+\begin{align}\label{6.8viso} N_G(Q) / Q &\cong \phi(N_G(Q)),
+\end{align}
+
+Since $N_G(Q)$ is a finite group, it's image under $\phi$ is thus a finite subgroup of $D$. Furthermore, since $D \cong F^*$ (by Lemma \ref{6.1b}), $\phi(N_G(Q))$ is a cyclic group whose order divides $p^m-1$ and is therefore relatively prime to $p$, and by \eqref{6.8viso}, so too is $N_G(Q) / Q$. \\
+\\
+Let $r$ be the order of $N_G(Q) / Q$. Since it is cyclic, $N_G(Q)/Q$ is generated by a single element, namely a coset of $Q$ in $N_G(Q)$, call it $kQ$. So $|kQ| = r$. Observe that,
+\begin{align*} (kQ)^r &= Q,
+\\ k^rQ &= Q,
+\\ k^r &\in Q.
+\end{align*}
+Since $Q$ is elementary abelian, each of it's non-trivial elements has order $p$, so $k$ has order $r$ or $rp$. In either case, since gcd$(r,p)=1$, the order of $k^p$ is $r$. Let $K = \langle k^p \rangle$. Now $|K| = r$ and
+\begin{align*} |N_G(Q)| &= r|Q|
+\\ &= |K||Q|
+\\ &= |QK|. \tag{since $Q \cap K = I_G$} 
+\end{align*}
+Thus,
+\begin{align}\label{QK} N_G(Q) &= QK.
+\end{align}
+
+Now assume $|K| > |Z|$. Since $K$ is abelian, it must be contained in some maximal abelian group $A \in \mathfrak{M}$. By part (iii), $A$ must also be a cyclic group whose order is relatively prime to $p$. \\
+\\
+Since $A$ is conjugate in $L$ to a subgroup of $D$, each non-central element of $A$ has exactly 2 fixed points on the projective line $\mathscr{L}$ by Proposition \ref{6.7}. Let $A = \langle x \rangle$ and let $P_1$ and $P_2$ be the points fixed by $x$. We show by induction on $n$ that $x^n$ also fixes $P_1$ and $P_2$, for all $n \in \mathbb{Z^+}$. We do this by assuming first that $x^{n-1}$ fixes $P_i$.
+\begin{align*} x^n P_i = x(x^{n-1} P_i) = x (P_i) = P_i.
+\end{align*}
+
+The importance of this is that since each element of $A$ can be expressed as some power of $x$, they must have the same two fixed points, namely $P_1$ and $P_2$. In other words, 
+\begin{align}\label{stab} A \subset S_L(P_i), \qquad (\text{$i$ = 1 or 2})
+\end{align}
+
+By Proposition \ref{6.7}(ii), each element of $T$ has a common fixed point $P$ and Stab$(P) = H$. Since $K \subset H$, each element in $K$ fixes $P$. Also, since $K \subset A$, this $P$ must be equal to either $P_1$ or $P_2$. Therefore by (\ref{stab}), $A \subset \text{Stab}(P) = H$. We arrive at the following result:
+\begin{align*} A &\subset H \cap G 
+\\ &= N_G(Q) \tag{by (\ref{normQ=HNG})}
+\\ &= QK. \tag{by (\ref{QK})}
+\end {align*}
+
+Furthermore, we get,
+\begin{align*} A &= QK \cap A
+\\ &= QK \cap AK \tag{$K \subset A$ so $A = AK$}
+\\ &= (Q \cap A)K
+\\ &= K \tag{$Q \cap A = I_G$}
+\end{align*}
+
+Thus $K \in \mathfrak{M}$. \\
+\\
+\end{proof}
+
+For the duration of this paper, unless otherwise stated, $Q$ will denote a Sylow $p$-subgroup of $G$ and $K$ will be as described above. 
+
+
+\section{Conjugacy of Maximal Abelian Subgroups}
+
+\begin{definition} The set $\mathcal{C}_i = \{ x A_i x^{-1} : x \in G \}$ is called the \textbf{conjugacy class} of $A_i \in \mathfrak{M}$.
+\end{definition}
+
+\begin{notation-non} Let $A_i^*$ be the non-central part of $A_i \in \mathfrak{M}$, let $\mathfrak{M}^*$ be the set of all $A_i^*$ and let $\mathcal{C}_i^*$ be the conjugacy class of $A_i^*$. \\
+\\
+For some $A_i \in \mathfrak{M}$ and $A_i^* \in \mathfrak{M}^*$ let,
+\begin{align*} C_i = \bigcup\limits_{x \in G} x A_i x^{-1}, \quad \text{and} \quad  C_i^* = \bigcup\limits_{x \in G} x A_i^* x^{-1}.
+\end{align*}
+In other words, $C_i$ denotes the set of elements of $G$ which belong to some element of $\mathcal{C}_i$. It's evident that $C_i^* = C_i \setminus Z$ and that there is a $C_i$ corresponding to each $\mathcal{C}_i$. Clearly we have the relation,
+\begin{align}\label{orderorder} |C_i^*| = |A_i^*||\mathcal{C}_i^*|.
+\end{align}
+\end{notation-non}
+
+\begin{theorem} \label{partitiontheorem} Let $G$ be a finite subgroup of $L$ and $S$ be a subset of $\mathfrak{M}^*$  containing exactly one element from each of its conjugacy classes. \vspace{2mm}
+
+(i) The set of $C_i^*$ form a partition of $G \! \setminus \! Z$. That is,
+\begin{align*} G \! \setminus \! Z = \bigcup\limits_{A_i^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \;  i \neq j.
+\end{align*}
+
+(ii) \: \! $|\mathcal{C}_i^*| = |\mathcal{C}_i|$. \vspace{4mm}
+
+(iii) \: $|\mathcal{C}_i| = [G : N_G(A_i)]$. \vspace{4mm}
+
+(iv) $$|G \! \setminus  \! Z| = \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)].$$
+
+\end{theorem}
+
+\begin{proof}
+(i) Define a relation $\sim$ on  $\mathfrak{M}^*$  as follows:
+\begin{align*} A_i^* \sim A_j^* \quad \text{if} \quad A_i^* = xA_j^*x^{-1} \quad \text{for some} \quad x \in G.
+\end{align*}
+
+ \space If we choose $x \in A_i^*$, then clearly $A_i^* = A_i^*xx^{-1} = xA_i^*x^{-1}$, thus $A_i^* \sim A_i^*$ and $\sim$ is reflexive.\\
+\\
+ \space If $A_i^* \sim A_j^*$, then $\exists \; x \in G$ such that,
+\begin{align*} A_i^*= xA_j^*x^{-1} \iff x^{-1}A_i^*x = A_j^* \iff A_j^* = yA_i^*y^{-1} \quad \text{for} \; y = x^{-1} \in G.
+\end{align*}
+Thus $A_j^* \sim A_i^*$ and $\sim$ is symmetric.\\
+\\
+ \space If $A_i^* \sim A_j^*$ and $A_j^* \sim A_k^*$, then $\exists \; x, y \in G$  such that,
+\begin{align*} A_i^* = xA_j^*x^{-1} \; \text{and} \; A_j^* = yA_k^*y^{-1} \Rightarrow A_i^* = xyA_k^*y^{-1}x^{-1} = (xy)A_k^*(xy)^{-1}.
+\end{align*}
+Thus $A_i^* \sim A_k^*$ (since $xy \in G$), which shows that $\sim$ is transitive and moreover an equivalence relation on $\mathfrak{M}^*$. \\
+\\
+The equivalence class of $A_i^*$ in $\mathfrak{M}^*$ therefore coincides with the set $\mathcal{C}_i^* = \{ xA_i^*x^{-1} : x \in G \}$. Furthermore, this tells us that each $A_i^*$ belongs to exactly one conjugacy class. Thus the conjugacy classes $\mathcal{C}_i^*$ form a partition of $\mathfrak{M}^*$,
+\begin{align*} \mathfrak{M}^* = \bigcup\limits_{A_i^* \in S} \mathcal{C}_i^*,  \qquad \text{and}  \qquad \mathcal{C}_i^* \cap \mathcal{C}_j^* = \varnothing, \qquad \forall \; i \neq j.
+\end{align*}
+
+Since the set of $\mathcal{C}_i^*$ are pairwise disjoint, it follows that the set of $C_i^*$ are also pairwise disjoint and we get the desired result,
+
+\begin{align*} G \! \setminus \! Z = \bigcup\limits_{A_i^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \; i \neq j.
+\end{align*}
+
+(ii) Let $x A_i x^{-1} \in \mathcal{C}_i$ and $x A_i^* x^{-1} \in \mathcal{C}_i^*$. Since $x A_i x^{-1} \! \setminus \! Z = x A_i^* x^{-1}$, it is quite clear that,
+\begin{align*} x A_i x^{-1} \in \mathcal{C}_i \iff x A_i^* x^{-1} \in \mathcal{C}_i^*.
+\end{align*}
+Thus $|\mathcal{C}_i^*| = |\mathcal{C}_i|$ as desired. \\
+\\
+(iii) Now we define a map $\phi$ by:
+\begin{align*} \phi: \mathcal{C}_i &\longrightarrow G / N_G(A_i),
+\\ \phi(xA_ix^{-1}) &= xN_G(A_i). \tag{$\forall \; x \in G, \; A_i \in \mathfrak{M}$}
+\end{align*}
+
+Clearly $\phi$ is trivially surjective. We now show that it is both well-defined and injective.
+\begin{align*} xN_G(A_i) = yN_G(A_i) &\iff y^{-1}xN_G(A_i) = N_G(A_i) \\
+&\iff y^{-1}x \in N_G(A_i) \\
+&\iff (y^{-1}x)A_i(y^{-1}x)^{-1} = A_i \\
+&\iff y^{-1}xA_ix^{-1}y = A_i \\
+&\iff xA_ix^{-1} = yA_iy^{-1}.
+\end{align*}
+
+Hence $\phi$ is well-defined and injective. This shows that $\phi$ is a bijection proving that $|\mathcal{C}_i| = [G:N_G(A_i)]$. This is a crucial result which shows that the number of maximal abelian subgroups conjugate to $A_i$ is equal to the index of the normaliser of $A_i$ in $G$. \\
+\\
+(iv) This follows directly from parts (i), (ii) and (iii) and \eqref{orderorder}.
+\begin{align*} G \! \setminus \! Z &= \bigcup\limits_{A_i^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \;  i \neq j, \\
+ |G \! \setminus \! Z| &=  \sum_{A_i^* \in S} |C_i^*| = \sum_{A_i^* \in S} |A_i^*||\mathcal{C}_i^*| = \sum_{A_i^* \in S} |A_i^*||\mathcal{C}_i|
+\\ &= \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)].
+\end{align*}
+
+\end{proof}
+
+This theorem proves that the non-central parts of the maximal abelian subgroups form a partition of the non-central part of $G$. This will serve as a powerful tool in decomposing $G$ and counting its elements.
+
+\section{Constructing The Class Equation}
+
+It is necessary to prove the following 2 short lemmas before we proceed further.
+ 
+\begin{lemma}\label{unsureifneeded} $N_G(A) =N_G(A^*)$.
+\end{lemma}
+
+\begin{proof}
+(iii) Let $x \in N_G(A^*)$. Take an arbitary $a \in A = A^* \cup Z$. If $a \in A^*$, then since  $x \in N_G(A^*)$, we have $xax^{-1} \in A^* \subset A$. If $a \in Z$, then $xzx^{-1} = zxx^{-1} = z \in A$. Therefore $x$ is in the normaliser of $A$ and $N_G(A^*) \subset N_G(A)$. \\
+\\
+Conversely, take $y \in N_G(A)$ and $a \in A^*$. $yay^{-1} \in A = A^* \cup Z$. If  $yay^{-1} \in Z$, then
+\begin{align*} yay^{-1} &= z, \tag{some $z \in Z$}
+\\ a &= y^{-1}zy =   y^{-1}yz = z \not \in A^*.
+\end{align*}
+This contradicts the fact that $a \in A^*$. Therefore $yay^{-1} \in A^*$ and $y \in N_G(A^*)$. Since $y$ was chosen arbitrarily we get $N_G(A) \subset N_G(A^*)$ and hence $N_G(A) =N_G(A^*)$.
+
+\end{proof}
+
+\begin{lemma}\label{unsure} $N_G(Q \times Z) = N_G(Q)$.
+\end{lemma}
+
+\begin{proof} 
+
+If $p= 2$ then $Z = I_G$ and the result is trivial. Now assume $p \neq 2$. Thus $|Z| = 2$. Let $x$ and $q_1$ be arbitrarily chosen elements of $N_G(Q)$ and $Q$ respectively.
+\begin{align*} xq_1x^{-1} &= q_2, \tag{for some $q_2 \in Q$}
+\\ xq_1x^{-1}z_1 &= q_2z_1,
+\\ xq_1z_1x^{-1} &= q_2z_1 \in Q \times Z.
+\end{align*}
+Thus any element $x$ which is in $N_G(Q)$ is also in $N_G(Q \times Z)$ so we have $N_G(Q) \subset N_G(Q \times Z)$. \\
+\\
+Let $q_1 z_1$ be an arbitrarily chosen element of $Q \times Z$ such that $q_1 \in Q$ and $z_1 \in Z$. Now let $y$ be an arbitrarily chosen element of $N_G(Q \times Z)$.
+\begin{align*} y q_1 z_1 y^{-1} = q_2 z_2 \in Q \times Z. \qquad (\text{where $q_2 \in Q$ and $z_2 \in Z$}) 
+\end{align*}
+
+Consider now the order of $q_1z_1$ in $G$. Since $p \neq 2$, $Q \cap Z = I_G$ and $|q_1 z_1| = |q_1| |z_1|$. Note that $q_1 z_1$ and $q_2 z_2$ are conjugate in $G$, and thus their orders are equal. This means that $|z_1| = |z_2|$, because otherwise 2 would divide one of them and not the other. Thus $z_1 = z_2$ and,
+\begin{align*} y q_1z_1 y^{-1} &=  q_2z_2 = q_2z_1
+\\ y q_1 y^{-1} z_1 &= q_2z_1,
+\\ y q_1 y^{-1} &= q_2 \in Q
+\end{align*}
+Hence $y \in N_G(Q)$. Furthermore, since $y$ was chosen arbitrarily, any element which is in $N_G(Q \times Z)$ is also in $N_G(Q)$, so $N_G(Q \times Z) = N_G(Q)$ as desired.
+
+\end{proof}
+
+We now start to count the elements of the seperate components of $G$ and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of $G$, something we will call the \textbf{Maximal Abelian Subgroup Class Equation} of $G$. \\
+\\
+First we spilt $\mathfrak{M}$ into the conjugacy classes of it's elements. Theorem \ref{6.8}(iii) tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to $p$ or of the form $Q \times Z$ where $Q$ is a Sylow $p$-subgroup. Let $\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}$ (where $s, t \in \mathbb{Z}^+$) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to $p$. Recall that part (iv) of Theorem \ref{6.8} tells us that $[N_G(A): A] = 1$ or 2. Let $A_i$ be a representative from each $\mathcal{C}_i$ such that,
+\begin{align*} [N_G(A_i) : A_i] &= 1, \tag{for  $i \leq s$} \\[2mm]
+[N_G(A_i) : A_i] &= 2. \tag{for  $s < i \leq s+t$}, \end{align*}
+
+Now let $Q_1$ and $Q_2$ be any two Sylow $p$-subgroups of $G$. By the Second Sylow Theorem, $Q_1$ and $Q_2$ are conjugate to each other in $G$. That is, there exists a $g \in G$ such that $gQ_1g^{-1} = Q_2$.
+
+\begin{align*} gQ_1g^{-1} = Q_2 &\iff gQ_1g^{-1}Z = Q_2Z 
+\\ &\iff gQ_1Zg^{-1} = Q_2Z
+\\ &\iff g(Q_1 \times Z)g^{-1} = (Q_2 \times Z). \tag{by Corollary \ref{directproductZ}}
+\end{align*} 
+
+So $Q_1 \times Z$ and $Q_2 \times Z$ belong to the same conjugacy class, furthermore there is thus only 1 conjugacy class of elements of this form in $\mathfrak{M}$. Let $\mathcal{C}_{Q \times Z}$ denote this conjugacy class and let $Q \times Z$ be a representative from it. The following diagram provides a visual representation of $G$ divided into it's maximal abelian subgroups.
+
+% \begin{center}
+% \begin{tikzpicture}[thick, scale=0.4]
+
+% \draw (0,0) ellipse (22pt and 22pt); 
+
+% \draw[dashed][rotate around={308:(0,0)},red] (3,0) ellipse (108pt and 41pt);  
+% \draw[dashed][rotate around={318:(0,0)},red] (3,0) ellipse (108pt and 41pt);  
+% \draw[rotate around={328:(0,0)},red] (3,0) ellipse (108pt and 41pt); 
+% \draw[dashed][rotate around={338:(0,0)},red] (3,0) ellipse (108pt and 41pt);  
+
+% \draw[dashed][rotate around={301:(0,0)},lightgray] (3,0) ellipse (94pt and 37pt); 
+% \draw[dashed][rotate around={296:(0,0)},lightgray] (3,0) ellipse (94pt and 37pt); 
+% \draw[dashed][rotate around={291:(0,0)},lightgray] (3,0) ellipse (94pt and 37pt);  
+
+% \draw[dashed][rotate around={258:(0,0)},orange] (2,0) ellipse (79pt and 37pt);  
+% \draw[rotate around={270:(0,0)},orange] (2,0) ellipse (79pt and 37pt);  
+% \draw[dashed][rotate around={282:(0,0)},orange] (2,0) ellipse (79pt and 37pt); 
+
+% \draw[dashed][rotate around={198:(0,0)},cyan] (3.4,0) ellipse (120pt and 35pt);  
+% \draw[rotate around={203:(0,0)},cyan] (3.4,0) ellipse (120pt and 35pt);
+% \draw[dashed][rotate around={208:(0,0)},cyan] (3.4,0) ellipse (120pt and 35pt);
+% \draw[dashed][rotate around={213:(0,0)},cyan] (3.4,0) ellipse (120pt and 35pt);
+% \draw[dashed][rotate around={218:(0,0)},cyan] (3.4,0) ellipse (120pt and 35pt);
+
+% \draw[dashed][rotate around={128:(0,0)},blue] (2,0) ellipse (79pt and 37pt);  
+% \draw[rotate around={148:(0,0)},blue] (2,0) ellipse (79pt and 37pt);
+% \draw[dashed][rotate around={168:(0,0)},blue] (2,0) ellipse (79pt and 37pt);
+
+% \draw[dashed][rotate around={108:(0,0)},lightgray] (3,0) ellipse (94pt and 37pt); 
+% \draw[dashed][rotate around={113:(0,0)},lightgray] (3,0) ellipse (94pt and 37pt); 
+% \draw[dashed][rotate around={118:(0,0)},lightgray] (3,0) ellipse (94pt and 37pt); 
+
+% \draw[dashed][rotate around={82:(0,0)},teal] (3,0) ellipse (108pt and 41pt);  
+% \draw[rotate around={86:(0,0)},teal] (3,0) ellipse (108pt and 41pt);  
+% \draw[dashed][rotate around={90:(0,0)},teal] (3,0) ellipse (108pt and 41pt);  
+% \draw[dashed][rotate around={94:(0,0)},teal] (3,0) ellipse (108pt and 41pt);  
+% \draw[dashed][rotate around={98:(0,0)},teal] (3,0) ellipse (108pt and 41pt);  
+
+% \draw[dashed][rotate around={18:(0,0)},green] (3.4,0) ellipse (120pt and 35pt);
+% \draw[rotate around={26:(0,0)},green] (3.4,0) ellipse (120pt and 35pt);
+% \draw[dashed][rotate around={34:(0,0)},green] (3.4,0) ellipse (120pt and 35pt); 
+
+% \node[] at (0,-10) {\resizebox{8cm}{!}{Fig 1: $G$ arranged into it's maximal abelian subgroups}};
+% \node[] at (0,0) {\resizebox{.3cm}{!}{$Z$}};
+
+% \node[] at (6.1,-4.5) {\resizebox{.5cm}{!}{$A_1$}};
+% \node[] at (-0.2,-5.6) {\resizebox{.5cm}{!}{$A_s$}};
+% \node[] at (-7.8,-4.1) {\resizebox{.9cm}{!}{$A_{s+1}$}};
+% \node[] at (-5.0,3.3) {\resizebox{.9cm}{!}{$A_{s+2}$}};
+% \node[] at (0.2,7.6) {\resizebox{.9cm}{!}{$A_{s+t}$}};
+% \node[] at (8.0,4.0) {\resizebox{1.1cm}{!}{$Q \times Z$}};
+
+% \node[] at (7.9,-6.0) {\resizebox{.5cm}{!}{$\mathcal{C}_1$}};
+% \node[] at (-0.2,-7.9) {\resizebox{.5cm}{!}{$\mathcal{C}_s$}};
+% \node[] at (-10.9,-4.7) {\resizebox{1.0cm}{!}{$\mathcal{C}_{s+1}$}};
+% \node[] at (-8.2,4.9) {\resizebox{1.0cm}{!}{$\mathcal{C}_{s+2}$}};
+% \node[] at (-0.1,10.0) {\resizebox{1.0cm}{!}{$\mathcal{C}_{s+t}$}};
+% \node[] at (11.6,5.1) {\resizebox{1.2cm}{!}{$\mathcal{C}_{Q \times Z}$}};
+
+% \node[scale=1.6, rotate=143,gray] at (6.9,-5.1) { $\Bigg\{$ };
+% \node[scale=1.1, rotate=90,gray] at (0,-6.6) { $\Bigg\{$ };
+% \node[scale=1.3, rotate=28,gray] at (-8.9,-4.8) { $\Bigg\{$ };
+% \node[scale=1.4, rotate=328,gray] at (-6.3,3.9) { $\Bigg\{$ };
+% \node[scale=1.2, rotate=270,gray] at (0.0,8.7) { $\Bigg\{$ };
+% \node[scale=1.2, rotate=206,gray] at (9.6,4.6) { $\Bigg\{$ };
+
+% \end{tikzpicture}
+% \end{center}
+
+We can reformulate the counting formula in Theorem \ref{partitiontheorem}(iv) using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests.
+
+\begin{align*} |G \! \setminus \! Z| = \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)] = \sum_{A_i^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum_{i=1}^{s+t} |C_i^*|.
+\end{align*}
+
+We are now able to begin to evaluate $G$. Firstly, let $|Z| = e$ and $|G| = eg$. We know well by now that $e = 1$ or 2 depending on whether $p$ equals 2 or not, and by Lagrange's Theorem, the order of a subgroup divides the order of the group, so $e$ divides $|G|$ since $Z < G$. \\
+\\
+We consider the cyclic case first. Again, by Lagrange's Theorem, since $Z$ is a subgroup of each $A_i$, $e$ divides $|A_i|$. So set $|A_i| = eg_i$. Since $Z \notin \mathfrak{M}$, each $A_i$ is therefore strictly larger than $Z$ and so each $g_i$ is an integer greater than or equal to 2. \\
+\\
+To determine the order of each $C_i$, we return to the set $\mathfrak{M}^*$. The size of one representative of each class is,
+\begin{align*} |A_i^*| = |A_i \! \setminus \! Z| = eg_i-e = e(g_i-1). \end{align*}
+The number of $A_i^*$ in each conjugacy class $\mathcal{C}_i$ for $i \leq s$ is thus,
+\begin{align*} |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{|A_i|} = \frac{eg}{eg_i} = \frac{g}{g_i}. \end{align*}
+\\
+Therefore the total number of elements of $G$ in the noncentral part of $C_i$ for $i \leq s$ is,
+\begin{align} \label{classeq1of3} \sum_{i=1}^{s} |C_i^*| = \sum_{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| = \sum_{i=1}^{s} \frac{eg(g_i-1)}{g_i}.
+\end{align}
+\\
+The number of $A_i^*$ in each conjugacy class $\mathcal{C}_i$ for $s < i \leq s+t$ is thus,
+\begin{align*} |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{2|A_i|} = \frac{eg}{2eg_i} = \frac{g}{2g_i}. \end{align*}
+\\
+Therefore the total number of elements of $G$ in the noncentral part of $C_i$ for $s < i \leq s+t$ is,
+\begin{align}\label{classeq2of3} \sum_{i=s+1}^{s+t} |C_i^*| = \sum_{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*| = \sum_{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}.
+\end{align}
+We next determine the order of $C_{Q \times Z}$. Let $|Q| = q$. If $p \nmid |G|$ then $q=1$ and if $p = 0$, then we consider a Sylow $p$-subgroup to simply be $I_G$. So $q$ is always at least 1. Since $Z < K$, we can let $|K| = ek$. Observe that if $K \in \mathfrak{M}$, then by Theorem \ref{6.8}(v), $K = A_i$ for some $0 < i \leq t$ and $k = g_i$. Recall that $N_G(Q) = QK$ and so,
+\begin{align*} |N_G(Q \times Z)^*| &= |N_G(Q \times Z)|  \tag{by Lemma \ref{unsureifneeded}}
+\\ &= |N_G(Q)| \tag{by Lemma \ref{unsure}}
+\\ &= |QK| = eqk.
+\end{align*}
+
+Again we count the size and number of these maximal abelian groups.
+\begin{align*} |(Q \times Z)^*| = |QZ| - |Z| = e(q-1).
+\end{align*}
+
+Since there is only one conjugacy class of $Q \times Z$, the number of $(Q \times Z)^*$ in $\mathfrak{M}^*$ is thus,
+\begin{align*} |\mathcal{C}_{Q \times Z}^*| =  |\mathcal{C}_{Q \times Z}| =  [G: N_G(Q \times Z)] = \frac{|G|}{|N_G(Q \times Z)^*|} = \frac{eg}{eqk} = \frac{g}{qk}.
+\end{align*}
+
+Therefore the total number of elements of $G$ in the noncentral parts of each $Q \times Z$ is,
+\begin{align} \label{classeq3of3} |C_{Q \times Z}^*| = |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| = \frac{eg(q-1)}{qk}.
+\end{align}
+
+We now sum together (\ref{classeq1of3}), (\ref{classeq2of3}) and (\ref{classeq3of3}) to create the \textbf{Maximal Abelian Subgroup Class Equation} of $G$.
+
+\begin{align}\label{classeq} |G \! \setminus \! Z| &= |C_{Q \times Z}^*| + \sum_{i=1}^{s+t} |C_i^*|, \nonumber \\
+|G \! \setminus \! Z| &= |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| + \sum_{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| + \sum_{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*|, \nonumber \\
+eg - e &= \frac{eg(q-1)}{qk} + \sum_{i=1}^{s} \frac{eg(g_i-1)}{g_i} + \sum_{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}, \nonumber \\
+1 &= \frac{1}{g} + \frac{q-1}{qk} + \sum_{i=1}^{s} \frac{g_i-1}{g_i} + \sum_{i=s+1}^{s+t} \frac{g_i-1}{2g_i}.
+\end{align}
+
+Since $g,k,q \in \mathbb{Z}^+$ this implies that,
+\begin{align*} \frac{1}{g} > 0 \quad \text{and} \quad \frac{q-1}{qk} \geq 0.
+\end{align*} 
+
+Also, since $g_i \geq 2$ for $1 \leq i \leq s + t$, we have,
+\begin{align*} \frac{g_i-1}{g_i} \geq \frac{1}{2}, \quad \sum_{i=1}^{s} \frac{g_i-1}{g_i} \geq \frac{s}{2} \quad \text{and} \quad \sum_{i=s+1}^{s+t} \frac{g_i-1}{2g_i} \geq \frac{t}{4}.
+\end{align*}
+
+Thus we can find a lower bound for (\ref{classeq}) which limits the possible number of conjugacy classes somewhat,
+\begin{align*} 1 > \frac{s}{2} + \frac{t}{4}.
+\end{align*}
+
+There are only 6 possible different pairs of values which $s$ and $t$ can take: \vspace{3mm}
+
+\begin{center}
+\centering
+  \begin{tabular}{||P{1.5cm}||P{1cm}|P{1cm}|P{1cm}|P{1cm}|P{1cm}|P{1cm}||}
+\hline
+Case & I & II & III & IV & V & VI \\ [1ex]
+\hline\hline
+ $s$ & 1 & 1 & 0 & 0 & 0 & 0 \\ [1ex]
+\hline
+$t$ & 0 & 1 & 0 & 1 & 2 & 3 \\ [1ex]
+ \hline
+\end{tabular}
+\end{center}
+\vspace{2mm}
+
+Each case will be examined individually in the next chapter.

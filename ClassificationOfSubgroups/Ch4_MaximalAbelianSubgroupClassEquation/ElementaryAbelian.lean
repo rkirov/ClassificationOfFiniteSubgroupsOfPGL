@@ -12,7 +12,7 @@ set_option synthInstance.maxHeartbeats 0
 
 open Subgroup
 
-namespace ElementaryAbelian
+
 
 structure ElementaryAbelian (p : ℕ) (G : Type*) [Group G] extends Subgroup G where
   is_comm : IsCommutative toSubgroup
@@ -21,6 +21,8 @@ structure ElementaryAbelian (p : ℕ) (G : Type*) [Group G] extends Subgroup G w
 
 def IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G) : Prop :=
   IsCommutative H ∧ ∀ h : H, h ≠ 1 → orderOf h = p
+
+namespace ElementaryAbelian
 
 lemma dvd_card_IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G)
   [Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H: ⊥ < H) : p ∣ (Nat.card H) := by
@@ -60,7 +62,8 @@ lemma primeFac_IsElementaryAbelian_eq {G : Type*} [Group G] (p : ℕ)
     absurd q_ne_p (order_eq_q ▸ order_eq_p)
     trivial
   · simp
-    exact ⟨hp, dvd_card_IsElementaryAbelian p H hH bot_lt_H, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
+    exact
+      ⟨hp, dvd_card_IsElementaryAbelian p H hH bot_lt_H, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
 
 lemma IsPGroup_of_IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (hp : Nat.Prime p)
   (H : Subgroup G) [Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H : ⊥ < H):
