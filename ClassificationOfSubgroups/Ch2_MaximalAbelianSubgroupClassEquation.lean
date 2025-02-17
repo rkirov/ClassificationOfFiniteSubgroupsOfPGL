@@ -89,7 +89,7 @@ def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) := {x : G | x ∈ 
 
 -- def M_ (A : )
 
--- lemma theorem_2_4 ()
+-- lemma theorem_2_4 {F : Type*} [Field F] {G : Subgroup SL(2,F)} [Finite G]
 
 /-
 Clᵢ = {x Aᵢx⁻¹ : x ∈ G}

@@ -91,7 +91,7 @@ This isomorphism will be crucial as it will allow us to focus on classifying fin
 
 When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct an isomorphism between the projective special linear group and the projective general linear group.
 \begin{definition}
-\lean{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.SL_monoidHom_PGL}
+\lean{SL_monoidHom_PGL}
 \label{SL_monoidHom_PGL}
     Let $\varphi : \SL_n(R) \rightarrow \PGL_n(R)$ be the injection of $\PSL_n(R)$ into $\PGL_n(R)$ defined by
     \[
@@ -102,7 +102,7 @@ When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct 
 \end{definition}
 
 \begin{lemma}
-\lean{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.center_SL_le_ker}
+\lean{center_SL_le_ker}
 \uses{SL_monoidHom_PGL}
 \leanok
 Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \subseteq \ker (\varphi)$.
@@ -116,11 +116,13 @@ Given the kernel of $\varphi$.
 
 
 
-\begin{definition}\lean{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.PSL_monoidHom_PGL}
+\begin{definition}
+\lean{PSL_monoidHom_PGL}
     Let $\bar{\varphi} : \PSL_n(F) \rightarrow \PGL_n(F)$ be the lift of $\varphi$
 \end{definition}
 
-\begin{lemma}\lean{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.Injective_PSL_monoidHom_PGL}
+\begin{lemma}
+\lean{Injective_PSL_monoidHom_PGL}
     The map $\bar{\varphi}$ is injective.
 \end{lemma}
 
