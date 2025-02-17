@@ -1,7 +1,9 @@
-import ClassificationOfSubgroups.SpecialMatrices
+import ClassificationOfSubgroups.Ch3_PropertiesOfSLOverAlgClosedField.S1_SpecialMatrices
 import Mathlib.Algebra.Category.Grp.Images
 import Mathlib.Analysis.Normed.Field.Lemmas
 import Mathlib.Order.CompletePartialOrder
+import Mathlib.GroupTheory.Sylow
+
 
 open Matrix MatrixGroups Subgroup Pointwise SpecialMatrices
 
@@ -36,7 +38,34 @@ def D (F : Type*) [Field F] : Subgroup SL(2,F) where
               use δ⁻¹
               simp [← hS]
 
+/- Lemma 1.2.1.3 -/
+def D_iso_units (F : Type*) [Field F] : SpecialSubgroups.D F ≃* Fˣ where
+  toFun d := ⟨
+              d.val 0 0,
+              d.val 1 1,
+              by obtain ⟨δ, hδ⟩ := d.property; rw [← hδ]; simp [SpecialMatrices.d],
+              by obtain ⟨δ, hδ⟩ := d.property; rw [← hδ]; simp [SpecialMatrices.d]
+              ⟩
+  invFun δ := ⟨d δ, by use δ⟩
+  left_inv A := by
+                obtain ⟨δ, hδ⟩ := A.property
+                rw [← Subtype.coe_inj, ← hδ]
+                ext <;> simp [SpecialMatrices.d, ← hδ]
+  right_inv a := by ext; rfl
+  map_mul' X Y := by
+                obtain ⟨δ₁, hδ₁⟩ := X.property
+                obtain ⟨δ₂, hδ₂⟩ := Y.property
+                simp [Subgroup.coe_mul, Fin.isValue, SpecialLinearGroup.coe_mul]
+                congr
+                repeat'
+                  simp_rw [← hδ₁, ← hδ₂]
+                  simp [SpecialMatrices.d, mul_comm]
+
+
+
 end Diagonal
+
+section Shear
 
 /- Lemma 1.2.1.2 -/
 def T (F : Type*) [Field F]: Subgroup SL(2,F) where
@@ -57,6 +86,25 @@ def T (F : Type*) [Field F]: Subgroup SL(2,F) where
               use (-τ)
               simp [← hτ]
 
+/- Lemma 1.2.1.4 { T τ } ≃* F -/
+def T_iso_F (F : Type*) [Field F]: SpecialSubgroups.T F ≃* (Multiplicative F) where
+  toFun T := T.val 1 0
+  invFun τ := ⟨t τ, by use τ⟩
+  left_inv T := by
+    obtain ⟨τ, hτ⟩ := T.property
+    rw [← Subtype.coe_inj, ← hτ]
+    ext <;> simp [t, ← hτ]
+  right_inv τ := by simp [t]
+  map_mul' X Y := by
+    obtain ⟨τ₁, hτ₁⟩ := X.property
+    obtain ⟨τ₂, hτ₂⟩ := Y.property
+    simp only [Subgroup.coe_mul, Fin.isValue, SpecialLinearGroup.coe_mul]
+    simp_rw [← hτ₁, ← hτ₂]
+    simp [t]
+    rfl
+
+end Shear
+
 
 
 lemma D_meet_T_eq_bot : D F ⊓ T F = ⊥ := by
@@ -74,6 +122,7 @@ lemma D_meet_T_eq_bot : D F ⊓ T F = ⊥ := by
     constructor
     · simp [h]; exact Subgroup.one_mem (D F)
     · simp [h]; exact Subgroup.one_mem (T F)
+
 
 def H (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ * t τ | (δ : Fˣ) (τ : F) }
@@ -356,7 +405,7 @@ lemma exists_unique_orderOf_eq_two [NeZero (2 : F)] : ∃! x : SL(2,F), orderOf 
   · rw [δ_eq_neg_one] at α_eq_δ
     ext <;> simp [α_eq_δ, β_eq_zero, γ_eq_zero, δ_eq_neg_one]
 
-lemma Z_IsCyclic : IsCyclic (Z F) := by
+lemma IsCyclic_Z : IsCyclic (Z F) := by
   apply isCyclic_iff_exists_orderOf_eq_natCard.mpr ?_
   by_cases h : NeZero (2 : F)
   · rw [card_Z_eq_two_of_two_ne_zero]
@@ -368,7 +417,252 @@ lemma Z_IsCyclic : IsCyclic (Z F) := by
     simp only [orderOf_eq_one_iff, exists_eq]
 
 
+namespace IsPGroup
+
+
+/- Lemma 2.1. If G is a finite group of order pm where p is prime and m > 0,
+then p divides |Z(G)|.-/
+lemma p_dvd_card_center {H : Type*} {p : ℕ} (hp:  Nat.Prime p) [Group H] [Finite H] [Nontrivial H]
+  (hH : IsPGroup p H) : p ∣ Nat.card (center H) := by
+  let inst : Fact (Nat.Prime p) := by exact { out := hp }
+  have card_H_eq_pow_prime : ∃ n > 0, Nat.card H = p ^ n := by rwa [← hH.nontrivial_iff_card]
+  suffices ∃ k > 0, Nat.card (center H) = p ^ k by
+    obtain ⟨k, kpos, hk⟩ := this
+    use p^(k-1)
+    rw [hk, ← Nat.pow_add_one', Nat.sub_add_cancel]
+    linarith
+  obtain ⟨n, npos, hn⟩ := card_H_eq_pow_prime
+  exact IsPGroup.card_center_eq_prime_pow hn npos
+
+end IsPGroup
+
+
 end Center
+
+
+
+def TZ : Subgroup SL(2,F) where
+  carrier := { t τ | τ : F } ∪ { - t τ | τ : F }
+  mul_mem' := by
+    rintro x y (⟨τ₁, rfl⟩ | ⟨τ₁, rfl⟩) (⟨τ₂, rfl⟩ | ⟨τ₂, rfl⟩)
+    repeat' simp
+  one_mem' := by
+    rw [← t_zero_eq_one]; left; use 0
+  inv_mem' :=  by
+    rintro x (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
+    repeat' simp
+
+
+def TZ' : Subgroup SL(2,F) where
+  carrier := T F * Z F
+  mul_mem' := by
+    rintro a b ⟨t₁, ht₁, ⟨z₁, hz₁, rfl⟩⟩ ⟨t₂, ht₂, ⟨z₂, hz₂, rfl⟩⟩
+    simp only [SetLike.mem_coe] at ht₁ ht₂ hz₁ hz₂ ⊢
+    group
+    have hz₁' := hz₁
+    simp [← center_SL2_F_eq_Z ] at hz₁'
+    rw [mul_assoc t₁, (mem_center_iff.mp hz₁' t₂).symm]
+    group
+    use t₁ * t₂
+    constructor
+    · exact Subgroup.mul_mem _ ht₁ ht₂
+    use z₁ * z₂
+    constructor
+    · exact Subgroup.mul_mem _ hz₁ hz₂
+    group
+  one_mem' := by
+    use 1
+    constructor
+    · use 0, t_zero_eq_one F
+    use 1
+    constructor
+    · simp
+    group
+  inv_mem' := by
+    rintro x ⟨t, ht, ⟨z, hz, rfl⟩⟩
+    simp at ht
+    have hz' := hz
+    simp [← center_SL2_F_eq_Z] at hz
+    simp only [_root_.mul_inv_rev,
+       (mem_center_iff.mp ((Subgroup.inv_mem_iff (center SL(2, F))).mpr hz) t⁻¹).symm]
+    use t⁻¹
+    constructor
+    · simp [ht]
+    use z⁻¹
+    constructor
+    · exact (Subgroup.inv_mem_iff (Z F)).mpr hz'
+    group
+
+lemma TZ_eq_TZ' {F : Type*} [Field F] : TZ' F = TZ F := by
+  ext x
+  constructor
+  · rintro ⟨t, ht, z, hz, rfl⟩
+    simp at hz ht
+    obtain ⟨τ, rfl⟩ := ht
+    -- z = 1 or z = -1
+    rcases hz with (rfl | rfl)
+    · left
+      use τ
+      simp
+    · right
+      use τ
+      simp
+  · intro hx
+    rcases hx with (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
+    · use t τ
+      constructor
+      · use τ
+      use 1
+      constructor
+      · simp
+      · simp
+    · use t τ
+      constructor
+      · use τ
+      use -1
+      constructor
+      · simp
+      · simp
+
+
+lemma T_mul_Z_subset_TZ :
+  ((T F) : Set SL(2,F)) * ((Z F) : Set SL(2,F)) ⊆ ((TZ F) : Set SL(2,F)) := by
+  rintro x ⟨t', ht', z, hz, hτ, h⟩
+  obtain ⟨τ, rfl⟩ := ht'
+  dsimp [Z] at hz
+  dsimp
+  rw [closure_neg_one_eq] at hz
+  simp [TZ]
+  rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
+  rcases hz with (rfl | rfl)
+  left
+  use τ
+  rw [mul_one]
+  right
+  use τ
+  simp
+
+
+lemma T_join_Z_eq_TZ : T F ⊔ Z F = TZ F := by
+  ext x
+  constructor
+  · intro hx
+    rw [sup_eq_closure_mul, mem_closure] at hx
+    exact hx (TZ F) (T_mul_Z_subset_TZ F)
+  · rintro (⟨τ, rfl⟩ | ⟨τ, rfl⟩) <;> rw [sup_eq_closure_mul]
+    · have mem_Z_mul_T : t τ ∈ ((T F) : Set SL(2,F)) * (Z F) := by
+        rw [Set.mem_mul]
+        use t τ
+        split_ands
+        simp [Z, closure_neg_one_eq]
+        use τ
+        simp
+      apply Subgroup.subset_closure mem_Z_mul_T
+    · have mem_Z_mul_T : -t τ ∈ ((T F) : Set SL(2,F)) * (Z F) := by
+        rw [Set.mem_mul]
+        use t τ
+        split_ands
+        simp [Z, closure_neg_one_eq]
+        use τ
+        simp
+      apply Subgroup.subset_closure mem_Z_mul_T
+
+
+
+-- ordering propositions so when proving it can be done more efficiently
+#check Set.mem_mul
+
+
+
+
+
+
+
+
+
+section CommutativeSubgroups
+
+lemma IsCommutative_iff {G : Type*} [Group G] (H : Subgroup G) :
+  IsCommutative H ↔ ∀ x y : H, x * y = y * x := by
+  constructor
+  · intro h x y
+    have := @mul_comm_of_mem_isCommutative G _ H h x y (by simp) (by simp)
+    exact SetLike.coe_eq_coe.mp this
+  · intro h
+    rw [← le_centralizer_iff_isCommutative]
+    intro y hy
+    rw [mem_centralizer_iff]
+    intro x hx
+    simp at hx
+    specialize h ⟨x, hx⟩ ⟨y, hy⟩
+    simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq] at h
+    exact h
+
+lemma IsCommutative_D : IsCommutative (D F) := by
+  rw [IsCommutative_iff]
+  rintro ⟨x, ⟨δ₁, hδ₁⟩⟩ ⟨y, ⟨δ₂, hδ₂⟩⟩
+  simp [@Subtype.ext_val_iff]
+  rw [← hδ₁, ← hδ₂]
+  simp [mul_comm]
+
+
+lemma IsCommutative_T : IsCommutative (T F) := by
+  rw [IsCommutative_iff]
+  rintro ⟨x, ⟨τ₁, hτ₁⟩⟩ ⟨y, ⟨τ₂, hτ₂⟩⟩
+  simp [@Subtype.ext_val_iff]
+  rw [← hτ₁, ← hτ₂]
+  simp [add_comm]
+
+lemma IsCommutative_TZ : IsCommutative (TZ F) := by
+  refine le_centralizer_iff_isCommutative.mp ?_
+  rintro x (⟨τ₁, rfl⟩ | ⟨τ₁, rfl⟩)
+  repeat
+  rw [mem_centralizer_iff]
+  rintro y (⟨τ₂, rfl⟩ | ⟨τ₂, rfl⟩)
+  repeat' simp [add_comm]
+
+end CommutativeSubgroups
+
+theorem val_eq_neg_one {F : Type* } [Field F] {a : Fˣ} : (a : F) = -1 ↔ a = (-1 : Fˣ) := by
+  rw [Units.ext_iff, Units.coe_neg_one];
+
+
+lemma ex_of_card_D_gt_two {D₀ : Subgroup SL(2,F) }(hD₀ : 2 < Nat.card D₀) (D₀_leq_D : D₀ ≤ D F) :
+  ∃ δ : Fˣ, (δ : F) ≠ 1 ∧ (δ : F) ≠ -1 ∧ d δ ∈ D₀ := by
+  by_contra! h
+  have D₀_le_Z : D₀.carrier ≤ Z F := by
+    simp
+    intro x hx
+    obtain ⟨δ, rfl⟩ := D₀_leq_D hx
+    rw [Set.mem_insert_iff]
+    by_cases h₀ : (δ : F) = 1
+    · left;
+      rw [Units.val_eq_one] at h₀
+      rw [h₀, d_one_eq_one]
+    · by_cases h₁ : (δ : F) = -1
+      · right;
+        push_cast at h₁
+        rw [val_eq_neg_one] at h₁
+        rw [h₁, d_neg_one_eq_neg_one, Set.mem_singleton_iff]
+      · rw [← ne_eq] at h₀ h₁
+        specialize h δ h₀ h₁
+        contradiction
+  have card_D₀_leq_two : Nat.card D₀ ≤ 2 :=
+    le_trans (Subgroup.card_le_of_le D₀_le_Z) (card_Z_le_two _)
+  linarith
+
+
+lemma mem_D_iff {S : SL(2,F)} : S ∈ D F ↔ ∃ δ : Fˣ, d δ = S := by rfl
+
+
+lemma mem_D_w_iff {S : SL(2,F)} : S ∈ (D F : Set SL(2,F)) * {w} ↔ ∃ δ : Fˣ, d δ * w = S := by
+  constructor
+  · rintro ⟨d', ⟨δ, rfl⟩, w, ⟨rfl⟩, rfl⟩
+    use δ
+  · rintro ⟨δ, rfl⟩
+    simp [D]
+    use δ
+    rw [mul_assoc, w_mul_w_eq_neg_one, mul_neg, mul_one, neg_neg]
 
 end SpecialSubgroups
 

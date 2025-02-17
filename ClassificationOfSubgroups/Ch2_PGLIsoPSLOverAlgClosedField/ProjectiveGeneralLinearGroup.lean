@@ -154,7 +154,7 @@ def GL_monoidHom_PGL (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRi
   GL n R →* PGL n R := QuotientGroup.mk' (center (GL n R))
 
 def SL_monoidHom_PGL (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRing R] :
-  SL n R →*  PGL n R :=  MonoidHom.comp (GL_monoidHom_PGL n R) (SL_monoidHom_GL n R)
+  SL n R →*  PGL n R := (GL_monoidHom_PGL n R).comp (SL_monoidHom_GL n R)
 
 lemma coe  {n : Type*}  [Fintype n] [DecidableEq n] (x : SpecialLinearGroup n R):
   SpecialLinearGroup.toGL x = (x : Matrix n n R) := rfl
@@ -164,7 +164,7 @@ lemma scalar_eq_smul_one (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [Co
   simp [smul_one_eq_diagonal]
 
 lemma center_SL_le_ker (n : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
-  (R : Type*) [CommRing R] [NeZero (1 : R)]:
+  (R : Type*) [CommRing R] [NeZero (1 : R)] :
   center (SpecialLinearGroup n R) ≤ (SL_monoidHom_PGL n R).ker := by
   intro x x_mem_center
   rw [SpecialLinearGroup.mem_center_iff] at x_mem_center
@@ -177,8 +177,6 @@ lemma center_SL_le_ker (n : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
   simp only [coe, ← h, scalar_eq_smul_one]
   rfl
 
-
-
 instance center_is_normal (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
   [CommRing R] [NeZero (1 : R)] : Subgroup.Normal (center (SpecialLinearGroup n R)) :=
   normal_of_characteristic (center (SL n R))
@@ -187,6 +185,7 @@ instance PGL_is_monoid  (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
   [CommRing R] [NeZero (1 : R)] : Monoid (ProjectiveGeneralLinearGroup n R) :=
   RightCancelMonoid.toMonoid
 
+-- By the universal property the map from PSL n F to PGL n F is well defined
 def PSL_monoidHom_PGL (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
   [CommRing R] [NeZero (1 : R)] :
   PSL n R →* PGL n R :=
@@ -194,7 +193,6 @@ def PSL_monoidHom_PGL (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
     (PGL_is_monoid n R) (SL_monoidHom_PGL n R) (center_SL_le_ker n R)
 
 open Polynomial
-
 
 lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [DecidableEq n]
   [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] (G : GL n F) :
@@ -225,7 +223,6 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
 
 open Function
 
-
 lemma lift_scalar_matrix_eq_one {n F : Type*} [hn₁ : Fintype n] [DecidableEq n]
   [Field F] [IsAlgClosed F] (c : Fˣ) : GL_monoidHom_PGL n F (c • 1)  = 1 := by
   simp [GL_monoidHom_PGL]
@@ -239,48 +236,55 @@ instance (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   ext
   simp [@GeneralLinearGroup.coe_mul]
 
+#leansearch "lift of quotient is injective?"
 
-lemma Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
+theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
+  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
+  rw [← MonoidHom.ker_eq_bot_iff, eq_bot_iff]
+  intro psl psl_in_ker
+  obtain ⟨S, hS⟩ := Quotient.exists_rep psl
+  rw [← hS] at psl_in_ker
+  simp [QuotientGroup.eq_iff_div_mem, PSL_monoidHom_PGL,
+    SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL] at psl_in_ker
+  rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff] at psl_in_ker
+  obtain ⟨ω, hω⟩ := psl_in_ker
+  have ω_eq_root_of_unity : det S.val = 1 := SpecialLinearGroup.det_coe S
+  simp [GeneralLinearGroup.ext_iff, SpecialLinearGroup.toGL] at hω
+  have S_eq_omega_smul_one : (S : Matrix n n F) = ω • 1 := Eq.symm (Matrix.ext hω)
+  simp [S_eq_omega_smul_one] at ω_eq_root_of_unity
+  simp [← hS]
+  refine SpecialLinearGroup.mem_center_iff.mpr ?_
+  use ω
+  refine ⟨?ω_is_root_of_unity, ?S_is_scalar_matrix⟩
+  case ω_is_root_of_unity => exact (eq_one_iff_eq_one_of_mul_eq_one ω_eq_root_of_unity).mpr rfl
+  case S_is_scalar_matrix => rw [S_eq_omega_smul_one]; exact scalar_eq_smul_one n F ↑ω
+
+theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
+  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Surjective (PSL_monoidHom_PGL n F) := by
+  intro pgl
+  obtain ⟨G, hG⟩ := Quotient.exists_rep pgl
+  obtain ⟨c, S, h⟩ := exists_SL_eq_scaled_GL_of_IsAlgClosed G
+  use (SL_monoidHom_PSL n F) S
+  have class_G_eq_class_S : (⟦G⟧ : PGL n F) = ⟦S.toGL⟧ := by
+    rw [Quotient.eq, QuotientGroup.leftRel_apply,
+      GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
+    use c⁻¹
+    suffices c⁻¹ • 1 * G = S by
+      simp [← h]
+      ext
+      simp [GeneralLinearGroup.scalar,
+        nonsing_inv_mul _ <| isUnits_det_units (SpecialLinearGroup.toGL S),
+        ← Matrix.smul_one_eq_diagonal]
+    rw [← h, smul_mul_assoc, one_mul, inv_smul_eq_iff]
+  rw [← hG, class_G_eq_class_S]
+  -- by definition these equivalence classes are the same
+  rfl
+
+theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
   [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Bijective (PSL_monoidHom_PGL n F) := by
   refine ⟨?injective, ?surjective⟩
-  case injective =>
-    rw [← @MonoidHom.ker_eq_bot_iff]
-    rw [@eq_bot_iff]
-    intro psl psl_in_ker
-    obtain ⟨S, hS⟩ := Quotient.exists_rep psl
-    rw [← hS] at psl_in_ker
-    simp [@QuotientGroup.eq_iff_div_mem, PSL_monoidHom_PGL,
-      SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL] at psl_in_ker
-    rw [@GeneralLinearGroup.Center.mem_center_general_linear_group_iff] at psl_in_ker
-    obtain ⟨ω, hω⟩ := psl_in_ker
-    have ω_eq_root_of_unity : det S.val = 1 := SpecialLinearGroup.det_coe S
-    simp [GeneralLinearGroup.ext_iff, SpecialLinearGroup.toGL] at hω
-    have S_eq_omega_smul_one : (S : Matrix n n F) = ω • 1 := Eq.symm (Matrix.ext hω)
-    simp [S_eq_omega_smul_one] at ω_eq_root_of_unity
-    simp [← hS]
-    refine SpecialLinearGroup.mem_center_iff.mpr ?_
-    use ω
-    refine ⟨?ω_is_root_of_unity, ?S_is_scalar_matrix⟩
-    case ω_is_root_of_unity => exact (eq_one_iff_eq_one_of_mul_eq_one ω_eq_root_of_unity).mpr rfl
-    case S_is_scalar_matrix => rw [S_eq_omega_smul_one]; exact scalar_eq_smul_one n F ↑ω
-  case surjective =>
-    intro pgl
-    obtain ⟨G, hG⟩ := Quotient.exists_rep pgl
-    obtain ⟨c, S, h⟩ := exists_SL_eq_scaled_GL_of_IsAlgClosed G
-    use (SL_monoidHom_PSL n F) S
-    have class_G_eq_class_S : (⟦G⟧ : PGL n F) = ⟦S.toGL⟧ := by
-      rw [Quotient.eq, QuotientGroup.leftRel_apply]
-      rw [@GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
-      use c⁻¹
-      suffices c⁻¹ • 1 * G = S by
-        simp [← h]
-        ext
-        simp [GeneralLinearGroup.scalar,
-          nonsing_inv_mul _ <| isUnits_det_units (SpecialLinearGroup.toGL S),
-          ← Matrix.smul_one_eq_diagonal]
-      rw [← h, smul_mul_assoc, one_mul, inv_smul_eq_iff]
-    rw [← hG, class_G_eq_class_S]
-    rfl
+  case injective => exact Injective_PSL_monoidHom_PGL n F
+  case surjective => exact Surjective_PSL_monoidHom_PGL n F
 
 -- We define the isomorphism between
 -- the projective general linear group and the projective special linear group

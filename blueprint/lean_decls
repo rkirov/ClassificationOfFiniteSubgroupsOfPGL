@@ -1,0 +1,9 @@
+Sylow
+Sylow.exists_subgroup_card_pow_prime
+Sylow.equiv.proof_1
+card_sylow_modEq_one
+Sylow.unique_of_normal
+ProjectiveGeneralLinearGroup.SL_monoidHom_PGL
+ProjectiveGeneralLinearGroup.center_SL_le_ker
+ProjectiveGeneralLinearGroup.PSL_monoidHom_PGL
+ProjectiveGeneralLinearGroup.Injective_PSL_monoidHom_PGL

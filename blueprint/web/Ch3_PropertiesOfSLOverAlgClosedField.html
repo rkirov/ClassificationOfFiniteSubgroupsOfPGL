@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Properties of the two dimensional Special Linear Group</title>
+<link rel="next" href="sect0001.html" title="Bibliography" />
+<link rel="prev" href="Ch2_Introduction.html" title="Introduction" />
+<link rel="up" href="index.html" title="Classification of finite subgroups of PGL" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">Classification of finite subgroups of PGL</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="Ch1_Preliminaries.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="Ch1_Preliminaries.html#a0000000003"><span class="toc_ref">1.1</span> <span class="toc_entry">Some Elementary Theorems</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000008"><span class="toc_ref">1.2</span> <span class="toc_entry">Sylow Theory</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000013"><span class="toc_ref">1.3</span> <span class="toc_entry">Group Action</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000023"><span class="toc_ref">1.4</span> <span class="toc_entry">Conjugation</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000031"><span class="toc_ref">1.5</span> <span class="toc_entry">Automorphism</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000033"><span class="toc_ref">1.6</span> <span class="toc_entry">Direct Product</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html"><span class="toc_ref">2</span> <span class="toc_entry">Introduction</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="Ch2_Introduction.html#a0000000042"><span class="toc_ref">2.1</span> <span class="toc_entry">What is the formalization of mathematics?</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000043"><span class="toc_ref">2.2</span> <span class="toc_entry">Fermat’s Last Theorem</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000044"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalizing Fermat’s Last Theorem</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000045"><span class="toc_ref">2.4</span> <span class="toc_entry">Classification of finite subgroups of the Projective General Linear group over the algebraically closed field</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000046"><span class="toc_ref">2.5</span> <span class="toc_entry">Over an algebraically closed field PSL is isomorphic to the projective PGL</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000047"><span class="toc_ref">2.6</span> <span class="toc_entry">Christopher Butler’s exposition</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="Ch3_PropertiesOfSLOverAlgClosedField.html"><span class="toc_ref">3</span> <span class="toc_entry">Properties of the two dimensional Special Linear Group</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#a0000000048"><span class="toc_ref">3.1</span> <span class="toc_entry">Special matrices of the two dimensional Special Linear Group</span></a>
+ </li>
+<li class="">
+  <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#a0000000049"><span class="toc_ref">3.2</span> <span class="toc_entry">Special subgroups of two dimensional Special Linear Group</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">4</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="Ch3_PropertiesOfSLOverAlgClosedField">3 Properties of the two dimensional Special Linear Group</h1>
+
+<h1 id="a0000000048">3.1 Special matrices of the two dimensional Special Linear Group</h1>
+<p>It turns out there are three matrices which are crucial to understanding the structure of finite subgroups of \(\textrm{SL}_2(F)\): </p>
+<ol class="enumerate">
+  <li><p>The diagonal matrix: </p>
+<div class="equation" id="a0000000065">
+<p>
+  <div class="equation_content">
+    \begin{equation}  d_\delta = \begin{pmatrix}  \delta 
+
+&  0
+
+\\ 0 
+
+&  \delta ^{-1} 
+
+\end{pmatrix} \quad \text{for $\delta \in F^\times $} \end{equation}
+  </div>
+  <span class="equation_label">1</span>
+</p>
+</div>
+</li>
+  <li><p>The shear matrix: </p>
+<div class="equation" id="a0000000066">
+<p>
+  <div class="equation_content">
+    \begin{equation}  s_\sigma = \begin{pmatrix}  1 
+
+&  0
+
+\\ \sigma 
+
+&  1 
+
+\end{pmatrix} \quad \text{for $\sigma \in F$} \end{equation}
+  </div>
+  <span class="equation_label">2</span>
+</p>
+</div>
+</li>
+  <li><p>the rotation matrix: </p>
+<div class="equation" id="a0000000067">
+<p>
+  <div class="equation_content">
+    \begin{equation}  w = \begin{pmatrix}  0 
+
+&  -1
+
+\\ 1 
+
+&  0 
+
+\end{pmatrix} \end{equation}
+  </div>
+  <span class="equation_label">3</span>
+</p>
+</div>
+<p>For instance, as will be covered later on in this section, the elements of \(\textrm{SL}_2(F)\) are conjugate to either \(d_\delta \) or \(\pm s_\sigma \). </p>
+<p>Furthermore, following this equivalence up to conjugacy, the centralizers and normalizers of any arbitrary element of the special linear group are isomorphic to the normalizers and centralizers of these particular matrices. </p>
+</li>
+</ol>
+<h1 id="a0000000049">3.2 Special subgroups of two dimensional Special Linear Group</h1>
+<p>From     </p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="Ch2_Introduction.html" title="Introduction"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="Classification of finite subgroups of PGL"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0001.html" title="Bibliography"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

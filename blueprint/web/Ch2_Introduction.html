@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Introduction</title>
+<link rel="next" href="Ch3_PropertiesOfSLOverAlgClosedField.html" title="Properties of the two dimensional Special Linear Group" />
+<link rel="prev" href="Ch1_Preliminaries.html" title="Introduction" />
+<link rel="up" href="index.html" title="Classification of finite subgroups of PGL" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">Classification of finite subgroups of PGL</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="Ch1_Preliminaries.html"><span class="toc_ref">1</span> <span class="toc_entry">Introduction</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="Ch1_Preliminaries.html#a0000000003"><span class="toc_ref">1.1</span> <span class="toc_entry">Some Elementary Theorems</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000008"><span class="toc_ref">1.2</span> <span class="toc_entry">Sylow Theory</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000013"><span class="toc_ref">1.3</span> <span class="toc_entry">Group Action</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000023"><span class="toc_ref">1.4</span> <span class="toc_entry">Conjugation</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000031"><span class="toc_ref">1.5</span> <span class="toc_entry">Automorphism</span></a>
+ </li>
+<li class="">
+  <a href="Ch1_Preliminaries.html#a0000000033"><span class="toc_ref">1.6</span> <span class="toc_entry">Direct Product</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="Ch2_Introduction.html"><span class="toc_ref">2</span> <span class="toc_entry">Introduction</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="Ch2_Introduction.html#a0000000042"><span class="toc_ref">2.1</span> <span class="toc_entry">What is the formalization of mathematics?</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000043"><span class="toc_ref">2.2</span> <span class="toc_entry">Fermat’s Last Theorem</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000044"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalizing Fermat’s Last Theorem</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000045"><span class="toc_ref">2.4</span> <span class="toc_entry">Classification of finite subgroups of the Projective General Linear group over the algebraically closed field</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000046"><span class="toc_ref">2.5</span> <span class="toc_entry">Over an algebraically closed field PSL is isomorphic to the projective PGL</span></a>
+ </li>
+<li class="">
+  <a href="Ch2_Introduction.html#a0000000047"><span class="toc_ref">2.6</span> <span class="toc_entry">Christopher Butler’s exposition</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="Ch3_PropertiesOfSLOverAlgClosedField.html"><span class="toc_ref">3</span> <span class="toc_entry">Properties of the two dimensional Special Linear Group</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#a0000000048"><span class="toc_ref">3.1</span> <span class="toc_entry">Special matrices of the two dimensional Special Linear Group</span></a>
+ </li>
+<li class="">
+  <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#a0000000049"><span class="toc_ref">3.2</span> <span class="toc_entry">Special subgroups of two dimensional Special Linear Group</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">4</span> <span class="toc_entry">Bibliography</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="Ch2_Introduction">2 Introduction</h1>
+
+<h1 id="a0000000042">2.1 What is the formalization of mathematics?</h1>
+<p>Formalization of mathematics is the art of teaching a computer what a piece of mathematics means, that is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. </p>
+<p>TODO: </p>
+<p>- Brief explanation of type theory and curry-howard isomorphism. </p>
+<p>- Example of formal proof and comparison with informal proof. </p>
+<h1 id="a0000000043">2.2 Fermat’s Last Theorem</h1>
+<p>TODO: </p>
+<p>-History of Fermat’s Equation </p>
+<p>-Problem statements </p>
+<p>-Developments in number theory that lead to the resolution of the conjecture. </p>
+<h1 id="a0000000044">2.3 Formalizing Fermat’s Last Theorem</h1>
+<p>Following the sequence of success stories ranging from the Liquid Tensor Experiment to the formalization of the Polynomial Freiman-Rusza conjecture. </p>
+<p>Prof. Kevin Buzzard from Imperial College London has received a five-year grant that will allow him to lead the formalization of Fermat’s Last Theorem. This grant kicked in in October of 2024. </p>
+<p>At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project. </p>
+<p>Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task. </p>
+<p>TODO: </p>
+<p>- Current goal of the formalization </p>
+<p>- Explain somewhat the modern approach and the highly sought after Modularity Lifting Theorem. </p>
+<p>- My task: Classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) </p>
+<h1 id="a0000000045">2.4 Classification of finite subgroups of the Projective General Linear group over the algebraically closed field</h1>
+<p>TODO: </p>
+<p>-Why are the finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) relevant to number theory: i.e: Automorphic forms, Galois representations, etc. </p>
+<p>The primary concern of this project is to formalise Theorem 2.47 of [DTT] which states: </p>
+<ol class="enumerate">
+  <li><p>If \(H\) is finite subgroup of \(\operatorname{PGL}_2(\mathbb {C})\) then \(H\) is isomorphic to one of the following groups: the cyclic group \(C_n\) of order \(n\) (\(n \in \mathbb {Z}_{{\gt}0}\)), the dihedral group \(D_{2n}\) of order \(2n\) (\(n \in \mathbb {Z}_{{\gt}1}\)), \(A_4\), \(S_4\) or \(A_5\). </p>
+</li>
+  <li><p>If \(H\) is a finite subgroup of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) then one of the following holds: </p>
+<ol class="enumerate">
+  <li><p>\(H\) is conjugate to a subgroup of the upper triangular matrices; </p>
+</li>
+  <li><p>\(H\) is conjugate to \(\operatorname{PGL}_2(\mathbb {F}_{\ell ^r})\) and \(\operatorname{PSL}_2(\mathbb {F}_{\ell ^{r}})\) for some \(r \in \mathbb {Z}_{{\gt}0}\); </p>
+</li>
+  <li><p>\(H\) is isomorphic to \(A_4\), \(S_4\), \(A_5\) or the dihedral group \(D_{2r}\) of order \(2r\) for some \(r \in \mathbb {Z}_{{\gt}1}\) not divisible by \(\ell \) </p>
+</li>
+</ol>
+<p> Where \(\ell \) is assumed to be an odd prime. </p>
+</li>
+</ol>
+<p>By definition the Projective General Linear Group is: </p>
+<div class="equation" id="a0000000050">
+<p>
+  <div class="equation_content">
+    \begin{equation}  \operatorname{PGL}_n(F) = \operatorname{GL}_n(F) / (Z(\operatorname{GL}_n(F))) = \operatorname{GL}_n(F) / (F^\times I) \end{equation}
+  </div>
+  <span class="equation_label">1</span>
+</p>
+</div>
+<p>Similarly, the Projective Special Linear Group is: </p>
+<div class="equation" id="a0000000051">
+<p>
+  <div class="equation_content">
+    \begin{equation}  \operatorname{PSL}_n(F) = \operatorname{SL}_n(F) / (Z(\operatorname{SL}_n(F))) = \operatorname{SL}_n(F) / (\langle -I\rangle ) \end{equation}
+  </div>
+  <span class="equation_label">2</span>
+</p>
+</div>
+<p>Given we are working over an algebraically closed field, it turns out that for any \(n \in \mathbb {N}\), \(\operatorname{PGL}_n(F)\) is isomorphic to \(\operatorname{PSL}_n(F)\). </p>
+<p>This isomorphism will be crucial as it will allow us to focus on classifying finite subgroups of \(SL_2(F)\) to classify the finite subgroups of \(\operatorname{PGL}_2(F)\). </p>
+<h1 id="a0000000046">2.5 Over an algebraically closed field PSL is isomorphic to the projective PGL</h1>
+<p>When \(F\) is algebraically closed and \(\textrm{char}(F) \neq 2\) we can construct an isomorphism between the projective special linear group and the projective general linear group. </p>
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000052">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.1</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000052">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/ProjectiveGeneralLinearGroup.SL_monoidHom_PGL" class="lean_decl">ProjectiveGeneralLinearGroup.SL_monoidHom_PGL</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> Let \(\varphi : \operatorname{SL}_n(R) \rightarrow \operatorname{PGL}_n(R)\) be the injection of \(\operatorname{PSL}_n(R)\) into \(\operatorname{PGL}_n(R)\) defined by </p>
+<div class="displaymath" id="a0000000053">
+  \[  S \mapsto i(S) \;  (R^\times I)  \]
+</div>
+<p>where \(i : \operatorname{SL}_n(F) \hookrightarrow \operatorname{GL}_n(F)\) is the natural injection of the special linear group into the general linear group. </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000054">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000054">#</a>
+    
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000055"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/ProjectiveGeneralLinearGroup.center_SL_le_ker" class="lean_decl">ProjectiveGeneralLinearGroup.center_SL_le_ker</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(R\) be a non-trivial commutative ring, then \(Z(\operatorname{SL}_n(R)) \subseteq \ker (\varphi )\). </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000055">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>If \(x \in Z(\operatorname{SL}_n(R))\) then \(x = \omega I\) where \(\omega \) is a primitve root of unity. </p>
+<p>Given the kernel of \(\varphi \). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000056">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.3</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000056">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/ProjectiveGeneralLinearGroup.PSL_monoidHom_PGL" class="lean_decl">ProjectiveGeneralLinearGroup.PSL_monoidHom_PGL</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> Let \(\bar{\varphi } : \operatorname{PSL}_n(F) \rightarrow \operatorname{PGL}_n(F)\) be the lift of \(\varphi \) </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000057">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.4</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000057">#</a>
+    
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/ProjectiveGeneralLinearGroup.Injective_PSL_monoidHom_PGL" class="lean_decl">ProjectiveGeneralLinearGroup.Injective_PSL_monoidHom_PGL</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> The map \(\bar{\varphi }\) is injective. </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000058">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>This injection is well-defined for any characteristic, as taking different representatives yields the same result, and furthermore, when \(\textrm{char}(F) \ne 2\) and \(F\) is algebraically closed \(\varphi \) defines an isomorphism. </p>
+<div class="proof_wrapper" id="a0000000059">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <ul class="itemize">
+  <li><p>We show \(\varphi \) is well-defined: </p>
+<p>Let \(S, S' \in \operatorname{SL}_n(F)\), suppose \(S \langle -I\rangle = S'\langle -I\rangle \) then because \(SS'^{-1} \in \langle -I\rangle \iff SS'^{-1} = \pm I\) we have the following chain of set equalities </p>
+<div class="displaymath" id="a0000000060">
+  \begin{align*}  \varphi (S \langle -I \rangle ) & = S (F^\times I)\\ & = S’ (F^\times I) \qquad \parbox[c]{0.5 \linewidth }{because $S = \pm I S$ and $\pm I \in F^\times I$}\\ & = \varphi (S’ \langle -I\rangle ) \end{align*}
+</div>
+</li>
+  <li><p>When \(F\) is algebraically closed, we show \(\varphi \) in fact defines an isomorphism: </p>
+<p>Given \(\varphi \) is an injection, we only need show that \(\varphi \) is multiplicative and surjective. </p>
+<ul class="itemize">
+  <li><p>\(\varphi \) is multiplicative: </p>
+<p>Let \(S \langle -I\rangle , Q\langle -I\rangle \in \operatorname{PSL}_n(F)\) where \(S, Q \in \operatorname{SL}_n(F)\) then </p>
+<div class="displaymath" id="a0000000061">
+  \begin{align*}  \varphi (S \langle -I\rangle Q\langle -I\rangle ) & = \varphi (SQ \langle -I\rangle ) \quad \parbox[c]{0.4\linewidth }{by the normality of $\langle -I \rangle $}\\ & = i(SQ) F^\times I\\ & = i(S) i(Q) F^\times I \quad \parbox[c]{0.4\linewidth }{as a group injection defines a homomorphism}\\ & = i(S) (F^\times I) \cdot i(Q)(F^\times I) \quad \parbox[c]{0.4\linewidth }{ by the normality of $F^\times I$}\\ & = \varphi (S) \varphi (Q) \end{align*}
+</div>
+</li>
+  <li><p>\(\varphi \) is surjective: </p>
+<p>Let \(G \;  (F^\times I) = [G] \in \operatorname{PGL}_n(F)\), then \(G \in \operatorname{GL}_n(F)\) we can find a representative of \([G']\), that lies within the special linear group. Given elements of the special linear group are matrices with determinant equal to one, we must scale \(G\) to a suitable factor to yield a representative which lies within \(\operatorname{SL}_n(F)\). Suppose \(\det (G) \ne 1\) and let </p>
+<div class="displaymath" id="a0000000062">
+  \[  P(X) := X^n - \det (G) \in F[X]  \]
+</div>
+<p> By assumption, \(F\) is algebraically closed so there exists a root \(\alpha \ne 0\in F\) such that </p>
+<div class="displaymath" id="a0000000063">
+  \[  \alpha ^n - \det (G) = 0 \iff \alpha ^n = \det (G)  \]
+</div>
+<p> We can define </p>
+<div class="displaymath" id="a0000000064">
+  \[  G' := \frac{1}{\alpha } \cdot G \quad \text{where} \quad \det (G') = \frac{1}{\alpha ^n} \det (G) = 1.  \]
+</div>
+<p> Thus \(G' \in \operatorname{SL}_n(F) \leq \operatorname{GL}_n(F)\) and given \(G' = \frac{1}{\alpha } G\) we have that \(G' \;  (F^\times I) = G \;  (F^\times I)\). </p>
+<p>Therefore, \(\varphi (G') = i(G') (F^\times I) = G' (F^\times I) = G (F^\times I)\). </p>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</div>
+<p>This isomorphism will be essential to the classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\), as we only need understand a smaller structure to get to our endgoal. </p>
+
+  </div>
+</div>
+<h1 id="a0000000047">2.6 Christopher Butler’s exposition</h1>
+<p>Following the result in the previous section, we can now proceed to classify the finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) by classifying the finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\). In turn, one can begin classifying the finite subgroups of \(\operatorname{PSL}_2(F)\) by classifying the finite subgroups of \(\operatorname{SL}_2(F)\) and then considering what happens after the center is quotiented out; which given \(Z(\operatorname{SL}_2(F)) = \langle -I\rangle \) should the \(\textrm{char}(F) \ne 2\) then this will at most shrink the size of the subgroup by two. </p>
+<p>For the case, where \(\textrm{char}(F) = 2\), given \(1 = -1\) in this field it then follows that \(I = -I \iff I + I = 2 \cdot I = 0 \cdot I = 0\) </p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="Ch1_Preliminaries.html" title="Introduction"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="Classification of finite subgroups of PGL"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="Ch3_PropertiesOfSLOverAlgClosedField.html" title="Properties of the two dimensional Special Linear Group"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>
