@@ -137,8 +137,7 @@ abbrev ProjectiveSpecialLinearGroup : Type _ :=
 /-- `PSL(n, R)` is the projective special linear group `SL(n, R)/Z(SL(n, R))`. -/
 abbrev PSL := ProjectiveSpecialLinearGroup
 
-
-namespace Isomorphism
+section Isomorphism
 
 variable (n : ℕ) (F : Type u) [Field F] [IsAlgClosed F]
 

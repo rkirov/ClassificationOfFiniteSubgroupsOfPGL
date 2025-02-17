@@ -89,6 +89,8 @@ def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) := {x : G | x ∈ 
 
 -- def M_ (A : )
 
+-- lemma theorem_2_4 ()
+
 /-
 Clᵢ = {x Aᵢx⁻¹ : x ∈ G}
 
