@@ -219,7 +219,7 @@
 <p>This isomorphism will be crucial as it will allow us to focus on classifying finite subgroups of \(SL_2(F)\) to classify the finite subgroups of \(\operatorname{PGL}_2(F)\). </p>
 <h1 id="a0000000016">3.5 Over an algebraically closed field PSL is isomorphic to the projective PGL</h1>
 <p>When \(F\) is algebraically closed and \(\textrm{char}(F) \neq 2\) we can construct an isomorphism between the projective special linear group and the projective general linear group. </p>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000066">
+<div class="definition_thmwrapper theorem-style-definition" id="SL_monoidHom_PGL">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
@@ -230,7 +230,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000066">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#SL_monoidHom_PGL">#</a>
     
     
     
@@ -256,15 +256,15 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p> Let \(\varphi : \operatorname{SL}_n(R) \rightarrow \operatorname{PGL}_n(R)\) be the injection of \(\operatorname{PSL}_n(R)\) into \(\operatorname{PGL}_n(R)\) defined by </p>
-<div class="displaymath" id="a0000000067">
+  <p>  Let \(\varphi : \operatorname{SL}_n(R) \rightarrow \operatorname{PGL}_n(R)\) be the injection of \(\operatorname{PSL}_n(R)\) into \(\operatorname{PGL}_n(R)\) defined by </p>
+<div class="displaymath" id="a0000000066">
   \[  S \mapsto i(S) \;  (R^\times I)  \]
 </div>
 <p>where \(i : \operatorname{SL}_n(F) \hookrightarrow \operatorname{GL}_n(F)\) is the natural injection of the special linear group into the general linear group. </p>
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="a0000000068">
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000067">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
@@ -275,11 +275,31 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000068">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000067">#</a>
     
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000068"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch2_Introduction.html#SL_monoidHom_PGL">Definition 3.1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
     
     
     <button class="modal lean">L∃∀N</button>
@@ -308,7 +328,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000069">
+<div class="proof_wrapper" id="a0000000068">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -321,7 +341,7 @@
 
   </div>
 </div>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000070">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000069">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
@@ -332,7 +352,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000070">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000069">#</a>
     
     
     
@@ -362,7 +382,7 @@
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="a0000000071">
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000070">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
@@ -373,9 +393,9 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000071">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000070">#</a>
     
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000071"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -406,7 +426,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000072">
+<div class="proof_wrapper" id="a0000000071">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -415,7 +435,7 @@
   </div>
   <div class="proof_content">
   <p>This injection is well-defined for any characteristic, as taking different representatives yields the same result, and furthermore, when \(\textrm{char}(F) \ne 2\) and \(F\) is algebraically closed \(\varphi \) defines an isomorphism. </p>
-<div class="proof_wrapper" id="a0000000073">
+<div class="proof_wrapper" id="a0000000072">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -426,7 +446,7 @@
   <ul class="itemize">
   <li><p>We show \(\varphi \) is well-defined: </p>
 <p>Let \(S, S' \in \operatorname{SL}_n(F)\), suppose \(S \langle -I\rangle = S'\langle -I\rangle \) then because \(SS'^{-1} \in \langle -I\rangle \iff SS'^{-1} = \pm I\) we have the following chain of set equalities </p>
-<div class="displaymath" id="a0000000074">
+<div class="displaymath" id="a0000000073">
   \begin{align*}  \varphi (S \langle -I \rangle ) & = S (F^\times I)\\ & = S’ (F^\times I) \qquad \parbox[c]{0.5 \linewidth }{because $S = \pm I S$ and $\pm I \in F^\times I$}\\ & = \varphi (S’ \langle -I\rangle ) \end{align*}
 </div>
 </li>
@@ -435,21 +455,21 @@
 <ul class="itemize">
   <li><p>\(\varphi \) is multiplicative: </p>
 <p>Let \(S \langle -I\rangle , Q\langle -I\rangle \in \operatorname{PSL}_n(F)\) where \(S, Q \in \operatorname{SL}_n(F)\) then </p>
-<div class="displaymath" id="a0000000075">
+<div class="displaymath" id="a0000000074">
   \begin{align*}  \varphi (S \langle -I\rangle Q\langle -I\rangle ) & = \varphi (SQ \langle -I\rangle ) \quad \parbox[c]{0.4\linewidth }{by the normality of $\langle -I \rangle $}\\ & = i(SQ) F^\times I\\ & = i(S) i(Q) F^\times I \quad \parbox[c]{0.4\linewidth }{as a group injection defines a homomorphism}\\ & = i(S) (F^\times I) \cdot i(Q)(F^\times I) \quad \parbox[c]{0.4\linewidth }{ by the normality of $F^\times I$}\\ & = \varphi (S) \varphi (Q) \end{align*}
 </div>
 </li>
   <li><p>\(\varphi \) is surjective: </p>
 <p>Let \(G \;  (F^\times I) = [G] \in \operatorname{PGL}_n(F)\), then \(G \in \operatorname{GL}_n(F)\) we can find a representative of \([G']\), that lies within the special linear group. Given elements of the special linear group are matrices with determinant equal to one, we must scale \(G\) to a suitable factor to yield a representative which lies within \(\operatorname{SL}_n(F)\). Suppose \(\det (G) \ne 1\) and let </p>
-<div class="displaymath" id="a0000000076">
+<div class="displaymath" id="a0000000075">
   \[  P(X) := X^n - \det (G) \in F[X]  \]
 </div>
 <p> By assumption, \(F\) is algebraically closed so there exists a root \(\alpha \ne 0\in F\) such that </p>
-<div class="displaymath" id="a0000000077">
+<div class="displaymath" id="a0000000076">
   \[  \alpha ^n - \det (G) = 0 \iff \alpha ^n = \det (G)  \]
 </div>
 <p> We can define </p>
-<div class="displaymath" id="a0000000078">
+<div class="displaymath" id="a0000000077">
   \[  G' := \frac{1}{\alpha } \cdot G \quad \text{where} \quad \det (G') = \frac{1}{\alpha ^n} \det (G) = 1.  \]
 </div>
 <p> Thus \(G' \in \operatorname{SL}_n(F) \leq \operatorname{GL}_n(F)\) and given \(G' = \frac{1}{\alpha } G\) we have that \(G' \;  (F^\times I) = G \;  (F^\times I)\). </p>

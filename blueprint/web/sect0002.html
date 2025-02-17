@@ -161,12 +161,34 @@
 <h1 id="a0000000024">5.1 A Finite Subgroup of \(\pmb {L}\)</h1>
 <p>We now return to the realm of finite groups and consider \(G\) to be an arbitrary finite subgroup of \(L\). We will still continue to use \(Z\) to denote the centre of \(L\), and will use \(Z(G)\) whenever we refer to the centre of \(G\). <br /><br />Observe that if \(Z\) is not contained in \(G\), then \(Z\) must contain a non-identity element, thus \(|Z| = 2\) and \(p \neq 2\) by Lemma <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.2">4.4</a>. Recall that \(L\) has a unique element of order 2 by Lemma <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.2b">4.5</a>, \(- I_L\), which is not in \(G\), therefore \(G\) has no element of order 2. <br /><br />By Cauchy’s Theorem, which says that if a prime \(p\) divides the order of a finite group, then the group contains an element of order \(p\), we deduce that 2 does not divide the order of \(G\). <br /><br />This means that \(|G|\) and \(|Z|\) are relatively prime, so \(G \cap Z = \{  I_L \} \) and we can use Corollary <a href="Ch1_Preliminaries.html#directproductZ">2.21</a> to show that \(GZ \cong G \times Z\). This shows that regardless of whether \(G\) contains \(Z\) or not, its structure is uniquely determined by \(GZ\), so it suffices to only consider the case when \(Z \subset G\). </p>
 <h1 id="a0000000025">5.2 Maximal Abelian Subgroups</h1>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000143">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000142">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">5.1</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#a0000000142">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>Let \(H\) and \(J\) be subgroups of a group \(G\) where \(H\) is abelian. \(H\) is called <b class="bfseries">maximal abelian</b> if \(J\) is not abelian whenever \(H \subsetneq J\). <br /><br />A group \(G\) is said to be <b class="bfseries">elementary abelian</b> if it is abelian and every non-trivial element has order \(p\), where \(p\) is prime. </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000143">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">5.2</span>
     <div class="thm_header_extras">
 
         </div>
@@ -179,18 +201,18 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>Let \(H\) and \(J\) be subgroups of a group \(G\) where \(H\) is abelian. \(H\) is called <b class="bfseries">maximal abelian</b> if \(J\) is not abelian whenever \(H \subsetneq J\). <br /><br />A group \(G\) is said to be <b class="bfseries">elementary abelian</b> if it is abelian and every non-trivial element has order \(p\), where \(p\) is prime. </p>
+  <p>Let \(\mathfrak {M}\) denote the set of all maximal abelian subgroups of \(G\). </p>
 
   </div>
 </div>
-<p> Let \(\mathfrak {M}\) denote the set of all maximal abelian subgroups of \(G\).   </p>
+
 <p>Maximal abelian subgroups play an important role in determining the structure of \(G\). In particular, every element in \(G\) must be contained in some maximal abelian subgroup, since every element commutes at least with itself and \(Z\). This will allow us to decompose \(G\) into the conjugacy classes of these maximal abelian subgroups. Note also that unless \(G=Z\), \(Z\) is not a maximal abelian subgroup, because for each \(x \in G \!  \setminus \!  Z\), \(\langle Z,x \rangle \) is clearly a larger abelian subgroup than \(Z\). <br /><br />We will shortly prove an important theorem regarding the maximal abelian subgroups of \(G\), but in order to do so we require the following two lemmas. <br /></p>
 <div class="lemma_thmwrapper theorem-style-plain" id="primecentre">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.2</span>
+    <span class="lemma_thmlabel">5.3</span>
     <div class="thm_header_extras">
 
         </div>
@@ -238,7 +260,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.3</span>
+    <span class="lemma_thmlabel">5.4</span>
     <div class="thm_header_extras">
 
         </div>
@@ -277,7 +299,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">5.4</span>
+    <span class="theorem_thmlabel">5.5</span>
     <div class="thm_header_extras">
 
         </div>
@@ -322,7 +344,7 @@
 <div class="displaymath" id="a0000000150">
   \begin{align*}  C_G(d_\omega ) & {\lt} C_L(d_\omega ) \tag {see proof of (i)} \\ & = D \tag {by Lemma \ref{6.4ii}} \\ & \cong F^*. \tag {by Lemma \ref{6.1b}} \end{align*}
 </div>
-<p>Since \(A\) is conjugate to \(C_G(d_\omega )\) by Proposition <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#conjcent">4.11</a>, we have that \(A\) is isomorphic to a finite subgroup of \(F^*\) and by Lemma <a href="sect0002.html#finsubcyc">5.3</a>, \(A\) is cyclic. By Lagrange’s Theorem any finite subgroup of \(F^*\) has an order which divides \(p^m - 1\) for some \(m \in \mathbb {Z}^+\), and since \(p \nmid (p^m - 1)\), \(|A|\) is relatively prime to \(p\). <br /><br /> \(\pmb {x}\) <b class="bfseries">conjugate to</b> \(\pmb {\pm t_\lambda }\) <b class="bfseries">in</b> \(\pmb {L}\). Again let \(A = C_G(x) \in \mathfrak {M}\). \(A\) is conjugate to \(C_G({\pm t_\lambda })\) in \(L\) by Proposition <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#conjcent">4.11</a>. Since \(x \notin Z\), we have \(\lambda \neq 0\). Observe that </p>
+<p>Since \(A\) is conjugate to \(C_G(d_\omega )\) by Proposition <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#conjcent">4.11</a>, we have that \(A\) is isomorphic to a finite subgroup of \(F^*\) and by Lemma <a href="sect0002.html#finsubcyc">5.4</a>, \(A\) is cyclic. By Lagrange’s Theorem any finite subgroup of \(F^*\) has an order which divides \(p^m - 1\) for some \(m \in \mathbb {Z}^+\), and since \(p \nmid (p^m - 1)\), \(|A|\) is relatively prime to \(p\). <br /><br /> \(\pmb {x}\) <b class="bfseries">conjugate to</b> \(\pmb {\pm t_\lambda }\) <b class="bfseries">in</b> \(\pmb {L}\). Again let \(A = C_G(x) \in \mathfrak {M}\). \(A\) is conjugate to \(C_G({\pm t_\lambda })\) in \(L\) by Proposition <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#conjcent">4.11</a>. Since \(x \notin Z\), we have \(\lambda \neq 0\). Observe that </p>
 <div class="displaymath" id="a0000000151">
   \begin{align*}  C_G({\pm t_\lambda }) & {\lt} C_L({\pm t_\lambda }) \\ & = T \times Z \tag {by Lemma \ref{6.4i}} \\ & \cong F \times Z. \tag {by Lemma \ref{6.1b}} \end{align*}
 </div>
@@ -330,7 +352,7 @@
 <div class="displaymath" id="a0000000152">
   \begin{align*}  q_1z_1q_2z_2 & = q_2z_2 q_1z_1, \tag {$A \in \mathfrak {M}$} \\ q_1q_2z_1z_2 & = q_2q_1z_1z_2, \tag {$z_1$, $z_2 \in Z$} \\ q_1q_2z_1z_2(z_1z_2)^{-1} & = q_2q_1z_1z_2(z_1z_2)^{-1}, \\ q_1q_2 & = q_2q_1. \end{align*}
 </div>
-<p> Thus \(Q\) is also abelian. Recall from the proof of Proposition <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.3">4.6</a>(ii) that all non-trivial elements of \(T\) have order \(p\), so each non-trivial element of \(Q\) has order \(p\) which means that \(Q\) is elementary abelian. Thus \(Q\) has order \(p^m\), for some \(m \in \mathbb {Z}^+\). <br /><br />Now let \(S\) be a Sylow \(p\)-subgroup containing \(Q\). We apply Lemma <a href="sect0002.html#primecentre">5.2</a> to determine that \(p\) divides \(|Z(S)|\), moreover \(|Z(S)| \geq p\). <br /><br />If \(p=2\), then \(Z=I_L\) by Lemma <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.2">4.4</a>. So \(|Z| = 1\) and hence \(|Z(S)| \geq 2 {\gt} |Z|\).<br />If \(p {\gt} 2\), then \(Z = \langle - I_L \rangle \) also by Lemma <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.2">4.4</a>. So \(|Z| = 2\) and again we get \(|Z(S)| {\gt} 2 = |Z|\). <br /><br />So \(Z(S)\) must contain at least one element which is not in \(Z\), let \(y\) be one such element. Let \(s_1z_1\) be an arbitrary element of \(S \times Z\). </p>
+<p> Thus \(Q\) is also abelian. Recall from the proof of Proposition <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.3">4.6</a>(ii) that all non-trivial elements of \(T\) have order \(p\), so each non-trivial element of \(Q\) has order \(p\) which means that \(Q\) is elementary abelian. Thus \(Q\) has order \(p^m\), for some \(m \in \mathbb {Z}^+\). <br /><br />Now let \(S\) be a Sylow \(p\)-subgroup containing \(Q\). We apply Lemma <a href="sect0002.html#primecentre">5.3</a> to determine that \(p\) divides \(|Z(S)|\), moreover \(|Z(S)| \geq p\). <br /><br />If \(p=2\), then \(Z=I_L\) by Lemma <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.2">4.4</a>. So \(|Z| = 1\) and hence \(|Z(S)| \geq 2 {\gt} |Z|\).<br />If \(p {\gt} 2\), then \(Z = \langle - I_L \rangle \) also by Lemma <a href="Ch3_PropertiesOfSLOverAlgClosedField.html#6.2">4.4</a>. So \(|Z| = 2\) and again we get \(|Z(S)| {\gt} 2 = |Z|\). <br /><br />So \(Z(S)\) must contain at least one element which is not in \(Z\), let \(y\) be one such element. Let \(s_1z_1\) be an arbitrary element of \(S \times Z\). </p>
 <div class="displaymath" id="a0000000153">
   \begin{align*}  (s_1z_1)y(s_1z_1)^{-1} & = (s_1z_1)y(z_1^{-1}s_1^{-1}) \\ & = s_1y(z_1z_1^{-1})s_1^{-1} \tag {since $y \in L$, $z_1 \in Z$} \\ & = y(s_1s_1^{-1}) \tag {since $s_1 \in S$, $y \in Z(S)$} \\ & = y \end{align*}
 </div>
@@ -454,7 +476,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.5</span>
+    <span class="definition_thmlabel">5.6</span>
     <div class="thm_header_extras">
 
         </div>
@@ -471,8 +493,26 @@
 
   </div>
 </div>
-<p> Let \(A_i^*\) be the non-central part of \(A_i \in \mathfrak {M}\), let \(\mathfrak {M}^*\) be the set of all \(A_i^*\) and let \(\mathcal{C}_i^*\) be the conjugacy class of \(A_i^*\). <br /><br />For some \(A_i \in \mathfrak {M}\) and \(A_i^* \in \mathfrak {M}^*\) let, </p>
-<div class="displaymath" id="a0000000172">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000172">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">5.7</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#a0000000172">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>Let \(A_i^*\) be the non-central part of \(A_i \in \mathfrak {M}\), let \(\mathfrak {M}^*\) be the set of all \(A_i^*\) and let \(\mathcal{C}_i^*\) be the conjugacy class of \(A_i^*\). <br /><br />For some \(A_i \in \mathfrak {M}\) and \(A_i^* \in \mathfrak {M}^*\) let, </p>
+<div class="displaymath" id="a0000000173">
   \begin{align*}  C_i = \bigcup \limits _{x \in G} x A_i x^{-1}, \quad \text{and} \quad C_i^* = \bigcup \limits _{x \in G} x A_i^* x^{-1}. \end{align*}
 </div>
 <p> In other words, \(C_i\) denotes the set of elements of \(G\) which belong to some element of \(\mathcal{C}_i\). It’s evident that \(C_i^* = C_i \setminus Z\) and that there is a \(C_i\) corresponding to each \(\mathcal{C}_i\). Clearly we have the relation, </p>
@@ -480,12 +520,14 @@
   \begin{align} \label{orderorder} |C_i^*| = |A_i^*||\mathcal{C}_i^*|. \end{align}
 </div>
 
+  </div>
+</div>
 <div class="theorem_thmwrapper theorem-style-plain" id="partitiontheorem">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">5.6</span>
+    <span class="theorem_thmlabel">5.8</span>
     <div class="thm_header_extras">
 
         </div>
@@ -493,7 +535,7 @@
 
     <a class="icon proof" href="sect0002.html#partitiontheorem">#</a>
     
-    <a class="icon proof" href="sect0002.html#a0000000173"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0002.html#a0000000174"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -503,19 +545,19 @@
   <div class="theorem_thmcontent">
   <p> Let \(G\) be a finite subgroup of \(L\) and \(S\) be a subset of \(\mathfrak {M}^*\) containing exactly one element from each of its conjugacy classes.  </p>
 <p>(i) The set of \(C_i^*\) form a partition of \(G \!  \setminus \!  Z\). That is, </p>
-<div class="displaymath" id="a0000000174">
+<div class="displaymath" id="a0000000175">
   \begin{align*}  G \!  \setminus \!  Z = \bigcup \limits _{A_i^* \in S} C_i^*, \qquad \text{and} \qquad C_i^* \cap C_j^* = \varnothing , \qquad \forall \;  i \neq j. \end{align*}
 </div>
 <p>(ii)    \(|\mathcal{C}_i^*| = |\mathcal{C}_i|\).  </p>
 <p>(iii)   \(|\mathcal{C}_i| = [G : N_G(A_i)]\).  </p>
 <p>(iv) </p>
-<div class="displaymath" id="a0000000175">
+<div class="displaymath" id="a0000000176">
   \[ |G \!  \setminus \!  Z| = \sum _{A_i^* \in S} |A_i^*| [G:N_G(A_i)]. \]
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000173">
+<div class="proof_wrapper" id="a0000000174">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -524,39 +566,39 @@
   </div>
   <div class="proof_content">
   <p>(i) Define a relation \(\sim \) on \(\mathfrak {M}^*\) as follows: </p>
-<div class="displaymath" id="a0000000176">
+<div class="displaymath" id="a0000000177">
   \begin{align*}  A_i^* \sim A_j^* \quad \text{if} \quad A_i^* = xA_j^*x^{-1} \quad \text{for some} \quad x \in G. \end{align*}
 </div>
 <p> If we choose \(x \in A_i^*\), then clearly \(A_i^* = A_i^*xx^{-1} = xA_i^*x^{-1}\), thus \(A_i^* \sim A_i^*\) and \(\sim \) is reflexive.<br /><br /> If \(A_i^* \sim A_j^*\), then \(\exists \;  x \in G\) such that, </p>
-<div class="displaymath" id="a0000000177">
+<div class="displaymath" id="a0000000178">
   \begin{align*}  A_i^*= xA_j^*x^{-1} \iff x^{-1}A_i^*x = A_j^* \iff A_j^* = yA_i^*y^{-1} \quad \text{for} \;  y = x^{-1} \in G. \end{align*}
 </div>
 <p> Thus \(A_j^* \sim A_i^*\) and \(\sim \) is symmetric.<br /><br /> If \(A_i^* \sim A_j^*\) and \(A_j^* \sim A_k^*\), then \(\exists \;  x, y \in G\) such that, </p>
-<div class="displaymath" id="a0000000178">
+<div class="displaymath" id="a0000000179">
   \begin{align*}  A_i^* = xA_j^*x^{-1} \;  \text{and} \;  A_j^* = yA_k^*y^{-1} \Rightarrow A_i^* = xyA_k^*y^{-1}x^{-1} = (xy)A_k^*(xy)^{-1}. \end{align*}
 </div>
 <p> Thus \(A_i^* \sim A_k^*\) (since \(xy \in G\)), which shows that \(\sim \) is transitive and moreover an equivalence relation on \(\mathfrak {M}^*\). <br /><br />The equivalence class of \(A_i^*\) in \(\mathfrak {M}^*\) therefore coincides with the set \(\mathcal{C}_i^* = \{  xA_i^*x^{-1} : x \in G \} \). Furthermore, this tells us that each \(A_i^*\) belongs to exactly one conjugacy class. Thus the conjugacy classes \(\mathcal{C}_i^*\) form a partition of \(\mathfrak {M}^*\), </p>
-<div class="displaymath" id="a0000000179">
+<div class="displaymath" id="a0000000180">
   \begin{align*}  \mathfrak {M}^* = \bigcup \limits _{A_i^* \in S} \mathcal{C}_i^*, \qquad \text{and} \qquad \mathcal{C}_i^* \cap \mathcal{C}_j^* = \varnothing , \qquad \forall \;  i \neq j. \end{align*}
 </div>
 <p>Since the set of \(\mathcal{C}_i^*\) are pairwise disjoint, it follows that the set of \(C_i^*\) are also pairwise disjoint and we get the desired result, </p>
-<div class="displaymath" id="a0000000180">
+<div class="displaymath" id="a0000000181">
   \begin{align*}  G \!  \setminus \!  Z = \bigcup \limits _{A_i^* \in S} C_i^*, \qquad \text{and} \qquad C_i^* \cap C_j^* = \varnothing , \qquad \forall \;  i \neq j. \end{align*}
 </div>
 <p>(ii) Let \(x A_i x^{-1} \in \mathcal{C}_i\) and \(x A_i^* x^{-1} \in \mathcal{C}_i^*\). Since \(x A_i x^{-1} \!  \setminus \!  Z = x A_i^* x^{-1}\), it is quite clear that, </p>
-<div class="displaymath" id="a0000000181">
+<div class="displaymath" id="a0000000182">
   \begin{align*}  x A_i x^{-1} \in \mathcal{C}_i \iff x A_i^* x^{-1} \in \mathcal{C}_i^*. \end{align*}
 </div>
 <p> Thus \(|\mathcal{C}_i^*| = |\mathcal{C}_i|\) as desired. <br /><br />(iii) Now we define a map \(\phi \) by: </p>
-<div class="displaymath" id="a0000000182">
+<div class="displaymath" id="a0000000183">
   \begin{align*}  \phi : \mathcal{C}_i & \longrightarrow G / N_G(A_i), \\ \phi (xA_ix^{-1}) & = xN_G(A_i). \tag {$\forall \;  x \in G, \;  A_i \in \mathfrak {M}$} \end{align*}
 </div>
 <p>Clearly \(\phi \) is trivially surjective. We now show that it is both well-defined and injective. </p>
-<div class="displaymath" id="a0000000183">
+<div class="displaymath" id="a0000000184">
   \begin{align*}  xN_G(A_i) = yN_G(A_i) & \iff y^{-1}xN_G(A_i) = N_G(A_i) \\ & \iff y^{-1}x \in N_G(A_i) \\ & \iff (y^{-1}x)A_i(y^{-1}x)^{-1} = A_i \\ & \iff y^{-1}xA_ix^{-1}y = A_i \\ & \iff xA_ix^{-1} = yA_iy^{-1}. \end{align*}
 </div>
 <p>Hence \(\phi \) is well-defined and injective. This shows that \(\phi \) is a bijection proving that \(|\mathcal{C}_i| = [G:N_G(A_i)]\). This is a crucial result which shows that the number of maximal abelian subgroups conjugate to \(A_i\) is equal to the index of the normaliser of \(A_i\) in \(G\). <br /><br />(iv) This follows directly from parts (i), (ii) and (iii) and <a href="sect0002.html#orderorder" class="eqref">12</a>. </p>
-<div class="displaymath" id="a0000000184">
+<div class="displaymath" id="a0000000185">
   \begin{align*}  G \!  \setminus \!  Z & = \bigcup \limits _{A_i^* \in S} C_i^*, \qquad \text{and} \qquad C_i^* \cap C_j^* = \varnothing , \qquad \forall \;  i \neq j, \\ |G \!  \setminus \!  Z| & = \sum _{A_i^* \in S} |C_i^*| = \sum _{A_i^* \in S} |A_i^*||\mathcal{C}_i^*| = \sum _{A_i^* \in S} |A_i^*||\mathcal{C}_i| \\ & = \sum _{A_i^* \in S} |A_i^*| [G:N_G(A_i)]. \end{align*}
 </div>
 
@@ -570,7 +612,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.7</span>
+    <span class="lemma_thmlabel">5.9</span>
     <div class="thm_header_extras">
 
         </div>
@@ -578,7 +620,7 @@
 
     <a class="icon proof" href="sect0002.html#unsureifneeded">#</a>
     
-    <a class="icon proof" href="sect0002.html#a0000000185"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0002.html#a0000000186"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -590,7 +632,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000185">
+<div class="proof_wrapper" id="a0000000186">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -599,7 +641,7 @@
   </div>
   <div class="proof_content">
   <p>(iii) Let \(x \in N_G(A^*)\). Take an arbitary \(a \in A = A^* \cup Z\). If \(a \in A^*\), then since \(x \in N_G(A^*)\), we have \(xax^{-1} \in A^* \subset A\). If \(a \in Z\), then \(xzx^{-1} = zxx^{-1} = z \in A\). Therefore \(x\) is in the normaliser of \(A\) and \(N_G(A^*) \subset N_G(A)\). <br /><br />Conversely, take \(y \in N_G(A)\) and \(a \in A^*\). \(yay^{-1} \in A = A^* \cup Z\). If \(yay^{-1} \in Z\), then </p>
-<div class="displaymath" id="a0000000186">
+<div class="displaymath" id="a0000000187">
   \begin{align*}  yay^{-1} & = z, \tag {some $z \in Z$} \\ a & = y^{-1}zy = y^{-1}yz = z \not\in A^*. \end{align*}
 </div>
 <p> This contradicts the fact that \(a \in A^*\). Therefore \(yay^{-1} \in A^*\) and \(y \in N_G(A^*)\). Since \(y\) was chosen arbitrarily we get \(N_G(A) \subset N_G(A^*)\) and hence \(N_G(A) =N_G(A^*)\). </p>
@@ -611,7 +653,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.8</span>
+    <span class="lemma_thmlabel">5.10</span>
     <div class="thm_header_extras">
 
         </div>
@@ -619,7 +661,7 @@
 
     <a class="icon proof" href="sect0002.html#unsure">#</a>
     
-    <a class="icon proof" href="sect0002.html#a0000000187"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0002.html#a0000000188"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -631,7 +673,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000187">
+<div class="proof_wrapper" id="a0000000188">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -640,40 +682,40 @@
   </div>
   <div class="proof_content">
   <p>If \(p= 2\) then \(Z = I_G\) and the result is trivial. Now assume \(p \neq 2\). Thus \(|Z| = 2\). Let \(x\) and \(q_1\) be arbitrarily chosen elements of \(N_G(Q)\) and \(Q\) respectively. </p>
-<div class="displaymath" id="a0000000188">
+<div class="displaymath" id="a0000000189">
   \begin{align*}  xq_1x^{-1} & = q_2, \tag {for some $q_2 \in Q$} \\ xq_1x^{-1}z_1 & = q_2z_1, \\ xq_1z_1x^{-1} & = q_2z_1 \in Q \times Z. \end{align*}
 </div>
 <p> Thus any element \(x\) which is in \(N_G(Q)\) is also in \(N_G(Q \times Z)\) so we have \(N_G(Q) \subset N_G(Q \times Z)\). <br /><br />Let \(q_1 z_1\) be an arbitrarily chosen element of \(Q \times Z\) such that \(q_1 \in Q\) and \(z_1 \in Z\). Now let \(y\) be an arbitrarily chosen element of \(N_G(Q \times Z)\). </p>
-<div class="displaymath" id="a0000000189">
+<div class="displaymath" id="a0000000190">
   \begin{align*}  y q_1 z_1 y^{-1} = q_2 z_2 \in Q \times Z. \qquad (\text{where $q_2 \in Q$ and $z_2 \in Z$}) \end{align*}
 </div>
 <p>Consider now the order of \(q_1z_1\) in \(G\). Since \(p \neq 2\), \(Q \cap Z = I_G\) and \(|q_1 z_1| = |q_1| |z_1|\). Note that \(q_1 z_1\) and \(q_2 z_2\) are conjugate in \(G\), and thus their orders are equal. This means that \(|z_1| = |z_2|\), because otherwise 2 would divide one of them and not the other. Thus \(z_1 = z_2\) and, </p>
-<div class="displaymath" id="a0000000190">
+<div class="displaymath" id="a0000000191">
   \begin{align*}  y q_1z_1 y^{-1} & = q_2z_2 = q_2z_1 \\ y q_1 y^{-1} z_1 & = q_2z_1, \\ y q_1 y^{-1} & = q_2 \in Q \end{align*}
 </div>
 <p> Hence \(y \in N_G(Q)\). Furthermore, since \(y\) was chosen arbitrarily, any element which is in \(N_G(Q \times Z)\) is also in \(N_G(Q)\), so \(N_G(Q \times Z) = N_G(Q)\) as desired. </p>
 
   </div>
 </div>
-<p>We now start to count the elements of the seperate components of \(G\) and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of \(G\), something we will call the <b class="bfseries">Maximal Abelian Subgroup Class Equation</b> of \(G\). <br /><br />First we spilt \(\mathfrak {M}\) into the conjugacy classes of it’s elements. Theorem <a href="sect0002.html#6.8">5.4</a>(iii) tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to \(p\) or of the form \(Q \times Z\) where \(Q\) is a Sylow \(p\)-subgroup. Let \(\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}\) (where \(s, t \in \mathbb {Z}^+\)) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to \(p\). Recall that part (iv) of Theorem <a href="sect0002.html#6.8">5.4</a> tells us that \([N_G(A): A] = 1\) or 2. Let \(A_i\) be a representative from each \(\mathcal{C}_i\) such that, </p>
-<div class="displaymath" id="a0000000191">
+<p>We now start to count the elements of the seperate components of \(G\) and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of \(G\), something we will call the <b class="bfseries">Maximal Abelian Subgroup Class Equation</b> of \(G\). <br /><br />First we spilt \(\mathfrak {M}\) into the conjugacy classes of it’s elements. Theorem <a href="sect0002.html#6.8">5.5</a>(iii) tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to \(p\) or of the form \(Q \times Z\) where \(Q\) is a Sylow \(p\)-subgroup. Let \(\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}\) (where \(s, t \in \mathbb {Z}^+\)) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to \(p\). Recall that part (iv) of Theorem <a href="sect0002.html#6.8">5.5</a> tells us that \([N_G(A): A] = 1\) or 2. Let \(A_i\) be a representative from each \(\mathcal{C}_i\) such that, </p>
+<div class="displaymath" id="a0000000192">
   \begin{align*}  [N_G(A_i) : A_i] & = 1, \tag {for $i \leq s$} \\[2mm] [N_G(A_i) : A_i] & = 2. \tag {for $s {\lt} i \leq s+t$}, \end{align*}
 </div>
 <p>Now let \(Q_1\) and \(Q_2\) be any two Sylow \(p\)-subgroups of \(G\). By the Second Sylow Theorem, \(Q_1\) and \(Q_2\) are conjugate to each other in \(G\). That is, there exists a \(g \in G\) such that \(gQ_1g^{-1} = Q_2\). </p>
-<div class="displaymath" id="a0000000192">
+<div class="displaymath" id="a0000000193">
   \begin{align*}  gQ_1g^{-1} = Q_2 & \iff gQ_1g^{-1}Z = Q_2Z \\ & \iff gQ_1Zg^{-1} = Q_2Z \\ & \iff g(Q_1 \times Z)g^{-1} = (Q_2 \times Z). \tag {by Corollary \ref{directproductZ}} \end{align*}
 </div>
 <p>So \(Q_1 \times Z\) and \(Q_2 \times Z\) belong to the same conjugacy class, furthermore there is thus only 1 conjugacy class of elements of this form in \(\mathfrak {M}\). Let \(\mathcal{C}_{Q \times Z}\) denote this conjugacy class and let \(Q \times Z\) be a representative from it. The following diagram provides a visual representation of \(G\) divided into it’s maximal abelian subgroups. </p>
-<p>We can reformulate the counting formula in Theorem <a href="sect0002.html#partitiontheorem">5.6</a>(iv) using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests. </p>
-<div class="displaymath" id="a0000000193">
+<p>We can reformulate the counting formula in Theorem <a href="sect0002.html#partitiontheorem">5.8</a>(iv) using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests. </p>
+<div class="displaymath" id="a0000000194">
   \begin{align*}  |G \!  \setminus \!  Z| = \sum _{A_i^* \in S} |A_i^*| [G:N_G(A_i)] = \sum _{A_i^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|. \end{align*}
 </div>
 <p>We are now able to begin to evaluate \(G\). Firstly, let \(|Z| = e\) and \(|G| = eg\). We know well by now that \(e = 1\) or 2 depending on whether \(p\) equals 2 or not, and by Lagrange’s Theorem, the order of a subgroup divides the order of the group, so \(e\) divides \(|G|\) since \(Z {\lt} G\). <br /><br />We consider the cyclic case first. Again, by Lagrange’s Theorem, since \(Z\) is a subgroup of each \(A_i\), \(e\) divides \(|A_i|\). So set \(|A_i| = eg_i\). Since \(Z \notin \mathfrak {M}\), each \(A_i\) is therefore strictly larger than \(Z\) and so each \(g_i\) is an integer greater than or equal to 2. <br /><br />To determine the order of each \(C_i\), we return to the set \(\mathfrak {M}^*\). The size of one representative of each class is, </p>
-<div class="displaymath" id="a0000000194">
+<div class="displaymath" id="a0000000195">
   \begin{align*}  |A_i^*| = |A_i \!  \setminus \!  Z| = eg_i-e = e(g_i-1). \end{align*}
 </div>
 <p> The number of \(A_i^*\) in each conjugacy class \(\mathcal{C}_i\) for \(i \leq s\) is thus, </p>
-<div class="displaymath" id="a0000000195">
+<div class="displaymath" id="a0000000196">
   \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{|A_i|} = \frac{eg}{eg_i} = \frac{g}{g_i}. \end{align*}
 </div>
 <p> <br />Therefore the total number of elements of \(G\) in the noncentral part of \(C_i\) for \(i \leq s\) is, </p>
@@ -681,23 +723,23 @@
   \begin{align}  \label{classeq1of3} \sum _{i=1}^{s} |C_i^*| = \sum _{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| = \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i}. \end{align}
 </div>
 <p> <br />The number of \(A_i^*\) in each conjugacy class \(\mathcal{C}_i\) for \(s {\lt} i \leq s+t\) is thus, </p>
-<div class="displaymath" id="a0000000196">
+<div class="displaymath" id="a0000000197">
   \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{2|A_i|} = \frac{eg}{2eg_i} = \frac{g}{2g_i}. \end{align*}
 </div>
 <p> <br />Therefore the total number of elements of \(G\) in the noncentral part of \(C_i\) for \(s {\lt} i \leq s+t\) is, </p>
 <div class="displaymath" id="classeq2of3">
   \begin{align} \label{classeq2of3} \sum _{i=s+1}^{s+t} |C_i^*| = \sum _{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*| = \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}. \end{align}
 </div>
-<p> We next determine the order of \(C_{Q \times Z}\). Let \(|Q| = q\). If \(p \nmid |G|\) then \(q=1\) and if \(p = 0\), then we consider a Sylow \(p\)-subgroup to simply be \(I_G\). So \(q\) is always at least 1. Since \(Z {\lt} K\), we can let \(|K| = ek\). Observe that if \(K \in \mathfrak {M}\), then by Theorem <a href="sect0002.html#6.8">5.4</a>(v), \(K = A_i\) for some \(0 {\lt} i \leq t\) and \(k = g_i\). Recall that \(N_G(Q) = QK\) and so, </p>
-<div class="displaymath" id="a0000000197">
+<p> We next determine the order of \(C_{Q \times Z}\). Let \(|Q| = q\). If \(p \nmid |G|\) then \(q=1\) and if \(p = 0\), then we consider a Sylow \(p\)-subgroup to simply be \(I_G\). So \(q\) is always at least 1. Since \(Z {\lt} K\), we can let \(|K| = ek\). Observe that if \(K \in \mathfrak {M}\), then by Theorem <a href="sect0002.html#6.8">5.5</a>(v), \(K = A_i\) for some \(0 {\lt} i \leq t\) and \(k = g_i\). Recall that \(N_G(Q) = QK\) and so, </p>
+<div class="displaymath" id="a0000000198">
   \begin{align*}  |N_G(Q \times Z)^*| & = |N_G(Q \times Z)| \tag {by Lemma \ref{unsureifneeded}} \\ & = |N_G(Q)| \tag {by Lemma \ref{unsure}} \\ & = |QK| = eqk. \end{align*}
 </div>
 <p>Again we count the size and number of these maximal abelian groups. </p>
-<div class="displaymath" id="a0000000198">
+<div class="displaymath" id="a0000000199">
   \begin{align*}  |(Q \times Z)^*| = |QZ| - |Z| = e(q-1). \end{align*}
 </div>
 <p>Since there is only one conjugacy class of \(Q \times Z\), the number of \((Q \times Z)^*\) in \(\mathfrak {M}^*\) is thus, </p>
-<div class="displaymath" id="a0000000199">
+<div class="displaymath" id="a0000000200">
   \begin{align*}  |\mathcal{C}_{Q \times Z}^*| = |\mathcal{C}_{Q \times Z}| = [G: N_G(Q \times Z)] = \frac{|G|}{|N_G(Q \times Z)^*|} = \frac{eg}{eqk} = \frac{g}{qk}. \end{align*}
 </div>
 <p>Therefore the total number of elements of \(G\) in the noncentral parts of each \(Q \times Z\) is, </p>
@@ -709,57 +751,57 @@
   \begin{align} \label{classeq} |G \!  \setminus \!  Z| & = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|, \nonumber \\ |G \!  \setminus \!  Z| & = |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| + \sum _{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| + \sum _{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*|, \nonumber \\ eg - e & = \frac{eg(q-1)}{qk} + \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i} + \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}, \nonumber \\ 1 & = \frac{1}{g} + \frac{q-1}{qk} + \sum _{i=1}^{s} \frac{g_i-1}{g_i} + \sum _{i=s+1}^{s+t} \frac{g_i-1}{2g_i}. \end{align}
 </div>
 <p>Since \(g,k,q \in \mathbb {Z}^+\) this implies that, </p>
-<div class="displaymath" id="a0000000200">
+<div class="displaymath" id="a0000000201">
   \begin{align*}  \frac{1}{g} {\gt} 0 \quad \text{and} \quad \frac{q-1}{qk} \geq 0. \end{align*}
 </div>
 <p>Also, since \(g_i \geq 2\) for \(1 \leq i \leq s + t\), we have, </p>
-<div class="displaymath" id="a0000000201">
+<div class="displaymath" id="a0000000202">
   \begin{align*}  \frac{g_i-1}{g_i} \geq \frac{1}{2}, \quad \sum _{i=1}^{s} \frac{g_i-1}{g_i} \geq \frac{s}{2} \quad \text{and} \quad \sum _{i=s+1}^{s+t} \frac{g_i-1}{2g_i} \geq \frac{t}{4}. \end{align*}
 </div>
 <p>Thus we can find a lower bound for (<a href="sect0002.html#classeq">16</a>) which limits the possible number of conjugacy classes somewhat, </p>
-<div class="displaymath" id="a0000000202">
+<div class="displaymath" id="a0000000203">
   \begin{align*}  1 {\gt} \frac{s}{2} + \frac{t}{4}. \end{align*}
 </div>
 <p>There are only 6 possible different pairs of values which \(s\) and \(t\) can take:  </p>
 <div class="centered"> <div class="centered"><table class="tabular">
   <tr>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-left:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-left:1px solid black" 
         rowspan=""
         colspan="">
       <p> Case </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> I </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> II </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> III </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> IV </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> V </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> VI </p>
@@ -767,43 +809,43 @@
     </td>
   </tr>
   <tr>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-left:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-left:1px solid black" 
         rowspan=""
         colspan="">
       <p> \(s\) </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> 1 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> 1 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> 0 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> 0 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> 0 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black" 
         rowspan=""
         colspan="">
       <p> 0 </p>
@@ -811,43 +853,43 @@
     </td>
   </tr>
   <tr>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-left:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-left:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
         rowspan=""
         colspan="">
       <p> \(t\) </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
         rowspan=""
         colspan="">
       <p> 0 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
         rowspan=""
         colspan="">
       <p> 1 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
         rowspan=""
         colspan="">
       <p> 0 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
         rowspan=""
         colspan="">
       <p> 1 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
         rowspan=""
         colspan="">
       <p> 2 </p>
 
     </td>
-    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:center; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
         rowspan=""
         colspan="">
       <p> 3 </p>
