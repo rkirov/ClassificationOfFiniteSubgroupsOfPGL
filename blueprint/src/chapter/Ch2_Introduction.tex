@@ -90,7 +90,9 @@ This isomorphism will be crucial as it will allow us to focus on classifying fin
 
 
 When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct an isomorphism between the projective special linear group and the projective general linear group.
-\begin{definition}\lean{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.SL_monoidHom_PGL}
+\begin{definition}
+\lean{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.SL_monoidHom_PGL}
+\label{SL_monoidHom_PGL}
     Let $\varphi : \SL_n(R) \rightarrow \PGL_n(R)$ be the injection of $\PSL_n(R)$ into $\PGL_n(R)$ defined by
     \[
      S \mapsto i(S) \;  (R^\times I) 
@@ -101,7 +103,7 @@ When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct 
 
 \begin{lemma}
 \lean{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.center_SL_le_ker}
-\uses{Ch2_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup.SL_monoidHom_PGL}
+\uses{SL_monoidHom_PGL}
 \leanok
 Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \subseteq \ker (\varphi)$.
 \end{lemma}
