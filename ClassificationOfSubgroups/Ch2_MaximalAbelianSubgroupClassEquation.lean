@@ -33,21 +33,7 @@ open SpecialSubgroups
 
 
 
-/- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
-theorem index_normalizer_le_two {p : ℕ}(A G : Subgroup SL(2,F)) (center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) : (A.subgroupOf G).normalizer.index ≤ 2 := by
-  by_cases h : Nat.card A ≤ 2
-  · have A_eq_Z : A = Z F := by
-      refine le_antisymm ?A_le_Z ?Z_le_A
-      case A_le_Z =>
-        obtain ⟨⟨A_IsComm, A_Maximal⟩, A_le_G⟩ := hA
-        sorry
-      case Z_le_A => exact (@center_SL2_F_eq_Z F _ _) ▸ center_le SL(2,F) G A hA center_le_G
-    simp [A_eq_Z]
-    have : Subgroup.Normal ((Z F).subgroupOf G) := by
-      -- rw [← @normalizer_eq_top]
-      sorry
-    sorry
-  · sorry
+
 
 #check IsPGroup.exists_le_sylow
 #check comap_inf

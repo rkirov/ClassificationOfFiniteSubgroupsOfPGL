@@ -18,8 +18,8 @@ This means that $|G|$ and $|Z|$ are relatively prime, so $G \cap Z = \{ I_L \}$ 
 A group $G$ is said to be \textbf{elementary abelian} if it is abelian and every non-trivial element has order $p$, where $p$ is prime.
 \end{definition}
 
-\begin{notation-non} Let $\mathfrak{M}$ denote the set of all maximal abelian subgroups of $G$.
-\end{notation-non}
+\begin{definition} Let $\mathfrak{M}$ denote the set of all maximal abelian subgroups of $G$.
+\end{definition}
 \vspace{3mm}
 
 Maximal abelian subgroups play an important role in determining the structure of $G$. In particular, every element in $G$ must be contained in some maximal abelian subgroup, since every element commutes at least with itself and $Z$. This will allow us to decompose $G$ into the conjugacy classes of these maximal abelian subgroups. Note also that unless $G=Z$, $Z$ is not a maximal abelian subgroup, because for each $x \in G \! \setminus \! Z$, $\langle Z,x \rangle$ is clearly a larger abelian subgroup than $Z$. \\
@@ -264,7 +264,7 @@ For the duration of this paper, unless otherwise stated, $Q$ will denote a Sylow
 \begin{definition} The set $\mathcal{C}_i = \{ x A_i x^{-1} : x \in G \}$ is called the \textbf{conjugacy class} of $A_i \in \mathfrak{M}$.
 \end{definition}
 
-\begin{notation-non} Let $A_i^*$ be the non-central part of $A_i \in \mathfrak{M}$, let $\mathfrak{M}^*$ be the set of all $A_i^*$ and let $\mathcal{C}_i^*$ be the conjugacy class of $A_i^*$. \\
+\begin{definition} Let $A_i^*$ be the non-central part of $A_i \in \mathfrak{M}$, let $\mathfrak{M}^*$ be the set of all $A_i^*$ and let $\mathcal{C}_i^*$ be the conjugacy class of $A_i^*$. \\
 \\
 For some $A_i \in \mathfrak{M}$ and $A_i^* \in \mathfrak{M}^*$ let,
 \begin{align*} C_i = \bigcup\limits_{x \in G} x A_i x^{-1}, \quad \text{and} \quad  C_i^* = \bigcup\limits_{x \in G} x A_i^* x^{-1}.
@@ -272,7 +272,7 @@ For some $A_i \in \mathfrak{M}$ and $A_i^* \in \mathfrak{M}^*$ let,
 In other words, $C_i$ denotes the set of elements of $G$ which belong to some element of $\mathcal{C}_i$. It's evident that $C_i^* = C_i \setminus Z$ and that there is a $C_i$ corresponding to each $\mathcal{C}_i$. Clearly we have the relation,
 \begin{align}\label{orderorder} |C_i^*| = |A_i^*||\mathcal{C}_i^*|.
 \end{align}
-\end{notation-non}
+\end{definition}
 
 \begin{theorem} \label{partitiontheorem} Let $G$ be a finite subgroup of $L$ and $S$ be a subset of $\mathfrak{M}^*$  containing exactly one element from each of its conjugacy classes. \vspace{2mm}
 

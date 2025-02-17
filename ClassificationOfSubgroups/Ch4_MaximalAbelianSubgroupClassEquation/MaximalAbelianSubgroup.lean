@@ -253,8 +253,11 @@ lemma singleton_of_cen_eq_G (G : Type*) [Group G] (H : Subgroup G) (hH : H = cen
 
 open scoped MatrixGroups
 
+#leansearch "A = B of B ⊆ A Nat.card A ≤ Nat.card B?"
+
 lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
-  (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G):
+  (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G)
+  (card_A_le_two : Nat.card A ≤ 2):
   A = center SL(2,F) := by
   have cen_le_A := center_le SL(2,F) G A hA center_le_G
   have card_cen_eq_two : Nat.card (center SL(2,F)) = 2 := by sorry
@@ -263,6 +266,7 @@ lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
     have one_mem_A : 1 ∈ A := by exact Subgroup.one_mem A
     have neg_one_mem_A : -1 ∈ A := by
       apply cen_le_A (@center_SL2_F_eq_Z F _ _ ▸ neg_one_mem_Z F)
+    -- split on the case where the characteristic is different
     sorry
   case cen_le_A => exact cen_le_A
 
@@ -1151,5 +1155,23 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
       A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t G A hA center_le_G center_lt_A x x_in_G
         x_not_in_center A_eq_centra τ x_IsConj_t_or_neg_t
 
+/- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
+theorem index_normalizer_le_two {F : Type*} [Field F] {p : ℕ}(A G : Subgroup SL(2,F))
+  (center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G)
+  (hA' : Nat.Coprime (Nat.card A) p) : (A.subgroupOf G).normalizer.index ≤ 2 := by
+  by_cases h : Nat.card A ≤ 2
+  · have A_eq_Z : A = Z F := by
+      refine le_antisymm ?A_le_Z ?Z_le_A
+      case A_le_Z =>
+        obtain ⟨⟨A_IsComm, A_Maximal⟩, A_le_G⟩ := hA
+
+        sorry
+      case Z_le_A => exact (@center_SL2_F_eq_Z F _ _) ▸ center_le SL(2,F) G A hA center_le_G
+    simp [A_eq_Z]
+    have : Subgroup.Normal ((Z F).subgroupOf G) := by
+      -- rw [← @normalizer_eq_top]
+      sorry
+    sorry
+  · sorry
 
 end MaximalAbelianSubgroup
