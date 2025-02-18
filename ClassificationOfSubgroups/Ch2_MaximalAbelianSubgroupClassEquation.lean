@@ -75,10 +75,12 @@ def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := Cᵢ Aᵢ G
 -- The non-central part of a subgroup
 def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) := {x : G | x ∈ H.carrier \ center G}
 
-#leansearch "noncentral part of a group?"
+#check noncenter
 
+def noncenter_MaximalAbelianSubgroups {F : Type*} [Field F] (G : Subgroup SL(2,F)) :=
+  { noncenter K | K ∈ MaximalAbelianSubgroups G }
 
-#leansearch "conjugacy class?"
+-- #leansearch "conjugacy class?"
 
 /- Let Aᵢ* be the non-central part of Aᵢ ∈ M -/
 

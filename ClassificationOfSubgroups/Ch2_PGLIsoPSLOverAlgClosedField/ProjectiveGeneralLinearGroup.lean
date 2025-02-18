@@ -35,16 +35,8 @@ namespace GeneralLinearGroup
 def scalar (n : Type*) [DecidableEq n] [Fintype n] (r : Rˣ) : GL n R :=
   Units.map (Matrix.scalar n).toMonoidHom r
 
-/-- scalar matrix belongs to GL n R iff r is a unit -/
-theorem coe_scalar_matrix (r : Rˣ) : Matrix.scalar n r.val = scalar n r := rfl
-
-/-- `M` is a scalar matrix if it commutes with every nontrivial transvection (elementary matrix). -/
-theorem mem_range_scalar_of_commute_transvectionStruct' {M : GL n R}
-    (hM : ∀ t : TransvectionStruct n R, Commute t.toGL M):
-    (M : Matrix n n R) ∈ Set.range (Matrix.scalar n) := by
-  refine mem_range_scalar_of_commute_transvectionStruct ?_
-  simp_rw [← Commute.units_val_iff] at hM
-  exact hM
+/-- The scalar matrix `r • 1` belongs to `GL n R` if and only if `r` is a unit -/
+theorem coe_scalar_matrix (r : Rˣ) : Matrix.scalar n r.val = GeneralLinearGroup.scalar n r := rfl
 
 theorem mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group {M : GL n R}
   (hM : (M : Matrix n n R) ∈ Set.range (Matrix.scalar n)) :
@@ -53,41 +45,17 @@ theorem mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group {
     have det_scalar : (Matrix.scalar n r').det = r'^(Nat.card n) := by simp
     have det_M_is_unit: IsUnit ((M : Matrix n n R).det) := by simp only [isUnits_det_units]
     rw [← hr', det_scalar] at det_M_is_unit
-    by_cases hn : Nat.card n ≠ 0
-    · have r'_is_unit : IsUnit r' := by rw [← isUnit_pow_iff hn]; exact det_M_is_unit
+    cases hn : isEmpty_or_nonempty n
+    · exact ⟨1, Subsingleton.elim _ _⟩
+    · have n_ne_zero : Nat.card n ≠ 0 := Nat.card_ne_zero.mpr ⟨inferInstance, inferInstance⟩
+      have r'_is_unit : IsUnit r' := by
+        rw [← isUnit_pow_iff n_ne_zero]
+        exact det_M_is_unit
       obtain ⟨r, hr⟩ := r'_is_unit
       use r
       ext
       simp [← hr', ← smul_one_eq_diagonal, ← hr]
       rfl
-    · simp only [Nat.card_eq_fintype_card, ne_eq, Decidable.not_not] at hn
-      use 1
-      ext
-      have n_empty : IsEmpty n := by rw [← Fintype.card_eq_zero_iff, hn]
-      rw [one_smul, ← units_eq_one M]
-
-
-theorem mem_units_range_scalar_iff_commute_transvectionStruct {R : Type v} [CommRing R]
-  (M : GL n R) : (∀ (A : GL n R), Commute A M) ↔ (∃ r : Rˣ, r • 1 = M) := by
-  constructor
-  · intro hM
-    -- If M commutes with every matrix then it must commute with the transvection matrices
-    have h₀ : ∀ (t : TransvectionStruct n R), Commute (t.toGL) M := fun t => hM t.toGL
-    -- If M commutes with the transvection matrices,
-    -- then M ∈ Set.range (Matrix.scalar n) where Set.range is Rˣ
-    have h₁ : (M : Matrix n n R) ∈ Set.range ⇑(Matrix.scalar n) :=
-      mem_range_scalar_of_commute_transvectionStruct' h₀
-    have h₂ : ∃ r : Rˣ, r • 1 = M :=
-      mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group h₁
-    obtain ⟨r, rfl⟩ := h₂
-    use r
-  · intro h A
-    obtain ⟨r, rfl⟩ := h
-    ext i j
-    simp [
-      GeneralLinearGroup.coe_mul, GeneralLinearGroup.coe_mul,
-      ← coe_scalar_matrix, scalar_commute
-      ]
 
 
 namespace Center
@@ -95,16 +63,29 @@ namespace Center
 open Subgroup GeneralLinearGroup
 
 theorem mem_center_general_linear_group_iff {M : GL n R} :
-  M ∈ Subgroup.center (GL n R) ↔ (∃ r : Rˣ, (r • 1) = M) := by
+  M ∈ center (GL n R) ↔ (∃ r : Rˣ, (r • 1) = M) := by
   rw [mem_center_iff]
-  constructor
-  · intro h
-    rw [← mem_units_range_scalar_iff_commute_transvectionStruct]
-    congr
-  · intro h A
-    have hA : (∀ (A : GL n R), Commute A M) :=
-      (mem_units_range_scalar_iff_commute_transvectionStruct M).mpr h
-    exact Commute.eq <| hA A
+  refine ⟨?mp, ?mpr⟩
+  case mp =>
+    intro hM
+    -- If M commutes with every matrix then it must commute with the transvection matrices
+    have h₀ : ∀ (t : TransvectionStruct n R), Commute (t.toGL) M := fun t => hM t.toGL
+    /-
+    If M commutes with the transvection matrices,
+    then M ∈ Set.range (Matrix.scalar n) where Set.range is Rˣ
+    -/
+    simp_rw [← Commute.units_val_iff] at h₀
+    have h₁ : (M : Matrix n n R) ∈ Set.range ⇑(Matrix.scalar n) :=
+      mem_range_scalar_of_commute_transvectionStruct h₀
+    obtain ⟨r, rfl⟩ :=
+      mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group h₁
+    use r
+  case mpr =>
+    intro hM N
+    obtain ⟨r, rfl⟩ := hM
+    ext i j
+    simp [GeneralLinearGroup.coe_mul, GeneralLinearGroup.coe_mul,
+      ← coe_scalar_matrix, scalar_commute]
 
 end Center
 
@@ -112,7 +93,9 @@ end GeneralLinearGroup
 
 variable (n : Type u) [DecidableEq n] [Fintype n] (R : Type v) [CommRing R]
 
-open Subgroup
+open Matrix LinearMap Subgroup
+
+open scoped MatrixGroups
 
 /-- A projective general linear group is the quotient of a special linear group by its center. -/
 abbrev ProjectiveGeneralLinearGroup : Type _ :=
@@ -121,14 +104,6 @@ abbrev ProjectiveGeneralLinearGroup : Type _ :=
 
 /-- `PGL n R` is the projective special linear group `(GL n R)/ Z(GL(n R))`. -/
 abbrev PGL := ProjectiveGeneralLinearGroup
-
-
-open Matrix LinearMap Subgroup
-
-open scoped MatrixGroups
-
-
-variable (n : Type u) [DecidableEq n] [Fintype n] (R : Type v) [CommRing R]
 
 /-- A projective special linear group is the quotient of a special linear group by its center. -/
 abbrev ProjectiveSpecialLinearGroup : Type _ :=
@@ -195,28 +170,28 @@ open Polynomial
 
 lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [DecidableEq n]
   [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] (G : GL n F) :
-  ∃ c : Fˣ, ∃ S : SL n F,  c • S.toGL = G := by
+  ∃ α : Fˣ, ∃ S : SL n F, α • S.toGL = G := by
   let P : F[X] := X^(Nat.card n) - C (det G.val)
   have nat_card_ne_zero : (Nat.card n) ≠ 0 := Nat.card_ne_zero.mpr ⟨hn₂, Fintype.finite hn₁⟩
   have deg_P_ne_zero : degree P ≠ 0 := by
     rw [Polynomial.degree_X_pow_sub_C]
     exact Nat.cast_ne_zero.mpr nat_card_ne_zero
     exact Nat.card_pos
-  obtain ⟨c, hc⟩ := @IsAlgClosed.exists_root F _ _ P deg_P_ne_zero
-  have c_ne_zero : c ≠ 0 := by
+  obtain ⟨α, hα⟩ := @IsAlgClosed.exists_root F _ _ P deg_P_ne_zero
+  have c_ne_zero : α ≠ 0 := by
     rintro rfl
-    simp [P] at hc
+    simp [P] at hα
     have det_G_ne_zero : det G.val ≠ 0 := IsUnit.ne_zero <| isUnits_det_units G
     contradiction
-  have IsUnit_c : IsUnit c := by exact Ne.isUnit c_ne_zero
-  have hc' : ∃ c : Fˣ, c^(Nat.card n) = det G.val := by
+  have IsUnit_c : IsUnit α := by exact Ne.isUnit c_ne_zero
+  have hα' : ∃ c : Fˣ, c^(Nat.card n) = det G.val := by
     use IsUnit_c.unit
-    simp [P, sub_eq_zero] at hc
-    simp [hc]
-  obtain ⟨c, hc⟩ := hc'
-  have det_inv_c_G_eq_one : det (c⁻¹ • G).1 = (1 : F) := by
-    simp [← hc, inv_smul_eq_iff, Units.smul_def]
-  use c, ⟨(c⁻¹ • G), det_inv_c_G_eq_one⟩
+    simp [P, sub_eq_zero] at hα
+    simp [hα]
+  obtain ⟨α, hα⟩ := hα'
+  have det_inv_c_G_eq_one : det (α⁻¹ • G).1 = (1 : F) := by
+    simp [← hα, inv_smul_eq_iff, Units.smul_def]
+  use α, ⟨(α⁻¹ • G), det_inv_c_G_eq_one⟩
   ext
   simp [coe]
 
@@ -235,7 +210,6 @@ instance (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   ext
   simp [@GeneralLinearGroup.coe_mul]
 
-#leansearch "lift of quotient is injective?"
 
 theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
   [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
@@ -243,8 +217,9 @@ theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [Decidabl
   intro psl psl_in_ker
   obtain ⟨S, hS⟩ := Quotient.exists_rep psl
   rw [← hS] at psl_in_ker
-  simp [QuotientGroup.eq_iff_div_mem, PSL_monoidHom_PGL,
-    SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL] at psl_in_ker
+  simp only [PSL_monoidHom_PGL, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL,
+    MonoidHom.mem_ker, QuotientGroup.lift_mk, MonoidHom.coe_comp, QuotientGroup.coe_mk',
+    Function.comp_apply, QuotientGroup.eq_one_iff] at psl_in_ker
   rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff] at psl_in_ker
   obtain ⟨ω, hω⟩ := psl_in_ker
   have ω_eq_root_of_unity : det S.val = 1 := SpecialLinearGroup.det_coe S
@@ -257,6 +232,44 @@ theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [Decidabl
   refine ⟨?ω_is_root_of_unity, ?S_is_scalar_matrix⟩
   case ω_is_root_of_unity => exact (eq_one_iff_eq_one_of_mul_eq_one ω_eq_root_of_unity).mpr rfl
   case S_is_scalar_matrix => rw [S_eq_omega_smul_one]; exact scalar_eq_smul_one n F ↑ω
+
+theorem SpecialLinearGroup.toGL_inj {n : Type*} [DecidableEq n] [Fintype n] {R : Type*}
+  [CommRing R] : Injective (@SpecialLinearGroup.toGL n _ _ R _) := by
+  refine (injective_iff_map_eq_one SpecialLinearGroup.toGL).mpr ?_
+  intro x hx
+  simp [GeneralLinearGroup.ext_iff, coe] at hx
+  ext i j
+  exact hx i j
+
+theorem ker_SL_monoidHom_PGL_eq_center (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
+  [Field F] [IsAlgClosed F] : (SL_monoidHom_PGL n R).ker = center (SL n R) := by
+  dsimp [SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL]
+  rw [← @MonoidHom.comap_ker, QuotientGroup.ker_mk']
+  ext x
+  constructor
+  · intro hx
+    simp [mem_center_iff] at hx ⊢
+    intro y
+    specialize hx y.toGL
+    rw [← MonoidHom.map_mul, ← MonoidHom.map_mul] at hx
+    apply SpecialLinearGroup.toGL_inj at hx
+    exact hx
+  · intro hx
+    rw [SpecialLinearGroup.mem_center_iff] at hx
+    obtain ⟨r, -, hr⟩ := hx
+    simp [mem_center_iff]
+    intro y
+    ext i j
+    simp [coe, ← hr]
+    exact CommMonoid.mul_comm (y i j) r
+
+
+theorem  Injective_PSL_monoidHom_PGL' (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
+  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
+  dsimp [PSL_monoidHom_PGL]
+  #check Setoid.ker_lift_injective
+  --refine Setoid.ker_lift_injective --(f := QuotientGroup.lift ((SL_monoidHom_PGL n F).ker) (SL_monoidHom_PGL n F))
+  sorry
 
 theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
   [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Surjective (PSL_monoidHom_PGL n F) := by
