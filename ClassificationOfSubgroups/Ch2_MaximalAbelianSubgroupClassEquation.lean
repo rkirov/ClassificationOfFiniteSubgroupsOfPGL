@@ -78,7 +78,7 @@ def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) := {x : G | x ∈ 
 
 
 
-def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := { K | K ∈ (Cᵢ Aᵢ G)}
+-- def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := { K | K ∈ (Cᵢ Aᵢ G)}
 
 
 #check noncenter
