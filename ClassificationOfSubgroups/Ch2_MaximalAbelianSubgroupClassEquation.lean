@@ -68,12 +68,18 @@ Definition. The set Ci = Clᵢ = {x Aᵢx⁻¹ : x ∈ G} is called the conjugac
 A ∈ M.
 -/
 
-def Cᵢ  {F : Type*} [Field F] (Aᵢ G : Subgroup SL(2,F)) (hA : Aᵢ  ∈ MaximalAbelianSubgroups G) := (ConjClasses Aᵢ)
+/- We define the conjugacy class of a maximal abelian subgroup of `G`, `Aᵢ` -/
+def Cᵢ {F : Type*} [Field F] (Aᵢ G : Subgroup SL(2,F)) (hA : Aᵢ  ∈ MaximalAbelianSubgroups G) := (ConjClasses Aᵢ)
 
-def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := Cᵢ Aᵢ G
+#check Cᵢ
 
--- The non-central part of a subgroup
+/- The non-central part of a subgroup -/
 def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) := {x : G | x ∈ H.carrier \ center G}
+
+
+
+def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := { K | K ∈ (Cᵢ Aᵢ G)}
+
 
 #check noncenter
 
