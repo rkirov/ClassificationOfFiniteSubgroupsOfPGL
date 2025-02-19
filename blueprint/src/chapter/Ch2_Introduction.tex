@@ -128,7 +128,6 @@ Given the kernel of $\varphi$.
 
 \begin{lemma}
 \label{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
-% \uses{mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group}
 \lean{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
 Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(R)$, $Z(\GL_n(R))$ if and only if $G = r \cdot I$ where $r \in R^\times$.
 \end{lemma}
@@ -138,7 +137,7 @@ Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(
     \item Suppose $G \in GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
     The transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
     \[
-    E_{ij}_{kl} = \begin{cases}
+    E_{{ij}_{kl}} = \begin{cases}
     1 & \text{if $i = k$ and $l = j$}\\
     0 & \text{otherwise}
     \end{cases}
