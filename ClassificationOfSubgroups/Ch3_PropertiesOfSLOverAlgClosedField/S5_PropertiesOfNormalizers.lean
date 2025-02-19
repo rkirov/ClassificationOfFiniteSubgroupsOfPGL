@@ -171,5 +171,17 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
     trivial
 
 
+lemma center_subgroup_le_center {G : Type*} [Group G] (H : Subgroup G) : center H ≤ (center G).subgroupOf H := by
+  refine map_subtype_le_map_subtype.mp ?_
+  simp
+  split_ands
+  · by_contra! h
+    rw [SetLike.not_le_iff_exists] at h
+    obtain ⟨x, hx, x_not_in_center_G⟩ := h
+    simp at hx
+    obtain ⟨x_in_H, x_in_center_H⟩ := hx
+    simp [mem_center_iff] at x_not_in_center_G
+    sorry
+  · exact map_subtype_le (center ↥H)
 
 #min_imports

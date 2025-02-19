@@ -163,17 +163,21 @@ Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(
 \leanok
     The homomorphism $\bar{\varphi}$ is injective.
 \end{lemma}
-
-
 \begin{proof}
 
-To show $\bar{\varphi}$ is injective we must show that $\ker \bar{\varphi} = \bot$ where $\bot$ is the trivial subgroup.
+To show $\bar{\varphi}$ is injective we must show that $\ker \bar{\varphi} \leq \bot_{\PSL_n(F)}$ where $\bot_{\PSL_n(F)}$ is the trivial subgroup of $\PSL_n(F)$.
 
-Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$. If $[S] \in \ker \bar{\varph}$ then $\bar{\varphi} ([S]) = [1]_{\PGL_n(F)}$ 
+Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$. If $[S] \in \ker \bar{\varphi}$ then $\bar{\varphi} ([S]) = [1]_{\PGL_n(F)}$. But on the other hand, $\bar{\varphi} ([S]) = \varphi(s)$ and so $\varphi(S) = 1_{\PGL_n(F)}$
 
+and thus $S \in Z(\GL_n(F))$, from \ref{GeneralLinearGroup.Center.mem_center_general_linear_group_iff} it follows that $s = r \cdot I$ for some $r \in R^\times$. But given the restriction of $S \in \SL_n(F)$ we know that 
 
-This injection is well-defined for any characteristic, as taking different representatives yields the same result, and furthermore, when $\textrm{char}(F) \ne 2$ and $F$ is algebraically closed $\varphi$ defines an isomorphism.
+\begin{equation*}
+    \det(S) = \det(r \cdot I) = r^n = 1 \implies \text{$r$ is a $n$ \textsuperscript{th} root of unity}
+\end{equation*}
 
+Therefore, given elements of $Z(\SL_n(F))$ are those matrices of the form $\omega \cdot I$ where $\omega$ is a $n$\textsuperscript{th} root of unity, we can conclude that $[S] = [1]_{\PSL_n(F)}$ and thus $\ker \bar{\varphi} \leq \bot_{\PSL_n(F)}$ as required.
+
+Which shows that the homomorphism $\bar{\varphi}$ is injective.
 \end{proof}
 
 Before we can show that $\bar{\varphi}$ is surjective we need the following lemma which allows us to find a suitable representative for an arbitrary element of $\PGL_n(F)$.
