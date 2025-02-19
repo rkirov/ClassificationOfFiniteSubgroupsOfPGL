@@ -1,5 +1,4 @@
-\chapter{Reduction to classification of finite subgroups of $\PSL_2(\Fbar)$}
-
+\chapter{Reduction of classification of finite subgroups of $\PGL_2(\Fbar_p)$ to classification of finite subgroups of $\PSL_2(\Fbar_p)$}\label{Ch3_ReductionOfProblem}
 
 \section{Over an algebraically closed field $\PSL_n(F)$ is isomorphic to the projective $\PGL_n(F)$}
 
@@ -17,18 +16,52 @@ When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct 
     where $i : \SL_n(F) \hookrightarrow \GL_n(F)$ is the natural injection of the special linear group into the general linear group.
 \end{definition}
 
+
+We prove a useful fact about elements that belong to the center of $\GL_n(R)$:
+
+\begin{lemma}
+    \label{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+    \lean{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+    Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(R)$, $Z(\GL_n(R))$ if and only if $G = r \cdot I$ where $r \in R^\times$.
+    \end{lemma}
+    
+    \begin{proof}
+        \begin{itemize}
+        \item Suppose $G \in GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
+        Let $1 \leq i < j \leq n$, then the transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
+        \[
+        E_{{ij}_{kl}} = \begin{cases}
+        1 & \text{if $i = k$ and $l = j$}\\
+        0 & \text{otherwise}
+        \end{cases}
+        \] 
+    
+        Given $T_{ij} G = (I + E_{ij}) G = G T_{ij} (I + E_{ij})$, and addition is commutative we can use the cancellation law to yield that
+        
+        \[
+        E_{ij} G = G E_{ij}
+        \]
+    
+        But $G$ only commutes with $E_{ij}$ for all $i \neq j$ if $G = r \cdot I$ for some $r \in R^\times$.
+        
+        \item Suppose $G = r \cdot I$ for some $r \in R^\times$ then it is clear that for all $H \in \GL_n(F)$ that $r \cdot I  H = r \cdot H = H \cdot r = H (r \cdot I)$
+        \end{itemize}
+    \end{proof}
+
 \begin{lemma}
 \label{center_SL_le_ker}
-\uses{SL_monoidHom_PGL}
+\uses{SL_monoidHom_PGL, GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
 \lean{center_SL_le_ker}
 \leanok
 Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \subseteq \ker (\varphi)$.
 \end{lemma}
 
 \begin{proof}
-If $x \in Z(\SL_n(R))$ then $x = \omega I$ where $\omega$ is a primitive root of unity.
+If $S \in Z(\SL_n(R)) \leq \SL_n(F)$ then $S = \omega I$ where $\omega$ is a primitive root of unity.
 
-Given the kernel of $\varphi$.
+Because $\varphi = \pi_{Z(\GL_n(F))} \circ i$, the kernel of $\varphi$ is $i^{-1}(Z(\GL_n(F)))$, where we recall that $i : \SL_n(R) \hookrightarrow \GL_n(F)$ is the injection of $SL_n(F)$ into $\GL_n(F)$.
+
+But given $i(S) = i(\omega \cdot I) = \omega \cdot I$ is of the form $r \cdot I$ where $r \in R^\times$ by \ref{GeneralLinearGroup.Center.mem_center_general_linear_group_iff} it follows that $S \in \ker \varphi$, as desired.
 \end{proof}
 
 
@@ -41,34 +74,7 @@ Given the kernel of $\varphi$.
     Where $\varphi = \bar{\varphi} \circ \pi_{Z(\SL_n(F))}$ and $\pi_{Z(\SL_n(F))} : \SL_n(F) \rightarrow \PSL_n(F)$ is the canonical homomorphism from the group into its quotient.
 \end{definition}
 
-\begin{lemma}
-\label{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
-\lean{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
-Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(R)$, $Z(\GL_n(R))$ if and only if $G = r \cdot I$ where $r \in R^\times$.
-\end{lemma}
 
-\begin{proof}
-    \begin{itemize}
-    \item Suppose $G \in GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
-    Let $1 \leq i < j \leq n$, then the transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
-    \[
-    E_{{ij}_{kl}} = \begin{cases}
-    1 & \text{if $i = k$ and $l = j$}\\
-    0 & \text{otherwise}
-    \end{cases}
-    \] 
-
-    Given $T_{ij} G = (I + E_{ij}) G = G T_{ij} (I + E_{ij})$, and addition is commutative we can use the cancellation law to yield that
-    
-    \[
-    E_{ij} G = G E_{ij}
-    \]
-
-    But $G$ only commutes with $E_{ij}$ for all $i \neq j$ if $G = r \cdot I$ for some $r \in R^\times$.
-    
-    \item Suppose $G = r \cdot I$ for some $r \in R^\times$ then it is clear that for all $H \in \GL_n(F)$ that $r \cdot I  H = r \cdot H = H \cdot r = H (r \cdot I)$
-    \end{itemize}
-\end{proof}
 
 \begin{lemma}
 \label{Injective_PSL_monoidHom_PGL}
