@@ -124,6 +124,7 @@ Given the kernel of $\varphi$.
 \lean{PSL_monoidHom_PGL}
 \leanok
     Given $Z(\SL_n(F)) \ker \varphi$ as shown in \ref{center_SL_le_ker}, by the universal property there exists a unique homomorphism $\bar{\varphi} : \PSL_n(F) \rightarrow \PGL_n(F)$ which is the lift of $\varphi$. 
+    Where $\varphi = \bar{\varphi} \circ \pi_{Z(\SL_n(F))}$ and $\pi_{Z(\SL_n(F))} : \SL_n(F) \rightarrow \PSL_n(F)$ is the canonical homomorphism from the group into its quotient.
 \end{definition}
 
 \begin{lemma}
@@ -135,7 +136,7 @@ Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(
 \begin{proof}
     \begin{itemize}
     \item Suppose $G \in GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
-    The transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
+    Let $1 \leq i < j \leq n$, then the transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
     \[
     E_{{ij}_{kl}} = \begin{cases}
     1 & \text{if $i = k$ and $l = j$}\\
@@ -144,11 +145,13 @@ Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(
     \] 
 
     Given $T_{ij} G = (I + E_{ij}) G = G T_{ij} (I + E_{ij})$, and addition is commutative we can use the cancellation law to yield that
+    
     \[
-    E_{ij} G = E_{ij} G
+    E_{ij} G = G + E_{ij}
     \]
 
-    But $G$ only commutes with $E_{ij}$ if $
+    But $G$ only commutes with $E_{ij}$ for all $i \neq j$ if $G = r \cdot I$ for some $r \in R^\times$.
+    
     \item Suppose $G = r \smul I$ for some $r \in R^\times$ then it is clear that for all $H \in \GL_n(F)$ that $r \cdot I  H = r \cdot H = H \cdot r = H (r \cdot I)$
     \end{itemize}
 \end{proof}
@@ -166,7 +169,7 @@ Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(
 
 To show $\bar{\varphi}$ is injective we must show that $\ker \bar{\varphi} = \bot$ where $\bot$ is the trivial subgroup.
 
-Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$, where $\ker \bar{\varphi} = Z(\GL_n(F))$
+Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$. If $[S] \in \ker \bar{\varph}$ then $\bar{\varphi} ([S]) = [1]_{\PGL_n(F)}$ 
 
 
 This injection is well-defined for any characteristic, as taking different representatives yields the same result, and furthermore, when $\textrm{char}(F) \ne 2$ and $F$ is algebraically closed $\varphi$ defines an isomorphism.
