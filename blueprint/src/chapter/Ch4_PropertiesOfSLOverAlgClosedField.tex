@@ -3,15 +3,15 @@
 
 \section{General Notation}
 
-Throughout this paper, $F$ will denote an arbitrary algebraically closed field. For convenince we let $L$ denote the infinite group $SL(2,F)$. The letter $p$ will be used to denote the characteristic of $F$. Recall that the characteristic of a field is the smallest number of times which the multilplicative identity of the field, say 1, needs to be summed to reach the additive identity of the field, say 0. If there is no such number, then we regard $p$ as being zero, otherwise it is always a prime. \\
+Throughout this paper, $F$ will denote an arbitrary algebraically closed field. For convenince we let $L$ denote the infinite group $\SL_2(F)$. The letter $p$ will be used to denote the characteristic of $F$. Recall that the characteristic of a field is the smallest number of times which the multilplicative identity of the field, say 1, needs to be summed to reach the additive identity of the field, say 0. If there is no such number, then we regard $p$ as being zero, otherwise it is always a prime. \\
 \\
-Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \lambda, \mu$, and $\sigma$ will denote elements of $F$ and $\omega$ and $\rho$ elements of $F^*$, where $F^*$  are the non-zero elements of $F$.
+Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \lambda, \mu$, and $\sigma$ will denote elements of $F$ and $\omega$ and $\rho$ elements of $F^\times$, where $F^\times$  are the non-zero elements of $F$.
 
 \section[Subsets of $L$]{Subsets of $\pmb{L}$}
 
 In this chapter we make some useful observations about specific elements and subgroups of $L$. We define the following elements of $L$ as follows.
 
-\begin{align*} d_\omega = \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix}, \qquad t_\lambda = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix}, \qquad w = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix}  \tag{$\omega \in F^*$ and $\lambda \in F$}.
+\begin{align*} d_\omega = \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix}, \qquad t_\lambda = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix}, \qquad w = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix}  \tag{$\omega \in F^\times$ and $\lambda \in F$}.
 \end{align*}
 
 We also define the following subsets of $L$.
@@ -27,7 +27,7 @@ Observe that $H$ is the set of all lower triangular matrices in $L$ whilst $Dw$ 
 These elements and subgroups are fundamental to this paper and this notation will be used throughout.
 
 \begin{lemma}\label{6.1}
-For any $\omega, \rho \in F^*$ and $\lambda, \mu \in F$ we have:
+For any $\omega, \rho \in F^\times$ and $\lambda, \mu \in F$ we have:
 \begin{align*} d_\omega d_{\rho}= d_{\omega\rho}, \quad t_\lambda t_\mu = t_{\lambda + \mu}, \quad d_\omega t_\lambda d^{-1}_\omega = t_\sigma \quad \! \! (\sigma=\lambda \omega^{-2}), \quad w d_\omega w^{-1} = d^{-1}_\omega.
 \end{align*} 
 \end{lemma}
@@ -35,28 +35,28 @@ For any $\omega, \rho \in F^*$ and $\lambda, \mu \in F$ we have:
 
 \begin{proof} 
 These identities are all easily shown by matrix multiplication:
-\begin{align*} d_\omega d_\rho = \begin{bmatrix} \omega & 0 \\ 0 & \omega\inv \end{bmatrix} \begin{bmatrix} \rho & 0 \\ 0 & \rho\inv \end{bmatrix} &= \begin{bmatrix} \omega \rho & 0 \\ 0 & \omega\inv \rho\inv \end{bmatrix} = d_{\omega \rho}.
+\begin{align*} d_\omega d_\rho = \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} \rho & 0 \\ 0 & \rho^{-1} \end{bmatrix} &= \begin{bmatrix} \omega \rho & 0 \\ 0 & \omega^{-1} \rho^{-1} \end{bmatrix} = d_{\omega \rho}.
 \\[1.5ex]
 t_\lambda t_\mu = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \mu & 1 \end{bmatrix} &= \begin{bmatrix} 1 & 0 \\ \lambda + \mu & 1 \end{bmatrix} = t_{\lambda + \mu}.
 \\[1.5ex]
- d_\omega t_\lambda d^{-1}_\omega = \! \begin{bmatrix} \omega & 0 \\ 0 & \omega\inv \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \omega\inv & 0 \\ 0 & \omega \end{bmatrix} &= \begin{bmatrix} \omega & 0 \\ 0 & \omega\inv \end{bmatrix} \! \begin{bmatrix} \omega\inv & 0 \\ \lambda \omega\inv & \omega \end{bmatrix} \! = \! \begin{bmatrix} 1 & 0 \\ \lambda \omega^{-2} & 1 \end{bmatrix} \! = t_\sigma.
+ d_\omega t_\lambda d^{-1}_\omega = \! \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \omega^{-1} & 0 \\ 0 & \omega \end{bmatrix} &= \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \! \begin{bmatrix} \omega^{-1} & 0 \\ \lambda \omega^{-1} & \omega \end{bmatrix} \! = \! \begin{bmatrix} 1 & 0 \\ \lambda \omega^{-2} & 1 \end{bmatrix} \! = t_\sigma.
 \\[1.5ex]
-w d_\omega w\inv = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} \omega & 0 \\ 0 & \omega\inv \end{bmatrix} \begin{bmatrix} 0 & - 1 \\ 1 & 0 \end{bmatrix} &=  \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} 0 & - \omega \\ \omega\inv & 0 \end{bmatrix} \! = \! \begin{bmatrix} \omega\inv & 0 \\ 0 & \omega \end{bmatrix} \!= d^{-1}_\omega. \end{align*}
+w d_\omega w^{-1} = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} 0 & - 1 \\ 1 & 0 \end{bmatrix} &=  \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} 0 & - \omega \\ \omega^{-1} & 0 \end{bmatrix} \! = \! \begin{bmatrix} \omega^{-1} & 0 \\ 0 & \omega \end{bmatrix} \!= d^{-1}_\omega. \end{align*}
  
 \end{proof}
 
 \begin{lemma}\label{6.1b}
 (i) The sets $D$ and $T$ are subgroups of $L$ and
-\begin{equation*} D\cong F^*, \qquad T \cong F. \end{equation*}
+\begin{equation*} D\cong F^\times, \qquad T \cong F. \end{equation*}
 (ii) $T$ is a normal subgroup of $H$ and $H / T \cong D$.
 \end{lemma}
 \vspace{0mm}
 
 \begin{proof} 
-(i) The function $\psi: F^* \rightarrow D$ defined by $\psi(\omega) = d_\omega$ is a homomorphism between the group $F^*$ under normal multiplication and $D$ under normal matrix multiplication:
+(i) The function $\psi: \times \rightarrow D$ defined by $\psi(\omega) = d_\omega$ is a homomorphism between the group $F^\times$ under normal multiplication and $D$ under normal matrix multiplication:
 \begin{align*} \psi(\omega \rho) = d_{\omega \rho} =  d_\omega d_\rho = \psi(\omega) \psi(\rho). \tag{by Lemma \ref{6.1}}
 \end{align*}
-Observe that $\psi$ is trivially injective and surjective and thus an isomorphism. So $D\cong F^*$ and $D$ is a subgroup of $L$.\\
+Observe that $\psi$ is trivially injective and surjective and thus an isomorphism. So $D\cong F^\times$ and $D$ is a subgroup of $L$.\\
 \\
  The function $\phi: F \rightarrow T$ defined by $\phi(\lambda) = t_\lambda$ is a homomorphism between the group $F$ under addition and $T$ under normal matrix multiplication:
 \begin{align*} \phi(\lambda + \mu) = t_{\lambda + \mu} = t_\lambda t_\mu = \phi(\lambda) \phi(\mu). \tag{by Lemma \ref{6.1}}
@@ -128,13 +128,13 @@ $Z = \langle - I_L \rangle$.
 \noindent Thus $\alpha = \delta$, $\beta = - \beta \Rightarrow 2\beta = 0$ and $\gamma = - \gamma \Rightarrow 2\gamma = 0$. In the case of $p \neq 2$ this gives $\beta = 0 = \gamma$. So
 \begin{equation*} x = \begin{bmatrix} \alpha & 0 \\ 0 & \alpha \end{bmatrix}.
 \end{equation*}
-\noindent Also $\alpha ^2 = 1$ since $x \in$ $SL(2,F)$, so $\alpha = \pm 1$. For $x$ to have order 2, we must have $\alpha = - 1$. Hence there is a unique element of order 2, namely $- I_L$.
+\noindent Also $\alpha ^2 = 1$ since $x \in$ $\SL_2(F)$, so $\alpha = \pm 1$. For $x$ to have order 2, we must have $\alpha = - 1$. Hence there is a unique element of order 2, namely $- I_L$.
 \\
 \end{proof}
 
 \section[Conjugacy of the Elements of $L$]{Conjugacy of the Elements of $\pmb{L}$}
 
-\begin{proposition}\label{6.3} Each element of $L$ is conjugate to either $d_\omega$ for some $\omega \in F^*$, or to $\pm t_\lambda$ for some $\lambda \in F$.
+\begin{proposition}\label{6.3} Each element of $L$ is conjugate to either $d_\omega$ for some $\omega \in F^\times$, or to $\pm t_\lambda$ for some $\lambda \in F$.
 \end{proposition}
 
 \begin{proof} Since $F$ is algebraically closed, any element $x \in L$ can be regarded as a linear transformation in the 2 dimensional vector space over $F$, with the eigenvalues $\pi_1$ and $\pi_2$. \\
@@ -144,7 +144,7 @@ $Z = \langle - I_L \rangle$.
 \begin{align*} \text{Set } \; b = \frac{a}{\sqrt {\text{det}(a)}}, \quad \text{thus } \; bxb^{-1} =\frac{a}{\sqrt {\text{det}(a)}} \; x \; (\sqrt{\text{det}(a)} \; )\,a^{-1} = axa^{-1} = y.
 \end{align*}
 
-Observe that det$(b)=1$, hence $x$ and $y$ are conjugate in $L$. Furthermore, since $y$ is a diagonal matrix it must belong to the set $D$, showing that $x$ is conjugate to $d_\omega$ for some $\omega \in F^*$. \\
+Observe that det$(b)=1$, hence $x$ and $y$ are conjugate in $L$. Furthermore, since $y$ is a diagonal matrix it must belong to the set $D$, showing that $x$ is conjugate to $d_\omega$ for some $\omega \in F^\times$. \\
 \\
 \space If $\pi_1 = \pi_2$ then $x$ has just one repeated eigenvalue. Suppose that $x$ is diagonalisable. Then there exists an element $c \in GL(2, F)$ and a diagonal matrix $\pi_1 I_G$ such that $x = c(\pi_1 I_G)c^{-1} = \pi_1 I_G$. Thus $x = \pm I_G$, which trivially belongs to both $D$ and $T \times Z$. \\
 \\
@@ -232,11 +232,11 @@ Since (\ref{6.3proof3}) is in $D_1$, the top right and bottom left entries must 
 \\
  \space If $\alpha \neq 0$, then similarly $\beta = 0$, $\delta = \alpha^{-1}$ and $\gamma = 0$. (\ref{6.3proof3}) now becomes $$\begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} = d_\omega \in D_1.$$This time we have $x \in D$. So $x \in D \cup wD = \langle D , w \rangle$ and any element which normalises $D_1$ is in $\langle D , w \rangle$, thus $N_L(D_1) \subset \langle D , w \rangle$. \\
 \\
-Now take an arbitrary $y \in \langle D , w \rangle = D \cup wD$. If $y \in D$ then $y = d_{\rho 1}$, for some $\rho 1 \in F^*$.
+Now take an arbitrary $y \in \langle D , w \rangle = D \cup wD$. If $y \in D$ then $y = d_{\rho 1}$, for some $\rho 1 \in F^\times$.
 \begin{align*} d_{\rho 1} d_\omega d^{-1}_{\rho 1} = d_\omega \in D_1. \tag{by Lemma \ref{6.1}}
 \end{align*}
 
-If $y \in wD$ then $y = w d_{\rho 2}$, for some $ d_{\rho 2} \in F^*$.
+If $y \in wD$ then $y = w d_{\rho 2}$, for some $ d_{\rho 2} \in F^\times$.
 \begin{align*} (w d_{\rho 2}) d_\omega (w d_{\rho 2})^{-1} &= w d_{\rho 2} d_\omega d^{-1}_{\rho 2} w^{-1}
 \\ &= w d_\omega w^{-1}
 \\ &= d^{-1}_\omega \in D_1 \tag{by Lemma \ref{6.1}}.
@@ -285,7 +285,7 @@ So $x^{-1}hx \in C_G(a)$ and since $h$ was arbitrarily chosen from $C_G(xax^{-1}
 The centraliser of an element $x$ in $L$ is abelian unless $x$ belongs to the centre of $L$. \vspace{3mm}
 \end{corollary}
 
-\begin{proof} This is almost an immediate consequence of the preceding results. Propositions \ref{6.4i} and \ref{6.4ii} show that an element of the form $\pm t_\lambda$ which does not lie in the centre of $L$ has centraliser $T \times Z$, whilst a non-central element of the form $d_\omega$ has centraliser $D$. Both $T$ and $D$ are abelian since they are isomoprhic to $F$ and $F^*$ respectively. Let $t_\lambda z_1$ and $t_\mu z_2$  be arbitrary elements of $T \times Z$.
+\begin{proof} This is almost an immediate consequence of the preceding results. Propositions \ref{6.4i} and \ref{6.4ii} show that an element of the form $\pm t_\lambda$ which does not lie in the centre of $L$ has centraliser $T \times Z$, whilst a non-central element of the form $d_\omega$ has centraliser $D$. Both $T$ and $D$ are abelian since they are isomoprhic to $F$ and $F^\times$ respectively. Let $t_\lambda z_1$ and $t_\mu z_2$  be arbitrary elements of $T \times Z$.
 
 \vspace{-.5mm}
 \begin{align*} (t_\lambda z_1)(t_\mu z_2)  &= t_\lambda t_\mu z_2 z_1  \tag{since  $z_1 \in Z$}
@@ -304,8 +304,8 @@ It is convenient to sometimes take a geometric viewpoint and regard the elements
 \begin{definition} Let $\mathscr{L}$ be the set of all 1-dimensional subspaces of $V$. A subset $\mathscr{S}$ of $\mathscr{L}$ is called a \textbf{subspace} of $\mathscr{L}$ if there is a subspace $U$ of $V$ such that $\mathscr{S}$ is the set of all 1-dimensional spaces of $U$. We have dim $U =$ dim $\mathscr{S} + 1$. The set $\mathscr{L}$ on which this concept of subspaces is defined is called the \textbf{projective line} on $V$ and an element of $\mathscr{L}$ is a 0-dimensional subspace of $\mathscr{L}$ and consequently called a \textbf{point}. The projective line can be considered as a straight line in the field, plus a point at infinity.
 \end{definition}
 
-Any 1-dimensional subspace of $V$ is a set of vectors of the form $\eta u$, where $u$ is a non-zero vector of $V$ and $\eta \in F^*$. Thus the points of $\mathscr{L}$ are equivalence classes with the following relation defined on the set of vectors of $V$.
-\begin{align*} u = \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} \sim \begin{bmatrix} v_1 \\ v_2 \end{bmatrix} = v \iff u = \eta v, \qquad (\text{for $\eta \in F^*$}).
+Any 1-dimensional subspace of $V$ is a set of vectors of the form $\eta u$, where $u$ is a non-zero vector of $V$ and $\eta \in F^\times$. Thus the points of $\mathscr{L}$ are equivalence classes with the following relation defined on the set of vectors of $V$.
+\begin{align*} u = \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} \sim \begin{bmatrix} v_1 \\ v_2 \end{bmatrix} = v \iff u = \eta v, \qquad (\text{for $\eta \in F^\times$}).
 \end{align*}
 
 Notice that $u$ and $v$ are equivalent if and only if $u_1 v_2 = v_1 u_2$. Importantly each point $P_i$ of $\mathscr{L}$ can be represented by a corresponding equivalence class of vectors of $V$, that is, $P$ corresponds to $u$ if $P = u_1 / u_2$. In the case when $u_2 = 0$, this corresponds to the point at infinity.
@@ -319,11 +319,11 @@ Notice that $u$ and $v$ are equivalent if and only if $u_1 v_2 = v_1 u_2$. Impor
 Let $\mathscr{L}$ be the projective line over the field $F$. Then $L$ is triply transitive on the set of the points of $\mathscr{L}$. \vspace{3mm}
 \end{theorem}
 
-\begin{proof} Let $P_1$, $P_2$ and $P_3$ be distinct points of $\mathscr{L}$ and $p_i$ be a vector in $V$ corresponding to $P_i$. Since each $P_i$ is distinct, $p_1$, $p_2$ and $p_3$ are thus pairwise linearly independent. Thus $p_1$ and $p_2$  form a basis for $V$ and it's clear that there exist $\alpha, \beta \in F^*$ such that,
+\begin{proof} Let $P_1$, $P_2$ and $P_3$ be distinct points of $\mathscr{L}$ and $p_i$ be a vector in $V$ corresponding to $P_i$. Since each $P_i$ is distinct, $p_1$, $p_2$ and $p_3$ are thus pairwise linearly independent. Thus $p_1$ and $p_2$  form a basis for $V$ and it's clear that there exist $\alpha, \beta \in F^\times$ such that,
 \begin{align*} p_3 = \alpha p_1 + \beta p_2.
 \end{align*}
 
-Now, let $Q_1$, $Q_2$ and $Q_3$ be three more distinct points of $\mathscr{L}$ and $q_i$ be a vector in $V$ corresponding to $Q_i$. Similarly, by the above argument, there exist $\gamma, \delta \in F^*$ such that,
+Now, let $Q_1$, $Q_2$ and $Q_3$ be three more distinct points of $\mathscr{L}$ and $q_i$ be a vector in $V$ corresponding to $Q_i$. Similarly, by the above argument, there exist $\gamma, \delta \in F^\times$ such that,
 \begin{align*} q_3 = \gamma q_1 + \delta q_2.
 \end{align*}
 

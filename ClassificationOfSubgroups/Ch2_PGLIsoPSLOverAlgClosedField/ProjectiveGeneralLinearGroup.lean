@@ -137,31 +137,32 @@ lemma scalar_eq_smul_one (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [Co
   (scalar n) r = r • 1 := by
   simp [smul_one_eq_diagonal]
 
-lemma center_SL_le_ker (n : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
-  (R : Type*) [CommRing R] [NeZero (1 : R)] :
+lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
+  (R : Type*) [CommRing R]:
   center (SpecialLinearGroup n R) ≤ (SL_monoidHom_PGL n R).ker := by
-  intro x x_mem_center
-  rw [SpecialLinearGroup.mem_center_iff] at x_mem_center
-  obtain ⟨ω, hω, h⟩ := x_mem_center
-  simp [MonoidHom.mem_ker, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL]
-  rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
-  have IsUnit_ω : IsUnit ω := IsUnit.of_pow_eq_one hω Fintype.card_ne_zero
-  use IsUnit_ω.unit
-  ext
-  simp only [coe, ← h, scalar_eq_smul_one]
-  rfl
+  cases hn : isEmpty_or_nonempty n
+  · exact le_of_subsingleton
+  · intro x x_mem_center
+    rw [SpecialLinearGroup.mem_center_iff] at x_mem_center
+    obtain ⟨ω, hω, h⟩ := x_mem_center
+    simp [MonoidHom.mem_ker, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL]
+    rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
+    have IsUnit_ω : IsUnit ω := IsUnit.of_pow_eq_one hω Fintype.card_ne_zero
+    use IsUnit_ω.unit
+    ext
+    simp only [coe, ← h, scalar_eq_smul_one]
+    rfl
 
-instance center_is_normal (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
-  [CommRing R] [NeZero (1 : R)] : Subgroup.Normal (center (SpecialLinearGroup n R)) :=
+instance center_is_normal (n R : Type*) [Fintype n] [DecidableEq n]
+  [CommRing R] : Subgroup.Normal (center (SpecialLinearGroup n R)) :=
   normal_of_characteristic (center (SL n R))
 
-instance PGL_is_monoid  (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
-  [CommRing R] [NeZero (1 : R)] : Monoid (ProjectiveGeneralLinearGroup n R) :=
+instance PGL_is_monoid  (n R : Type*) [Fintype n] [DecidableEq n]
+  [CommRing R] : Monoid (ProjectiveGeneralLinearGroup n R) :=
   RightCancelMonoid.toMonoid
 
 -- By the universal property the map from PSL n F to PGL n F is well defined
-def PSL_monoidHom_PGL (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
-  [CommRing R] [NeZero (1 : R)] :
+def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   PSL n R →* PGL n R :=
   @QuotientGroup.lift (SL n R) _ (center (SL n R)) (center_is_normal n R) (PGL n R)
     (PGL_is_monoid n R) (SL_monoidHom_PGL n R) (center_SL_le_ker n R)
@@ -169,10 +170,13 @@ def PSL_monoidHom_PGL (n R : Type*) [Nonempty n] [Fintype n] [DecidableEq n]
 open Polynomial
 
 lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [DecidableEq n]
-  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] (G : GL n F) :
+  [Field F] [IsAlgClosed F] (G : GL n F) :
   ∃ α : Fˣ, ∃ S : SL n F, α • S.toGL = G := by
+  cases hn : isEmpty_or_nonempty n
+  · exact ⟨1, 1, Subsingleton.elim _ _⟩
   let P : F[X] := X^(Nat.card n) - C (det G.val)
-  have nat_card_ne_zero : (Nat.card n) ≠ 0 := Nat.card_ne_zero.mpr ⟨hn₂, Fintype.finite hn₁⟩
+  have nat_card_ne_zero : (Nat.card n) ≠ 0 :=
+    Nat.card_ne_zero.mpr ⟨inferInstance, inferInstance⟩;
   have deg_P_ne_zero : degree P ≠ 0 := by
     rw [Polynomial.degree_X_pow_sub_C]
     exact Nat.cast_ne_zero.mpr nat_card_ne_zero
@@ -208,11 +212,11 @@ instance (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   refine IsScalarTower.of_smul_one_mul ?_
   intro r g
   ext
-  simp [@GeneralLinearGroup.coe_mul]
+  simp [GeneralLinearGroup.coe_mul]
 
 
 theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
+  [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
   rw [← MonoidHom.ker_eq_bot_iff, eq_bot_iff]
   intro psl psl_in_ker
   obtain ⟨S, hS⟩ := Quotient.exists_rep psl
@@ -265,14 +269,14 @@ theorem ker_SL_monoidHom_PGL_eq_center (n F : Type*) [hn₁ : Fintype n] [Decida
 
 
 theorem  Injective_PSL_monoidHom_PGL' (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
+  [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
   dsimp [PSL_monoidHom_PGL]
   #check Setoid.ker_lift_injective
   --refine Setoid.ker_lift_injective --(f := QuotientGroup.lift ((SL_monoidHom_PGL n F).ker) (SL_monoidHom_PGL n F))
   sorry
 
 theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Surjective (PSL_monoidHom_PGL n F) := by
+  [Field F] [IsAlgClosed F] :  Surjective (PSL_monoidHom_PGL n F) := by
   intro pgl
   obtain ⟨G, hG⟩ := Quotient.exists_rep pgl
   obtain ⟨c, S, h⟩ := exists_SL_eq_scaled_GL_of_IsAlgClosed G
@@ -293,15 +297,15 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
   rfl
 
 theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-  [hn₂ : Nonempty n] [Field F] [IsAlgClosed F] :  Bijective (PSL_monoidHom_PGL n F) := by
+  [Field F] [IsAlgClosed F] :  Bijective (PSL_monoidHom_PGL n F) := by
   refine ⟨?injective, ?surjective⟩
   case injective => exact Injective_PSL_monoidHom_PGL n F
   case surjective => exact Surjective_PSL_monoidHom_PGL n F
 
 -- We define the isomorphism between
 -- the projective general linear group and the projective special linear group
-noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Nonempty n]
-  [Field F] [IsAlgClosed F] : PSL n F ≃* PGL n F :=
+noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Field F]
+  [IsAlgClosed F] : PSL n F ≃* PGL n F :=
     MulEquiv.ofBijective (PSL_monoidHom_PGL n F) (Bijective_PSL_monoidHom_PGL n F)
 
 end Isomorphism

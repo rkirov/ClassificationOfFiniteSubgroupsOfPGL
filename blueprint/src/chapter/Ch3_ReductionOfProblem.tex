@@ -1,0 +1,207 @@
+\chapter{Reduction to classification of finite subgroups of $\PSL_2(\Fbar)$}
+
+
+\section{Over an algebraically closed field $\PSL_n(F)$ is isomorphic to the projective $\PGL_n(F)$}
+
+
+When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct an isomorphism between the projective special linear group and the projective general linear group.
+\begin{definition}
+\label{SL_monoidHom_PGL}
+\lean{SL_monoidHom_PGL}
+\leanok
+    Let $\varphi : \SL_n(R) \rightarrow \PGL_n(R)$ be the injection of $\PSL_n(R)$ into $\PGL_n(R)$ defined by
+    \[
+     S \mapsto i(S) \;  (R^\times I) 
+    \]
+
+    where $i : \SL_n(F) \hookrightarrow \GL_n(F)$ is the natural injection of the special linear group into the general linear group.
+\end{definition}
+
+\begin{lemma}
+\label{center_SL_le_ker}
+\uses{SL_monoidHom_PGL}
+\lean{center_SL_le_ker}
+\leanok
+Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \subseteq \ker (\varphi)$.
+\end{lemma}
+
+\begin{proof}
+If $x \in Z(\SL_n(R))$ then $x = \omega I$ where $\omega$ is a primitive root of unity.
+
+Given the kernel of $\varphi$.
+\end{proof}
+
+
+\begin{definition}
+\label{PSL_monoidHom_PGL}
+\uses{center_SL_le_ker, SL_monoidHom_PGL}
+\lean{PSL_monoidHom_PGL}
+\leanok
+    Given $Z(\SL_n(F)) \ker \varphi$ as shown in \ref{center_SL_le_ker}, by the universal property there exists a unique homomorphism $\bar{\varphi} : \PSL_n(F) \rightarrow \PGL_n(F)$ which is the lift of $\varphi$. 
+    Where $\varphi = \bar{\varphi} \circ \pi_{Z(\SL_n(F))}$ and $\pi_{Z(\SL_n(F))} : \SL_n(F) \rightarrow \PSL_n(F)$ is the canonical homomorphism from the group into its quotient.
+\end{definition}
+
+\begin{lemma}
+\label{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+\lean{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(R)$, $Z(\GL_n(R))$ if and only if $G = r \cdot I$ where $r \in R^\times$.
+\end{lemma}
+
+\begin{proof}
+    \begin{itemize}
+    \item Suppose $G \in GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
+    Let $1 \leq i < j \leq n$, then the transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
+    \[
+    E_{{ij}_{kl}} = \begin{cases}
+    1 & \text{if $i = k$ and $l = j$}\\
+    0 & \text{otherwise}
+    \end{cases}
+    \] 
+
+    Given $T_{ij} G = (I + E_{ij}) G = G T_{ij} (I + E_{ij})$, and addition is commutative we can use the cancellation law to yield that
+    
+    \[
+    E_{ij} G = G E_{ij}
+    \]
+
+    But $G$ only commutes with $E_{ij}$ for all $i \neq j$ if $G = r \cdot I$ for some $r \in R^\times$.
+    
+    \item Suppose $G = r \cdot I$ for some $r \in R^\times$ then it is clear that for all $H \in \GL_n(F)$ that $r \cdot I  H = r \cdot H = H \cdot r = H (r \cdot I)$
+    \end{itemize}
+\end{proof}
+
+\begin{lemma}
+\label{Injective_PSL_monoidHom_PGL}
+\lean{Injective_PSL_monoidHom_PGL}
+\uses{PSL_monoidHom_PGL, GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+\leanok
+    The homomorphism $\bar{\varphi}$ is injective.
+\end{lemma}
+\begin{proof}
+
+To show $\bar{\varphi}$ is injective we must show that $\ker \bar{\varphi} \leq \bot_{\PSL_n(F)}$ where $\bot_{\PSL_n(F)}$ is the trivial subgroup of $\PSL_n(F)$.
+
+Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$. If $[S] \in \ker \bar{\varphi}$ then $\bar{\varphi} ([S]) = [1]_{\PGL_n(F)}$. But on the other hand, $\bar{\varphi} ([S]) = \varphi(s)$ and so $\varphi(S) = 1_{\PGL_n(F)}$
+
+and thus $S \in Z(\GL_n(F))$, from \ref{GeneralLinearGroup.Center.mem_center_general_linear_group_iff} it follows that $s = r \cdot I$ for some $r \in R^\times$. But given the restriction of $S \in \SL_n(F)$ we know that 
+
+\begin{equation*}
+    \det(S) = \det(r \cdot I) = r^n = 1 \implies \text{$r$ is a $n$ \textsuperscript{th} root of unity}
+\end{equation*}
+
+Therefore, given elements of $Z(\SL_n(F))$ are those matrices of the form $\omega \cdot I$ where $\omega$ is a $n$\textsuperscript{th} root of unity, we can conclude that $[S] = [1]_{\PSL_n(F)}$ and thus $\ker \bar{\varphi} \leq \bot_{\PSL_n(F)}$ as required.
+
+Which shows that the homomorphism $\bar{\varphi}$ is injective.
+\end{proof}
+
+Before we can show that $\bar{\varphi}$ is surjective we need the following lemma which allows us to find a suitable representative for an arbitrary element of $\PGL_n(F)$.
+
+\begin{lemma}
+\label{exists_SL_eq_scaled_GL_of_IsAlgClosed}
+\lean{exists_SL_eq_scaled_GL_of_IsAlgClosed}
+\leanok
+If $F$ is an algebraically closed field then for every $G \in \GL_n(F)$ there exists a nonzero constant $\alpha \in F^\times$ and an element $S \in \SL_n(F)$ such that 
+\begin{equation*}
+    G = \alpha \cdot S
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+Let $G \in \GL_n(R)$ then define
+\begin{equation*}
+    P(X) := X^n - \det(G)
+\end{equation*}
+
+By assumption $F$ is algebraically closed and $\det(G) \in F^\times$ thus there exists a root $\alpha \in F^\times$ such that 
+
+\begin{equation*}
+    \alpha^n - \det(G) = 0 \iff \alpha = \sqrt[n]{\det(G)} 
+\end{equation*}
+
+Let $S = \frac{1}{\alpha} \cdot G$, by construction $S \in \SL_n(F)$ as 
+
+\begin{equation*}
+    \det(S) = \left(\frac{1}{\alpha}\right) \cdot \det(G) = \frac{1}{\det(G)} \det(G) = 1
+\end{equation*}
+\end{proof}
+
+\begin{lemma}
+\label{Surjective_PSL_monoidHom_PGL}
+\uses{PSL_monoidHom_PGL, exists_SL_eq_scaled_GL_of_IsAlgClosed}
+\lean{Surjective_PSL_monoidHom_PGL}
+    The map $\bar{\varphi}$ is surjective.
+\end{lemma}
+
+\begin{proof}
+    Let $G \; (F^\times I) = [G] \in \PGL_n(F)$, then $G \in \GL_n(F)$ we can find a representative of $[G']$, that lies within the special linear group.
+    Given elements of the special linear group are matrices with determinant equal to one, we must scale $G$ to a suitable factor to yield a representative which lies within $\SL_n(F)$. Suppose $\det(G) \ne 1$ and let
+    \[
+    P(X) := X^n - \det(G) \in F[X]
+    \]
+    By assumption, $F$ is algebraically closed so there exists a root $\alpha \ne 0\in F$ such that 
+    \[
+    \alpha^n - \det(G) = 0 \iff \alpha^n = \det(G)
+    \]
+    We can define
+    \[
+    G' := \frac{1}{\alpha} \cdot G \quad \text{where} \quad \det(G') = \frac{1}{\alpha^n} \det(G) = 1.
+    \]
+    Thus $G' \in \SL_n(F) \leq \GL_n(F)$ and given $G' = \frac{1}{\alpha} G$ we have that $G'  \; (F^\times I) = G \; (F^\times I)$.
+    
+    Therefore, $\varphi(G') = i(G') (F^\times I) = G' (F^\times I) = G (F^\times I)$.
+\end{proof}
+
+\begin{lemma}
+\label{Bijective_PSL_monoidHom_PGL}
+\uses{Injective_PSL_monoidHom_PGL, Surjective_PSL_monoidHom_PGL}
+\lean{Bijective_PSL_monoidHom_PGL}
+    The map $\bar{\varphi}$ is bijective
+\end{lemma}
+
+\begin{proof}
+ We have shown that $\bar{\varphi}$ is injective in \ref{Injective_PSL_monoidHom_PGL} and have shown that $\bar{\varphi}$ is surjective in \ref{Surjective_PSL_monoidHom_PGL}. 
+ Therefore,$\bar{\varphi}$ defines a bijection from $\PSL_n(F)$ to $\PGL_n(F)$.
+\end{proof}
+
+\begin{theorem}
+\label{PGL_iso_PSL}
+\uses{Bijective_PSL_monoidHom_PGL, PSL_MonoidHom_PGL}
+\lean{PGL_iso_PSL}
+    If $F$ is an algebraically closed field, then the map $\bar{\varphi} : \PSL_n(F) \rightarrow \PGL_n(F)$ defines a group isomorphism between $\PSL_n(F)$ and $\PGL_n(F)$.
+\end{theorem}
+
+\begin{proof}
+    The map $\bar{\varphi}$ was shown to be a bijection in \ref{Bijective_PSL_monoidHom_PGL} and given $\bar{\varphi}$ is mulitplicative as it was defined to be the lift of the homomorphism $\varphi$, we can conclude that 
+    $\bar{\varphi}$ defines a group isomorphism between $\PSL_n(F)$ and $ºPGL_n(F)$
+\end{proof}
+
+
+
+% \begin{center}
+% \begin{tikzcd}
+% 	{\SL_n(F)} && {\SL_n(F)} \\
+% 	&& {} \\
+% 	{\PSL_n(F)} && {\PGL_n(F)}
+% 	\arrow["i", from=1-1, to=1-3]
+% 	\arrow["{\textrm{can}_{\langle-I\rangle}}"', from=1-1, to=3-1]
+% 	\arrow["{\textrm{can}_{F^\times I}}", from=1-3, to=3-3]
+% 	\arrow[dotted, from=3-1, to=3-3]
+% \end{tikzcd}
+% \end{center}
+% \end{proof}
+
+This isomorphism will be essential to the classification of finite subgroups of $\PGL_2(\bar{\F}_p)$, as we only need understand a the classification of subgroups of $\PSL_2(F)$ structure to reach our desired result.
+
+
+\section{Christopher Butler's exposition}
+
+Following from the isomorphism defined in the previous section, we can now proceed to classify the finite subgroups of $\PGL_2(\bar{\F}_p)$ by classifying the finite subgroups of $\PSL_2(\bar{\F}_p)$. 
+In turn, one can begin classifying the finite subgroups of $\PSL_2(\Fbar_p)$ by classifying the finite subgroups of $\SL_2(\Fbar_p)$ and then considering what happens after quotienting by the center, $Z(\SL_2(F)) = \langle -I\rangle$.
+
+We now turn our attention to the more general setting when $F$ is an arbitrary field that is algebraically closed, as this will turn out to be sufficient for our purposes.
+
+Given $|\langle -I \rangle| = 2$ when $\textrm{char} F \ne 2$ and $\langle -I\rangle = \bot$ when $\textrm{char} F = 2$.
+When a finite subgroup of $\SL_2(F)$ is sent through the canonical mapping $\pi_{Z(\SL_2(F))} : \SL_2(F) \rightarrow \PSL_2(F)$ the resulting subgroup will at most shrink by a factor of two or remain intact should the center not be contained within the subgroup. 
+
+We now proceed to classify all finite subgroups of $\SL_2(F)$ when $F$ is algebraically closed field. 
+From now on, we follow Christopher Butler's exposition of Dickson's classification of finite subgroups of $\SL_2(F)$ over an algebraically closed field $F$. Christopher has been kind enough to provide the $\LaTeX$ code so I could prepare this blueprint which crucially hinges on the result which his exposition covers.
