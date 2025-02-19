@@ -245,16 +245,17 @@ Let $S = \frac{1}{\alpha} G$, by construction $S \in \SL_n(F)$ as
 \end{lemma}
 
 \begin{proof}
-
+ We have shown that $\bar{\varphi}$ is injective in \ref{Injective_PSL_monoidHom_PGL} and have shown that $\bar{\varphi}$ is surjective in \ref{Surjective_PSL_monoidHom_PGL}. 
+ Therefore,$\bar{\varphi}$ defines a bijection from $\PSL_n(F)$ to $\PGL_n(F)$.
 \end{proof}
 
 \begin{theorem}
-    The map $\bar{\varphi}$ defines a group isomorphism between $\PSL_n(F)$ and $\PGL_n(F)$.
+    If $F$ is an algebraically closed field, then the map $\bar{\varphi} : \PSL_n(F) \rightarrow \PGL_n(F)$ defines a group isomorphism between $\PSL_n(F)$ and $\PGL_n(F)$.
 \end{theorem}
 
 \begin{proof}
-
-
+    The map $\bar{\varphi}$ was shown to be a bijection in \ref{Bijective_PSL_monoidHom_PGL} and given $\bar{\varphi}$ is mulitplicative as it was defined to be the lift of the homomorphism $\varphi$, we can conclude that 
+    $\bar{\varphi}$ defines a group isomorphism between $\PSL_n(F)$ and $ºPGL_n(F)$
 \end{proof}
 
 
@@ -272,51 +273,17 @@ Let $S = \frac{1}{\alpha} G$, by construction $S \in \SL_n(F)$ as
 % \end{center}
 % \end{proof}
 
-\begin{proof}
-\begin{itemize}
-    \item We show $\varphi$ is well-defined:
-
-Let $S, S' \in \SL_n(F)$, suppose $S \langle -I\rangle = S'\langle -I\rangle$ then because $SS'^{-1} \in \langle -I\rangle \iff SS'^{-1} = \pm I$ we have the following chain of set equalities
-
-\begin{align*}
-    \varphi(S \langle -I \rangle) 
-    &= S (F^\times I)\\
-    &= S' (F^\times I) \qquad \parbox[c]{0.5
-    \linewidth}{because $S = \pm I S$ and $\pm I \in F^\times I$}\\
-    &= \varphi(S' \langle -I\rangle)
-\end{align*}
-
-\item When $F$ is algebraically closed, we show $\varphi$ in fact defines an isomorphism:
-
-Given $\varphi$ is an injection, we only need show that $\varphi$ is multiplicative and surjective.
-\begin{itemize}
-    \item $\varphi$ is multiplicative:
-
-    Let $S \langle-I\rangle, Q\langle-I\rangle \in \PSL_n(F)$ where $S, Q \in \SL_n(F)$ then
-
-    \begin{align*}
-    \varphi(S \langle-I\rangle  Q\langle-I\rangle ) &= \varphi(SQ \langle -I\rangle) \quad \parbox[c]{0.4\linewidth}{by the normality of $\langle -I \rangle$}\\
-    &= i(SQ) F^\times I\\
-    &= i(S) i(Q) F^\times I \quad  \parbox[c]{0.4\linewidth}{as a group injection defines a homomorphism}\\
-    &= i(S) (F^\times I) \cdot i(Q)(F^\times I) \quad \parbox[c] {0.4\linewidth}{ by the normality of $F^\times I$}\\
-    &= \varphi(S) \varphi(Q)
-    \end{align*}
-    
-    \item $\varphi$ is surjective:
-
-    
-\end{itemize}
-
-
-\end{itemize}
-
-\end{proof}
-
-This isomorphism will be essential to the classification of finite subgroups of $\PGL_2(\bar{\F}_p)$, as we only need understand a smaller structure to get to our endgoal.
+This isomorphism will be essential to the classification of finite subgroups of $\PGL_2(\bar{\F}_p)$, as we only need understand a the classification of subgroups of $\PSL_2(F)$ structure to reach our desired result.
 
 
 \section{Christopher Butler's exposition}
 
-Following the result in the previous section, we can now proceed to classify the finite subgroups of $\PGL_2(\bar{\F}_p)$ by classifying the finite subgroups of $\PSL_2(\bar{\F}_p)$. In turn, one can begin classifying the finite subgroups of $\PSL_2(F)$ by classifying the finite subgroups of $\SL_2(F)$ and then considering what happens after the center is quotiented out; which given $Z(\SL_2(F)) = \langle -I\rangle$ should the $\textrm{char}(F) \ne 2$ then this will at most shrink the size of the subgroup by two. 
+Following from the isomorphism defined in the previous section, we can now proceed to classify the finite subgroups of $\PGL_2(\bar{\F}_p)$ by classifying the finite subgroups of $\PSL_2(\bar{\F}_p)$. 
+In turn, one can begin classifying the finite subgroups of $\PSL_2(\Fbar_p)$ by classifying the finite subgroups of $\SL_2(\Fbar_p)$ and then considering what happens after quotienting by the center, $Z(\SL_2(F)) = \langle -I\rangle$.
 
-For the case, where $\textrm{char}(F) = 2$, given $1 = -1$ in this field it then follows that $I = -I \iff I + I =  2 \cdot I = 0 \cdot I = 0$
+We now turn our attention to the more general setting when $F$ is an arbitrary field that is algebraically closed, as this will turn out to be sufficient for our purposes.
+
+Given $|\langle -I \rangle| = 2$ when $\textrm{char} F \ne 2$ and $\langle -I\rangle = \bot$ when $\textrm{char} F = 2$.
+When a finite subgroup of $\SL_2(F)$ is sent through the canonical mapping $\pi_{Z(\SL_2(F))} : \SL_2(F) \rightarrow \PSL_2(F)$ the resulting subgroup will at most shrink by a factor of two or remain intact should the center not be contained within the subgroup. 
+
+We now proceed to classify all finite subgroups of $\SL_2(F)$ when $F$ is algebraically closed field.
