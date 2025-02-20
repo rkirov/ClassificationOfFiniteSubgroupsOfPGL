@@ -1,9 +1,3 @@
-import Mathlib.Algebra.Order.Star.Basic
-import Mathlib.Data.Nat.Factorization.PrimePow
-import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.GroupTheory.Sylow
-import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
-import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S1_ElementaryAbelian
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
 
 set_option linter.style.longLine true
@@ -40,7 +34,7 @@ def Cᵢ {F : Type*} [Field F] (Aᵢ : Subgroup SL(2,F)) := (ConjClasses Aᵢ)
 #check Cᵢ
 
 /- The non-central part of a subgroup -/
-def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) := {x : G | x ∈ H.carrier \ center G}
+def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) : Set G := {x : G | x ∈ H.carrier \ center G}
 
 
 def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := { K : Cᵢ Aᵢ // True }
@@ -58,12 +52,32 @@ def noncenter_MaximalAbelianSubgroups {F : Type*} [Field F] (G : Subgroup SL(2,F
 #check ConjClasses
 #check ConjClasses.noncenter
 
-#leansearch "group class equation?"
+#check MulAction.card_eq_sum_card_group_div_card_stabilizer
 
 /- let M∗ be the set of all Aᵢ* and let Cᵢ* be the conjugacy class of Aᵢ* .-/
+namespace Noncenter
 
--- def M_ (A : )
+protected def setoid (α : Type*) [Monoid α] : Setoid α where
+  r := IsConj
+  iseqv := ⟨IsConj.refl, IsConj.symm, IsConj.trans⟩
 
+/-- The quotient type of conjugacy classes of a group. -/
+def ConjClasses (α : Type*) [Monoid α] : Type _ :=
+  Quotient (Noncenter.setoid α)
+
+/- Define a setoid -/
+def SetoidOfMaximalAbelianSubgroup {G : Type*} [Group G] (H : Set G) : Setoid G where
+ r := IsConj
+ iseqv := {
+  refl := fun a => by exact ConjClasses.mk_eq_mk_iff_isConj.mp rfl,
+  symm := fun {x y} a ↦ id (IsConj.symm a),
+  trans := by exact fun {x y z} a a_1 ↦ IsConj.trans a a_1 }
+
+def ConjClassesOfMaximalAbelianSubgroup {G : Type*} [Group G] (H : Set G) : Type _ :=
+  Quotient (Noncenter.SetoidOfMaximalAbelianSubgroup H)
+
+
+end Noncenter
 -- lemma theorem_2_4 {F : Type*} [Field F] {G : Subgroup SL(2,F)} [Finite G]
 
 /-

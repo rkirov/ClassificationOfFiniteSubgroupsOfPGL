@@ -1,10 +1,7 @@
-import Mathlib.Algebra.Order.Star.Basic
-import Mathlib.Data.Nat.Factorization.PrimePow
-import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.GroupTheory.Sylow
 import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S1_ElementaryAbelian
-
+import Mathlib.Algebra.Order.Star.Basic
+import Mathlib.FieldTheory.Finite.Basic
 
 set_option linter.style.longLine true
 set_option autoImplicit false
@@ -13,11 +10,18 @@ set_option synthInstance.maxHeartbeats 0
 
 open Subgroup
 
-def IsMaximalAbelian (G : Type*) [Group G] (H : Subgroup G) : Prop := Maximal (IsCommutative) H
+def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal (IsCommutative) G
 
 def MaximalAbelianSubgroups { L : Type*} [Group L] (G : Subgroup L) : Set (Subgroup L) :=
-  { K : Subgroup L | IsMaximalAbelian G (K.subgroupOf G) ∧ K ≤ G}
+  { K : Subgroup L | IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G}
 
+structure MaximalAbelian {G : Type*} [Group G] (H : Subgroup G) extends Subgroup G where
+  is_maximal' : Maximal (IsCommutative) H
+
+def MaximalAbelianSubgroups' {L : Type*} [Group L] (G : Subgroup L) :=
+  { K : Subgroup L // IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G }
+
+#check Matrix.SpecialLinearGroup
 
 open SpecialSubgroups
 
@@ -1192,3 +1196,5 @@ theorem theorem_2_6_v_b {F : Type*} [Field F] { p : ℕ } [hp' : Fact (Nat.Prime
   sorry
 
 end MaximalAbelianSubgroup
+
+#min_imports

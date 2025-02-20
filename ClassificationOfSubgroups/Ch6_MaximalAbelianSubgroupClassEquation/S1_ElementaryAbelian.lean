@@ -1,8 +1,6 @@
-import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
-import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.Data.Nat.Factorization.PrimePow
-import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.GroupTheory.Sylow
+import Mathlib.GroupTheory.PGroup
+import Mathlib.Order.CompletePartialOrder
 
 
 set_option linter.style.longLine true
@@ -104,3 +102,5 @@ lemma IsElementaryAbelian_subgroupOf {G : Type*} [Group G]
     simp [← order_of_eq_p']
 
 end IsElementaryAbelian
+
+#min_imports
