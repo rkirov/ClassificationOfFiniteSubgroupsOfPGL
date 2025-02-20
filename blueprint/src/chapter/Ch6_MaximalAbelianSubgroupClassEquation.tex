@@ -1,4 +1,4 @@
-\chapter[The Maximal Abelian Subgroup Class Equation]{The Maximal Abelian Subgroup Class Equation}\label{Ch5_MaximalAbelianSubgroupClassEquation}
+\chapter[The Maximal Abelian Subgroup Class Equation]{The Maximal Abelian Subgroup Class Equation}\label{Ch6_MaximalAbelianSubgroupClassEquation}
 % \chaptermark{The Class Equation}
 
 \section[A finite subgroup of $L$]{A Finite Subgroup of $\pmb{L}$}
@@ -13,12 +13,27 @@ This means that $|G|$ and $|Z|$ are relatively prime, so $G \cap Z = \{ I_L \}$ 
 
 \section{Maximal Abelian Subgroups}
 
-\begin{definition} Let $H$ and $J$ be subgroups of a group $G$ where $H$ is abelian. $H$ is called \textbf{maximal abelian} if $J$ is not abelian whenever $H \subsetneq J$. \\
-\\
+\begin{definition}[Maximal Abelian Subgroup]
+\label{IsMaximalAbelian}
+\lean{IsMaximalAbelian}
+\leanok
+Let $H$ and $J$ be subgroups of a group $G$ where $H$ is abelian. $H$ is called \textbf{maximal abelian} if $J$ is not abelian whenever $H \subsetneq J$.
+\end{definition}
+
+
+\begin{definition}[Elementary Abelian]
+\label{IsElementaryAbelian}
+\lean{IsElementaryAbelian}
+\leanok
 A group $G$ is said to be \textbf{elementary abelian} if it is abelian and every non-trivial element has order $p$, where $p$ is prime.
 \end{definition}
 
-\begin{definition} Let $\mathfrak{M}$ denote the set of all maximal abelian subgroups of $G$.
+\begin{definition}
+\label{MaximalAbelianSubgroups}
+\lean{MaximalAbelianSubgroups}
+\use{IsMaximalAbelian
+\leanok}
+Let $\mathfrak{M}$ denote the set of all maximal abelian subgroups of $G$.
 \end{definition}
 \vspace{3mm}
 
@@ -26,7 +41,8 @@ Maximal abelian subgroups play an important role in determining the structure of
 \\
 We will shortly prove an important theorem regarding the maximal abelian subgroups of $G$, but in order to do so we require the following two lemmas. \\
 
-\begin{lemma}\label{primecentre}
+\begin{lemma}
+\label{primecentre}
 If $G$ is a finite group of order $p^m$ where $p$ is prime and $m>0$, then $p$ divides $|Z(G)|$. 
 \end{lemma}
 
@@ -45,11 +61,11 @@ Since $|G| = p^m$, each subgroup of $G$ is of order $p^k$ for some $k \leq m$. I
 Every finite subgroup of a multiplicative group of a field is cyclic.
 \end{lemma}
 
-\begin{proof} See \cite[p.41]{suzuki}.
+\begin{proof} 
+  See \cite[p.41]{suzuki}.
 \end{proof}
 
 \begin{theorem}\label{6.8} Let $G$ be an arbitrary finite subgroup of $L$ containing $Z$. \\
-
 (i) If $x \in G \! \setminus \! Z$ then we have $C_G(x) \in \mathfrak{M}$. \vspace{3mm} \\
 (ii) For any two distinct subgroups $A$ and $B$ of $\mathfrak{M}$, we have
 \begin{align*} A \cap B = Z. \end{align*}

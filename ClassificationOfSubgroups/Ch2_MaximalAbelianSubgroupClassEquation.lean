@@ -69,7 +69,7 @@ A ∈ M.
 -/
 
 /- We define the conjugacy class of a maximal abelian subgroup of `G`, `Aᵢ` -/
-def Cᵢ {F : Type*} [Field F] (Aᵢ G : Subgroup SL(2,F)) (hA : Aᵢ  ∈ MaximalAbelianSubgroups G) := (ConjClasses Aᵢ)
+def Cᵢ {F : Type*} [Field F] (Aᵢ : Subgroup SL(2,F)) := (ConjClasses Aᵢ)
 
 #check Cᵢ
 
@@ -77,8 +77,7 @@ def Cᵢ {F : Type*} [Field F] (Aᵢ G : Subgroup SL(2,F)) (hA : Aᵢ  ∈ Maxim
 def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) := {x : G | x ∈ H.carrier \ center G}
 
 
-
--- def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := { K | K ∈ (Cᵢ Aᵢ G)}
+def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := { K : Cᵢ Aᵢ // True }
 
 
 #check noncenter
@@ -92,6 +91,8 @@ def noncenter_MaximalAbelianSubgroups {F : Type*} [Field F] (G : Subgroup SL(2,F
 
 #check ConjClasses
 #check ConjClasses.noncenter
+
+#leansearch "group class equation?"
 
 /- let M∗ be the set of all Aᵢ* and let Cᵢ* be the conjugacy class of Aᵢ* .-/
 
@@ -114,6 +115,15 @@ Cᵢ . Clearly we have the relation, |Cᵢ*| = |Aᵢ*||Clᵢ*|
 -- def C_i {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [Finite G] (hA : A ∈ MaximalAbelianSubgroups G) :=  ⋃ x ∈ G,
 
 -- lemma card_noncentral_conjugacy_eq_mul_noncentral_MaxAbSub
+
+
+/- Lemma 2.5 N_G(A) = N_G(A*)-/
+lemma normalizer_noncentral_eq {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [Finite G] (hA : A ∈ MaximalAbelianSubgroups G) : normalizer A = setNormalizer (noncenter A) := by
+  sorry
+
+/- Lemma Let `Q` be a `p`-Sylow subgroup of `G` then $N_G(Q \sqcup Z) = N_G(Q)$-/
+lemma normalizer_Sylow_join_center_eq_normalizer_Sylow {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) : normalizer (map G.subtype Q.toSubgroup ⊔ center SL(2,F)) = normalizer (map G.subtype Q.toSubgroup) := by
+  sorry
 
 
 #min_imports

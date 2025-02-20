@@ -22,9 +22,9 @@ structure ElementaryAbelian (p : ℕ) (G : Type*) [Group G] extends Subgroup G w
 def IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G) : Prop :=
   IsCommutative H ∧ ∀ h : H, h ≠ 1 → orderOf h = p
 
-namespace ElementaryAbelian
+namespace IsElementaryAbelian
 
-lemma dvd_card_IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G)
+lemma dvd_card {G : Type*} [Group G] (p : ℕ) (H : Subgroup G)
   [Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H: ⊥ < H) : p ∣ (Nat.card H) := by
   simp [@SetLike.lt_iff_le_and_exists] at bot_lt_H
   obtain ⟨h, h_in_H, h_ne_one⟩ := bot_lt_H
@@ -38,7 +38,7 @@ lemma dvd_card_IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup
   exact order_dvd_card
 
 
-lemma primeFac_IsElementaryAbelian_eq {G : Type*} [Group G] (p : ℕ)
+lemma primeFac_eq {G : Type*} [Group G] (p : ℕ)
   (hp : Nat.Prime p) (H : Subgroup G) [Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H : ⊥ < H):
   Nat.primeFactors (Nat.card H) = {p} := by
   rw [@Finset.Subset.antisymm_iff]
@@ -63,15 +63,15 @@ lemma primeFac_IsElementaryAbelian_eq {G : Type*} [Group G] (p : ℕ)
     trivial
   · simp
     exact
-      ⟨hp, dvd_card_IsElementaryAbelian p H hH bot_lt_H, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
+      ⟨hp, dvd_card p H hH bot_lt_H, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
 
-lemma IsPGroup_of_IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (hp : Nat.Prime p)
+lemma IsPGroup {G : Type*} [Group G] (p : ℕ) (hp : Nat.Prime p)
   (H : Subgroup G) [Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H : ⊥ < H):
   IsPGroup p H := by
   let inst : Fact (Nat.Prime p) := { out := hp }
   rw [IsPGroup.iff_card]
   have : Nat.primeFactors (Nat.card (H :)) = {p} :=
-    @primeFac_IsElementaryAbelian_eq G _ p hp H _ hH bot_lt_H
+    @primeFac_eq G _ p hp H _ hH bot_lt_H
   have card_primeFac_eq_one : (Nat.card ↥H).primeFactors.card = 1 := this ▸ rfl
   have card_eq_isPrimePow :=
     (@isPrimePow_iff_card_primeFactors_eq_one (Nat.card (H :))).mpr card_primeFac_eq_one
@@ -85,7 +85,7 @@ lemma IsPGroup_of_IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (hp : Nat.
   simp [this] at p_eq_p'
   use k, p_eq_p'▸ card_eq.symm
 
-lemma IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian {G : Type*} [Group G]
+lemma IsElementaryAbelian_subgroupOf {G : Type*} [Group G]
   (H K : Subgroup G) {p : ℕ} [Fact (Nat.Prime p)] (hH : IsElementaryAbelian p H) :
   IsElementaryAbelian p (H.subgroupOf K) := by
   refine ⟨?IsCommutative, ?orderOf_eq_p⟩
@@ -103,4 +103,4 @@ lemma IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian {G : Type*} [Group G
     have order_of_eq_p' := hH.right ⟨(h : G), h_in_H⟩ h_ne_one'
     simp [← order_of_eq_p']
 
-end ElementaryAbelian
+end IsElementaryAbelian

@@ -268,12 +268,13 @@ theorem ker_SL_monoidHom_PGL_eq_center (n F : Type*) [hn₁ : Fintype n] [Decida
     exact CommMonoid.mul_comm (y i j) r
 
 
-theorem  Injective_PSL_monoidHom_PGL' (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-  [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
-  dsimp [PSL_monoidHom_PGL]
-  #check Setoid.ker_lift_injective
-  --refine Setoid.ker_lift_injective --(f := QuotientGroup.lift ((SL_monoidHom_PGL n F).ker) (SL_monoidHom_PGL n F))
-  sorry
+-- theorem  Injective_PSL_monoidHom_PGL' (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
+--   [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
+--   dsimp [PSL_monoidHom_PGL]
+--   #check Setoid.ker_lift_injective
+--   --refine Setoid.ker_lift_injective
+--(f := QuotientGroup.lift ((SL_monoidHom_PGL n F).ker) (SL_monoidHom_PGL n F))
+--   sorry
 
 theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
   [Field F] [IsAlgClosed F] :  Surjective (PSL_monoidHom_PGL n F) := by

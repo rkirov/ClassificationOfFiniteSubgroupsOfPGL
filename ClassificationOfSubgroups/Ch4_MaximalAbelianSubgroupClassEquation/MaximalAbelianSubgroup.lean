@@ -368,7 +368,7 @@ theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {F : Type*} [Field F] {p : 
       rw [card_Z_eq_one_of_two_eq_zero F two_eq_zero]
       exact Nat.gcd_one_left p
 
-open ElementaryAbelian
+open IsElementaryAbelian
 
 lemma center_not_mem {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] (G : Subgroup SL(2,F))
   (hG : center SL(2,F) ≠ G) : center SL(2,F) ∉ MaximalAbelianSubgroups G := by
@@ -959,14 +959,14 @@ theorem A_eq_Q_join_Z_CharP_of_IsConj_t_or_neg_t {F : Type*} [Field F]
       · exact Injective.injOn fun ⦃a₁ a₂⦄ a ↦ a
       exact Set.toFinite (Q.subgroupOf G).carrier
     have IsElementaryAbelian_Q_subgroupOf_G :=
-      @IsElementaryAbelian_subgroupOf_of_IsElementaryAbelian SL(2,F) _ Q G p _ IsElementaryAbelian_Q
+      @IsElementaryAbelian_subgroupOf SL(2,F) _ Q G p _ IsElementaryAbelian_Q
     have bot_lt_Q_subgroupOf_G : ⊥ < Q.subgroupOf G := by
       apply Ne.bot_lt'
       symm
       rw [← nontrivial_iff_ne_bot]
       exact nontrivial_Q_subgroupOf_G
     have IsPGroup_Q_subgroupOf_G:=
-      @IsPGroup_of_IsElementaryAbelian
+      @IsPGroup
         G _ p hp'.out (Q.subgroupOf G) _ IsElementaryAbelian_Q_subgroupOf_G bot_lt_Q_subgroupOf_G
     have exists_Sylow := @IsPGroup.exists_le_sylow p G _ (Q.subgroupOf G) IsPGroup_Q_subgroupOf_G
     obtain ⟨S, hS⟩ := exists_Sylow
@@ -1164,7 +1164,6 @@ theorem index_normalizer_le_two {F : Type*} [Field F] {p : ℕ}(A G : Subgroup S
       refine le_antisymm ?A_le_Z ?Z_le_A
       case A_le_Z =>
         obtain ⟨⟨A_IsComm, A_Maximal⟩, A_le_G⟩ := hA
-
         sorry
       case Z_le_A => exact (@center_SL2_F_eq_Z F _ _) ▸ center_le SL(2,F) G A hA center_le_G
     simp [A_eq_Z]
