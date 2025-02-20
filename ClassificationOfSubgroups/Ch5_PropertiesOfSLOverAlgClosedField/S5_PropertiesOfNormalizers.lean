@@ -1,4 +1,4 @@
-import ClassificationOfSubgroups.Ch3_PropertiesOfSLOverAlgClosedField.S3_JordanNormalFormOfSL
+import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S3_JordanNormalFormOfSL
 
 
 

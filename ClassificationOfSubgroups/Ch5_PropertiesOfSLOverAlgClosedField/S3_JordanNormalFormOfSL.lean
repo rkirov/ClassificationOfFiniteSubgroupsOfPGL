@@ -1,4 +1,4 @@
-import ClassificationOfSubgroups.Ch3_PropertiesOfSLOverAlgClosedField.S2_SpecialSubgroups
+import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S2_SpecialSubgroups
 import Mathlib.Algebra.GroupWithZero.Conj
 import Mathlib.FieldTheory.IsAlgClosed.Basic
 import Mathlib.LinearAlgebra.FreeModule.PID

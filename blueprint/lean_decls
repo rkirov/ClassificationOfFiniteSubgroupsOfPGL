@@ -4,6 +4,14 @@ Sylow.equiv.proof_1
 card_sylow_modEq_one
 Sylow.unique_of_normal
 SL_monoidHom_PGL
+GeneralLinearGroup.Center.mem_center_general_linear_group_iff
 center_SL_le_ker
 PSL_monoidHom_PGL
 Injective_PSL_monoidHom_PGL
+exists_SL_eq_scaled_GL_of_IsAlgClosed
+Surjective_PSL_monoidHom_PGL
+Bijective_PSL_monoidHom_PGL
+PGL_iso_PSL
+IsMaximalAbelian
+IsElementaryAbelian
+MaximalAbelianSubgroups

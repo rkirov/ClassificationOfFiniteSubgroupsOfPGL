@@ -2,10 +2,9 @@ import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.Data.Nat.Factorization.PrimePow
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.GroupTheory.Sylow
-import ClassificationOfSubgroups.Ch3_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
-import ClassificationOfSubgroups.Ch4_MaximalAbelianSubgroupClassEquation.MaximalAbelianSubgroup
-import ClassificationOfSubgroups.Ch4_MaximalAbelianSubgroupClassEquation.ElementaryAbelian
-
+import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S1_ElementaryAbelian
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
 
 set_option linter.style.longLine true
 set_option autoImplicit false
@@ -28,39 +27,6 @@ open Matrix MatrixGroups Subgroup MulAut MaximalAbelianSubgroup
 
 open SpecialSubgroups
 
-
-
-
-
-
-
-
-#check IsPGroup.exists_le_sylow
-#check comap_inf
-
-#check Sylow
-
-#check le_normalizer_of_normal
-#check Normal
-#check le_centralizer_meet
-
-/- Theorem 2.3 (iv b) Furthermore, if [NG (A) : A] = 2, then there is an element y of NG (A)\A such that, yxy⁻¹ = x⁻¹  for all x ∈ A. -/
-theorem of_index_normalizer_eq_two {p : ℕ }(A G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) (hNA : A.normalizer.index = 2)
-  (x : A) : ∃ y ∈ A.normalizer.carrier \ A, y * x * y⁻¹ = x⁻¹ := by sorry
-
-/- Theorem 2.3 (v a) Let Q be a Sylow p-subgroup of G. If Q = { I_G }, then there is a cyclic subgroup K of G such that N_G (Q) = Q K.  -/
-def theorem_2_6_v_a { p : ℕ }
-  (hp : Nat.Prime p)
-  (G : Subgroup SL(2,F))
-  (Q : Sylow p G)
-  (h : Q.toSubgroup ≠ ⊥) :
-  ∃ K : Subgroup G, IsCyclic K ∧ normalizer Q.toSubgroup = Q.toSubgroup ⊓ K := by sorry
-
-/- Theorem 2.3 (v b)If |K| > |Z|, then K ∈ M. -/
-theorem theorem_2_6_v_b { p : ℕ } [hp' : Fact (Nat.Prime p)] (G : Subgroup SL(2,F)) (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) (K : Subgroup G)
-  (hK : IsCyclic K) (hNG : normalizer Q.toSubgroup = Q.toSubgroup ⊔ K) (h : Nat.card K > Nat.card (center SL(2,F))) :
-  map G.subtype K ∈ MaximalAbelianSubgroups G := by
-  sorry
 
 /- Conjugacy of Maximal Abelian subgroups -/
 /-
@@ -124,6 +90,7 @@ lemma normalizer_noncentral_eq {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [F
 /- Lemma Let `Q` be a `p`-Sylow subgroup of `G` then $N_G(Q \sqcup Z) = N_G(Q)$-/
 lemma normalizer_Sylow_join_center_eq_normalizer_Sylow {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) : normalizer (map G.subtype Q.toSubgroup ⊔ center SL(2,F)) = normalizer (map G.subtype Q.toSubgroup) := by
   sorry
+
 
 
 #min_imports

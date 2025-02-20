@@ -1,5 +1,5 @@
 import Mathlib
-import ClassificationOfSubgroups.Ch4_MaximalAbelianSubgroupClassEquation.MaximalAbelianSubgroup
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
 
 set_option linter.style.longLine true
 

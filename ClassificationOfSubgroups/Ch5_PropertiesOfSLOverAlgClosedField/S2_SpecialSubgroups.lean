@@ -1,4 +1,4 @@
-import ClassificationOfSubgroups.Ch3_PropertiesOfSLOverAlgClosedField.S1_SpecialMatrices
+import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S1_SpecialMatrices
 import Mathlib.Algebra.Category.Grp.Images
 import Mathlib.Analysis.Normed.Field.Lemmas
 import Mathlib.Order.CompletePartialOrder
@@ -68,7 +68,7 @@ end Diagonal
 section Shear
 
 /- Lemma 1.2.1.2 -/
-def T (F : Type*) [Field F]: Subgroup SL(2,F) where
+def T (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { t τ | τ : F }
   mul_mem' := by
               intro S Q hS hQ
@@ -107,7 +107,7 @@ end Shear
 
 
 
-lemma D_meet_T_eq_bot : D F ⊓ T F = ⊥ := by
+lemma D_meet_T_eq_bot {F : Type*} [Field F] : D F ⊓ T F = ⊥ := by
   ext x
   constructor
   · rintro ⟨x_mem_D, x_mem_T⟩
@@ -150,7 +150,7 @@ lemma T_leq_H : T F ≤ H F := by
   rw [d_one_eq_one, one_mul]
 
 /- Lemma 1.2.2.1 T is a normal subgroup of H = D T -/
-lemma T_normal_subgroupOf_H : ((T F).subgroupOf (H F)).Normal := by
+lemma T_normal_subgroupOf_H {F : Type*} [Field F] : ((T F).subgroupOf (H F)).Normal := by
   rw [← normalizer_eq_top_iff]
   ext x
   constructor

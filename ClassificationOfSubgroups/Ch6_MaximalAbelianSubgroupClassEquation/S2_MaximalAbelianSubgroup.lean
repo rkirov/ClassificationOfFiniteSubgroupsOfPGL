@@ -2,8 +2,8 @@ import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.Data.Nat.Factorization.PrimePow
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.GroupTheory.Sylow
-import ClassificationOfSubgroups.Ch3_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
-import ClassificationOfSubgroups.Ch4_MaximalAbelianSubgroupClassEquation.ElementaryAbelian
+import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S1_ElementaryAbelian
 
 
 set_option linter.style.longLine true
@@ -1172,5 +1172,23 @@ theorem index_normalizer_le_two {F : Type*} [Field F] {p : ℕ}(A G : Subgroup S
       sorry
     sorry
   · sorry
+
+/- Theorem 2.3 (iv b) Furthermore, if [NG (A) : A] = 2, then there is an element y of NG (A)\A such that, yxy⁻¹ = x⁻¹  for all x ∈ A. -/
+theorem of_index_normalizer_eq_two {F : Type*} [Field F] {p : ℕ }(A G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p) (hNA : A.normalizer.index = 2)
+  (x : A) : ∃ y ∈ A.normalizer.carrier \ A, y * x * y⁻¹ = x⁻¹ := by sorry
+
+/- Theorem 2.3 (v a) Let Q be a Sylow p-subgroup of G. If Q = { I_G }, then there is a cyclic subgroup K of G such that N_G (Q) = Q K.  -/
+def theorem_2_6_v_a {F : Type*} [Field F] { p : ℕ }
+  (hp : Nat.Prime p)
+  (G : Subgroup SL(2,F))
+  (Q : Sylow p G)
+  (h : Q.toSubgroup ≠ ⊥) :
+  ∃ K : Subgroup G, IsCyclic K ∧ normalizer Q.toSubgroup = Q.toSubgroup ⊓ K := by sorry
+
+/- Theorem 2.3 (v b)If |K| > |Z|, then K ∈ M. -/
+theorem theorem_2_6_v_b {F : Type*} [Field F] { p : ℕ } [hp' : Fact (Nat.Prime p)] (G : Subgroup SL(2,F)) (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) (K : Subgroup G)
+  (hK : IsCyclic K) (hNG : normalizer Q.toSubgroup = Q.toSubgroup ⊔ K) (h : Nat.card K > Nat.card (center SL(2,F))) :
+  map G.subtype K ∈ MaximalAbelianSubgroups G := by
+  sorry
 
 end MaximalAbelianSubgroup

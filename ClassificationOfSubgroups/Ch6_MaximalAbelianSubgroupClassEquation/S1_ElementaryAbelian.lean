@@ -1,4 +1,4 @@
-import ClassificationOfSubgroups.Ch3_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
+import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
 import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.Data.Nat.Factorization.PrimePow
 import Mathlib.FieldTheory.Finite.Basic
