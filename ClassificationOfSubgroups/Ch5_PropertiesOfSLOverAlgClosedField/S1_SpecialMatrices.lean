@@ -30,9 +30,9 @@ def s (σ : F): SL(2,F) :=
 section Shear
 
 @[simp]
-lemma s_zero_eq_one {F : Type*} [Field F] : s (0 : F) = 1 := by ext <;> rfl
+lemma s_zero_eq_one : s (0 : F) = 1 := by ext <;> rfl
 
-lemma s_eq_t_iff (σ μ : F) : s σ = s μ ↔ σ = μ := by
+lemma s_eq_s_iff (σ μ : F) : s σ = s μ ↔ σ = μ := by
   constructor
   · intro h
     rw [SpecialLinearGroup.fin_two_ext_iff] at h
@@ -41,7 +41,7 @@ lemma s_eq_t_iff (σ μ : F) : s σ = s μ ↔ σ = μ := by
   · exact fun a ↦ congrArg s a
 
 lemma s_eq_one_iff (σ : F) : s σ = 1 ↔ σ = 0 := by
-  exact (@s_zero_eq_one F).symm ▸ s_eq_t_iff σ 0
+  exact (@s_zero_eq_one F).symm ▸ s_eq_s_iff σ 0
 
 
 @[simp]
@@ -77,6 +77,9 @@ end Shear
 
 section Diagonal
 
+/-
+The diagonal matrix with $\delta \in F^\times$ as the top left entry.
+-/
 def d {F : Type*} [Field F] (δ : Fˣ) : SL(2, F) :=
   ⟨!![(δ : F), (0 : F); (0 :F) , (δ⁻¹ : F)], by norm_num⟩
 
@@ -143,7 +146,7 @@ def ds (δ : Fˣ) (σ : F) : SL(2, F) :=
   ⟨!![δ, 0; σ * δ⁻¹, δ⁻¹], by norm_num⟩
 
 -- Lemma 1.1.iii
-lemma d_mul_t_mul_d_inv_eq_t' (δ : Fˣ) (σ : F) : d δ * s σ * (d δ)⁻¹ = s (σ * δ⁻¹ * δ⁻¹) := by
+lemma d_mul_s_mul_d_inv_eq_s (δ : Fˣ) (σ : F) : d δ * s σ * (d δ)⁻¹ = s (σ * δ⁻¹ * δ⁻¹) := by
   simp; ext <;> simp [s, d, mul_comm]
 
 def dw (δ : Fˣ) : SL(2,F) :=

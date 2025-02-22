@@ -19,7 +19,7 @@ namespace SpecialSubgroups
 
 section Diagonal
 
-/- Lemma 1.2.1.1-/
+/- Lemma 1.2.1.1 -/
 def D (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ | δ : Fˣ }
   mul_mem' := by
@@ -124,7 +124,7 @@ lemma D_meet_S_eq_bot {F : Type*} [Field F] : D F ⊓ S F = ⊥ := by
     · simp [h]; exact Subgroup.one_mem (S F)
 
 
-def H (F : Type*) [Field F] : Subgroup SL(2,F) where
+def L (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ * s σ | (δ : Fˣ) (σ : F) }
   mul_mem' := by
               rintro A₁ A₂ ⟨δ₁, σ₁, h₁⟩ ⟨δ₂, σ₂, h₂⟩
@@ -143,14 +143,14 @@ def H (F : Type*) [Field F] : Subgroup SL(2,F) where
               simp [d_mul_s_eq_ds, Matrix.SpecialLinearGroup.SL2_inv_expl]
               ext <;> simp [ds]
 
-lemma T_leq_H : S F ≤ H F := by
+lemma S_le_L : S F ≤ L F := by
   rintro x ⟨σ, rfl⟩
-  rw [H, mem_mk, Set.mem_setOf_eq]
+  rw [L, mem_mk, Set.mem_setOf_eq]
   use 1, σ
   rw [d_one_eq_one, one_mul]
 
 /- Lemma 1.2.2.1 T is a normal subgroup of H = D T -/
-lemma S_normal_subgroupOf_H {F : Type*} [Field F] : ((S F).subgroupOf (H F)).Normal := by
+lemma normal_S_subgroupOf_L {F : Type*} [Field F] : ((S F).subgroupOf (L F)).Normal := by
   rw [← normalizer_eq_top_iff]
   ext x
   constructor
@@ -169,7 +169,7 @@ lemma S_normal_subgroupOf_H {F : Type*} [Field F] : ((S F).subgroupOf (H F)).Nor
       rw [← hx, ← hσ', _root_.mul_inv_rev, s_inv,
         inv_d_eq_d_inv, mul_assoc, mul_assoc (s (-σ)), ← mul_assoc (s σ'),
         ← mul_assoc (d δ⁻¹), ← mul_assoc (d δ⁻¹), d_eq_inv_d_inv δ,
-        d_mul_t_mul_d_inv_eq_t', s_mul_s_eq_s_add, s_mul_s_eq_s_add]
+        d_mul_s_mul_d_inv_eq_s, s_mul_s_eq_s_add, s_mul_s_eq_s_add]
       rw [S, inv_inv, neg_add_cancel_comm_assoc, mem_mk, Set.mem_setOf_eq]
       use σ' * (δ : F) * (δ : F)
     · rintro ⟨σ', hσ'⟩
@@ -179,8 +179,49 @@ lemma S_normal_subgroupOf_H {F : Type*} [Field F] : ((S F).subgroupOf (H F)).Nor
       rw [hσ, ← hx]
       rw [_root_.mul_inv_rev, s_inv, inv_d_eq_d_inv, mul_assoc (d δ), s_mul_s_eq_s_add,
          mul_assoc (d δ), ← mul_assoc (s (σ + σ')), s_mul_s_eq_s_add, ← mul_assoc,
-         ← inv_d_eq_d_inv, d_mul_t_mul_d_inv_eq_t', add_neg_cancel_comm, Units.val_inv_eq_inv_val]
+         ← inv_d_eq_d_inv, d_mul_s_mul_d_inv_eq_s, add_neg_cancel_comm, Units.val_inv_eq_inv_val]
       use σ' * (δ : F)⁻¹ * (δ :F)⁻¹
+
+instance group_L_quot_S_subgroupOf_L : Group ((L F) ⧸ (S F).subgroupOf (L F)) := @QuotientGroup.Quotient.group (L F) _ ((S F).subgroupOf (L F)) (normal_S_subgroupOf_L)
+
+set_option pp.proofs true
+
+#leansearch "choose of property."
+
+def prod_iso_join_of_normal {G : Type*} [Group G] (H K : Subgroup G) (hHK : H ⊓ K = ⊥) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) where
+  toFun := fun h_k => ⟨h_k.1 * h_k.2, mul_mem_sup h_k.1.property h_k.2.property⟩
+  invFun := fun h_k => ⟨sorry, sorry⟩
+  left_inv := sorry
+  right_inv := sorry
+  map_mul' := sorry
+
+
+
+#check mul_normal
+lemma L_eq_D_join_S : L F = D F ⊔ S F := by sorry
+
+-- noncomputable def pi : (L F) →* (D F) where
+--   toFun := fun l => ⟨d (l.property.choose), ⟨l.property.choose, rfl⟩⟩
+--   map_one' := by
+--     have d_one_in_L : d 1 * s 0 ∈ L F := ⟨1, 0, by simp⟩
+--     have one_eq_d_one : (⟨d 1 * s 0, d_one_in_L⟩ : L F) = 1 := by simp
+--     have : Exists.choose (⟨d 1 * s 0, d_one_in_L⟩ : L F).property = 1 := by sorry
+--     rw [← one_eq_d_one]
+--     ext
+--     · simp only [Fin.isValue, OneMemClass.coe_one, SpecialLinearGroup.coe_one, one_apply_eq]
+--       sorry
+--     · exact rfl
+--     · exact rfl
+--     · sorry
+--   map_mul' := by sorry
+
+def L_quot_S_subgroupOf_L_iso_D : (L F) ⧸ (S F).subgroupOf (L F) ≃* D F := by
+  -- MulEquiv.ofBijective
+  sorry
+
+#check  QuotientGroup.quotientKerEquivRange
+
+#leansearch "first gorup isomorphism theorem."
 
 def DW (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ | δ : Fˣ} ∪ { d δ * w | δ : Fˣ}
@@ -304,8 +345,6 @@ lemma Z_carrier_eq : (Z R).carrier = {1, -1} := by
 @[simp]
 lemma mem_Z_iff {x : SL(2,R)}: x ∈ Z R ↔ x = 1 ∨ x = -1 := by
   rw [← mem_carrier, Z_carrier_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
-
--- lemma foo : ↥(Z F) = {1, -1} := by sorry
 
 instance : Finite (Z F) := by
   simp [← SetLike.coe_sort_coe]
@@ -433,9 +472,7 @@ lemma p_dvd_card_center {H : Type*} {p : ℕ} (hp:  Nat.Prime p) [Group H] [Fini
 
 end IsPGroup
 
-
 end Center
-
 
 
 def SZ (F : Type*) [Field F] : Subgroup SL(2,F) where
@@ -568,13 +605,6 @@ lemma S_join_Z_eq_SZ : S F ⊔ Z F = SZ F := by
 
 -- ordering propositions so when proving it can be done more efficiently
 #check Set.mem_mul
-
-
-
-
-
-
-
 
 
 section CommutativeSubgroups

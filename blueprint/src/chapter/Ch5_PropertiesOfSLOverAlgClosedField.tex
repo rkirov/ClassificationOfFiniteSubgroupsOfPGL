@@ -5,101 +5,236 @@
 
 Throughout this paper, $F$ will denote an arbitrary algebraically closed field. For convenince we let $L$ denote the infinite group $\SL_2(F)$. The letter $p$ will be used to denote the characteristic of $F$. Recall that the characteristic of a field is the smallest number of times which the multilplicative identity of the field, say 1, needs to be summed to reach the additive identity of the field, say 0. If there is no such number, then we regard $p$ as being zero, otherwise it is always a prime. \\
 \\
-Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \lambda, \mu$, and $\sigma$ will denote elements of $F$ and $\omega$ and $\rho$ elements of $F^\times$, where $F^\times$  are the non-zero elements of $F$.
+Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \lambda, \gamma$, and $\sigma$ will denote elements of $F$ and $\delta$ and $\rho$ elements of $F^\times$, where $F^\times$  are the non-zero elements of $F$.
 
 \section[Subsets of $L$]{Subsets of $\pmb{L}$}
 
 In this chapter we make some useful observations about specific elements and subgroups of $L$. We define the following elements of $L$ as follows.
 
-\begin{align*} d_\delta = \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix}, \qquad s_\sigma = \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix}, \qquad w = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix}  \tag{$\delta \in F^\times$ and $\sigma \in F$}.
-\end{align*}
+\subsubsection{Special matrices of $\SL_2(F)$}
 
-We also define the following subsets of $L$.
-\begin{definition}
-    The set of diagonal matrices: 
+\begin{definition}[The shear matrix of $SL_2(F)$]
+\label{SpecialMatrices.s}
+\lean{SpecialMatrices.s}
+\leanok
+    Given an element $\delta \in F^\times$ we define the diagonal matrix:
     \[
-    D = \{d_\delta \} = \{\begin{pmatrix}\delta & 0\\ 0 & \delta^{-1}\end{pmatrix} \; | \; \delta \in F^\times \}
+    d_\delta = \begin{pmatrix}
+        \delta & 0\\
+        0 & \delta^{-1}
+    \end{pmatrix}
     \]
 \end{definition}
 
-\begin{definition}[Shear Matrices]
-    The set of shear matrices:
+\begin{definition}[The diagonal matrix of $SL_2(F)$]
+\label{SpecialMatrices.d}
+\lean{SpecialMatrices.d}
+\leanok
+    Given an element $\delta \in F$ we define the shear matrix:
     \[
-    S = \{s_\sigma\} = \{\begin{pmatrix}1 & 0\\ \sigma & 1\end{pmatrix} \; | \; \sigma \in F \}
+    s_\sigma  = \begin{pmatrix}
+    1 & 0\\
+    \sigma & 1
+    \end{pmatrix}
     \]
 \end{definition}
 
-\begin{definition}
-    The set of lower triangular matrices:
+\begin{definition}[Rotation by $\pi / 2$ radians matrix]
+\label{SpecialMatrices.w}
+\lean{SpecialMatrices.w}
+\leanok
+ We denote the matrix which corresponds to a rotation by $\pi / 2$ radians to be:
+ \[
+ w = \begin{pmatrix}
+    0 & -1\\
+    1 & 0
+ \end{pmatrix}
+ \]
+\end{definition}
+
+The matrices $d$, $s$ and $w$ satisfy the following relations:
+
+
+\begin{lemma}
+\label{SpecialMatrices.d_mul_d_eq_d_mul}
+\uses{SpecialMatrices.d}
+\lean{SpecialMatrices.d_mul_d_eq_d_mul}
+\leanok
+For any $\delta, \rho \in F^\times$ we have that
+\[
+d_\delta d_\rho = d_{\delta\rho}
+\]
+\end{lemma}
+\begin{proof}
+    We verify by matrix multiplication that indeed:
+
+    \begin{equation*}
+        d_\delta d_\rho = \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} \rho & 0 \\ 0 & \rho^{-1} \end{bmatrix} = \begin{bmatrix} \delta \rho & 0 \\ 0 & \delta^{-1} \rho^{-1} \end{bmatrix} = d_{\delta \rho}.
+    \end{equation*}
+\end{proof}
+
+\begin{lemma}
+\label{SpecialMatrices.s_mul_s_eq_s_add}
+\uses{SpecialMatrices.s}
+\lean{SpecialMatrices.s_mul_s_eq_s_add}
+\leanok
+    For any $\sigma, \gamma \in F$ we have that
     \[
-    H = DT
+    s_\sigma s_\gamma = s_{\sigma + \gamma}.
+    \]
+\end{lemma}
+\begin{proof}
+    We verify by matrix multiplication that indeed:
+\begin{equation*}
+    s_\sigma s_\gamma = \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \gamma & 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ \sigma + \gamma & 1 \end{bmatrix} = s_{\sigma + \gamma}.
+\end{equation*}
+\end{proof}
+
+\begin{lemma}
+\label{SpecialMatrices.d_mul_s_mul_d_inv_eq_s}
+\uses{SpecialMatrices.d, SpecialMatrices.s}
+\lean{SpecialMatrices.d_mul_s_mul_d_inv_eq_s}
+    We have that for all $\delta \in F^\times$ and $\sigma \in F$
+    \[
+    d_\delta s_\sigma d^{-1}_\delta = s_{\sigma \delta^{-2}}.
+    \]
+\end{lemma}
+\begin{proof}
+    We verify by matrix multiplication that indeed:
+
+    \begin{equation*}
+        d_\delta s_\sigma d^{-1}_\delta = \! \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \delta^{-1} & 0 \\ 0 & \delta \end{bmatrix} = \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \! \begin{bmatrix} \delta^{-1} & 0 \\ \sigma \delta^{-1} & \delta \end{bmatrix} \! = \! \begin{bmatrix} 1 & 0 \\ \sigma \delta^{-2} & 1 \end{bmatrix} \! = s_{\sigma \delta^{-2}}.
+    \end{equation*}
+\end{proof}
+
+\begin{lemma}
+\label{SpecialMatrices.w_mul_d_eq_d_inv_w}
+\uses{SpecialMatrices.d, SpecialMatrices.w}
+\lean{SpecialMatrices.w_mul_d_eq_d_inv_w}
+\leanok
+For any $\delta \in F^\times$ we have:
+\[ 
+w d_\delta w^{-1} = d^{-1}_\delta.
+\]
+\end{lemma}
+\begin{proof} 
+We verify by matrix multiplication that indeed
+\begin{equation*}
+w d_\delta w^{-1} = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 0 & - 1 \\ 1 & 0 \end{bmatrix} =  \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} 0 & - \delta \\ \delta^{-1} & 0 \end{bmatrix} \! = \! \begin{bmatrix} \delta^{-1} & 0 \\ 0 & \delta \end{bmatrix} \!= d^{-1}_\delta. 
+\end{equation*}
+\end{proof}
+
+From these relations we can now single out the following subgroups of $\SL_2(F)$.
+
+\subsubsection{Special subgroups of $\SL_2(F)$}
+
+\begin{definition}[The subgroup of diagonal matrices]
+\label{SpecialSubgroups.D}
+\lean{SpecialSubgroups.D}
+\leanok
+    The set of diagonal matrices with matrix multiplication is a subgroup of $\SL_2(F)$: 
+    \[
+    D = \{d_\delta \} = \left\{ \begin{pmatrix}\delta & 0\\ 0 & \delta^{-1}\end{pmatrix} \; | \; \delta \in F^\times \right\}
     \]
 \end{definition}
 
-Observe that $H$ is the set of all lower triangular matrices in $L$ whilst $Dw$ is the set of all anti-diagonal matrices.
+\begin{definition}[The subgroup of shear matrices]
+\label{SpecialSubgroups.S}
+\lean{SpecialSubgroups.S}
+\uses{S}
+    The set of shear matrices with matrix multiplication is a subgroup of $\SL_2(F)$:
+    \[
+    S = \{s_\sigma\} = \left\{\begin{pmatrix}1 & 0\\ \sigma & 1\end{pmatrix} \; | \; \sigma \in F \right\}
+    \]
+\end{definition}
 
-\begin{equation} \label{Hlowertri} H = DT =  \{d_\omega t_\lambda\} = \left\{ \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} \omega & 0 \\ \lambda \omega^{-1} & \omega^{-1} \end{bmatrix}  \right\}. \end{equation}
+\begin{definition}[The subgroup of lower triangular matrices]
+\label{SpecialSubgroups.L}
+\lean{SpecialSubgroups.L}
+\leanok
+    The set of lower triangular matrices with matrix multiplication is a subgroup of $\SL_2(F)$
+    \[
+    L = DS
+    \]
+\end{definition}
 
-\begin{equation} \label{antidiag} Dw = \{ d_\omega w \} =  \left\{  \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} 0 & \omega \\ -\omega^{-1} & 0 \end{bmatrix}  \right\}. \end{equation}
+Observe that $L$ is the set of all lower triangular matrices in $\SL_2(F)$ whilst $Dw$ is the set of all anti-diagonal matrices.
+
+\begin{equation} \label{Hlowertri} L = DS =  \{d_\delta s_\sigma\} = \left\{ \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} \delta & 0 \\ \lambda \delta^{-1} & \delta^{-1} \end{bmatrix}  \right\}. \end{equation}
+
+\begin{equation} \label{antidiag} Dw = \{ d_\delta w \} =  \left\{  \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} 0 & \delta \\ -\delta^{-1} & 0 \end{bmatrix}  \right\}. \end{equation}
 
 These elements and subgroups are fundamental to this paper and this notation will be used throughout.
 
-\begin{lemma}\label{6.1}
-For any $\omega, \rho \in F^\times$ and $\lambda, \mu \in F$ we have:
-\begin{align*} d_\omega d_{\rho}= d_{\omega\rho}, \quad t_\lambda t_\mu = t_{\lambda + \mu}, \quad d_\omega t_\lambda d^{-1}_\omega = t_\sigma \quad \! \! (\sigma=\lambda \omega^{-2}), \quad w d_\omega w^{-1} = d^{-1}_\omega.
-\end{align*} 
+\begin{lemma}[$(D, \cdot) \cong (F^\times, \cdot)$]
+\label{SpecialSubgroups.D_iso_units}
+\uses{SpecialSubgroups.D, SpecialMatrices.d_mul_d_eq_d_mul}
+\lean{SpecialSubgroups.D_iso_units}
+\leanok
+The map $\phi : F^\times \overset{\sim}{\rightarrow} D$ defined by $d_\delta \mapsto (d_\delta)_{11}$ defines a group isomorphism.
 \end{lemma}
-\vspace{0mm}
 
-\begin{proof} 
-These identities are all easily shown by matrix multiplication:
-\begin{align*} d_\omega d_\rho = \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} \rho & 0 \\ 0 & \rho^{-1} \end{bmatrix} &= \begin{bmatrix} \omega \rho & 0 \\ 0 & \omega^{-1} \rho^{-1} \end{bmatrix} = d_{\omega \rho}.
-\\[1.5ex]
-t_\lambda t_\mu = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \mu & 1 \end{bmatrix} &= \begin{bmatrix} 1 & 0 \\ \lambda + \mu & 1 \end{bmatrix} = t_{\lambda + \mu}.
-\\[1.5ex]
- d_\omega t_\lambda d^{-1}_\omega = \! \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \omega^{-1} & 0 \\ 0 & \omega \end{bmatrix} &= \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \! \begin{bmatrix} \omega^{-1} & 0 \\ \lambda \omega^{-1} & \omega \end{bmatrix} \! = \! \begin{bmatrix} 1 & 0 \\ \lambda \omega^{-2} & 1 \end{bmatrix} \! = t_\sigma.
-\\[1.5ex]
-w d_\omega w^{-1} = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} 0 & - 1 \\ 1 & 0 \end{bmatrix} &=  \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix} \begin{bmatrix} 0 & - \omega \\ \omega^{-1} & 0 \end{bmatrix} \! = \! \begin{bmatrix} \omega^{-1} & 0 \\ 0 & \omega \end{bmatrix} \!= d^{-1}_\omega. \end{align*}
- 
-\end{proof}
-
-\begin{lemma}\label{6.1b}
-(i) The sets $D$ and $T$ are subgroups of $L$ and
-\begin{equation*} D\cong F^\times, \qquad T \cong F. \end{equation*}
-(ii) $T$ is a normal subgroup of $H$ and $H / T \cong D$.
-\end{lemma}
-\vspace{0mm}
-
-\begin{proof} 
-(i) The function $\psi: \times \rightarrow D$ defined by $\psi(\omega) = d_\omega$ is a homomorphism between the group $F^\times$ under normal multiplication and $D$ under normal matrix multiplication:
-\begin{align*} \psi(\omega \rho) = d_{\omega \rho} =  d_\omega d_\rho = \psi(\omega) \psi(\rho). \tag{by Lemma \ref{6.1}}
+\begin{proof}
+    The function $\psi: F^\times \rightarrow D$ defined by $\psi(\delta) = d_\delta$ is a homomorphism between the group $F^\times$ under normal multiplication and $D$ under normal matrix multiplication:
+\begin{align*} \psi(\delta \rho) = d_{\delta \rho} =  d_\delta d_\rho = \psi(\delta) \psi(\rho). \tag{by Lemma \ref{6.1}}
 \end{align*}
 Observe that $\psi$ is trivially injective and surjective and thus an isomorphism. So $D\cong F^\times$ and $D$ is a subgroup of $L$.\\
-\\
- The function $\phi: F \rightarrow T$ defined by $\phi(\lambda) = t_\lambda$ is a homomorphism between the group $F$ under addition and $T$ under normal matrix multiplication:
-\begin{align*} \phi(\lambda + \mu) = t_{\lambda + \mu} = t_\lambda t_\mu = \phi(\lambda) \phi(\mu). \tag{by Lemma \ref{6.1}}
+\end{proof}
+
+
+
+\begin{lemma}[$(S, \cdot) \cong (F, +)$]
+\label{SpecialSubgroups.S_iso_F, SpecialMatrices.s_mul_s_eq_s_add}
+\uses{SpecialSubgroups.S}
+\lean{SpecialSubgroups.S_iso_F}
+\leanok
+    The map $\phi : F \overset{\sim}{\rightarrow} S$ defined by $s_\sigma \mapsto (s_\sigma)_{11}$ defines a group isomorphism.
+\end{lemma}
+
+\begin{proof}
+     The function $\phi: F \rightarrow T$ defined by $\phi(\sigma) = s_\sigma$ is a homomorphism between the group $F$ under addition and $S$ under normal matrix multiplication:
+\begin{align*} \phi(\sigma + \gamma) = s_{\sigma + \gamma} = s_\sigma s_\gamma = \phi(\sigma) \phi(\gamma). \tag{by Lemma \ref{6.1}}
 \end{align*}
-It's clear that $\phi$ is injective and surjective and thus an isomorphism. So $ T \cong F$ and $T$ is a subgroup of $L$. \\
-\\
-(ii) Let $t_\mu$ and $d_\omega t_\lambda$ be arbitrary elements of $T$ and $H$ respectively. Conjugating $t_\mu$ by $d_\omega t_\lambda$ gives,
-\begin{align*} (d_\omega t_\lambda) t_\mu (d_\omega t_\lambda)^{-1} &= (d_\omega t_\lambda) t_\mu (t^{-1}_\lambda d^{-1}_\omega) \\[1.5ex]
+It's clear that $\phi$ is injective and surjective and thus an isomorphism. So $ S \cong F$ and $S$ is a subgroup of $L$. \\
+\end{proof}
+
+
+
+\begin{lemma}
+\label{SpecialSubgroups.normal_S_subgroupOf_L}
+\lean{SpecialSubgroups.normal_S_subgroupOf_L}
+\leanok
+$S$ is a normal subgroup of $H$
+\end{lemma}
+
+\begin{proof}
+    Let $s_\gamma$ and $d_\delta s_\sigma$ be arbitrary elements of $T$ and $H$ respectively. Conjugating $s_\gamma$ by $d_\delta s_\sigma$ gives,
+\begin{align*} (d_\delta s_\sigma) s_\gamma (d_\delta s_\sigma)^{-1} &= (d_\delta s_\sigma) s_\gamma (t^{-1}_\lambda d^{-1}_\delta) \\[1.5ex]
 &=
-d_\omega (t_\lambda t_\mu t_{-\lambda}) d^{-1}_\omega \qquad \tag{since $t^{-1}_\lambda=t_{-\lambda}$} \\[1.5ex] 
+d_\delta (s_\sigma s_\gamma t_{-\lambda}) d^{-1}_\delta \qquad \tag{since $t^{-1}_\lambda=t_{-\lambda}$} \\[1.5ex] 
 &=
-d_\omega t_\mu d^{-1}_\omega \tag{by Lemma \ref{6.1}} \\[1.5ex] 
-&= t_\sigma \in T. \tag{where $\sigma = \mu \omega^{-2}$ by Lemma \ref{6.1}}
+d_\delta s_\gamma d^{-1}_\delta \tag{by Lemma \ref{6.1}} \\[1.5ex] 
+&= s_{\gamma \delta^{-2}} \in S. \tag{by Lemma \ref{6.1}}
 \end{align*}
 
-Since $t_\mu$ was chosen arbitrarily from $T$ we have ($d_\omega t_\lambda) T (d_\omega t_\lambda)^{-1} = T$ and since $d_\omega t_\lambda$ was chosen arbitrarily from $H$, we have that $T \vartriangleleft H$. \\
-\\
-The function $\pi: H \rightarrow D$ defined by $\pi(d_\omega t_\lambda) = d_\omega$ is a homomorphism between $H$ under normal matrix multiplication and $D$ under normal matrix multiplication:
-\begin{align*} \pi(d_\omega t_\lambda d_\rho t_\mu) &= \pi(d_\omega d_\rho t_\sigma t_\mu) \tag{where $\sigma = \lambda \rho^{2}$ by Lemma \ref{6.1}}
-\\ &= d_\omega d_\rho
-\\ &= \pi(d_\omega t_\lambda)\pi(d_\rho t_\mu).
+Since $s_\gamma$ was chosen arbitrarily from $T$ we have ($d_\delta s_\sigma) T (d_\delta s_\sigma)^{-1} = T$ and since $d_\delta s_\sigma$ was chosen arbitrarily from $H$, we have that $T \vartriangleleft H$. \\
+\end{proof}
+
+
+
+\begin{lemma}
+    $H / T \cong D$.
+\end{lemma}
+
+\begin{proof} 
+The function $\pi: H \rightarrow D$ defined by $\pi(d_\delta s_\sigma) = d_\delta$ is a homomorphism between $H$ under normal matrix multiplication and $D$ under normal matrix multiplication:
+\begin{align*} \pi(d_\delta s_\sigma d_\rho s_\gamma) &= \pi(d_\delta d_\rho t_\sigma s_\gamma) \tag{where $\sigma = \lambda \rho^{2}$ by Lemma \ref{6.1}}
+\\ &= d_\delta d_\rho
+\\ &= \pi(d_\delta s_\sigma)\pi(d_\rho s_\gamma).
 \end{align*}
 
 We see that $\pi$ is trivially surjective and has kernel
-\begin{align*}  ker(\pi) &= \{ d_\omega t_\lambda \in H : \pi(d_\omega t_\lambda) = I_L \} = T.
+\begin{align*}  ker(\pi) &= \{ d_\delta s_\sigma \in H : \pi(d_\delta s_\sigma) = I_L \} = T.
 \end{align*}
 Thus by the First Isomorphism Theorem,
 \begin{align*} H / ker(\pi) &\cong \text{Im}(\pi), \\
@@ -140,11 +275,14 @@ $Z = \langle - I_L \rangle$.
 \begin{lemma} \label{6.2b} If $p\neq 2$, then $L$ contains a unique element of order 2. \\
 \end{lemma}
 
-\begin{proof} Consider an arbitrary element $x \in L$ with order 2. That is $x^2 = I_L$, $x \neq I_L$ and thus $x=x^{-1}$.
-\begin{equation*} x = \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} = \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}^{-1} = \begin{bmatrix} \delta & - \beta \\ - \gamma & \alpha \end{bmatrix}.
+\begin{proof} 
+Consider an arbitrary element $x \in L$ with order 2. That is $x^2 = I_L$, $x \neq I_L$ and thus $x=x^{-1}$.
+\begin{equation*} 
+    x = \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} = \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}^{-1} = \begin{bmatrix} \delta & - \beta \\ - \gamma & \alpha \end{bmatrix}.
 \end{equation*}
 \noindent Thus $\alpha = \delta$, $\beta = - \beta \Rightarrow 2\beta = 0$ and $\gamma = - \gamma \Rightarrow 2\gamma = 0$. In the case of $p \neq 2$ this gives $\beta = 0 = \gamma$. So
-\begin{equation*} x = \begin{bmatrix} \alpha & 0 \\ 0 & \alpha \end{bmatrix}.
+\begin{equation*} 
+    x = \begin{bmatrix} \alpha & 0 \\ 0 & \alpha \end{bmatrix}.
 \end{equation*}
 \noindent Also $\alpha ^2 = 1$ since $x \in$ $\SL_2(F)$, so $\alpha = \pm 1$. For $x$ to have order 2, we must have $\alpha = - 1$. Hence there is a unique element of order 2, namely $- I_L$.
 \\
@@ -152,7 +290,7 @@ $Z = \langle - I_L \rangle$.
 
 \section[Conjugacy of the Elements of $L$]{Conjugacy of the Elements of $\pmb{L}$}
 
-\begin{proposition}\label{6.3} Each element of $L$ is conjugate to either $d_\omega$ for some $\omega \in F^\times$, or to $\pm t_\lambda$ for some $\lambda \in F$.
+\begin{proposition}\label{6.3} Each element of $L$ is conjugate to either $d_\delta$ for some $\delta \in F^\times$, or to $\pm s_\sigma$ for some $\lambda \in F$.
 \end{proposition}
 
 \begin{proof} Since $F$ is algebraically closed, any element $x \in L$ can be regarded as a linear transformation in the 2 dimensional vector space over $F$, with the eigenvalues $\pi_1$ and $\pi_2$. \\
@@ -162,7 +300,7 @@ $Z = \langle - I_L \rangle$.
 \begin{align*} \text{Set } \; b = \frac{a}{\sqrt {\text{det}(a)}}, \quad \text{thus } \; bxb^{-1} =\frac{a}{\sqrt {\text{det}(a)}} \; x \; (\sqrt{\text{det}(a)} \; )\,a^{-1} = axa^{-1} = y.
 \end{align*}
 
-Observe that det$(b)=1$, hence $x$ and $y$ are conjugate in $L$. Furthermore, since $y$ is a diagonal matrix it must belong to the set $D$, showing that $x$ is conjugate to $d_\omega$ for some $\omega \in F^\times$. \\
+Observe that det$(b)=1$, hence $x$ and $y$ are conjugate in $L$. Furthermore, since $y$ is a diagonal matrix it must belong to the set $D$, showing that $x$ is conjugate to $d_\delta$ for some $\delta \in F^\times$. \\
 \\
 \space If $\pi_1 = \pi_2$ then $x$ has just one repeated eigenvalue. Suppose that $x$ is diagonalisable. Then there exists an element $c \in GL(2, F)$ and a diagonal matrix $\pi_1 I_G$ such that $x = c(\pi_1 I_G)c^{-1} = \pi_1 I_G$. Thus $x = \pm I_G$, which trivially belongs to both $D$ and $T \times Z$. \\
 \\
@@ -171,7 +309,7 @@ Now assume that $x$ is not diagonalisable. Chapter 7 of \cite{matrix} shows that
 \begin{align*} \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 & 1 \\ 0 & \pi_1 \end{bmatrix} \begin{bmatrix} \delta & \gamma^{-1} \\ -\gamma & 0 \end{bmatrix} = \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 \delta - \gamma & \pi_1 \gamma^{-1} \\ -\pi_1 \gamma & 0 \end{bmatrix} = \begin{bmatrix} \pi_1 & 0 \\ -\gamma^{2} & \pi_1 \end{bmatrix}
 \end{align*}
 \\
-Now clearly the determinant of $x$ is equal to the determinant of $j$, namely 1, which means that $\pi_1 = \pm 1$. This shows that $j$ is conjugate in $L$ to some element in $T \times Z$ as well as $x$. Furthermore, since conjugation is transitive, $x$ is conjugate to $\pm t_\lambda$ for some $\lambda \in F$.
+Now clearly the determinant of $x$ is equal to the determinant of $j$, namely 1, which means that $\pi_1 = \pm 1$. This shows that $j$ is conjugate in $L$ to some element in $T \times Z$ as well as $x$. Furthermore, since conjugation is transitive, $x$ is conjugate to $\pm s_\sigma$ for some $\lambda \in F$.
 
 \end{proof}
 
@@ -192,90 +330,91 @@ Both the centraliser and normaliser of a subset $H$ are subgroups of $G$. Note a
 \begin{proposition}\label{6.4i}
 (i) $N_L(T_1) \subset H$, where $T_1$ is any subgroup of $T$ with order greater than 1. \\
 \\
-(ii) $C_L(\pm t_\lambda) = T \times Z$ where $\lambda \neq 0$.
+(ii) $C_L(\pm s_\sigma) = T \times Z$ where $\lambda \neq 0$.
 \end{proposition}
 
-\begin{proof} (i) Let $t_\lambda$ be an arbitary element of $T_1$ with $\lambda \neq 0$. To determine the normaliser of $T_1$ in $L$ we consider which $x \in L$ satisfy $x t_\lambda x^{-1} \in T_1$.
-\begin{align*} x t_\lambda x^{-1} &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \minus \gamma & \alpha \end{bmatrix}
+\begin{proof} (i) Let $s_\sigma$ be an arbitary element of $T_1$ with $\lambda \neq 0$. To determine the normaliser of $T_1$ in $L$ we consider which $x \in L$ satisfy $x s_\sigma x^{-1} \in T_1$.
+\begin{align*} x s_\sigma x^{-1} &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \minus \gamma & \alpha \end{bmatrix}
 \\[1.5ex] &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \delta \lambda - \gamma & \alpha - \beta \lambda \end{bmatrix}
 \\[1.5ex] &= \begin{bmatrix} \alpha \delta - \beta \gamma + \beta \delta \lambda & \minus \beta^2  \lambda \\ \delta^2 \lambda & \alpha \delta - \beta \gamma - \beta \delta \lambda \end{bmatrix}.
 \end{align*}
 
-Since $x t_\lambda x^{-1} \in T_1$ we have $\minus \beta^2  \lambda = 0$ and since $\lambda \neq 0$, we have $\beta = 0$. Since $t_\lambda$ was chosen arbitrarily, any element which normalises $T_1$ is a lower diagonal matrix and is therefore in $H$ by (\ref{Hlowertri}). Thus $N_L(T_1) \subset H$ as required. \\
+Since $x s_\sigma x^{-1} \in T_1$ we have $\minus \beta^2  \lambda = 0$ and since $\lambda \neq 0$, we have $\beta = 0$. Since $s_\sigma$ was chosen arbitrarily, any element which normalises $T_1$ is a lower diagonal matrix and is therefore in $H$ by (\ref{Hlowertri}). Thus $N_L(T_1) \subset H$ as required. \\
 \\
-(ii) To determine the centraliser of $t_\lambda$ in $L$, we consider which $y \in L$ satisfy $y t_\lambda = t_\lambda y$ for an arbitrarily chosen $t_\lambda$, with $\lambda \neq 0$. \\
+(ii) To determine the centraliser of $s_\sigma$ in $L$, we consider which $y \in L$ satisfy $y s_\sigma = s_\sigma y$ for an arbitrarily chosen $s_\sigma$, with $\lambda \neq 0$. \\
 \vspace{-0.5mm}
-\begin{align}\label{6.3proof2} y t_\lambda &= t_\lambda y, \nonumber \\[1.5ex]
+\begin{align}\label{6.3proof2} y s_\sigma &= s_\sigma y, \nonumber \\[1.5ex]
 \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} &= \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}, \nonumber \\[1.5ex]
 \begin{bmatrix} \alpha + \beta \lambda & \beta \\ \gamma + \delta \lambda & \delta \end{bmatrix} &= \begin{bmatrix} \alpha & \beta \\ \gamma +  \alpha \lambda & \delta + \beta \lambda \end{bmatrix}.
 \end{align}
 \vspace{.5mm}
 
-Equating the top left entries of (\ref{6.3proof2}) gives $\alpha + \beta \lambda = \alpha$ which means $\beta = 0$ since $\lambda \neq 0$ by assumption. Equating the bottom left entries gives that $\alpha = \delta$. Finally, since det$(y) = 1$, we have $\alpha \delta = 1$ so $\alpha = \pm 1$. Thus a $y \in C_L(t_\lambda)$ is
+Equating the top left entries of (\ref{6.3proof2}) gives $\alpha + \beta \lambda = \alpha$ which means $\beta = 0$ since $\lambda \neq 0$ by assumption. Equating the bottom left entries gives that $\alpha = \delta$. Finally, since det$(y) = 1$, we have $\alpha \delta = 1$ so $\alpha = \pm 1$. Thus a $y \in C_L(s_\sigma)$ is
 
 \begin{align*} y &= \begin{bmatrix} \alpha & 0 \\ \gamma & \alpha \end{bmatrix}. \tag{where $\alpha = \pm 1$}
 \end{align*}
 
-So $y = \pm t_\sigma$ for some $\sigma \in F$, and $TZ = \{ \pm t_\sigma \} \subset C_L(t_\lambda)$. Now take an arbitrary $t_\mu z \in TZ$.
-\begin{align*} (t_\mu z) t_\lambda &= t_\lambda (t_\mu z),
-\\ t_\mu t_\lambda z &= t_\lambda t_\mu z, \tag{since $z \in Z$}
-\\ t_{\mu + \lambda} &= t_{\mu + \lambda}.
+So $y = \pm t_\sigma$ for some $\sigma \in F$, and $TZ = \{ \pm t_\sigma \} \subset C_L(s_\sigma)$. Now take an arbitrary $s_\gamma z \in TZ$.
+\begin{align*} (s_\gamma z) s_\sigma &= s_\sigma (s_\gamma z),
+\\ s_\gamma s_\sigma z &= s_\sigma s_\gamma z, \tag{since $z \in Z$}
+\\ t_{\gamma + \lambda} &= t_{\gamma + \lambda}.
 \end{align*}
 
-Thus $t_\mu z$ and indeed the whole of $TZ$ is contained in $ C_L(t_\lambda)$, so $C_L(t_\lambda) = TZ$. \\
+Thus $s_\gamma z$ and indeed the whole of $TZ$ is contained in $ C_L(s_\sigma)$, so $C_L(s_\sigma) = TZ$. \\
 \\
-Since $T$ commutes elementwise with $Z$ and $T \cap Z = \{ I_G \}$, we can apply Corollary \ref{directproductZ} and assert that $C_L(t_\lambda) = TZ \cong T \times Z$ as required. The centraliser of $\minus t_\lambda$ is also $T \times Z$, since an element $x$ commutes with $\minus t_\lambda$ if and only if it commutes with $t_\lambda$:
-\begin{align*} xt_\lambda = t_\lambda x \iff   \minus(x t_\lambda) = \minus (t_\lambda x) \iff x(\minus t_\lambda) = (\minus t_\lambda)x.
+Since $T$ commutes elementwise with $Z$ and $T \cap Z = \{ I_G \}$, we can apply Corollary \ref{directproductZ} and assert that $C_L(s_\sigma) = TZ \cong T \times Z$ as required. The centraliser of $\minus s_\sigma$ is also $T \times Z$, since an element $x$ commutes with $\minus s_\sigma$ if and only if it commutes with $s_\sigma$:
+\begin{align*} 
+    xt_\lambda = s_\sigma x \iff \minus(x s_\sigma) = \minus (s_\sigma x) \iff x(\minus s_\sigma) = (\minus s_\sigma)x.
 \end{align*}
 
-Note that in case of $\lambda = 0$, $\pm t_\lambda \in Z$ and thus it's centraliser is the whole of $L$.
+Note that in case of $\lambda = 0$, $\pm s_\sigma \in Z$ and thus it's centraliser is the whole of $L$.
 
 \end{proof}
 
 \begin{proposition}\label{6.4ii}
 (i) $N_L(D_1) = \langle D , w \rangle$, where  $D_1$ is any subgroup of $D$ with order greater than 2. \\
 \\
-(ii) $C_L(d_\omega)= D$ where $\omega \neq \pm 1$.
+(ii) $C_L(d_\delta)= D$ where $\delta \neq \pm 1$.
 \end{proposition}
 
-\begin{proof} (i) Since $|D_1| > 3$, we can choose a $d_\omega \in D_1 \! \setminus \! Z$, that is where $\omega \neq 1$. To determine the normaliser of $D_1$ in $L$ we consider which $x \in L$ satisfy $x d_\omega x^{-1} \in D_1$.
-\begin{align}\label{6.3proof3} xd_\omega x^{-1} &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \minus \gamma & \alpha \end{bmatrix} \nonumber \\[1.5ex]
-&= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta \omega & \minus \beta \omega \\ \minus \gamma \omega^{-1} & \alpha \omega^{-1} \end{bmatrix} \nonumber \\[1.5ex]
-&= \begin{bmatrix} \alpha \delta \omega - \beta \gamma \omega^{-1} & \alpha \beta (\omega^{-1} - \omega) \\ \gamma \delta (\omega - \omega^{-1}) & \alpha \delta \omega^{-1} - \beta \gamma \omega \end{bmatrix} \in D_1.
+\begin{proof} (i) Since $|D_1| > 3$, we can choose a $d_\delta \in D_1 \! \setminus \! Z$, that is where $\delta \neq 1$. To determine the normaliser of $D_1$ in $L$ we consider which $x \in L$ satisfy $x d_\delta x^{-1} \in D_1$.
+\begin{align}\label{6.3proof3} xd_\delta x^{-1} &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \minus \gamma & \alpha \end{bmatrix} \nonumber \\[1.5ex]
+&= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta \delta & \minus \beta \delta \\ \minus \gamma \delta^{-1} & \alpha \delta^{-1} \end{bmatrix} \nonumber \\[1.5ex]
+&= \begin{bmatrix} \alpha \delta \delta - \beta \gamma \delta^{-1} & \alpha \beta (\delta^{-1} - \delta) \\ \gamma \delta (\delta - \delta^{-1}) & \alpha \delta \delta^{-1} - \beta \gamma \delta \end{bmatrix} \in D_1.
 \end{align}
 
-Since (\ref{6.3proof3}) is in $D_1$, the top right and bottom left entries must be 0. Since  $\omega \neq \pm 1$, we have $\omega \neq \omega^{-1}$ and so $\alpha \beta = 0 = \gamma \delta$. \\
+Since (\ref{6.3proof3}) is in $D_1$, the top right and bottom left entries must be 0. Since  $\delta \neq \pm 1$, we have $\delta \neq \delta^{-1}$ and so $\alpha \beta = 0 = \gamma \delta$. \\
 \\
- \space If $\alpha = 0$, then $\beta$ and $\gamma$ are non-zero since det$(x) = 1$, thus $\delta = 0$. So det$(x) = \minus \gamma \beta = 1$  and $\minus \gamma = \beta^{-1}$. (\ref{6.3proof3}) becomes $$\begin{bmatrix} \omega^{-1} & 0 \\ 0 & \omega \end{bmatrix} = d^{-1}_\omega.$$Since $D_1$ is a group, it contains the inverse of each of it's elements, so $d^{-1}_\omega \in D_1$ as required. In this case we have $x \in wD$. \\
+ \space If $\alpha = 0$, then $\beta$ and $\gamma$ are non-zero since det$(x) = 1$, thus $\delta = 0$. So det$(x) = \minus \gamma \beta = 1$  and $\minus \gamma = \beta^{-1}$. (\ref{6.3proof3}) becomes $$\begin{bmatrix} \delta^{-1} & 0 \\ 0 & \delta \end{bmatrix} = d^{-1}_\delta.$$Since $D_1$ is a group, it contains the inverse of each of it's elements, so $d^{-1}_\delta \in D_1$ as required. In this case we have $x \in wD$. \\
 \\
- \space If $\alpha \neq 0$, then similarly $\beta = 0$, $\delta = \alpha^{-1}$ and $\gamma = 0$. (\ref{6.3proof3}) now becomes $$\begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} = d_\omega \in D_1.$$This time we have $x \in D$. So $x \in D \cup wD = \langle D , w \rangle$ and any element which normalises $D_1$ is in $\langle D , w \rangle$, thus $N_L(D_1) \subset \langle D , w \rangle$. \\
+ \space If $\alpha \neq 0$, then similarly $\beta = 0$, $\delta = \alpha^{-1}$ and $\gamma = 0$. (\ref{6.3proof3}) now becomes $$\begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} = d_\delta \in D_1.$$This time we have $x \in D$. So $x \in D \cup wD = \langle D , w \rangle$ and any element which normalises $D_1$ is in $\langle D , w \rangle$, thus $N_L(D_1) \subset \langle D , w \rangle$. \\
 \\
 Now take an arbitrary $y \in \langle D , w \rangle = D \cup wD$. If $y \in D$ then $y = d_{\rho 1}$, for some $\rho 1 \in F^\times$.
-\begin{align*} d_{\rho 1} d_\omega d^{-1}_{\rho 1} = d_\omega \in D_1. \tag{by Lemma \ref{6.1}}
+\begin{align*} d_{\rho 1} d_\delta d^{-1}_{\rho 1} = d_\delta \in D_1. \tag{by Lemma \ref{6.1}}
 \end{align*}
 
 If $y \in wD$ then $y = w d_{\rho 2}$, for some $ d_{\rho 2} \in F^\times$.
-\begin{align*} (w d_{\rho 2}) d_\omega (w d_{\rho 2})^{-1} &= w d_{\rho 2} d_\omega d^{-1}_{\rho 2} w^{-1}
-\\ &= w d_\omega w^{-1}
-\\ &= d^{-1}_\omega \in D_1 \tag{by Lemma \ref{6.1}}.
+\begin{align*} (w d_{\rho 2}) d_\delta (w d_{\rho 2})^{-1} &= w d_{\rho 2} d_\delta d^{-1}_{\rho 2} w^{-1}
+\\ &= w d_\delta w^{-1}
+\\ &= d^{-1}_\delta \in D_1 \tag{by Lemma \ref{6.1}}.
 \end{align*}
 
 Thus $y$ indeed who whole of $\langle D , w \rangle$ is contained in $N_L(D_1)$. This inclusion gives the desired result, $N_L(D_1) = \langle D , w \rangle$. \\
 \\
-(ii) Now we consider which $y \in L$ satisfy $y d_\omega = d_\omega y$ for an arbitrarily chosen $d_\omega$, with $\omega \neq \pm 1$.
-\begin{align}\label{6.3proof4} y d_ \omega &= d_\lambda y, \nonumber \\[1.5ex]
-\begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} &= \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}, \nonumber \\[1.5ex]
-\begin{bmatrix} \alpha \omega & \beta \omega^{-1} \\ \gamma \omega & \delta \omega^{-1} \end{bmatrix} &= \begin{bmatrix} \alpha \omega & \beta \omega \\ \gamma \omega^{-1} & \delta \omega^{-1} \end{bmatrix}.
+(ii) Now we consider which $y \in L$ satisfy $y d_\delta = d_\delta y$ for an arbitrarily chosen $d_\delta$, with $\delta \neq \pm 1$.
+\begin{align}\label{6.3proof4} y d_ \delta &= d_\lambda y, \nonumber \\[1.5ex]
+\begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} &= \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}, \nonumber \\[1.5ex]
+\begin{bmatrix} \alpha \delta & \beta \delta^{-1} \\ \gamma \delta & \delta \delta^{-1} \end{bmatrix} &= \begin{bmatrix} \alpha \delta & \beta \delta \\ \gamma \delta^{-1} & \delta \delta^{-1} \end{bmatrix}.
 \end{align}
 
-Equating the top right and bottom left entries of (\ref{6.3proof4}) gives that $\beta = 0 = \gamma$ since Since $\omega \neq \omega^{-1}$. Thus $\delta = \alpha^{-1}$ and 
+Equating the top right and bottom left entries of (\ref{6.3proof4}) gives that $\beta = 0 = \gamma$ since Since $\delta \neq \delta^{-1}$. Thus $\delta = \alpha^{-1}$ and 
 \begin{align*} x = \begin{bmatrix} \alpha & 0 \\ 0 & \alpha^{-1} \end{bmatrix} \in D. 
 \end{align*}
 
-Thus $x$ and indeed the whole of $C_L(d_\omega)$ is contained in $D$. Now take an arbitrary $d_\rho \in D$.
-\begin{align*} d_\rho d_\omega = d_{\rho \omega} = d_\omega d_\rho.
+Thus $x$ and indeed the whole of $C_L(d_\delta)$ is contained in $D$. Now take an arbitrary $d_\rho \in D$.
+\begin{align*} d_\rho d_\delta = d_{\rho \delta} = d_\delta d_\rho.
 \end{align*}
-So clearly $D \subset C_L(d_\omega)$ and thus $C_L(d_\omega) = D$ as required.
+So clearly $D \subset C_L(d_\delta)$ and thus $C_L(d_\delta) = D$ as required.
 \end{proof}
 
 \begin{proposition} \label{conjcent} Let $a$ and $b$ be conjugate elements in a group $G$. Then $\exists \, x \in G$ such that $xC_G(a)x^{-1} = C_G(b)$. \vspace{3mm}
@@ -303,15 +442,15 @@ So $x^{-1}hx \in C_G(a)$ and since $h$ was arbitrarily chosen from $C_G(xax^{-1}
 The centraliser of an element $x$ in $L$ is abelian unless $x$ belongs to the centre of $L$. \vspace{3mm}
 \end{corollary}
 
-\begin{proof} This is almost an immediate consequence of the preceding results. Propositions \ref{6.4i} and \ref{6.4ii} show that an element of the form $\pm t_\lambda$ which does not lie in the centre of $L$ has centraliser $T \times Z$, whilst a non-central element of the form $d_\omega$ has centraliser $D$. Both $T$ and $D$ are abelian since they are isomoprhic to $F$ and $F^\times$ respectively. Let $t_\lambda z_1$ and $t_\mu z_2$  be arbitrary elements of $T \times Z$.
+\begin{proof} This is almost an immediate consequence of the preceding results. Propositions \ref{6.4i} and \ref{6.4ii} show that an element of the form $\pm s_\sigma$ which does not lie in the centre of $L$ has centraliser $T \times Z$, whilst a non-central element of the form $d_\delta$ has centraliser $D$. Both $T$ and $D$ are abelian since they are isomoprhic to $F$ and $F^\times$ respectively. Let $s_\sigma z_1$ and $s_\gamma z_2$  be arbitrary elements of $T \times Z$.
 
 \vspace{-.5mm}
-\begin{align*} (t_\lambda z_1)(t_\mu z_2)  &= t_\lambda t_\mu z_2 z_1  \tag{since  $z_1 \in Z$}
-\\ &= t_\mu t_\lambda z_2 z_1  \tag{since  $T$ is abelian}
-\\ &= (t_\mu z_2)(t_\lambda z_1).   \tag{since  $z_2 \in Z$}
+\begin{align*} (s_\sigma z_1)(s_\gamma z_2)  &= s_\sigma s_\gamma z_2 z_1  \tag{since  $z_1 \in Z$}
+\\ &= s_\gamma s_\sigma z_2 z_1  \tag{since  $T$ is abelian}
+\\ &= (s_\gamma z_2)(s_\sigma z_1).   \tag{since  $z_2 \in Z$}
 \end {align*} 
 
-Thus $T \times Z$ is also abelian. Since every element of $L$ is conjugate to $d_\omega$ or $\pm t_\lambda$ by Proposition \ref{6.3} and conjugate elements have conjugate centralisers by Proposition \ref{conjcent}, the centraliser of each $x \in L \setminus Z$ is conjugate to either $T \times Z$ or $D$. Proposition \ref{conjugateprop}(iii) shows that conjugate subgroups are isomorphic and therefore have the same structure, thus since both $T \times Z$ and $D$ are abelian, $C_L(x)$ is also abelian. Note that in general this does hold for $x \in Z$, since its centraliser is the whole of $L$ which is not abelian unless $L = Z$.
+Thus $T \times Z$ is also abelian. Since every element of $L$ is conjugate to $d_\delta$ or $\pm s_\sigma$ by Proposition \ref{6.3} and conjugate elements have conjugate centralisers by Proposition \ref{conjcent}, the centraliser of each $x \in L \setminus Z$ is conjugate to either $T \times Z$ or $D$. Proposition \ref{conjugateprop}(iii) shows that conjugate subgroups are isomorphic and therefore have the same structure, thus since both $T \times Z$ and $D$ are abelian, $C_L(x)$ is also abelian. Note that in general this does hold for $x \in Z$, since its centraliser is the whole of $L$ which is not abelian unless $L = Z$.
 
 \end{proof}
 
@@ -363,31 +502,31 @@ So $\theta \in SL(2,F) = L$ and since $P^\theta_1 = Q_1$, $P^\theta_2 = Q_2$ and
 
 The following proposition looks at what happens when the group $L$ acts on the projective line $\mathscr{L}$.
 
-\begin{proposition} \label{6.7} (i) Each element of the form $d_\omega$ (with $\omega \neq \pm 1$), fixes the same two points on the projective line $\mathscr{L}$ and fix no other point. \vspace{3mm} \\
-(ii) Each element of the form $\pm t_\lambda$ (with $\lambda \neq 0$), fixes the same point $P$ on $\mathscr{L}$ and fix no other point. Furthermore, \emph{Stab}$(P) = H$. \vspace{3mm} \\
+\begin{proposition} \label{6.7} (i) Each element of the form $d_\delta$ (with $\delta \neq \pm 1$), fixes the same two points on the projective line $\mathscr{L}$ and fix no other point. \vspace{3mm} \\
+(ii) Each element of the form $\pm s_\sigma$ (with $\lambda \neq 0$), fixes the same point $P$ on $\mathscr{L}$ and fix no other point. Furthermore, \emph{Stab}$(P) = H$. \vspace{3mm} \\
 (iii) All conjugate elements have the same number of fixed points on $\mathscr{L}$. \vspace{3mm} \\
 (iv) Any noncentral element of $L$ has at most 2 fixed points on $\mathscr{L}$.
 \end{proposition}
 
 \begin{proof} 
-(i) Let $P$ be a fixed a point of an arbitrary $d_\omega \in D$, with $\omega \neq \pm 1$ and let $u$ belong to the corresponding equivalence class of vectors of $V$ to $P$. \\
-\begin{align*} d_\omega u = \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} u_1 \omega \\ u_2 \omega^{-1} \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
-\\[1.5ex] u_1 u_2 \omega &= u_1 u_2 \omega^{-1}.
+(i) Let $P$ be a fixed a point of an arbitrary $d_\delta \in D$, with $\delta \neq \pm 1$ and let $u$ belong to the corresponding equivalence class of vectors of $V$ to $P$. \\
+\begin{align*} d_\delta u = \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} u_1 \delta \\ u_2 \delta^{-1} \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
+\\[1.5ex] u_1 u_2 \delta &= u_1 u_2 \delta^{-1}.
 \end{align*}
 
-Since $\omega \neq \pm 1$, $\omega$ does not equal $\omega^{-1}$, and so either $u_1 = 0$ or $u_2 = 0$. Thus $u$ is equivalent to either the vector $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ or $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$ and these correspond to 2 distinct points of $\mathscr{L}$ which are fixed by $d_\omega$. \\
+Since $\delta \neq \pm 1$, $\delta$ does not equal $\delta^{-1}$, and so either $u_1 = 0$ or $u_2 = 0$. Thus $u$ is equivalent to either the vector $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ or $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$ and these correspond to 2 distinct points of $\mathscr{L}$ which are fixed by $d_\delta$. \\
 \\
-(ii) Let $P$ be a fixed a point of an arbitrary $t_\lambda$, with $\lambda \neq 0$, and let $u$ be the corresponding element of $V$ to $P$. \\
-\begin{align*} t_\lambda u = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} u_1 \\ u_1 \lambda + u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
+(ii) Let $P$ be a fixed a point of an arbitrary $s_\sigma$, with $\lambda \neq 0$, and let $u$ be the corresponding element of $V$ to $P$. \\
+\begin{align*} s_\sigma u = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} u_1 \\ u_1 \lambda + u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
 \\[1.5ex] u_1 u_2 &= {u_1}^2 \lambda + u_1 u_2.
 \end{align*}
 
-This gives ${u_1}^2 \lambda = 0$ and since $\lambda \neq 0$ we have $u_1 = 0$. Thus $t_\lambda$ has just one fixed point, $P$ which corresponds to the equivalence class of $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ in $V$. We show also that $P$ is also the only fixed point of $-t_\lambda$, with $\lambda \neq 0$.
-\begin{align*} -t_\lambda u = \begin{bmatrix} -1 & 0 \\ \lambda & -1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} -u_1 \\ u_1 \lambda - u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
+This gives ${u_1}^2 \lambda = 0$ and since $\lambda \neq 0$ we have $u_1 = 0$. Thus $s_\sigma$ has just one fixed point, $P$ which corresponds to the equivalence class of $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ in $V$. We show also that $P$ is also the only fixed point of $-s_\sigma$, with $\lambda \neq 0$.
+\begin{align*} -s_\sigma u = \begin{bmatrix} -1 & 0 \\ \lambda & -1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} -u_1 \\ u_1 \lambda - u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
 \\[1.5ex] -u_1 u_2 &= {u_1}^2 \lambda - u_1 u_2.
 \end{align*}
 
-So again $u_1 =0$ and $-t_\lambda$ fixes $P$ and no other point. We now calculate the stabiliser of $P$ in $L$, by considering which $x \in L$ fix $P$. \\
+So again $u_1 =0$ and $-s_\sigma$ fixes $P$ and no other point. We now calculate the stabiliser of $P$ in $L$, by considering which $x \in L$ fix $P$. \\
 \begin{align*} x u = \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 0 \\ 1 \end{bmatrix} &= \begin{bmatrix} \beta \\ \delta \end{bmatrix} \sim \begin{bmatrix} 0 \\ 1 \end{bmatrix}.
 \end{align*}
 
@@ -405,7 +544,7 @@ Thus $y$ and indeed $H$ is contained in Stab$(P)$, so Stab$(P) = H$ as desired. 
 
 This shows that $P_i$ is a fixed point of $x$ if and only if $g^{-1} P_i$ is a fixed point of $y$. Thus conjugate elements have the same number of fixed points. \\
 \\
-(iv) By Proposition \ref{6.3}(i), every  element of $L$ is conjugate to either $d_\omega$ or $\pm t_\lambda$, so since conjugate elements have the same number of fixed points, every element of $L \! \setminus \! Z$ has either the same number of fixed points as $d_\omega$ (with $\omega \neq \pm 1$), namely 2, or the same number as $\pm t_\lambda$, (with $\lambda \neq 0$), namely 1.
+(iv) By Proposition \ref{6.3}(i), every  element of $L$ is conjugate to either $d_\delta$ or $\pm s_\sigma$, so since conjugate elements have the same number of fixed points, every element of $L \! \setminus \! Z$ has either the same number of fixed points as $d_\delta$ (with $\delta \neq \pm 1$), namely 2, or the same number as $\pm s_\sigma$, (with $\lambda \neq 0$), namely 1.
 
 \end{proof}
 

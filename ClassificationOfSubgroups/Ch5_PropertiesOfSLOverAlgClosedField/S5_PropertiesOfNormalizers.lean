@@ -23,7 +23,7 @@ def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
 
 -- it is in fact a surjection
 lemma mem_H_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
-  x ∈ H F ↔ ∃ a c d, a * d = 1 ∧ (x : Matrix (Fin 2) (Fin 2) F) = !![a, 0; c, d] := by
+  x ∈ L F ↔ ∃ a c d, a * d = 1 ∧ (x : Matrix (Fin 2) (Fin 2) F) = !![a, 0; c, d] := by
   constructor
   · intro hx
     obtain ⟨δ, σ, h⟩ := hx
@@ -40,7 +40,7 @@ lemma mem_H_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
     ext <;> field_simp [a_inv_eq_d, had, hx]; exact Eq.symm (eq_one_div_of_mul_eq_one_right had)
 
 lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
-  x ∈ H F ↔ ∃ a c d, !![a, 0; c, d] = (x : Matrix (Fin 2) (Fin 2) F) := by
+  x ∈ L F ↔ ∃ a c d, !![a, 0; c, d] = (x : Matrix (Fin 2) (Fin 2) F) := by
   constructor
   · intro hx
     obtain ⟨δ, σ, h⟩ := hx
@@ -73,7 +73,7 @@ lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
 Proposition 1.6.i
 N_L(T₁) ⊆ H, where T₁ is any subgroup of T with order greater than 1. -/
 lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
- (hT₀ : 1 < Nat.card T₀ ) (h : T₀ ≤ S F) : normalizer T₀ ≤ H F := by
+ (hT₀ : 1 < Nat.card T₀ ) (h : T₀ ≤ S F) : normalizer T₀ ≤ L F := by
   intro x hx
   rw [mem_normalizer_iff] at hx
   by_cases h' : ∃ σ, σ ≠ 0 ∧ s σ ∈ T₀
