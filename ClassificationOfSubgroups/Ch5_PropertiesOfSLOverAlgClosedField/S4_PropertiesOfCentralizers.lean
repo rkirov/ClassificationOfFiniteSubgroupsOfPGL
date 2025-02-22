@@ -11,27 +11,27 @@ open SpecialMatrices SpecialSubgroups
 universe u
 
 variable
-  (F : Type u) [Field F]
+  {F : Type u} [Field F]
   (n : Type u) [Fintype n]
   (R : Type u) [CommRing R]
   {G : Type u} [Group G]
 
-/- Proposition 1.6.ii C_L(± T τ) = T × Z where τ ≠ 0 -/
-def centralizer_t_eq_TZ {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = TZ F := by
+/- Proposition 1.6.ii C_L(± s σ) = T × Z where σ ≠ 0 -/
+def centralizer_s_eq_SZ {σ : F} (hσ : σ ≠ 0) : centralizer { s σ } = SZ F := by
   ext x
   constructor
   · intro hx
     simp [mem_centralizer_iff] at hx
     rw [SpecialLinearGroup.fin_two_ext_iff] at hx
-    simp [t] at hx
+    simp [s] at hx
     obtain ⟨top_right, -, bottom_left, -⟩ := hx
-    rcases get_entries F x with ⟨α, β, γ, δ, hα, hβ, -, hδ, x_eq⟩
-    simp [x_eq, hτ] at top_right bottom_left
+    rcases get_entries x with ⟨α, β, γ, δ, hα, hβ, -, hδ, x_eq⟩
+    simp [x_eq, hσ] at top_right bottom_left
     rw [add_comm γ] at bottom_left
-    have α_eq_δ : τ * α = τ * δ := by rw [mul_comm τ δ, eq_iff_eq_of_add_eq_add bottom_left]
+    have α_eq_δ : σ * α = σ * δ := by rw [mul_comm σ δ, eq_iff_eq_of_add_eq_add bottom_left]
     rw [mul_eq_mul_left_iff, or_iff_not_imp_right] at α_eq_δ
-    specialize α_eq_δ hτ
-    simp [TZ]
+    specialize α_eq_δ hσ
+    simp [SZ]
     -- is a shear matrix if diagonal entries are equal and top right entry is zero
     rw [← SpecialLinearGroup.fin_two_shear_iff]
     constructor
@@ -39,7 +39,7 @@ def centralizer_t_eq_TZ {τ : F} (hτ : τ ≠ 0) : centralizer { t τ } = TZ F 
     · rw [← hα, ← hδ, α_eq_δ]
     -- top right entry is zero
     · rw [← hβ, top_right]
-  · rintro (⟨τ, rfl⟩ | ⟨τ, rfl⟩)
+  · rintro (⟨σ, rfl⟩ | ⟨σ, rfl⟩)
     repeat
     rw [mem_centralizer_iff]
     intro y hy
@@ -61,13 +61,13 @@ lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ �
   constructor
   · intro hx
     simp [mem_centralizer_iff] at hx
-    rcases get_entries F x with ⟨a, b, c, d, _ha, hb', hc', _hd, x_eq⟩
+    rcases get_entries x with ⟨a, b, c, d, _ha, hb', hc', _hd, x_eq⟩
     simp [SpecialLinearGroup.fin_two_ext_iff, SpecialMatrices.d, x_eq] at hx
     obtain ⟨-, hb, hc, -⟩ := hx
     have δ_ne_zero : (δ : F) ≠ 0 := Units.ne_zero δ
     have δ_ne_δ_inv : (δ : F) ≠ δ⁻¹ := by
       intro h
-      rw [Field.self_eq_inv_iff F _ δ_ne_zero] at h
+      rw [Field.self_eq_inv_iff _ δ_ne_zero] at h
       simp_rw [Units.val_eq_one, Units.val_eq_neg_one] at h
       absurd not_or.mpr ⟨δ_ne_one, δ_ne_neg_one⟩ h
       trivial
@@ -81,7 +81,7 @@ lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ �
 
 lemma centralizer_d_eq_D' (δ : Fˣ) (hd: d δ ∉ center SL(2,F)) : centralizer {d δ} = D F := by
   simp [center_SL2_F_eq_Z, ← ne_eq] at hd
-  apply centralizer_d_eq_D F δ
+  apply centralizer_d_eq_D δ
   · rintro rfl
     simp at hd
   · rintro rfl
@@ -164,8 +164,8 @@ The centraliser of an element x in L is abelian unless x belongs to the centre o
 -/
 lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](x : SL(2,F))
   (hx : x ∉ center SL(2,F)) : IsCommutative (centralizer { x }) := by
-  rcases SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t F x with
-    (⟨δ, x_IsConj_d⟩ | ⟨τ, x_IsConj_t⟩ | ⟨τ, x_IsConj_neg_t⟩ )
+  rcases SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s x with
+    (⟨δ, x_IsConj_d⟩ | ⟨σ, x_IsConj_s⟩ | ⟨σ, x_IsConj_neg_s⟩ )
   · obtain ⟨x, centralizer_x_eq⟩ := conjugate_centralizers_of_IsConj (d δ) x x_IsConj_d
     have δ_ne_one : δ ≠ 1 := by
       rintro rfl
@@ -177,26 +177,26 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
       simp at x_IsConj_d
       rw [← x_IsConj_d, center_SL2_F_eq_Z] at hx
       simp at hx
-    rw [← centralizer_x_eq, centralizer_d_eq_D _ _ δ_ne_one δ_ne_neg_one]
+    rw [← centralizer_x_eq, centralizer_d_eq_D _ δ_ne_one δ_ne_neg_one]
     apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_D F
-  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (t τ) x x_IsConj_t
-    have τ_ne_zero : τ ≠ 0 := by
+    exact IsCommutative_D
+  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (s σ) x x_IsConj_s
+    have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
-      simp at x_IsConj_t
-      rw [← x_IsConj_t, center_SL2_F_eq_Z] at hx
+      simp at x_IsConj_s
+      rw [← x_IsConj_s, center_SL2_F_eq_Z] at hx
       simp at hx
-    rw [← centralizer_S_eq, centralizer_t_eq_TZ F τ_ne_zero]
+    rw [← centralizer_S_eq, centralizer_s_eq_SZ σ_ne_zero]
     apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_TZ F
-  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-t τ) x x_IsConj_neg_t
-    have τ_ne_zero : τ ≠ 0 := by
+    exact IsCommutative_SZ F
+  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-s σ) x x_IsConj_neg_s
+    have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
-      simp at x_IsConj_neg_t
-      rw [← x_IsConj_neg_t, center_SL2_F_eq_Z] at hx
+      simp at x_IsConj_neg_s
+      rw [← x_IsConj_neg_s, center_SL2_F_eq_Z] at hx
       simp at hx
-    rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_t_eq_TZ F τ_ne_zero]
+    rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_s_eq_SZ σ_ne_zero]
     apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_TZ F
+    exact IsCommutative_SZ F
 
 #min_imports

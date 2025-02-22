@@ -42,10 +42,17 @@
 \usepackage{amsthm}
 \usepackage{etexcmds}
 \usepackage{thmtools}
-% \usepackage{minted}
+% pdf version can use minted - we define code environment which uses minted for the pdf
+\usepackage{minted}
 \usepackage{tikz}
 
 \input{preamble/print}
+
+% Probably works
+% \newenvironment{code}
+%   {\VerbatimEnvironment
+%    \begin{minted}{lean}}
+%   {\end{minted}}
 
 \title{Classification of the finite subgroups of the Projective General Linear Group}
 \author{Alex Brodbelt}

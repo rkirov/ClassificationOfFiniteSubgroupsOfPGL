@@ -24,7 +24,7 @@ lemma Sylow.not_normal_subgroup_of_G {F : Type*} [Field F] {p : ℕ} [Fact (Nat.
 
 /- Lemma 3.3 -/
 def R (F : Type*) [Field F] (p : ℕ) [Fact (Nat.Prime p)] [CharP F p](k : ℕ+) :=
-  { x : F | x^p^(k : ℕ) - x = 0}
+  { x : F | x^p^(k : ℕ) - x = 0 }
 
 
 instance field_R {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
@@ -87,9 +87,9 @@ theorem dickson_classification_theorem_class_II {F : Type*} [Field F] {p : ℕ}
     ∃ φ : G ≃* SL(2, GaloisField p k), True
   := by sorry
 
+
 -- implicit normality condition on Q
 
-#leansearch "quotient group is a group?"
 -- ∧ IsCyclic (Subgroup.map (@QuotientGroup.mk' G _ (Q.subgroupOf G) (by sorry)) ⊤) -- needs to know quotient is a group
 
 -- (IsCyclic (QuotientGroup.Quotient.group Q (nN := by sorry)))

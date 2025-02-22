@@ -11,12 +11,30 @@ Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \lambda, \m
 
 In this chapter we make some useful observations about specific elements and subgroups of $L$. We define the following elements of $L$ as follows.
 
-\begin{align*} d_\omega = \begin{bmatrix} \omega & 0 \\ 0 & \omega^{-1} \end{bmatrix}, \qquad t_\lambda = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix}, \qquad w = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix}  \tag{$\omega \in F^\times$ and $\lambda \in F$}.
+\begin{align*} d_\delta = \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix}, \qquad s_\sigma = \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix}, \qquad w = \begin{bmatrix} 0 & 1 \\ - 1 & 0 \end{bmatrix}  \tag{$\delta \in F^\times$ and $\sigma \in F$}.
 \end{align*}
 
 We also define the following subsets of $L$.
-\begin{align*} D= \{d_\omega\}, \qquad T= \{t_\lambda\}, \qquad H=DT.
-\end{align*}
+\begin{definition}
+    The set of diagonal matrices: 
+    \[
+    D = \{d_\delta \} = \{\begin{pmatrix}\delta & 0\\ 0 & \delta^{-1}\end{pmatrix} \; | \; \delta \in F^\times \}
+    \]
+\end{definition}
+
+\begin{definition}[Shear Matrices]
+    The set of shear matrices:
+    \[
+    S = \{s_\sigma\} = \{\begin{pmatrix}1 & 0\\ \sigma & 1\end{pmatrix} \; | \; \sigma \in F \}
+    \]
+\end{definition}
+
+\begin{definition}
+    The set of lower triangular matrices:
+    \[
+    H = DT
+    \]
+\end{definition}
 
 Observe that $H$ is the set of all lower triangular matrices in $L$ whilst $Dw$ is the set of all anti-diagonal matrices.
 

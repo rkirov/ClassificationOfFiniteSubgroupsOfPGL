@@ -106,7 +106,7 @@ Each finite field is uniquely determined up to isomorphism by the number of elem
 \begin{align}\label{subfield} \mathbb{F}_q = R \subset F.
 \end{align}
 
-\begin{lemma}\label{ordersl2q} Let $\mathbb{F}_q$ be the field of $q$ elements, where $q$ is the power of a prime. The order of $GL(2,\mathbb{F}_q)$ is $(q^2-1)(q^2-q)$ and the order of $SL(2,\mathbb{F}_q)$ is $q(q^2-1)$.
+\begin{lemma}\label{ordersl2q} Let $\mathbb{F}_q$ be the field of $q$ elements, where $q$ is the power of a prime. The order of $GL(2,\mathbb{F}_q)$ is $(q^2-1)(q^2-q)$ and the order of $\SL_2(\mathbb{F}_q)$ is $q(q^2-1)$.
 \end{lemma}
 
 \begin{proof} In order to prove this, we again take a geometric viewpoint. Recall that $GL(2,\mathbb{F}_q)$ is the group of 2 x 2 invertible matrices over $\mathbb{F}_q$ under ordinary matrix multiplication. The order of $GL(2,\mathbb{F}_q)$ is thus equal to the number of ordered pairs $\{u,v\}$ of linearly independent vectors in a 2-dimensional vector space over $\mathbb{F}_q$. \\
@@ -118,7 +118,7 @@ Thus the order of $GL(2,\mathbb{F}_q)$ is the product of the number of choices o
 \end{align*}
 
 Next we determine the kernel of $\phi$.
-\begin{align*} ker(\phi) &= \{  GL(2,\mathbb{F}_q) : \text{det}(x) = 1 \} = SL(2,\mathbb{F}_q).
+\begin{align*} ker(\phi) &= \{  GL(2,\mathbb{F}_q) : \text{det}(x) = 1 \} = \SL_2(\mathbb{F}_q).
 \end{align*}
 
 We show that $\phi$ is a group homomorphism. Take $x,y \in GL(2,\mathbb{F}_q)$,
@@ -127,10 +127,10 @@ We show that $\phi$ is a group homomorphism. Take $x,y \in GL(2,\mathbb{F}_q)$,
 \end{align*}
 
 Clearly $\phi$ is surjective, since $\alpha \in \mathbb{F}^*_q$ is the determinant of $\begin{bmatrix} \alpha & 0 \\ 0 & 1 \end{bmatrix} \in GL(2,\mathbb{F}_q)$. Therefore by the First Isomorphism Theorem,
-\begin{align*} GL(2,\mathbb{F}_q) / SL(2,\mathbb{F}_q) \cong \mathbb{F}^*_q.
+\begin{align*} GL(2,\mathbb{F}_q) / \SL_2(\mathbb{F}_q) \cong \mathbb{F}^*_q.
 \end{align*}
 Thus,
-\begin{align*} |SL(2,\mathbb{F}_q)| =  \frac{|GL(2,\mathbb{F}_q)|}{|\mathbb{F}^*_q|} = \frac{(q^2-1)(q^2-q)}{q-1} = q(q^2-1).
+\begin{align*} |\SL_2(\mathbb{F}_q)| =  \frac{|GL(2,\mathbb{F}_q)|}{|\mathbb{F}^*_q|} = \frac{(q^2-1)(q^2-q)}{q-1} = q(q^2-1).
 \end{align*}
 
 \end{proof}
@@ -177,7 +177,7 @@ Thus $G/Q$ is a cyclic group whose order is relatively prime to $p$.
 
 \textbf{Case II}:\\
 \\
-Claim: \textit{The order of $G$ is relatively prime to $p$ and either $G \cong SL(2,3)$ or $G$ is the group of order $4n$, where $n$ is odd, defined by the presentation:}
+Claim: \textit{The order of $G$ is relatively prime to $p$ and either $G \cong \SL_2(3)$ or $G$ is the group of order $4n$, where $n$ is odd, defined by the presentation:}
 \begin{align*} \langle \, x,y \, | \, x^n = y^2, \, yxy^{-1} = x^{-1} \, \rangle. \\
 \end{align*}
 \begin{proof} Here, $s = 1 = t$. Equation (\ref{classeq}) simplifies to:
@@ -372,7 +372,7 @@ Observe that $x(yx) = x (x^{-1} y) = y$. Thus without loss of generality we can 
 \begin{align*} \langle x, y, r \, |  \, x^2= y^2, \, y x y^{-1} = x^{-1}, \, r^3 = I, \, r x r^{-1} = y, \, r y r^{-1} = xy, \, r xy r^{-1} = x \rangle,
 \end{align*}
 
-By Lemma \ref{ordersl2q}, we observe that the order of $SL(2,3)$ is $3(3^2-1) = 24$. Now consider the following the elements of $SL(2,3)$:
+By Lemma \ref{ordersl2q}, we observe that the order of $\SL_2(3)$ is $3(3^2-1) = 24$. Now consider the following the elements of $\SL_2(3)$:
 \begin{align*} a = \begin{bmatrix} 1 & 1 \\ 1 & 2 \end{bmatrix}, \qquad b = \begin{bmatrix} 0 & 2 \\ 1 & 0 \end{bmatrix}, \qquad c = \begin{bmatrix} 2 & 1 \\ 2 & 0 \end{bmatrix}.
 \end{align*}
 
@@ -381,8 +381,8 @@ One can verify easily that each of the following relations hold:
 \\ c a c^{-1} &= b,  \qquad \; \: c b c^{-1} = ab, \qquad \! c ab c^{-1} = a.
 \end{align*}
 
-Since $G$ and $SL(2,3)$ have the same order and since their respective generators satisfy the corresponding relations, there is an isomorphism mapping $x \mapsto a$, $y \mapsto b$ and $r \mapsto c$. Thus,
-\begin{align*} G = \langle x, y, r \rangle \cong \langle a, b, c \rangle = SL(2,3). 
+Since $G$ and $\SL_2(3)$ have the same order and since their respective generators satisfy the corresponding relations, there is an isomorphism mapping $x \mapsto a$, $y \mapsto b$ and $r \mapsto c$. Thus,
+\begin{align*} G = \langle x, y, r \rangle \cong \langle a, b, c \rangle = \SL_2(3). 
 \end{align*} 
 \end{proof}
 \vspace{-1mm}
@@ -408,7 +408,7 @@ Thus $k = 1$ and equation (\ref{case3a}) reduces to $1/q = 1/g$, that is $g=q$.
 \vspace{-1mm}
 \textbf{Case IV}:\\
 \\
-Claim: \textit{Either $p=2$ and $G$ is isomorphic to the dihedral group of order $2n$, where $n$ is odd, or $p=3$ and $G \cong SL(2,3)$.}
+Claim: \textit{Either $p=2$ and $G$ is isomorphic to the dihedral group of order $2n$, where $n$ is odd, or $p=3$ and $G \cong \SL_2(3)$.}
 \\
 \begin{proof} Here, $s = 0$ and $t = 1$. Equation (\ref{classeq}) simplifies to:
 \begin{align}\label{case4a} 1 &= \frac{1}{g} + \frac{q-1}{qk} +  \frac{g_1-1}{2g_1}, \nonumber
@@ -563,7 +563,7 @@ This means that $g_1 = 2$ and $g = 12$. Since $q=3$ we have $p=3$ and $e=2$. Fur
 % \end{tikzpicture}
 % \end{center}
 
-Notice that Fig 5 is almost identical to Fig 2 in the study of Case IIb. This is a strong indication that these 2 cases are isomorphic to each other and hence also to $SL(2,3)$, albeit not a proof. However, an argument analogous to the one outlined in the proof of Case IIb can be directly applied here with a simple renaming of the conjugacy classes and representatives. It would be tedious to repeat this argument again and I will leave it to the reader to verify.
+Notice that Fig 5 is almost identical to Fig 2 in the study of Case IIb. This is a strong indication that these 2 cases are isomorphic to each other and hence also to $\SL_2(3)$, albeit not a proof. However, an argument analogous to the one outlined in the proof of Case IIb can be directly applied here with a simple renaming of the conjugacy classes and representatives. It would be tedious to repeat this argument again and I will leave it to the reader to verify.
 
 \end{proof}
 
@@ -571,11 +571,11 @@ Notice that Fig 5 is almost identical to Fig 2 in the study of Case IIb. This is
 \\
 Claim: \textit{We have one of the following three cases: \\
 \\
-(i) $G \cong SL(2,\mathbb{F}_q)$. \\
+(i) $G \cong \SL_2(\mathbb{F}_q)$. \\
 \\
-(ii) $G \cong \langle SL(2,\mathbb{F}_q), d_\pi \rangle$, where $\pi \in \mathbb{F}_{q^2} \setminus \mathbb{F}_q$, $\pi^2 \in \mathbb{F}_q$ and $SL(2,\mathbb{F}_q) \vartriangleleft G$. \\
+(ii) $G \cong \langle \SL_2(\mathbb{F}_q), d_\pi \rangle$, where $\pi \in \mathbb{F}_{q^2} \setminus \mathbb{F}_q$, $\pi^2 \in \mathbb{F}_q$ and $\SL_2(\mathbb{F}_q) \vartriangleleft G$. \\
 \\
-(iii) $G \cong SL(2,5)$ and $p=3=q$.}
+(iii) $G \cong \SL_2(5)$ and $p=3=q$.}
 
 \begin{proof} Here, $s = 0$ and $t = 2$. Equation (\ref{classeq}) simplifies to:
 \begin{align} \label{case5a} 1 &= \frac{1}{g} + \frac{q-1}{qk} + \frac{g_1 -1}{2g_1} + \frac{g_2 -1}{2g_2}, \nonumber
@@ -784,7 +784,7 @@ Also, the following polynomial has at most $q-1$ roots in $F$.
 \end{align}
 By \eqref{subfield}, $\mathbb{F}_q \subset F$ and each element of $\mathbb{F}^*_q$ is a root of \eqref{rootsx}. Thus each $\omega$ of $\mathbb{M}$ is in $\mathbb{F}^*_q$ and since they have the same cardinality, $\mathbb{M} = \mathbb{F}^*_q$. By \eqref{mattr2}, $\lambda$ also ranges over $\mathbb{F}^*_q$ and considering also that $\lambda$ can be 0, we have $\mathbb{N} =\mathbb{F}_q$. \\
 \\
-Observe that each element of ${\widetilde{G}}$ is either of the form $t_\lambda d_\omega$ or $t_\lambda d_\omega w t_\mu$ (where $\lambda, \mu \in \mathbb{F}_q$, $\omega \in \mathbb{F}^*_q$), so ${\widetilde{G}} \subset SL(2,\mathbb{F}_q)$. Also, Propostion \ref{ordersl2q} gives that, $|SL(2,\mathbb{F}_q)| = q(q^2-1) = |{\widetilde{G}}|$, so ${\widetilde{G}} = SL(2,\mathbb{F}_q)$. Since ${\widetilde{G}}$ is conjugate in $L$ to $G$, we have $G \cong SL(2,\mathbb{F}_q)$  as desired. \\
+Observe that each element of ${\widetilde{G}}$ is either of the form $t_\lambda d_\omega$ or $t_\lambda d_\omega w t_\mu$ (where $\lambda, \mu \in \mathbb{F}_q$, $\omega \in \mathbb{F}^*_q$), so ${\widetilde{G}} \subset \SL_2(\mathbb{F}_q)$. Also, Propostion \ref{ordersl2q} gives that, $|\SL_2(\mathbb{F}_q)| = q(q^2-1) = |{\widetilde{G}}|$, so ${\widetilde{G}} = \SL_2(\mathbb{F}_q)$. Since ${\widetilde{G}}$ is conjugate in $L$ to $G$, we have $G \cong \SL_2(\mathbb{F}_q)$  as desired. \\
 \\
 Let \textbf{Case Vb} be the case when $i = 2 = e$. This time the order of each element of $K$ divides $2(q-1)$, so for each $\omega \in \mathbb{M}$,
 \begin{align}\label{roots} \omega^{2(q-1)} = 1.
@@ -793,14 +793,14 @@ As in the case of $i=1$, each element of $\mathbb{F}^*_q$ is a root of the polyn
 \begin{align*} d_\omega^{-1} t_\lambda d_\omega = t_{\omega^2 \lambda}.
 \end{align*}
 Hence since $t_0, t_1 \in Q$, it follows that $t_{\omega^2} \in Q$ for each $\omega^2 \in \mathbb{F}^*_q$, thus $\mathbb{N} = \mathbb{F}_q$. Since $K$ is a cyclic group of order $2(q-1)$, so too is $\mathbb{M}$. Let $\pi$ be a generator of $\mathbb{M}$. It follows that $\pi^2$ has order $q-1$ and is therefore a generator of $\mathbb{F}^*_q$. Since $K = \langle d_\pi \rangle$, we have:
-\begin{align*} {\widetilde{G}} = \langle t_\lambda, d_\pi, w : \lambda \in \mathbb{F}_q \rangle = \langle SL(2,\mathbb{F}_q), d_\pi \rangle.
+\begin{align*} {\widetilde{G}} = \langle t_\lambda, d_\pi, w : \lambda \in \mathbb{F}_q \rangle = \langle \SL_2(\mathbb{F}_q), d_\pi \rangle.
 \end{align*}
-Again, since ${\widetilde{G}}$ is conjugate in $L$ to $G$, we have $G \cong \langle SL(2,\mathbb{F}_q), d_\pi \rangle$ as desired. Now we take an arbitrary $x$ from $SL(2,\mathbb{F}_q)$ and conjugate it by $d_\pi$.
+Again, since ${\widetilde{G}}$ is conjugate in $L$ to $G$, we have $G \cong \langle \SL_2(\mathbb{F}_q), d_\pi \rangle$ as desired. Now we take an arbitrary $x$ from $\SL_2(\mathbb{F}_q)$ and conjugate it by $d_\pi$.
 \begin{align*} d_\pi x d_\pi^{-1} &= \begin{bmatrix} \pi & 0 \\ 0 & \pi^{-1} \end{bmatrix} \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}\begin{bmatrix} \pi^{-1} & 0 \\ 0 & \pi \end{bmatrix}
 \\[1.5ex] &=  \begin{bmatrix} \pi & 0 \\ 0 & \pi^{-1} \end{bmatrix}  \begin{bmatrix} \alpha \pi^{-1} & \beta \pi \\ \gamma \pi^{-1} & \delta \pi \end{bmatrix}
 \\[1.5ex] &= \begin{bmatrix} \alpha & \beta \pi^{-2} \\ \gamma \pi^{2} & \delta \end{bmatrix}. 
 \end{align*}
-Since $\pi^2 \in \mathbb{F}_q$, we have that $d_\pi x d_\pi^{-1} \in SL(2,\mathbb{F}_q)$ and since $x$ was chosen arbitrarily, $d_\pi$ belongs to the normaliser of $SL(2,\mathbb{F}_q)$ in $\langle SL(2,\mathbb{F}_q), d_\pi \rangle$. This shows that $SL(2,\mathbb{F}_q) \vartriangleleft \langle SL(2,\mathbb{F}_q), d_\pi \rangle$ as desired. \\
+Since $\pi^2 \in \mathbb{F}_q$, we have that $d_\pi x d_\pi^{-1} \in \SL_2(\mathbb{F}_q)$ and since $x$ was chosen arbitrarily, $d_\pi$ belongs to the normaliser of $\SL_2(\mathbb{F}_q)$ in $\langle \SL_2(\mathbb{F}_q), d_\pi \rangle$. This shows that $\SL_2(\mathbb{F}_q) \vartriangleleft \langle \SL_2(\mathbb{F}_q), d_\pi \rangle$ as desired. \\
 \\
  \space \textbf{Cases Vc and Vd:} $\pmb{q \leq 3}$. Since $q - 1 = d g_1 \geq 2$ by \eqref{6.14}, $q$ cannot equal 2. So $q = 3 = p$, $e = 2$ and thus $g_1 = 2$. The inequalities in \eqref{6.13} and \eqref{6.16b} give,
 \begin{align*} 2 < g_2 < 6.
@@ -812,13 +812,13 @@ Also, since $g_2$ is relatively prime to $p=3$, we have $g_2 = 4$ or 5. Let \tex
 which gives $g = 24$. Observe that,
 \begin{align*} |K| = 4 = i(q-1), \qquad |G| = 48 = iq(q^2-1),
 \end{align*}
-where $i=2$, thus we have the situation as described in Case Vb. That is, $G \cong \langle SL(2,\mathbb{F}_q), d_\pi \rangle$ with $q=3$.\\
+where $i=2$, thus we have the situation as described in Case Vb. That is, $G \cong \langle \SL_2(\mathbb{F}_q), d_\pi \rangle$ with $q=3$.\\
 \\
 Alternatively, \textbf{Case Vd} occurs when $g_2 = 5$. \eqref{case5b} becomes,
 \begin{align*} \frac{1}{10} = \frac{1}{g} + \frac{1}{4} - \frac{1}{6}.
 \end{align*}
 
-Thus $g = 60 $ and $|G| = 120$. We verify, using Proposition \ref{ordersl2q}, that $SL(2,5)$ has the same order as $G$, that is $|SL(2,5)| = 5(5^2-1) =120$. Observe that,
+Thus $g = 60 $ and $|G| = 120$. We verify, using Proposition \ref{ordersl2q}, that $\SL_2(5)$ has the same order as $G$, that is $|\SL_2(5)| = 5(5^2-1) =120$. Observe that,
 \begin{align*} |\mathcal{C}_1| &= [G : N_G(A_1)] = \frac{eg}{2eg_1} = 15,
 \\[1ex] |\mathcal{C}_2| &= [G : N_G(A_2)] = \frac{eg}{2eg_2} = 6,
 \\[1ex] |\mathcal{C}_{Q \times Z}| &= [G : N_G(Q \times Z)] = \frac{eg}{ekq} = 10.
@@ -841,7 +841,7 @@ Since $1+15+24+20=60$, all elements of $G / Z$ are accounted for. \\
 \\
 Let $N$ be a normal subgroup of $G / Z$. Observe that each non-central element of $A_2 / Z$ is a generator of it, so if $N$ contains one non-central element of $A_2 / Z$, then it contains the whole of it, due to the closure of the group under multiplication and the fact that each element of $A_2 / Z$ is a power of any non-central element. Also, it can easily be seen that normal subgroups are composed of whole conjugacy classes, so since $N$ is normal in $G$, if it contains $A_2 / Z$, it must contain all subgroups conjugate to $A_2 / Z$. The consequence of this is that if $N$ has an element of order 5, then it contains all 24 elements of $G / Z$ of order 5. Similarly, if it contains an element of order 2, it contains all 15 of them and if it contains an element of order 3, it contains all 20 of them. This means that $|N|$ is partitioned by some or all of the elements in $\{ 1, 15, 20, 24 \}$. Bearing in mind that the order of $N$ divides 60 and that $N$ contains the identity element, this means that $N$ is equal to either the identity element or it is the whole of $G / Z$, since it's easy to see that no other partition of those numbers divides 60. Thus $G / Z$ has no non-trivial normal subgroups and is simple. \\
 \\
-By \cite[p.145]{dummit}, the only simple groups of order 60 are those isomorphic to the alternating group $A_5$ (not to be confused with an element of $\mathfrak{M}$), thus $G / Z \cong A_5$. Since $Z \cong \mathbb{Z}_2$, we have that $G$ is isomorphic to a central extension of $A_5$ which, according to Schur \cite{schur}, is unique and isomorphic to $SL(2,5)$ as desired. The proofs of these 2 claims are beyond the scope of this thesis. \qedhere
+By \cite[p.145]{dummit}, the only simple groups of order 60 are those isomorphic to the alternating group $A_5$ (not to be confused with an element of $\mathfrak{M}$), thus $G / Z \cong A_5$. Since $Z \cong \mathbb{Z}_2$, we have that $G$ is isomorphic to a central extension of $A_5$ which, according to Schur \cite{schur}, is unique and isomorphic to $\SL_2(5)$ as desired. The proofs of these 2 claims are beyond the scope of this thesis. \qedhere
 
 \end{proof}
 
@@ -853,7 +853,7 @@ Claim: \textit{We have one of the following three cases: \\
 \\
 (ii) $G = \widehat{S}_4$. \\
 \\
-(iii) $G \cong SL(2,5)$ and $p$ does not divide $|G|$. \\
+(iii) $G \cong \SL_2(5)$ and $p$ does not divide $|G|$. \\
 \\
 Where $\widehat{S}_4$ is one of the representation groups of the symmetric group $S_4$ in which the transpositions correspond to the elements of order 4.} \\
 
@@ -935,30 +935,30 @@ We conclude that $ker(\phi) = \{ I \}$ and so $\phi$ is injective. Since $G / Z$
  \space \textbf{Case VIc:} $\pmb{g_1 = 2, g_2 = 3, g_3 = 5}$.  In this case \eqref{case6b} becomes,
 \begin{align*} \frac{1}{4} + \frac{1}{6} + \frac{1}{10} &= \frac{1}{g} + \frac{1}{2}.
 \end{align*}
-Thus $|g| = 60$ and $|G| = 120$. Observe that a simple relabelling of the maximal abelian subgroups gives the same situation as described in \textbf{Case Vd:}. Thus $G \cong SL(2,5)$, however in this case $p$ does not divide $|G|$.
+Thus $|g| = 60$ and $|G| = 120$. Observe that a simple relabelling of the maximal abelian subgroups gives the same situation as described in \textbf{Case Vd:}. Thus $G \cong \SL_2(5)$, however in this case $p$ does not divide $|G|$.
 
 \end{proof}
 
 \section{Dickson's Classification Theorem}
 
-We now state the main result of this paper, Dickson's classification of finite subgroups of $SL(2,F)$. Observe that it is not the focus of this paper to determine whether the following groups actually exist, rather that this theorem can be regarded as an \textit{upper bound}, so to speak, of the only possible subgroups of $SL(2,F)$.\\
+We now state the main result of this paper, Dickson's classification of finite subgroups of $\SL_2(F)$. Observe that it is not the focus of this paper to determine whether the following groups actually exist, rather that this theorem can be regarded as an \textit{upper bound}, so to speak, of the only possible subgroups of $\SL_2(F)$.\\
 
-\begin{theorem}\label{mainresult} Let $F$ be an arbitary algebraically closed field of characteristic $p$. Any finite subgroup $G$ of $SL(2,F)$ is isomorphic to one of the following groups. \vspace{3mm} \\
+\begin{theorem}\label{mainresult} Let $F$ be an arbitary algebraically closed field of characteristic $p$. Any finite subgroup $G$ of $\SL_2(F)$ is isomorphic to one of the following groups. \vspace{3mm} \\
 \textbf{Class I}: When $p=0$ or $|G|$ is relatively prime to $p$: \vspace{1mm} \\
 (i) A cyclic group. \vspace{3mm} \\
 (ii) The group defined by the presentation:
 \begin{equation*} \langle \, x,y \, | \, x^n = y^2, \, yxy^{-1} = x^{-1} \, \rangle.
 \end{equation*}
-(iii) The Special Linear Group $SL(2,3)$. \vspace{3mm} \\
-(iv) The Special Linear Group $SL(2,5)$. \vspace{3mm} \\
+(iii) The Special Linear Group $\SL_2(3)$. \vspace{3mm} \\
+(iv) The Special Linear Group $\SL_2(5)$. \vspace{3mm} \\
 (v) $\widehat{S}_4$, the representation group of $S_4$ in which the transpositions correspond to the elements of order $4$. \\
 \\
 \textbf{Class II}: When $|G|$ is divisible by $p$: \vspace{1mm} \\
 (vi) $Q$ is elementary abelian, $Q \vartriangleleft G$ and $G/Q$ is a cyclic group whose order is relatively prime to $p$. \vspace{3mm} \\
 (vii) $p=2$ and $G$ is a dihedral group of order $2n$, where $n$ is odd. \vspace{3mm} \\
-(viii) The Special Linear Group $SL(2,5)$, where $p=3=q$. \vspace{3mm} \\
-(ix) The Special Linear Group $SL(2,\mathbb{F}_q)$. \vspace{3mm} \\
-(x) The group $\langle SL(2,\mathbb{F}_q), d_\pi \rangle$, where $SL(2,\mathbb{F}_q) \vartriangleleft \langle SL(2,\mathbb{F}_q), d_\pi \rangle$. \vspace{3mm} \\
+(viii) The Special Linear Group $\SL_2(5)$, where $p=3=q$. \vspace{3mm} \\
+(ix) The Special Linear Group $\SL_2(\mathbb{F}_q)$. \vspace{3mm} \\
+(x) The group $\langle \SL_2(\mathbb{F}_q), d_\pi \rangle$, where $\SL_2(\mathbb{F}_q) \vartriangleleft \langle \SL_2(\mathbb{F}_q), d_\pi \rangle$. \vspace{3mm} \\
 
 Here, $Q$ is a Sylow $p$-subgroup of $G$ of order $q$, $\mathbb{F}_q$ is a field of $q$ elements, $\mathbb{F}_{q^2}$ is a field of $q^2$ elements, $\pi \in \mathbb{F}_{q^2} \setminus \mathbb{F}_q$ and $\pi^2 \in \mathbb{F}_q$. \vspace{3mm}
 \end{theorem}

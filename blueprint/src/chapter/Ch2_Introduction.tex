@@ -2,8 +2,19 @@
 
 \section{What is the formalization of mathematics?}
 
-Formalization of mathematics is the art of teaching a computer what a piece of mathematics means, that is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. 
+Formalization of mathematics is the art of teaching a computer what a piece of mathematics means.
 
+That is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. 
+
+Typically one formalizes mathematics with the help of a proof assistant or interactive theorem prover, a piece of software which enables a human to write down mathematics and have the software verify the claims.
+
+There exist many proof assistants, such examples are Lean, Isabelle, Coq, Metamath, etc.
+
+For this project I have opted to use Lean due to its rapid growing mathematics library and its dependent type theory. I shall explain in more detail these last two reasons, but first I will comment on what Lean is.
+
+\subsubsection{What is Lean?}
+
+Lean is both a functional programming language and an interactive theorem prover that is being developed at Microsoft research and AWS by Leonardo de Moura and his team. It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems where correctness is of extreme
 TODO:
 
 - Brief explanation of type theory and curry-howard isomorphism.
@@ -11,10 +22,10 @@ TODO:
 - Example of formal proof and comparison with informal proof.
 
 
-% \begin{minted}{lean}
-% theorem add_comm (a b : Nat) : a + b = b + a :=
-%   Nat.add_comm a b
-% \end{minted}
+% \begin{code}
+% theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
+%   Nat.add\textunderscore comm a b
+% \end{code}
 
 
 \section{Fermat's Last Theorem}

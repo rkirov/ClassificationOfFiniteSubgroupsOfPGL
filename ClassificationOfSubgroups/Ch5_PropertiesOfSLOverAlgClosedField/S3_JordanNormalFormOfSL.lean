@@ -16,9 +16,9 @@ open SpecialMatrices SpecialSubgroups
 universe u
 
 variable
-  (F : Type u) [Field F]
+  {F : Type u} [Field F]
   (n : Type u) [Fintype n]
-  (R : Type u) [CommRing R]
+  {R : Type u} [CommRing R]
   {G : Type u} [Group G]
 
 @[simp]
@@ -116,15 +116,15 @@ lemma det_eq_mul_diag_of_lower_triangular (S : SL(2,F)) (hβ : S.1 0 1 = 0) :
   exact det_eq_one
 
 
-lemma SpecialLinearGroup.fin_two_diagonal_iff (S : SL(2,F)) :
-  S 0 1 = 0 ∧ S 1 0 = 0 ↔ ∃ δ : Fˣ, d δ = S := by
+lemma SpecialLinearGroup.fin_two_diagonal_iff (x : SL(2,F)) :
+  x 0 1 = 0 ∧ x 1 0 = 0 ↔ ∃ δ : Fˣ, d δ = x := by
   constructor
   · rintro ⟨hβ, hγ⟩
-    rcases get_entries F S with ⟨α, β, γ, δ, hα, -, -, hδ, -⟩
-    have det_eq_mul_diagonal := det_eq_mul_diag_of_lower_triangular F S hβ
+    rcases get_entries x with ⟨α, β, γ, δ, hα, -, -, hδ, -⟩
+    have det_eq_mul_diagonal := det_eq_mul_diag_of_lower_triangular x hβ
     have α_is_unit : IsUnit α := isUnit_of_mul_eq_one α δ (hα ▸ hδ ▸ det_eq_mul_diagonal)
     have δ_is_unit : IsUnit δ := isUnit_of_mul_eq_one_right α δ (hα ▸ hδ ▸ det_eq_mul_diagonal)
-    have δ_ne_zero : S.1 1 1 ≠ 0 := by exact IsUnit.ne_zero <| hδ.symm ▸ δ_is_unit
+    have δ_ne_zero : x.1 1 1 ≠ 0 := by exact IsUnit.ne_zero <| hδ.symm ▸ δ_is_unit
     use α_is_unit.unit
     rw [mul_eq_one_iff_eq_inv₀ δ_ne_zero] at det_eq_mul_diagonal
     ext <;> simp [d, hα, hβ, hγ, det_eq_mul_diagonal]
@@ -133,15 +133,15 @@ lemma SpecialLinearGroup.fin_two_diagonal_iff (S : SL(2,F)) :
     rcases h with ⟨-, h₁, h₂, -⟩
     split_ands <;> simp [d, ← h₁, ← h₂]
 
-lemma SpecialLinearGroup.fin_two_antidiagonal_iff (S : SL(2,F)) :
-  S 0 0 = 0 ∧ S 1 1 = 0 ↔ ∃ δ : Fˣ, (d δ) * w = S := by
+lemma SpecialLinearGroup.fin_two_antidiagonal_iff (x : SL(2,F)) :
+  x 0 0 = 0 ∧ x 1 1 = 0 ↔ ∃ δ : Fˣ, (d δ) * w = x := by
   constructor
   · rintro ⟨hα, hδ⟩
-    have det_eq_one : det (S : Matrix (Fin 2) (Fin 2) F) = 1 := by rw [SpecialLinearGroup.det_coe]
+    have det_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by rw [SpecialLinearGroup.det_coe]
     rw [det_fin_two, hα, hδ, zero_mul, zero_sub, ← neg_mul, neg_mul_comm] at det_eq_one
-    have β_is_unit : IsUnit (S 0 1) := by exact isUnit_of_mul_eq_one (S 0 1) (-S 1 0) det_eq_one
+    have β_is_unit : IsUnit (x 0 1) := by exact isUnit_of_mul_eq_one (x 0 1) (-x 1 0) det_eq_one
     rw [← neg_mul_comm] at det_eq_one
-    have neg_β_inv_eq : -(S 0 1)⁻¹ = S 1 0 := by
+    have neg_β_inv_eq : -(x 0 1)⁻¹ = x 1 0 := by
       rw [neg_inv]
       refine inv_eq_of_mul_eq_one_right det_eq_one
     use β_is_unit.unit
@@ -153,28 +153,29 @@ lemma SpecialLinearGroup.fin_two_antidiagonal_iff (S : SL(2,F)) :
 
 
 lemma SpecialLinearGroup.fin_two_shear_iff (S : SL(2,F)) :
-  S 0 0 = S 1 1 ∧ S 0 1 = 0 ↔ (∃ τ, t τ = S) ∨ ∃ τ, -t τ = S := by
+  S 0 0 = S 1 1 ∧ S 0 1 = 0 ↔ (∃ σ, s σ = S) ∨ ∃ σ, -s σ = S := by
   constructor
   · rintro ⟨α_eq_δ, β_eq_zero⟩
-    have α_eq_one_or_neg_one := α_eq_δ.symm ▸ det_eq_mul_diag_of_lower_triangular F S β_eq_zero
+    have α_eq_one_or_neg_one := α_eq_δ.symm ▸ det_eq_mul_diag_of_lower_triangular S β_eq_zero
     rw [← sq, sq_eq_one_iff] at α_eq_one_or_neg_one
     rcases α_eq_one_or_neg_one with (α_eq_one | α_eq_neg_one)
     · left
       use S.1 1 0
-      ext <;> simp [t, α_eq_one, β_eq_zero, α_eq_δ ▸ α_eq_one]
+      ext <;> simp [s, α_eq_one, β_eq_zero, α_eq_δ ▸ α_eq_one]
     · right
       use - S.1 1 0
-      ext <;> simp [t, α_eq_neg_one, β_eq_zero, α_eq_δ ▸ α_eq_neg_one]
-  · rintro (⟨τ,h⟩ | ⟨τ, h⟩)
+      ext <;> simp [s, α_eq_neg_one, β_eq_zero, α_eq_δ ▸ α_eq_neg_one]
+  · rintro (⟨σ,h⟩ | ⟨σ, h⟩)
     repeat' rw [SpecialLinearGroup.fin_two_ext_iff] at h; rcases h with ⟨hα, hβ, -, hδ⟩
-    · simp [← hα, ← hδ, ← hβ, t]
-    · simp [← hα, ← hδ, ← hβ, t]
+    · simp [← hα, ← hδ, ← hβ, s]
+    · simp [← hα, ← hδ, ← hβ, s]
 
 
 
-/- A 2×2 matrix, G is conjugate to an upper triangular if there exists an invertible matrix
- such that when conjugated the bottom left entry is annhilated
-  -/
+/-
+A 2×2 matrix, G is conjugate to an upper triangular if there exists an invertible matrix
+such that when conjugated the bottom left entry is annhilated
+-/
 lemma isConj_upper_triangular_iff [DecidableEq F] [IsAlgClosed F]
   {M : Matrix (Fin 2) (Fin 2) F} :
   (∃ a b d , ∃ (C : SL(2,F)), (C  * M * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d]) ↔
@@ -209,13 +210,13 @@ lemma exists_root_of_special_poly [IsAlgClosed F] (a b c d : F) (hb : b ≠ 0):
   ring_nf at hx ⊢
   exact hx
 
-lemma Matrix.conj_t_eq {x : F} {a b c d : F} :
-  t x * !![a, b; c, d] * t (-x) =
+lemma Matrix.conj_s_eq {x : F} {a b c d : F} :
+  s x * !![a, b; c, d] * s (-x) =
   !![-b * x + a, b; (-b) * x * x + (a -d) * x + c, b*x + d] := by
-  simp [SpecialMatrices.t]
+  simp [s]
   ext; ring_nf
 
-def SpecialLinearGroup.mk' {n : ℕ}(M : Matrix (Fin n) (Fin n) F) (h : det M = 1) : SL(n, F) :=
+def SpecialLinearGroup.mk' {n : ℕ} (M : Matrix (Fin n) (Fin n) F) (h : det M = 1) : SL(n, F) :=
   ⟨M, h⟩
 
 -- Note: I do not use IsConj as the the matrix which acts by conjugation has determinant 1
@@ -232,18 +233,18 @@ theorem isTriangularizable_of_algClosed [DecidableEq F] [IsAlgClosed F]
   rw [isConj_upper_triangular_iff]
   -- If β ≠ 0 then we solve the quadratic to force the bottom left entry to be 0
   by_cases hβ : β ≠ 0
-  · obtain ⟨x, hx⟩ := by apply exists_root_of_special_poly F α β γ δ hβ
-    use t x
-    simp [M_coe_eq, t, Matrix.conj_t_eq]
-    ring_nf at hx ⊢
-    exact hx
+  · obtain ⟨σ, hσ⟩ := exists_root_of_special_poly α β γ δ hβ
+    use s σ
+    simp [M_coe_eq, s, Matrix.conj_s_eq]
+    ring_nf at hσ ⊢
+    exact hσ
   simp at hβ
   -- If β = 0 then we solve the linear polynomial if α - δ ≠ 0
   by_cases had : α - δ ≠ 0
-  · let x := -γ / (α - δ)
-    use t x
-    simp [M_coe_eq, Matrix.conj_t_eq]
-    field_simp [hβ, x]
+  · let σ := -γ / (α - δ)
+    use s σ
+    simp [M_coe_eq, Matrix.conj_s_eq]
+    field_simp [hβ, σ]
     ring_nf
   -- If β = 0 and α = δ
   · use w
@@ -303,10 +304,10 @@ lemma IsConj_coe {M N : Matrix (Fin 2) (Fin 2) F} (hM : det M = 1) (hN : det N =
 /-
 Lemma 1.5.
 Each element of SL(2,F) is conjugate to either
-D δ for some δ ∈ Fˣ, or to  ± T τ for some τ ∈ F.
+D δ for some δ ∈ Fˣ, or to  ± T σ for some σ ∈ F.
 -/
-theorem SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t [DecidableEq F] [IsAlgClosed F] (S : SL(2, F)) :
-  (∃ δ : Fˣ, IsConj (d δ) S) ∨ (∃ τ : F, IsConj (t τ) S) ∨ (∃ τ : F, IsConj (- t τ) S) := by
+theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s [DecidableEq F] [IsAlgClosed F] (S : SL(2, F)) :
+  (∃ δ : Fˣ, IsConj (d δ) S) ∨ (∃ σ : F, IsConj (s σ) S) ∨ (∃ σ : F, IsConj (- s σ) S) := by
   -- S is conjugate to an upper triangular matrix
   have S_IsConj_upper_triangular :
     ∃ a b d, ∃ C : SL(2,F), (C * S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
@@ -335,9 +336,9 @@ theorem SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t [DecidableEq F] [IsAlgClosed F]
       rw [a_eq_one] at h
       have det_eq_one'' : det !![1, b; 0, 1] = 1 := by norm_num
       use -b
-      have isConj₁ : ∃ C : SL(2,F), C * (t (-b)) * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
+      have isConj₁ : ∃ C : SL(2,F), C * (s (-b)) * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
         apply IsConj_coe
-        exact lower_triangular_isConj_upper_triangular _
+        exact lower_triangular_isConj_upper_triangular
       have isConj₂ : ∃ C : SL(2,F), C * S * C⁻¹ = ⟨!![1, b; 0, 1], det_eq_one''⟩ := by
         use C
         apply SpecialLinearGroup.eq_of
@@ -347,12 +348,12 @@ theorem SL2_IsConj_d_or_IsConj_t_or_IsConj_neg_t [DecidableEq F] [IsAlgClosed F]
     · right
       rw [a_eq_neg_one] at h
       have det_eq_one'' : det !![-1, b; 0, -1] = 1 := by norm_num
-      have T_eq : - t b = !![-1, 0; -b, -1] := by simp [t]
+      have S_eq : - s b = !![-1, 0; -b, -1] := by simp [s]
       use b
-      have isConj₁ : ∃ C : SL(2,F), C * (-t b) * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
+      have isConj₁ : ∃ C : SL(2,F), C * (-s b) * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
         apply IsConj_coe
-        simp only [T_eq]
-        exact lower_triangular_isConj_upper_triangular _
+        simp only [S_eq]
+        exact lower_triangular_isConj_upper_triangular
       have isConj₂ : ∃ C : SL(2,F), C * S * C⁻¹ = ⟨!![-1, b; 0, -1], det_eq_one''⟩ := by
         use C
         apply SpecialLinearGroup.eq_of

@@ -1,4 +1,5 @@
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
+import Mathlib.GroupTheory.ClassEquation
 
 set_option linter.style.longLine true
 set_option autoImplicit false
@@ -8,93 +9,70 @@ set_option synthInstance.maxHeartbeats 0
 
 universe u
 
-variable (F : Type u) [Field F]
 
-open Matrix MatrixGroups Subgroup MulAut MaximalAbelianSubgroup
+open Matrix MatrixGroups Subgroup MulAut MaximalAbelianSubgroup Pointwise
 
-
-
-
-/- Lemma 2.2: Every finite subgroup of a multiplicative group of a field is cyclic. -/
--- lemma IsCyclic_of_finite_subgroup_units (H : Subgroup Fˣ) [Finite H] : IsCyclic H :=
---   subgroup_units_cyclic H
-
-open SpecialSubgroups
-
-
-/- Conjugacy of Maximal Abelian subgroups -/
-/-
-Definition. The set Ci = Clᵢ = {x Aᵢx⁻¹ : x ∈ G} is called the conjugacy class of
-A ∈ M.
--/
-
-/- We define the conjugacy class of a maximal abelian subgroup of `G`, `Aᵢ` -/
-def Cᵢ {F : Type*} [Field F] (Aᵢ : Subgroup SL(2,F)) := (ConjClasses Aᵢ)
-
-#check Cᵢ
 
 /- The non-central part of a subgroup -/
-def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) : Set G := {x : G | x ∈ H.carrier \ center G}
-
-
-def Cᵢ_noncentral (Aᵢ G : Subgroup SL(2,F)) := { K : Cᵢ Aᵢ // True }
-
-
-#check noncenter
-
-def noncenter_MaximalAbelianSubgroups {F : Type*} [Field F] (G : Subgroup SL(2,F)) :=
-  { noncenter K | K ∈ MaximalAbelianSubgroups G }
-
--- #leansearch "conjugacy class?"
-
-/- Let Aᵢ* be the non-central part of Aᵢ ∈ M -/
-
-#check ConjClasses
-#check ConjClasses.noncenter
-
-#check MulAction.card_eq_sum_card_group_div_card_stabilizer
+def Subgroup.noncenter {G : Type*} [Group G] (H : Subgroup G) : Set G :=
+  {x : G | x ∈ H.carrier \ center G}
 
 /- let M∗ be the set of all Aᵢ* and let Cᵢ* be the conjugacy class of Aᵢ* .-/
-namespace Noncenter
+def noncenter_MaximalAbelianSubgroups {F : Type*} [Field F] (G : Subgroup SL(2,F)) :=
+  { noncenter (K : Subgroup SL(2,F)) | K ∈ MaximalAbelianSubgroups G }
 
-protected def setoid (α : Type*) [Monoid α] : Setoid α where
-  r := IsConj
-  iseqv := ⟨IsConj.refl, IsConj.symm, IsConj.trans⟩
-
-/-- The quotient type of conjugacy classes of a group. -/
-def ConjClasses (α : Type*) [Monoid α] : Type _ :=
-  Quotient (Noncenter.setoid α)
-
-/- Define a setoid -/
-def SetoidOfMaximalAbelianSubgroup {G : Type*} [Group G] (H : Set G) : Setoid G where
- r := IsConj
- iseqv := {
-  refl := fun a => by exact ConjClasses.mk_eq_mk_iff_isConj.mp rfl,
-  symm := fun {x y} a ↦ id (IsConj.symm a),
-  trans := by exact fun {x y z} a a_1 ↦ IsConj.trans a a_1 }
-
-def ConjClassesOfMaximalAbelianSubgroup {G : Type*} [Group G] (H : Set G) : Type _ :=
-  Quotient (Noncenter.SetoidOfMaximalAbelianSubgroup H)
-
-
-end Noncenter
--- lemma theorem_2_4 {F : Type*} [Field F] {G : Subgroup SL(2,F)} [Finite G]
 
 /-
-Clᵢ = {x Aᵢx⁻¹ : x ∈ G}
-
-For some Ai ∈ M and A∗i ∈ M∗ let,
-Ci = ⋃ x ∈ G, x * Aᵢ * x⁻¹, and Cᵢ* = ⋃ x ∈ G, x Aᵢ* x⁻¹
-
-It’s evident that Cᵢ* = Cᵢ \ Z(SL(2,F)) and that there is a Cᵢ corresponding to each
-Cᵢ . Clearly we have the relation, |Cᵢ*| = |Aᵢ*||Clᵢ*|
+Definition. The set $\mathcal{C}(A) = Cl(A) = \{x A x^{-1} \; | \; x ∈ G \}$
+is called the conjugacy class of $A \in \mathcal{M}$.
 -/
+def ConjClassOfSet {G : Type*} [Group G] (A : Subgroup G) :=
+  { conj x • A | x : G }
 
-#leansearch "finite union?"
+def noncenter_ConjClassOfSet {G : Type*} [Group G] (A : Subgroup G)  :=
+  { conj x • noncenter A | x : G }
 
--- def C_i {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [Finite G] (hA : A ∈ MaximalAbelianSubgroups G) :=  ⋃ x ∈ G,
+/-
+Define the equivalence relation $\sim$ on $\mathcal{M}^*$ by
+$A_i \sim A_j$ if and only if $A_i = x A_j x^{-1}$ for some $x \in G$.
+ -/
+instance {F : Type*} [Field F] {G : Subgroup SL(2,F)} :
+  Setoid (noncenter_MaximalAbelianSubgroups G) where
+  r Aᵢ Aⱼ := IsConj Aᵢ.val Aⱼ.val
+  iseqv := {
+    refl _x := ConjClasses.mk_eq_mk_iff_isConj.mp rfl,
+    symm {_x _y} h := IsConj.symm h,
+    trans {_x _y _z} h₁ h₂ := IsConj.trans h₁ h₂
+    }
 
--- lemma card_noncentral_conjugacy_eq_mul_noncentral_MaxAbSub
+/- Define $C (A)^* = \bicup_{x \in G} x A  x^{-1}$ -/
+def noncenter_C {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [Finite G] :=
+  ⋃ x ∈ G, conj x • noncenter A
+
+/- We have the relation $|C_i^*| = |A_i^*| |\mathcal{C}_i^*|$ -/
+lemma card_noncenter_C_eq_card_A_mul_card_noncenter_ConjClass {F : Type*} [Field F]
+  (G A : Subgroup SL(2,F)) [Finite G] :
+  Nat.card (noncenter_C A G) =
+    Nat.card (noncenter A) * Nat.card (noncenter_ConjClassOfSet A) := by sorry
+
+/- $G \setminus Z(\textrm{SL}_2(F)) = \bigcup_{A \in \mathcal{M}} (C A)^*$ -/
+lemma subgroup_sdiff_center_eq_union_noncenter_C {F : Type*} [Field F] (G : Subgroup SL(2,F))
+  [Finite G] : G.carrier \ center (SL(2,F)) =
+    ⋃ A ∈ MaximalAbelianSubgroups G, noncenter_C A G := by sorry
+
+/- $|\mathcal{C}_i| = |C_i|$ -/
+lemma card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet {G : Type*} [Group G] (A : Subgroup G) :
+  Nat.card (ConjClassOfSet A) = Nat.card (noncenter_ConjClassOfSet A) := by sorry
+
+/- $|\mathcal{C}_i| = [G : N_G(A_i)]$ -/
+lemma card_ConjClassOfSet_eq_index_normalizer {F : Type*} [Field F] (A G : Subgroup SL(2,F)) :
+  Nat.card (ConjClassOfSet A) = index (normalizer (A.subgroupOf G)) := by sorry
+
+instance {L : Type*} [Group L] {G : Subgroup L} [Finite G] : Fintype (MaximalAbelianSubgroups G) := by sorry
+
+-- theorem card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer {F : Type*} [Field F] (G : Subgroup SL(2,F))  :
+--   Nat.card (G.carrier \ (center SL(2,F)).carrier : Set SL(2,F)) = ∑ A ∈ (MaximalAbelianSubgroups G), Nat.card A * index (normalizer (A.subgroupOf G)) := by sorry
+
 
 
 /- Lemma 2.5 N_G(A) = N_G(A*)-/

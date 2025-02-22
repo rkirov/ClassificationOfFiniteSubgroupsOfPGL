@@ -7,10 +7,7 @@ open Matrix MatrixGroups Subgroup Pointwise
 
 universe u
 
-variable
-  (F : Type u) [Field F]
-  (n : Type u) [Fintype n]
-  (R : Type u) [CommRing R]
+variable {R F : Type u} [CommRing R] [Field F]
 
 @[ext]
 lemma Matrix.fin_two_ext { R : Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
@@ -27,40 +24,41 @@ lemma SpecialLinearGroup.fin_two_ext (A B : SL(2,R))
 
 namespace SpecialMatrices
 
-def t {F : Type*} [Field F] (τ : F): SL(2,F) :=
-  ⟨!![1, 0; τ, 1], by simp⟩
+def s (σ : F): SL(2,F) :=
+  ⟨!![1, 0; σ, 1], by simp⟩
 
 section Shear
 
 @[simp]
-lemma t_zero_eq_one : t (0 : F) = 1 := by ext <;> rfl
+lemma s_zero_eq_one {F : Type*} [Field F] : s (0 : F) = 1 := by ext <;> rfl
 
-lemma t_eq_t_iff (τ μ : F) : t τ = t μ ↔ τ = μ := by
+lemma s_eq_t_iff (σ μ : F) : s σ = s μ ↔ σ = μ := by
   constructor
   · intro h
     rw [SpecialLinearGroup.fin_two_ext_iff] at h
     obtain ⟨-, -, h, -⟩ := h
     exact h
-  · exact fun a ↦ congrArg t a
+  · exact fun a ↦ congrArg s a
 
-lemma t_eq_one_iff (τ : F) : t τ = 1 ↔ τ = 0 := by
-  exact (t_zero_eq_one F).symm ▸ t_eq_t_iff F τ 0
+lemma s_eq_one_iff (σ : F) : s σ = 1 ↔ σ = 0 := by
+  exact (@s_zero_eq_one F).symm ▸ s_eq_t_iff σ 0
 
-@[simp]
-lemma t_inv (τ : F) : (t τ)⁻¹ = t (-τ) := by
-  simp [Matrix.SpecialLinearGroup.SL2_inv_expl, t]; rfl
 
 @[simp]
-lemma inv_neg_t_eq (τ : F) : (- t τ)⁻¹ = - t (-τ) := by
+lemma s_inv (σ : F) : (s σ)⁻¹ = s (-σ) := by
+  simp [Matrix.SpecialLinearGroup.SL2_inv_expl, s]; rfl
+
+@[simp]
+lemma inv_neg_t_eq (σ : F) : (- s σ)⁻¹ = - s (-σ) := by
   simp [Matrix.SpecialLinearGroup.SL2_inv_expl]
-  ext <;> simp [t]
+  ext <;> simp [s]
 
 -- (ii)
 @[simp]
-lemma t_mul_t_eq_t_add (τ μ : F) : t τ * t μ = t (τ + μ) := by ext <;> simp [t]
+lemma s_mul_s_eq_s_add (σ μ : F) : s σ * s μ = s (σ + μ) := by ext <;> simp [s]
 
 @[simp]
-lemma t_pow_eq_t_mul (τ : F) (n : ℕ) : (t τ)^n = t (n • τ) := by
+lemma s_pow_eq_s_mul (σ : F) (n : ℕ) : (s σ)^n = s (n • σ) := by
   induction n
   case zero => simp
   case succ k hk =>
@@ -69,11 +67,11 @@ lemma t_pow_eq_t_mul (τ : F) (n : ℕ) : (t τ)^n = t (n • τ) := by
     ring
 
 lemma order_t_eq_char {p : ℕ} [hp : Fact (Nat.Prime p)] [hC : CharP F p]
-  (τ : F) (hτ : τ ≠ 0) : orderOf (t τ) = p := by
+  (σ : F) (hσ : σ ≠ 0) : orderOf (s σ) = p := by
   refine orderOf_eq_prime ?hg ?hg1
   · simp
-  · contrapose! hτ
-    exact (t_eq_one_iff F τ).mp hτ
+  · contrapose! hσ
+    exact (s_eq_one_iff σ).mp hσ
 
 end Shear
 
@@ -90,7 +88,7 @@ lemma d_eq_inv_d_inv (δ : Fˣ) : d δ = (d δ⁻¹)⁻¹ := by
   rw [inv_d_eq_d_inv, inv_inv]
 
 lemma d_eq_diagonal (δ : Fˣ) :
-  (d δ : Matrix (Fin 2) (Fin 2) F) = diagonal (fun i ↦ if i.val = 0 then (δ : F) else δ⁻¹) := by
+  (d δ : Matrix (Fin 2) (Fin 2) F) = diagonal (fun i ↦ if i.val = 0 then (δ : F) else δ.inv) := by
   ext <;> simp [d]
 
 @[simp]
@@ -114,14 +112,14 @@ lemma d_mul_d_eq_d_mul (δ ρ : Fˣ) : d δ * d ρ = d (δ * ρ) := by ext <;> s
 
 end Diagonal
 
-lemma t_eq_d_iff {δ : Fˣ} {τ : F} : d δ = t τ ↔ δ = 1 ∧ τ = 0 := by
+lemma s_eq_d_iff {δ : Fˣ} {σ : F} : d δ = s σ ↔ δ = 1 ∧ σ = 0 := by
   constructor
   · intro h
-    have δ_eq_one : d δ 0 0 = 1 := by simp [h, t]
+    have δ_eq_one : d δ 0 0 = 1 := by simp [h, s]
     simp [d] at δ_eq_one
-    have τ_eq_zero : t τ 1 0 = 0 := by simp [← h, d]
-    simp [t] at τ_eq_zero
-    exact ⟨δ_eq_one, τ_eq_zero⟩
+    have σ_eq_zero : s σ 1 0 = 0 := by simp [← h, d]
+    simp [s] at σ_eq_zero
+    exact ⟨δ_eq_one, σ_eq_zero⟩
   · rintro ⟨rfl, rfl⟩
     simp
 
@@ -135,23 +133,23 @@ def w {F : Type*} [Field F] : SL(2, F) :=
 lemma w_inv {F : Type*} [Field F] :
   (w : SL(2,F))⁻¹  = - w := by ext <;> simp [w]
 
-lemma w_mul_w_eq_neg_one: w * w = (-1 : SL(2,F)) := by ext <;> simp [w]
+lemma w_mul_w_eq_neg_one : w * w = (-1 : SL(2,F)) := by ext <;> simp [w]
 
 end Rotation
 
 section Interactions
 
-def dt {F : Type*} [Field F] (δ : Fˣ) (τ : F) : SL(2, F) :=
-  ⟨!![δ, 0; τ * δ⁻¹, δ⁻¹], by norm_num⟩
+def ds (δ : Fˣ) (σ : F) : SL(2, F) :=
+  ⟨!![δ, 0; σ * δ⁻¹, δ⁻¹], by norm_num⟩
 
 -- Lemma 1.1.iii
-lemma d_mul_t_mul_d_inv_eq_t' (δ : Fˣ) (τ : F) : d δ * t τ * (d δ)⁻¹ = t (τ * δ⁻¹ * δ⁻¹) := by
-  simp; ext <;> simp [t, d, mul_comm]
+lemma d_mul_t_mul_d_inv_eq_t' (δ : Fˣ) (σ : F) : d δ * s σ * (d δ)⁻¹ = s (σ * δ⁻¹ * δ⁻¹) := by
+  simp; ext <;> simp [s, d, mul_comm]
 
-def dw {F : Type*} [Field F] (δ : Fˣ) : SL(2,F) :=
+def dw (δ : Fˣ) : SL(2,F) :=
   ⟨!![0, δ; -δ⁻¹, 0], by norm_num⟩
 
-lemma d_mul_t_eq_dt (δ : Fˣ) (τ : F) : d δ * t τ = dt δ τ := by ext <;> simp [d, t, dt, mul_comm]
+lemma d_mul_s_eq_ds (δ : Fˣ) (σ : F) : d δ * s σ = ds δ σ := by ext <;> simp [d, s, ds, mul_comm]
 
 lemma d_mul_w_eq_dw (δ : Fˣ) : d δ * w = dw δ := by ext <;> simp [d, w, dw]
 
@@ -167,7 +165,7 @@ lemma w_mul_d_mul_inv_w_eq_inv_d (δ : Fˣ) : w * (d δ) * w⁻¹ = (d δ)⁻¹ 
 @[simp]
 lemma w_mul_d_eq_d_inv_w  (δ : Fˣ):  w * (d δ) = (d δ)⁻¹ * w :=  by
   rw [← mul_inv_eq_iff_eq_mul]
-  exact w_mul_d_mul_inv_w_eq_inv_d _ _
+  exact w_mul_d_mul_inv_w_eq_inv_d _
 
 @[simp]
 lemma neg_d_mul_w (δ : Fˣ) : -(d δ * w) = d (-δ) * w := by rw [← neg_mul, neg_d_eq_d_neg]

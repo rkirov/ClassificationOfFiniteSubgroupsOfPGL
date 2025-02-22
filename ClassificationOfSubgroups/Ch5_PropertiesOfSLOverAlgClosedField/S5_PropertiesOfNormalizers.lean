@@ -26,34 +26,34 @@ lemma mem_H_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
   x ∈ H F ↔ ∃ a c d, a * d = 1 ∧ (x : Matrix (Fin 2) (Fin 2) F) = !![a, 0; c, d] := by
   constructor
   · intro hx
-    obtain ⟨δ, τ, h⟩ := hx
-    use δ, τ * δ⁻¹, δ⁻¹
+    obtain ⟨δ, σ, h⟩ := hx
+    use δ, σ * δ⁻¹, δ⁻¹
     rw [← h]
     split_ands
     simp
-    ext <;> simp [d, t, mul_comm]
+    ext <;> simp [d, s, mul_comm]
   · rintro ⟨a, c, d, had, hx⟩
     have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
     have a_inv_eq_d : a⁻¹ = d := by exact DivisionMonoid.inv_eq_of_mul a d had
     use a_is_unit.unit, c * a_is_unit.unit
-    simp [SpecialMatrices.d, t, lower_triangular, had]
+    simp [SpecialMatrices.d, s, lower_triangular, had]
     ext <;> field_simp [a_inv_eq_d, had, hx]; exact Eq.symm (eq_one_div_of_mul_eq_one_right had)
 
 lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
   x ∈ H F ↔ ∃ a c d, !![a, 0; c, d] = (x : Matrix (Fin 2) (Fin 2) F) := by
   constructor
   · intro hx
-    obtain ⟨δ, τ, h⟩ := hx
-    use δ, τ * δ⁻¹, δ⁻¹
+    obtain ⟨δ, σ, h⟩ := hx
+    use δ, σ * δ⁻¹, δ⁻¹
     rw [← h]
-    ext <;> simp [d, t, mul_comm]
+    ext <;> simp [d, s, mul_comm]
   · rintro ⟨a, c, d, hx⟩
     have had : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by simp
     simp [← hx] at had
     have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
     have a_inv_eq_d : a⁻¹ = d := by exact DivisionMonoid.inv_eq_of_mul a d had
     use a_is_unit.unit, c * a_is_unit.unit
-    simp [SpecialMatrices.d, t, lower_triangular, had]
+    simp [SpecialMatrices.d, s, lower_triangular, had]
     ext <;> field_simp [a_inv_eq_d, had, ← hx]; exact Eq.symm (eq_one_div_of_mul_eq_one_right had)
 
 
@@ -73,29 +73,29 @@ lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
 Proposition 1.6.i
 N_L(T₁) ⊆ H, where T₁ is any subgroup of T with order greater than 1. -/
 lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
- (hT₀ : 1 < Nat.card T₀ ) (h : T₀ ≤ T F) : normalizer T₀ ≤ H F := by
+ (hT₀ : 1 < Nat.card T₀ ) (h : T₀ ≤ S F) : normalizer T₀ ≤ H F := by
   intro x hx
   rw [mem_normalizer_iff] at hx
-  by_cases h' : ∃ τ, τ ≠ 0 ∧ t τ ∈ T₀
-  · obtain ⟨τ, τ_ne_zero, hτ⟩  := h'
-    specialize hx (t τ)
-    rw [hx] at hτ
+  by_cases h' : ∃ σ, σ ≠ 0 ∧ s σ ∈ T₀
+  · obtain ⟨σ, σ_ne_zero, hσ⟩  := h'
+    specialize hx (s σ)
+    rw [hx] at hσ
     let α := x.1 0 0
     let β := x.1 0 1
     let γ := x.1 1 0
     let δ := x.1 1 1
     have x_eq : x = !![α, β; γ, δ] := by ext <;> rfl
-    have : x * t τ * x⁻¹ ∈ T F := by exact h hτ
-    obtain ⟨τ' , hτ'⟩ := this
-    simp [x_eq] at hτ'
+    have : x * s σ * x⁻¹ ∈ S F := by exact h hσ
+    obtain ⟨σ' , hσ'⟩ := this
+    simp [x_eq] at hσ'
     -- uses decidable equality
     rw [mem_H_iff_lower_triangular', lower_triangular_iff_top_right_entry_eq_zero]
-    have β_eq_zero : t τ' 0 1 = 0 := by simp [t]
-    rw [hτ'] at β_eq_zero
-    simp [x_eq, t] at β_eq_zero
+    have β_eq_zero : s σ' 0 1 = 0 := by simp [s]
+    rw [hσ'] at β_eq_zero
+    simp [x_eq, s] at β_eq_zero
     ring_nf at β_eq_zero
     rw [neg_eq_zero] at β_eq_zero
-    apply eq_zero_of_ne_zero_of_mul_right_eq_zero τ_ne_zero at β_eq_zero
+    apply eq_zero_of_ne_zero_of_mul_right_eq_zero σ_ne_zero at β_eq_zero
     rw [sq_eq_zero_iff] at β_eq_zero
     simp [x_eq]
     exact β_eq_zero
@@ -103,8 +103,8 @@ lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
     have T₀_eq_bot : T₀ = ⊥ := by
       rw [eq_bot_iff_forall]
       intro x hx
-      obtain ⟨τ, rfl⟩ := h hx
-      specialize h' τ
+      obtain ⟨σ, rfl⟩ := h hx
+      specialize h' σ
       rw [not_imp_not] at h'
       specialize h' hx
       simp [h']
@@ -121,12 +121,12 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
  (hD₀ : 2 < Nat.card D₀ ) (D₀_leq_D : D₀ ≤ D F) : normalizer D₀ ≤ DW F := by
   intro x hx
   rw [@mem_normalizer_iff] at hx
-  have ⟨δ', h₀, h₁, hδ'⟩ := ex_of_card_D_gt_two F hD₀ D₀_leq_D
+  have ⟨δ', h₀, h₁, hδ'⟩ := ex_of_card_D_gt_two hD₀ D₀_leq_D
   specialize hx (d δ')
   rw [hx] at hδ'
   have mem_D := D₀_leq_D hδ'
   rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff] at mem_D
-  rcases get_entries F x with ⟨α, β, γ, δ, hα, hβ, hγ, hδ, x_eq⟩
+  rcases get_entries x with ⟨α, β, γ, δ, hα, hβ, hγ, hδ, x_eq⟩
   rcases mem_D with ⟨top_right, bottom_left⟩
   simp [d, x_eq] at top_right bottom_left
   ring_nf at top_right bottom_left
@@ -169,19 +169,5 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
     rw [det_eq_zero] at det_eq_one
     absurd zero_ne_one det_eq_one
     trivial
-
-
-lemma center_subgroup_le_center {G : Type*} [Group G] (H : Subgroup G) : center H ≤ (center G).subgroupOf H := by
-  refine map_subtype_le_map_subtype.mp ?_
-  simp
-  split_ands
-  · by_contra! h
-    rw [SetLike.not_le_iff_exists] at h
-    obtain ⟨x, hx, x_not_in_center_G⟩ := h
-    simp at hx
-    obtain ⟨x_in_H, x_in_center_H⟩ := hx
-    simp [mem_center_iff] at x_not_in_center_G
-    sorry
-  · exact map_subtype_le (center ↥H)
 
 #min_imports
