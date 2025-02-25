@@ -255,6 +255,8 @@ lemma singleton_of_cen_eq_G (G : Type*) [Group G] (H : Subgroup G) (hH : H = cen
 
 open scoped MatrixGroups
 
+#check Subgroup.center
+
 -- #leansearch "A = B of B ⊆ A Nat.card A ≤ Nat.card B?"
 
 lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
@@ -267,7 +269,7 @@ lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
   case A_le_cen =>
     have one_mem_A : 1 ∈ A := by exact Subgroup.one_mem A
     have neg_one_mem_A : -1 ∈ A := by
-      apply cen_le_A (@center_SL2_F_eq_Z F _ _ ▸ neg_one_mem_Z)
+      apply cen_le_A (@center_SL2_eq_Z F _ _ ▸ neg_one_mem_Z)
     -- split on the case where the characteristic is different
     sorry
   case cen_le_A => exact cen_le_A
@@ -349,7 +351,7 @@ theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {F : Type*} [Field F] {p : 
   (hG : G = center SL(2,F)) : IsCyclic A ∧ Nat.Coprime (Nat.card A) p := by
   rw [@singleton_of_cen_eq_G SL(2,F) _ G hG] at hA
   simp at hA
-  rw [center_SL2_F_eq_Z] at hA
+  rw [center_SL2_eq_Z] at hA
   rw [hA]
   split_ands
   · exact IsCyclic_Z
@@ -486,7 +488,7 @@ lemma conj_ZT_eq_conj_Z_join_T {F : Type*} [Field F] (c : SL(2,F)):
   constructor
   · rintro ⟨t, ⟨⟨t, ht, z, hz, rfl⟩, rfl⟩⟩
     simp at ht ⊢
-    simp [← center_SL2_F_eq_Z] at hz ⊢
+    simp [← center_SL2_eq_Z] at hz ⊢
     rw [mul_assoc c, mul_assoc t, ← mem_center_iff.mp hz c⁻¹]
     rw [← SetLike.mem_coe, mul_normal]
     use c * t * c⁻¹
@@ -496,7 +498,7 @@ lemma conj_ZT_eq_conj_Z_join_T {F : Type*} [Field F] (c : SL(2,F)):
     constructor
     · exact hz
     group
-  · rw [← SetLike.mem_coe, ← center_SL2_F_eq_Z, mul_normal]
+  · rw [← SetLike.mem_coe, ← center_SL2_eq_Z, mul_normal]
     rintro ⟨y, hy, z, hz, rfl⟩
     simp [pointwise_smul_def] at hy ⊢
     obtain ⟨t, ht, rfl⟩ := hy
@@ -508,7 +510,7 @@ lemma conj_ZT_eq_conj_Z_join_T {F : Type*} [Field F] (c : SL(2,F)):
       · exact ht
       use z
       constructor
-      · exact (@center_SL2_F_eq_Z F _ _) ▸ hz
+      · exact (@center_SL2_eq_Z F _ _) ▸ hz
       rfl
     rw [mul_assoc c, mul_assoc t, ← mem_center_iff.mp hz c⁻¹]
     group
@@ -518,7 +520,7 @@ lemma conj_center_eq_center (G : Type*) [Group G] (c : G) :
 
 lemma Z_eq_Z_meet_G (F : Type*) [Field F] (G : Subgroup SL(2,F))
   (center_le_G : center SL(2,F) ≤ G) :
-  Z F = Z F ⊓ G := ((@center_SL2_F_eq_Z F _ _).symm) ▸ left_eq_inf.mpr center_le_G
+  Z F = Z F ⊓ G := ((@center_SL2_eq_Z F _ _).symm) ▸ left_eq_inf.mpr center_le_G
 
 lemma conj_T_join_Z_meet_G_eq_conj_T_meet_G_join_Z {F : Type*} [Field F]{G : Subgroup SL(2,F)}
   (center_le_G : center SL(2,F) ≤ G) (c : SL(2,F)) :
@@ -554,7 +556,7 @@ lemma conj_T_join_Z_meet_G_eq_conj_T_meet_G_join_Z {F : Type*} [Field F]{G : Sub
 
 lemma conj_inv_conj_eq (F : Type*) [Field F](G : Subgroup SL(2,F)) (c : SL(2,F)):
   conj c⁻¹ • ((conj c • S F ⊓ G) ⊔ Z F) = (S F ⊓ conj c⁻¹ • G) ⊔ Z F := by
-  simp only [smul_inf, ← center_SL2_F_eq_Z, conj_center_eq_center SL(2,F) c⁻¹, smul_sup]
+  simp only [smul_inf, ← center_SL2_eq_Z, conj_center_eq_center SL(2,F) c⁻¹, smul_sup]
   simp
 
 
@@ -564,7 +566,7 @@ theorem IsCyclic_and_card_coprime_CharP_of_IsConj_d {F : Type*} [Field F]
   (x_not_in_center : x ∉ center SL(2,F)) (A_eq_centra : A = centralizer {x} ⊓ G )
   (δ : Fˣ) (x_IsConj_d : IsConj (d δ) x ) :
   (IsCyclic A ∧ Nat.Coprime (Nat.card A) p) := by
-  simp [center_SL2_F_eq_Z] at x_not_in_center
+  simp [center_SL2_eq_Z] at x_not_in_center
   have δ_ne_one : δ ≠ 1 := by rintro rfl; simp_all
   have δ_ne_neg_one : δ ≠ -1 := by rintro rfl; simp_all
   obtain ⟨c, c_smul_D_eq_centralizer⟩ :=
@@ -611,7 +613,7 @@ lemma centra_eq_conj_TZ_of_IsConj_t_or_IsConj_neg_t {F : Type*} [Field F]
   (x_IsConj_t_or_neg_t : IsConj (s σ) x ∨ IsConj (- s σ) x)
   (x_in_G : x ∈ G.carrier) (x_not_in_center : x ∉ center SL(2,F)) (hx : centralizer {x} ⊓ G = A) :
   ∃ c : SL(2,F), conj c • SZ F = centralizer {x} := by
-  simp [center_SL2_F_eq_Z, ← ne_eq] at x_not_in_center
+  simp [center_SL2_eq_Z, ← ne_eq] at x_not_in_center
   obtain ⟨x_ne_one, x_ne_neg_one⟩ := x_not_in_center
   have σ_ne_zero : σ ≠ 0 := by
     rintro rfl
@@ -686,7 +688,7 @@ lemma card_center_lt_card_center_Sylow (F : Type*) [Field F] {p : ℕ} [hp' : Fa
     · calc
       Fintype.card (center SL(2, F)) = Nat.card (center SL(2,F)) := Fintype.card_eq_nat_card
       _ = 1 := by
-        rw [center_SL2_F_eq_Z, card_Z_eq_one_of_two_eq_zero];
+        rw [center_SL2_eq_Z, card_Z_eq_one_of_two_eq_zero];
         simp only [hp] at hC
         exact CharTwo.two_eq_zero
       _ < 2 := by norm_num
@@ -702,7 +704,7 @@ lemma card_center_lt_card_center_Sylow (F : Type*) [Field F] {p : ℕ} [hp' : Fa
     · let two_ne_zero : NeZero (2 : F) := ne_zero_two_of_char_ne_two F hp
       calc
       Fintype.card (center SL(2, F)) = Nat.card (center SL(2,F)) := Fintype.card_eq_nat_card
-      _ = 2 := by rw [center_SL2_F_eq_Z, card_Z_eq_two_of_two_ne_zero]
+      _ = 2 := by rw [center_SL2_eq_Z, card_Z_eq_two_of_two_ne_zero]
       _ < 3 := by norm_num
       _ ≤ p := Nat.Prime.three_le_of_ne_two hp'.out hp
       _ ≤ Nat.card ↥(center S) := p_le_card_center_S
@@ -738,7 +740,7 @@ theorem mul_center_eq_left {F : Type*} [Field F] {G : Type*} [Group G] (S Q : Su
       use x, x_in_S, 1, Subgroup.one_mem _
     simp [hSQ] at key
     obtain ⟨q, q_in_Q, z, z_in_center, hx⟩ := key
-    simp [center_SL2_F_eq_Z] at z_in_center
+    simp [center_SL2_eq_Z] at z_in_center
     rcases z_in_center with (rfl | rfl)
     · simp at hx
       simp [← hx]
@@ -810,11 +812,11 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
     rw [← bot_subgroupOf, subgroupOf_inj, bot_inf_eq, inf_of_le_left this] at Q_eq_bot
     -- if T F ⊓ conj c⁻¹ • G = ⊥ then there is an isomorphism from A to Z
     -- the different sizes of the cardinality provide a contradiction
-    rw [Q_eq_bot, bot_sup_eq, ← center_SL2_F_eq_Z] at φ
+    rw [Q_eq_bot, bot_sup_eq, ← center_SL2_eq_Z] at φ
     have card_A_le_two : Nat.card A ≤ Nat.card (center SL(2,F)) :=
       le_of_eq (Nat.card_eq_of_bijective φ <| MulEquiv.bijective φ)
     let fin_center : Finite (center SL(2,F)) := by
-      rw [center_SL2_F_eq_Z]
+      rw [center_SL2_eq_Z]
       infer_instance
     let Fintype_center : Fintype (center SL(2,F)) := by exact Fintype.ofFinite ↥(center SL(2, F))
     let fin_A : Finite A := Set.Finite.subset hG₀ hA.right
@@ -875,7 +877,7 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
   have A_eq_Q_join_Z : A = Q ⊔ Z F := by
     have ker_f_eq_bot : f.ker = ⊥ := by
       exact (MonoidHom.ker_eq_bot_iff f).mpr f_inj
-    have Z_le_A : Z F ≤ A := (le_of_lt ((@center_SL2_F_eq_Z F _ _).symm ▸ center_lt_A))
+    have Z_le_A : Z F ≤ A := (le_of_lt ((@center_SL2_eq_Z F _ _).symm ▸ center_lt_A))
     have Z_le_range : Z F ≤ f.range := by
       intro z hz
       use (φ.toMonoidHom ⟨z, Z_le_A hz⟩)
@@ -1006,7 +1008,7 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
       have S_join_Z_le_centra_meet_G :
         ((Subgroup.map G.subtype S.toSubgroup) ⊔ Z F :) ≤ centralizer {y} ⊓ G := by
         intro w hw
-        rw [← center_SL2_F_eq_Z, ← SetLike.mem_coe,  mul_normal (N := center SL(2,F))] at hw
+        rw [← center_SL2_eq_Z, ← SetLike.mem_coe,  mul_normal (N := center SL(2,F))] at hw
         obtain ⟨s', hs, z, z_in_center, rfl⟩ := hw
         simp at hs
         obtain ⟨s'_in_G, s''_in_S⟩ := hs
@@ -1080,7 +1082,7 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
           apply le_trans
           exact S_join_Z_le_centra_meet_G
           exact le_of_eq A_eq_centra_y_meet_G.symm
-      simp only [← center_SL2_F_eq_Z,
+      simp only [← center_SL2_eq_Z,
         ← SetLike.coe_set_eq, mul_normal (N := center SL(2,F))] at Q_join_Z_eq_S_join_Z
       -- This statement is key to show that from S ⊔ Z = Q ⊔ Z and S ≤ Q we have that S = Q
       have h' : (1 : SL(2,F)) = (-1 : SL(2,F)) ∨ -1 ∉ (Subgroup.map G.subtype S.toSubgroup) := by
@@ -1170,7 +1172,7 @@ theorem index_normalizer_le_two {F : Type*} [Field F] {p : ℕ}(A G : Subgroup S
       case A_le_Z =>
         obtain ⟨⟨A_IsComm, A_Maximal⟩, A_le_G⟩ := hA
         sorry
-      case Z_le_A => exact (@center_SL2_F_eq_Z F _ _) ▸ center_le SL(2,F) G A hA center_le_G
+      case Z_le_A => exact (@center_SL2_eq_Z F _ _) ▸ center_le SL(2,F) G A hA center_le_G
     simp [A_eq_Z]
     have : Subgroup.Normal ((Z F).subgroupOf G) := by
       -- rw [← @normalizer_eq_top]

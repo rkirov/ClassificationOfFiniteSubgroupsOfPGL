@@ -20,7 +20,6 @@
 <link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/blueprint.css" />
-<link rel="stylesheet" href="styles/pygments.css" />
 <link rel="stylesheet" href="styles/extra_styles.css" />
 </head>
 
@@ -194,6 +193,10 @@
 <p>Lean is both a functional programming language and an interactive theorem prover that is being developed at Microsoft research and AWS by Leonardo de Moura and his team. It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems where correctness is of extreme TODO: </p>
 <p>- Brief explanation of type theory and curry-howard isomorphism. </p>
 <p>- Example of formal proof and comparison with informal proof. </p>
+<pre class="verbatim">
+theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
+  Nat.add\textunderscore comm a b
+</pre>
 <h1 id="a0000000005">2.2 Fermat’s Last Theorem</h1>
 <p>TODO: </p>
 <p>-History of Fermat’s Equation </p>

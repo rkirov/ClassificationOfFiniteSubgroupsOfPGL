@@ -4,6 +4,8 @@ import Mathlib.Analysis.Normed.Field.Lemmas
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.GroupTheory.Sylow
 
+set_option linter.style.longLine true
+set_option maxHeartbeats 0
 
 open Matrix MatrixGroups Subgroup Pointwise SpecialMatrices
 
@@ -107,7 +109,7 @@ end Shear
 
 
 
-lemma D_meet_S_eq_bot {F : Type*} [Field F] : D F ⊓ S F = ⊥ := by
+lemma D_meet_S_eq_bot (F : Type*) [Field F] : D F ⊓ S F = ⊥ := by
   ext x
   constructor
   · rintro ⟨x_mem_D, x_mem_T⟩
@@ -182,23 +184,103 @@ lemma normal_S_subgroupOf_L {F : Type*} [Field F] : ((S F).subgroupOf (L F)).Nor
          ← inv_d_eq_d_inv, d_mul_s_mul_d_inv_eq_s, add_neg_cancel_comm, Units.val_inv_eq_inv_val]
       use σ' * (δ : F)⁻¹ * (δ :F)⁻¹
 
-instance group_L_quot_S_subgroupOf_L : Group ((L F) ⧸ (S F).subgroupOf (L F)) := @QuotientGroup.Quotient.group (L F) _ ((S F).subgroupOf (L F)) (normal_S_subgroupOf_L)
 
-set_option pp.proofs true
+lemma commute_of_disjoint_of_normal {G : Type*} [Group G] (H K : Subgroup G) (hHK : Disjoint H K) [hK : Normal K] [hH : Normal H] {h k : G} (hh : h ∈ H)
+  (hk : k ∈ K) : h * k = k * h := by
+  refine Eq.symm (Commute.eq ?_)
+  exact commute_of_normal_of_disjoint K H hK hH (Disjoint.symm hHK) k h hk hh
+  -- have conj_in_K : h * k * h⁻¹ ∈ K := hK.conj_mem k hk h
+  -- have conj_in_H : k⁻¹ * h * k ∈ H := hH.conj_mem' h hh k
+  -- rw [← (Subgroup.mul_mem_cancel_left K (inv_mem hk)), ← mul_assoc, ← mul_assoc] at conj_in_K
+  -- have key₁ := conj_in_K; clear conj_in_K
+  -- have key₂ : k⁻¹ * h * k * h⁻¹ ∈ H := mul_mem conj_in_H (inv_mem hh)
+  -- rw [← mul_inv_eq_iff_eq_mul]
+  -- rw [disjoint_iff_inf_le] at hHK
+  -- have key : k⁻¹ * h * k * h⁻¹ ∈ (⊥ : Subgroup G) := hHK <| mem_inf.mpr ⟨ key₂, key₁⟩
+  -- rw [mem_bot, mul_assoc, mul_assoc, ← mul_assoc h, inv_mul_eq_one] at key
+  -- exact key.symm
 
-#leansearch "choose of property."
-
-def prod_iso_join_of_normal {G : Type*} [Group G] (H K : Subgroup G) (hHK : H ⊓ K = ⊥) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) where
-  toFun := fun h_k => ⟨h_k.1 * h_k.2, mul_mem_sup h_k.1.property h_k.2.property⟩
-  invFun := fun h_k => ⟨sorry, sorry⟩
-  left_inv := sorry
-  right_inv := sorry
-  map_mul' := sorry
 
 
+def prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H] [hK : Normal K]
+  (hHK : Disjoint H K) : H × K →* (H ⊔ K :) where
+  toFun h_k := ⟨h_k.1 * h_k.2, mul_mem_sup h_k.1.property h_k.2.property⟩
+  map_one' := by simp
+  map_mul' := by
+    rintro ⟨⟨h₁, hh₁⟩, ⟨k₁, hk₁⟩⟩ ⟨⟨h₂, hh₂⟩, ⟨k₂, hk₂⟩⟩
+    simp
+    rw [mul_assoc, mul_assoc, ← mul_assoc k₁, ← commute_of_disjoint_of_normal H K hHK hh₂ hk₁]
+    group
 
-#check mul_normal
-lemma L_eq_D_join_S : L F = D F ⊔ S F := by sorry
+open Function
+
+lemma Bijective_prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H]
+  [hK : Normal K] (hHK : Disjoint H K) : Bijective (prod_monoidHom_join H K hHK) :=  by
+  refine ⟨?injective, ?surjective⟩
+  case injective =>
+    rintro ⟨⟨h₁, h₁_in_H⟩, k₁, k₁_in_K⟩ ⟨⟨h₂, h₂_in_H⟩, k₂, k₂_in_K⟩ h
+    simp [prod_monoidHom_join] at h
+    have : h₁⁻¹ * h₂ * k₂ * k₁⁻¹ = 1 := by
+      rw [mul_assoc, mul_assoc, ← mul_assoc h₂, ← h]
+      group
+    -- show h₁ * h₂⁻¹  = 1 and k₁ * k₂⁻¹ = 1
+    have H₁ : k₂ * k₁⁻¹ = (k₁ * k₂⁻¹)⁻¹ := by
+      group
+    have key₁ : h₁⁻¹ * h₂ = k₁ * k₂⁻¹ := by
+      rw [mul_assoc] at this
+      rw [H₁, mul_inv_eq_one] at this
+      exact this
+    have mul_in_H : k₁ * k₂⁻¹ ∈ H := key₁.symm ▸ mul_mem (inv_mem h₁_in_H) h₂_in_H
+    have mul_in_K : k₁ * k₂⁻¹ ∈ K := mul_mem k₁_in_K (inv_mem k₂_in_K)
+    rw [disjoint_iff_inf_le] at hHK
+    have key₂ : k₁ * k₂⁻¹ = 1 := by
+      rw [← mem_bot]
+      apply hHK
+      refine mem_inf.mpr ⟨mul_in_H, mul_in_K⟩
+    rw [key₂] at key₁
+    rw [inv_mul_eq_one] at key₁
+    rw [mul_inv_eq_one] at key₂
+    ext <;> simp [key₁, key₂]
+  case surjective =>
+    rintro ⟨x, hx⟩
+    rw [← SetLike.mem_coe, mul_normal] at hx
+    obtain ⟨h, h_in_H, k, k_in_K, hh⟩ := hx
+    use ⟨⟨h, h_in_H⟩, ⟨k, k_in_K⟩⟩
+    simp [prod_monoidHom_join, hh]
+
+noncomputable def prod_iso_join_of_normal {G : Type*} [Group G] (H K : Subgroup G)
+  (hHK : Disjoint H K) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) :=
+  MulEquiv.ofBijective (prod_monoidHom_join H K hHK) (Bijective_prod_monoidHom_join H K hHK)
+
+#leansearch "Normal of IsCommutative."
+
+lemma D_mul_S_le_L (F : Type*) [Field F] : ((D F) : Set SL(2,F)) * (S F) ⊆ (L F) := by
+  rintro x ⟨d, ⟨δ, rfl⟩, s, ⟨σ, rfl⟩, rfl⟩
+  simp [L]
+
+lemma D_join_S_eq_L (F : Type*) [Field F]: D F ⊔ S F = L F := by
+  ext x
+  constructor
+  · intro hx
+    rw [sup_eq_closure_mul, mem_closure] at hx
+    exact hx (L F) (D_mul_S_le_L F)
+  · rintro ⟨δ, σ, rfl⟩
+    rw [sup_eq_closure_mul, mem_closure]
+    intro K hK
+    apply hK
+    rw [Set.mem_mul]
+    use d δ
+    split_ands
+    · use δ
+    use s σ
+    split_ands
+    · use σ
+    rfl
+
+#leansearch "H × K ⧸ K ≃ H."
+
+-- def foo {G : Type*} [Group G] (H K : Subgroup G) : (H ⊔ K :) ⧸ K ≃* H := by sorry
+
 
 -- noncomputable def pi : (L F) →* (D F) where
 --   toFun := fun l => ⟨d (l.property.choose), ⟨l.property.choose, rfl⟩⟩
@@ -215,9 +297,118 @@ lemma L_eq_D_join_S : L F = D F ⊔ S F := by sorry
 --     · sorry
 --   map_mul' := by sorry
 
-def L_quot_S_subgroupOf_L_iso_D : (L F) ⧸ (S F).subgroupOf (L F) ≃* D F := by
-  -- MulEquiv.ofBijective
-  sorry
+-- second isomorphism theorem!!!!
+#check QuotientGroup.quotientInfEquivProdNormalQuotient
+
+def D_subgroupOf_L_mulEquiv_D : (D F).subgroupOf (L F) ≃* D F := by
+  refine subgroupOfEquivOfLe ?_
+  rintro d ⟨δ, rfl⟩
+  simp [L]
+  use δ, 0
+  simp
+
+def S_subgroupOf_L_mulEquiv_S : (S F).subgroupOf (L F) ≃* S F := by
+  refine subgroupOfEquivOfLe ?_
+  rintro s ⟨σ, rfl⟩
+  simp [L]
+  use 1, σ
+  simp
+
+instance group_L_quot_S_subgroupOf_L :
+  Group ((L F) ⧸ (S F).subgroupOf (L F)) :=
+    @QuotientGroup.Quotient.group (L F) _ ((S F).subgroupOf (L F)) (normal_S_subgroupOf_L)
+
+instance : ((S F).subgroupOf (D F ⊔ S F :)).Normal := by
+  rw [D_join_S_eq_L]
+  exact normal_S_subgroupOf_L
+
+lemma left_subgroupOf_join_right_subgroupOf_join_eq_join_subgroupOf_join {G : Type*}
+  [Group G] (H K : Subgroup G) :
+  H.subgroupOf (H ⊔ K) ⊔ K.subgroupOf (H ⊔ K) = ⊤ := by
+  rw [← comap_subtype, ← comap_subtype]
+  let f := (H ⊔ K).subtype
+  have hH : H ≤ f.range := by simp [f]
+  have hK : K ≤ f.range := by simp [f]
+  rw [comap_sup_eq_of_le_range f hH hK]
+  simp [f]
+
+lemma simplify₁ : ((D F).subgroupOf (D F ⊔ S F) ⊔ (S F).subgroupOf (D F ⊔ S F)) = ⊤ :=
+  left_subgroupOf_join_right_subgroupOf_join_eq_join_subgroupOf_join (D F) (S F)
+
+/- D and S have trivial interesection, so the following holds -/
+lemma simplify₂ : ((S F).subgroupOf (D F ⊔ S F)).subgroupOf ((D F).subgroupOf (D F ⊔ S F)) = ⊥ := by
+  simp
+  rw [disjoint_iff, ← comap_subtype, ← comap_subtype, ← comap_inf, inf_comm, D_meet_S_eq_bot]
+  simp
+
+/- The second isomorphism theorem -/
+noncomputable def D_join_S_quot_S_subgroupOf_D_join_S_mulEquiv_D_subgroupOf_D_join_S
+  (F : Type*) [Field F] :=
+  (QuotientGroup.quotientInfEquivProdNormalQuotient
+    (H := (D F).subgroupOf (D F ⊔ S F:)) (N := (S F).subgroupOf (D F ⊔ S F :))).symm
+
+#check D_join_S_quot_S_subgroupOf_D_join_S_mulEquiv_D_subgroupOf_D_join_S
+
+def LHS (F : Type*) [Field F] :=
+  @QuotientGroup.equivQuotientSubgroupOfOfEq
+
+
+
+#check QuotientGroup.quotientBot
+
+#check MulEquiv.trans
+
+#check QuotientGroup.equivQuotientSubgroupOfOfEq
+
+#check QuotientGroup.quotientMulEquivOfEq
+
+def RHS (F : Type*) [Field F] :=
+  @QuotientGroup.equivQuotientSubgroupOfOfEq ((D F).subgroupOf (D F ⊔ S F) :) _
+    (A' := ((S F).subgroupOf (D F ⊔ S F)).subgroupOf ((D F).subgroupOf (D F ⊔ S F)))
+    -- below were ⊤ : (D F).subgroupOf (D F ⊔ S F)
+    (A := ⊤)--((D F).subgroupOf (D F ⊔ S F)).subgroupOf ((D F).subgroupOf (D F ⊔ S F)))
+    (B' := ⊥)
+    (B := ⊤)--((D F).subgroupOf (D F ⊔ S F)).subgroupOf ((D F).subgroupOf (D F ⊔ S F)))
+    (hAN := normal_subgroupOf)
+    (hBN := normal_subgroupOf)
+    (h' := simplify₂)
+    (h := Eq.refl _)
+
+#check RHS
+
+
+-- def RHS' (F : Type*) [Field F] :
+--   ↥(⊤ : Subgroup ↥((D F).subgroupOf (D F ⊔ S F))) ⧸ (⊥ : Subgroup ((D F).subgroupOf (D F ⊔ S F))).subgroupOf (⊤ : Subgroup ↥((D F).subgroupOf (D F ⊔ S F)))
+--   ≃*
+--   ↥(⊤ : Subgroup ↥((D F).subgroupOf (D F ⊔ S F))) :=
+--   @QuotientGroup.quotientBot (((D F).subgroupOf (D F ⊔ S F)) :) _
+
+-- Conclusion to reach is
+instance : ((S F).subgroupOf (L F)).Normal := normal_S_subgroupOf_L
+
+noncomputable def L_quot_S_subgroupOf_L_mulEquiv_D_subgroupOf_L :=
+    QuotientGroup.quotientInfEquivProdNormalQuotient
+      (H := (L F).subgroupOf (L F)) (N := (S F).subgroupOf (L F :))
+
+
+#check L_quot_S_subgroupOf_L_mulEquiv_D_subgroupOf_L
+
+-- lemma foo : ((S F).subgroupOf (L F)).subgroupOf ((L F).subgroupOf (L F)) = (S F).subgroupOf (L F) := by sorry
+
+#check D_join_S_quot_S_subgroupOf_D_join_S_mulEquiv_D_subgroupOf_D_join_S
+
+#check L_quot_S_subgroupOf_L_mulEquiv_D_subgroupOf_L
+
+#check ((S F).subgroupOf (L F)).subgroupOf ((L F).subgroupOf (L F) ⊔ (S F).subgroupOf (L F))
+
+  --@QuotientGroup.Quotient.group (L F) _ ((S F).subgroupOf (L F)) (normal_S_subgroupOf_L)
+
+def D_join_S_monoidHom_D : (D F × S F :) →* D F where
+  toFun d_s := d_s.1
+  map_one' := by simp
+  map_mul' := by simp
+
+
 
 #check  QuotientGroup.quotientKerEquivRange
 
@@ -279,7 +470,8 @@ lemma get_entries (x : SL(2,F)) : ∃ α β γ δ,
 lemma neg_one_mem_Z : (-1 : SL(2,F)) ∈ Z F := by simp [Z]
 
 
-lemma Odd.neg_one_zpow {α : Type*} [Group α] [HasDistribNeg α] {n : ℤ} (h : Odd n) : (-1 : α) ^ n = -1 := by
+lemma Odd.neg_one_zpow {α : Type*} [Group α] [HasDistribNeg α] {n : ℤ} (h : Odd n) :
+  (-1 : α) ^ n = -1 := by
   rw [← neg_eq_iff_eq_neg, ← neg_one_mul, Commute.neg_one_left, mul_zpow_self]
   exact Even.neg_one_zpow <| Odd.add_one h
 
@@ -350,7 +542,7 @@ instance : Finite (Z F) := by
   simp [← SetLike.coe_sort_coe]
   exact Finite.Set.finite_insert 1 {-1}
 
-lemma center_SL2_F_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
+lemma center_SL2_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
   ext x
   constructor
   · intro hx
@@ -366,7 +558,7 @@ lemma center_SL2_F_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(
     rintro (rfl | rfl) <;> simp [mem_center_iff]
 
 instance : Finite (center SL(2,F)) := by
-  rw [center_SL2_F_eq_Z F]
+  rw [center_SL2_eq_Z F]
   infer_instance
 
 lemma card_Z_eq_two_of_two_ne_zero [NeZero (2 : F)]: Nat.card (Z F) = 2 := by
@@ -494,7 +686,7 @@ def SZ' (F : Type*) [Field F] : Subgroup SL(2,F) where
     simp only [SetLike.mem_coe] at hs₁ hs₂ hz₁ hz₂ ⊢
     group
     have hz₁' := hz₁
-    simp [← center_SL2_F_eq_Z ] at hz₁'
+    simp [← center_SL2_eq_Z ] at hz₁'
     rw [mul_assoc s₁, (mem_center_iff.mp hz₁' s₂).symm]
     group
     use s₁ * s₂
@@ -516,7 +708,7 @@ def SZ' (F : Type*) [Field F] : Subgroup SL(2,F) where
     rintro x ⟨s, hs, ⟨z, hz, rfl⟩⟩
     simp at hs
     have hz' := hz
-    simp [← center_SL2_F_eq_Z] at hz
+    simp [← center_SL2_eq_Z] at hz
     simp only [_root_.mul_inv_rev,
        (mem_center_iff.mp ((Subgroup.inv_mem_iff (center SL(2, F))).mpr hz) s⁻¹).symm]
     use s⁻¹
@@ -631,7 +823,6 @@ lemma IsCommutative_D : IsCommutative (D F) := by
   simp [@Subtype.ext_val_iff]
   rw [← hδ₁, ← hδ₂]
   simp [mul_comm]
-
 
 lemma IsCommutative_S (F : Type*) [Field F] : IsCommutative (S F) := by
   rw [IsCommutative_iff]

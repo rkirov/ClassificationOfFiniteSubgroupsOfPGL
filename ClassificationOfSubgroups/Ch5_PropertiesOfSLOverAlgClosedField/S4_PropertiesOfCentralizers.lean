@@ -80,7 +80,7 @@ lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ �
     simp [mem_centralizer_iff, mul_comm]
 
 lemma centralizer_d_eq_D' (δ : Fˣ) (hd: d δ ∉ center SL(2,F)) : centralizer {d δ} = D F := by
-  simp [center_SL2_F_eq_Z, ← ne_eq] at hd
+  simp [center_SL2_eq_Z, ← ne_eq] at hd
   apply centralizer_d_eq_D δ
   · rintro rfl
     simp at hd
@@ -170,12 +170,12 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
     have δ_ne_one : δ ≠ 1 := by
       rintro rfl
       simp at x_IsConj_d
-      rw [← x_IsConj_d, center_SL2_F_eq_Z] at hx
+      rw [← x_IsConj_d, center_SL2_eq_Z] at hx
       simp at hx
     have δ_ne_neg_one : δ ≠ -1 := by
       rintro rfl
       simp at x_IsConj_d
-      rw [← x_IsConj_d, center_SL2_F_eq_Z] at hx
+      rw [← x_IsConj_d, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_x_eq, centralizer_d_eq_D _ δ_ne_one δ_ne_neg_one]
     apply conjugate_IsComm_of_IsComm
@@ -184,7 +184,7 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
       simp at x_IsConj_s
-      rw [← x_IsConj_s, center_SL2_F_eq_Z] at hx
+      rw [← x_IsConj_s, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq, centralizer_s_eq_SZ σ_ne_zero]
     apply conjugate_IsComm_of_IsComm
@@ -193,7 +193,7 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
       simp at x_IsConj_neg_s
-      rw [← x_IsConj_neg_s, center_SL2_F_eq_Z] at hx
+      rw [← x_IsConj_neg_s, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_s_eq_SZ σ_ne_zero]
     apply conjugate_IsComm_of_IsComm

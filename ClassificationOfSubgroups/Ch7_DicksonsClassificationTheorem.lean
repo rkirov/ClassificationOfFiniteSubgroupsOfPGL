@@ -39,13 +39,14 @@ lemma card_SL_field {𝔽 : Type u_1} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
   Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by sorry
 
 /- Lemma 3.5. Correspondence theorem -/
-#leansearch "group theory correspondence theorem?"
+-- #leansearch "group theory correspondence theorem?"
+#check QuotientGroup.comapMk'OrderIso
 
 
 instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
 
 
-#leansearch "Schur covering group of S₄?"
+-- #leansearch "Schur covering group of S₄?"
 
 -- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to
 -- the elements of order 4.

@@ -25,6 +25,9 @@ SpecialSubgroups.L
 SpecialSubgroups.D_iso_units
 SpecialSubgroups.S_iso_F
 SpecialSubgroups.normal_S_subgroupOf_L
+Subgroup.center
+SpecialSubgroups.center_SL2_eq_Z
+SpecialSubgroups.exists_unique_orderOf_eq_two
 IsMaximalAbelian
 IsElementaryAbelian
 MaximalAbelianSubgroups
