@@ -1145,7 +1145,7 @@ theorem IsCyclic_and_card_coprime_CharP_or_fin_prod_IsElementaryAbelian_le_T_of_
   -- Once shown A = centralizer {x} ⊓ G and recalling x is conjugate to d δ or ± t σ
   -- We show the centralizer in each of these cases is conjugate to finite
   -- commutative subgroups of either D or TZ
-  rcases SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s x with
+  rcases SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed x with
     (⟨δ, x_IsConj_d⟩ | x_IsConj_s_or_neg_s)
   -- x is conjugate to d δ
   · left

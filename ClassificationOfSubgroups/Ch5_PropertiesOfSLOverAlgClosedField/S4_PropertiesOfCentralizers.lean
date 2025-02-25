@@ -164,7 +164,7 @@ The centraliser of an element x in L is abelian unless x belongs to the centre o
 -/
 lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](x : SL(2,F))
   (hx : x ∉ center SL(2,F)) : IsCommutative (centralizer { x }) := by
-  rcases SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s x with
+  rcases SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed x with
     (⟨δ, x_IsConj_d⟩ | ⟨σ, x_IsConj_s⟩ | ⟨σ, x_IsConj_neg_s⟩ )
   · obtain ⟨x, centralizer_x_eq⟩ := conjugate_centralizers_of_IsConj (d δ) x x_IsConj_d
     have δ_ne_one : δ ≠ 1 := by

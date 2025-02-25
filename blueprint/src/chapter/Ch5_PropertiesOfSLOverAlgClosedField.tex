@@ -7,7 +7,7 @@ Throughout this paper, $F$ will denote an arbitrary algebraically closed field. 
 \\
 Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \lambda, \gamma$, and $\sigma$ will denote elements of $F$ and $\delta$ and $\rho$ elements of $F^\times$, where $F^\times$  are the non-zero elements of $F$.
 
-\section[Subsets of $L$]{Subsets of $\pmb{L}$}
+\section[Subsets of $L$]{Subsets of $\SL_2(F)$}
 
 In this chapter we make some useful observations about specific elements and subgroups of $L$. We define the following elements of $\SL_2(F)$as follows.
 
@@ -207,15 +207,6 @@ It is clear that $\phi$ is injective and surjective and thus an isomorphism. So 
 $S$ is a normal subgroup of $L$
 \end{lemma}
 
-\begin{remark}[Subgroup of subgroups in Lean]
-In lean, for this particular scenario, $S$ is considered to be a subgroup of $\SL_2(F)$. 
-It is fairly easy to see that $S \not\lhd \SL_2(F)$. When we say that $S \lhd L$, we are implicitly restricting $S \cap \SL_2(F)= S$ as $S \le \SL_2(F)$to be a subgroup of $L$.
-So this is why the informal statement corresponds to:
-\begin{verbatim}
-Normal (S F).subgroupOf (L F) 
-\end{verbatim}
-
-\end{remark}
 \begin{proof}
     Let $s_\gamma$ and $d_\delta s_\sigma$ be arbitrary elements of $T$ and $H$ respectively. Conjugating $s_\gamma$ by $d_\delta s_\sigma$ gives,
 \begin{align*} (d_\delta s_\sigma) s_\gamma (d_\delta s_\sigma)^{-1} &= (d_\delta s_\sigma) s_\gamma (t^{-1}_\lambda d^{-1}_\delta) \\[1.5ex]
@@ -228,9 +219,25 @@ d_\delta s_\gamma d^{-1}_\delta \tag{by Lemma \ref{6.1}} \\[1.5ex]
 Since $s_\gamma$ was chosen arbitrarily from $\SL_2(F)$we have ($d_\delta s_\sigma) S (d_\delta s_\sigma)^{-1} = S$ and since $d_\delta s_\sigma$ was chosen arbitrarily from $L$, we have that $S \vartriangleleft L$. \\
 \end{proof}
 
+\begin{remark}[Subgroup of subgroups in Lean]
+    In Lean, for this particular scenario, $S$ is considered to be a subgroup of $\SL_2(F)$. 
+    
+    It is fairly easy to see that $S \not\lhd \SL_2(F)$. When we say that $S \lhd L$, we are implicitly restricting $S$ to $S \cap L$, but given  $S = S \sqcap L$ as $S \le \SL_2(F)$ ;
+    
+    informally we do not think twice about this, but when formalizing this we do need to be clear which is the ambient group for $S$ to be normal and in this case it should be a subgroup of $L$, rather than $\SL_2(F)$.
+    
+    So this is why the informal statement corresponds to:
+    \begin{verbatim}
+    Normal (S F).subgroupOf (L F) 
+    \end{verbatim}
+    
+    \end{remark}
+
+
 \begin{lemma}
     $L / S \cong D$.
 \end{lemma}
+
 \begin{proof} 
 The function $\pi: L \rightarrow D$ defined by $\pi(d_\delta s_\sigma) = d_\delta$ is a homomorphism between $L$ under normal matrix multiplication and $D$ under normal matrix multiplication:
 \begin{align*} \pi(d_\delta s_\sigma d_\rho s_\gamma) &= \pi(d_\delta d_\rho t_\sigma s_\gamma) \tag{where $\sigma = \lambda \rho^{2}$ by Lemma \ref{6.1}}
@@ -253,7 +260,7 @@ Interestingly, this proof was quite hard to formalise for reasons I will expand 
 
 There are two complete lattice structures at play here: one where the top element is $\SL_2(F)$ and the sublattice of this lattice where where $D \sqcup S$ is the top element.
 This latter sublattice is necessary because we need $S$ to be normal in an ambient group, and clearly $S \not\lhd \SL_2(F)$; 
-this is why we introduce the sublattice with $\top = D \sqcup S = L$. Given $S$ is a subgroup of $D \sqcup S = L$ as $S \le S\sqcup D = L$, considered as a subgroup of $D \sqcup S = L$ we as shown in \ref{SpecialSubgroups.normal_S_subgroupOf_L}
+this is why we introduce the sublattice with $\top = D \sqcup S = L$. Given $S$ is a subgroup of $D \sqcup S = L$ as $S \le S\sqcup D = L$, considered as a subgroup of $D \sqcup S = L$ we as shown in \ref{SpecialSubgroups.normal_S_subgroupOf_{\SL_2(F)}}
 it is normal $S$ a subgroup of $L$.
 
 This eventually entails to using the theorem called \texttt{QuotientGroup.quotientInfEquivProdNormalQuotient} with
@@ -287,7 +294,7 @@ D \cong \frac{D}{\bot} = \frac{D}{S \sqcap D} \cong \frac{D \sqcup S}{S} = \frac
 
 \end{remark}
 
-\section[The Centre of $L$]{The Centre of $\pmb{L}$}
+\section[The Centre of $L$]{The Centre of $\SL_2(F)$}
 
 \begin{definition}
 \lean{Subgroup.center}
@@ -322,7 +329,7 @@ Thus
     z_1 = z_4 \qquad  \text{and} \qquad z =  
     \begin{bmatrix} z_1 & 0 \\ 0 & z_1 \end{bmatrix}. 
 \end{equation*}
-Since we are working in the special linear group, det$(z)=1$, thus $z_1 = \pm 1$ and $Z = \langle - I_\SL_2(F)\rangle$ as required. Observe that this is a cyclic group of order 2 except in the case of $p=2$ where $- I_\SL_2(F)= I_L$. \\
+Since we are working in the special linear group, det$(z)=1$, thus $z_1 = \pm 1$ and $Z = \langle - I_\SL_2(F)\rangle$ as required. Observe that this is a cyclic group of order 2 except in the case of $p=2$ where $- I_\SL_2(F)= I_{\SL_2(F)}$. \\
 \end{proof}
 
 
@@ -335,7 +342,7 @@ Since we are working in the special linear group, det$(z)=1$, thus $z_1 = \pm 1$
 \end{lemma}
 
 \begin{proof} 
-Consider an arbitrary element $x \in \SL_2(F)$with order 2. That is $x^2 = I_L$, $x \neq I_\SL_2(F)$and thus $x=x^{-1}$.
+Consider an arbitrary element $x \in \SL_2(F)$with order 2. That is $x^2 = I_{\SL_2(F)}$, $x \neq I_\SL_2(F)$and thus $x=x^{-1}$.
 \begin{equation*} 
     x = \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} = \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}^{-1} = \begin{bmatrix} \delta & - \beta \\ - \gamma & \alpha \end{bmatrix}.
 \end{equation*}
@@ -343,13 +350,17 @@ Consider an arbitrary element $x \in \SL_2(F)$with order 2. That is $x^2 = I_L$,
 \begin{equation*} 
     x = \begin{bmatrix} \alpha & 0 \\ 0 & \alpha \end{bmatrix}.
 \end{equation*}
-\noindent Also $\alpha ^2 = 1$ since $x \in$ $\SL_2(F)$, so $\alpha = \pm 1$. For $x$ to have order 2, we must have $\alpha = - 1$. Hence there is a unique element of order 2, namely $- I_L$.
+\noindent Also $\alpha ^2 = 1$ since $x \in$ $\SL_2(F)$, so $\alpha = \pm 1$. For $x$ to have order 2, we must have $\alpha = - 1$. Hence there is a unique element of order 2, namely $- I_{\SL_2(F)}$.
 \\
 \end{proof}
 
-\section[Conjugacy of the Elements of $L$]{Conjugacy of the Elements of $\pmb{L}$}
+\section[Conjugacy of the Elements of $L$]{Conjugacy of the Elements of $\SL_2(F)$}
 
-\begin{proposition}\label{6.3} Each element of $\SL_2(F)$ is conjugate to either $d_\delta$ for some $\delta \in F^\times$, or to $\pm s_\sigma$ for some $\lambda \in F$.
+\begin{proposition}
+\label{SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed}
+\lean{SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed}
+\leanok
+    Each element of $\SL_2(F)$ is conjugate to either $d_\delta$ for some $\delta \in F^\times$, or to $\pm s_\sigma$ for some $\lambda \in F$.
 \end{proposition}
 
 \begin{proof} Since $F$ is algebraically closed, any element $x \in \SL_2(F)$can be regarded as a linear transformation in the 2 dimensional vector space over $F$, with the eigenvalues $\pi_1$ and $\pi_2$. \\
@@ -366,7 +377,8 @@ Observe that det$(b)=1$, hence $x$ and $y$ are conjugate in $L$. Furthermore, si
 \\
 Now assume that $x$ is not diagonalisable. Chapter 7 of \cite{matrix} shows that there exists an element $d \in GL(2, F)$, such that $x= djd^{-1}$, where, $$j = \begin{bmatrix} \pi_1 & 1 \\ 0 & \pi_1 \end{bmatrix}$$ is the Jordan Normal Form of $x$. By the method described above, we can multiply $d$ by a suitable scalar to show that $x$ is conjugate to $j$ in $L$. Now we conjugate $j$ by an element of $\SL_2(F)$whose top left entry is 0.
 
-\begin{align*} \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 & 1 \\ 0 & \pi_1 \end{bmatrix} \begin{bmatrix} \delta & \gamma^{-1} \\ -\gamma & 0 \end{bmatrix} = \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 \delta - \gamma & \pi_1 \gamma^{-1} \\ -\pi_1 \gamma & 0 \end{bmatrix} = \begin{bmatrix} \pi_1 & 0 \\ -\gamma^{2} & \pi_1 \end{bmatrix}
+\begin{align*}
+    \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 & 1 \\ 0 & \pi_1 \end{bmatrix} \begin{bmatrix} \delta & \gamma^{-1} \\ -\gamma & 0 \end{bmatrix} = \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 \delta - \gamma & \pi_1 \gamma^{-1} \\ -\pi_1 \gamma & 0 \end{bmatrix} = \begin{bmatrix} \pi_1 & 0 \\ -\gamma^{2} & \pi_1 \end{bmatrix}
 \end{align*}
 \\
 Now clearly the determinant of $x$ is equal to the determinant of $j$, namely 1, which means that $\pi_1 = \pm 1$. This shows that $j$ is conjugate in $\SL_2(F)$to some element in $\times Z$ as well as $x$. Furthermore, since conjugation is transitive, $x$ is conjugate to $\pm s_\sigma$ for some $\lambda \in F$.
@@ -376,11 +388,15 @@ Now clearly the determinant of $x$ is equal to the determinant of $j$, namely 1,
 \section{Centralisers \& Normalisers}
 
 \begin{definition}
+\lean{Subgroup.centralizer}
+\leanok
 The \textbf{centraliser} $C_G(H)$ of a subset $H$ of a group $G$ is the set of elements of $G$ which commute with each element of $H$.
 \begin{equation*} C_G(H) = \{ g \in G  : gh=hg, \quad \forall h\in L \}. \end{equation*} 
 \end{definition}
 
 \begin{definition}
+\lean{Subgroup.normalizer}
+\leanok
 The \textbf{normaliser} $N_G(H)$ of a subset $H$ of a group $G$ is the set of elements of $G$ which stabilise $H$ under conjugation.
 \begin{equation*} N_G(H) = \{ g \in G : gHg^{-1}=H\}. \end{equation*}
 \end{definition}
@@ -389,9 +405,9 @@ Both the centraliser and normaliser of a subset $H$ are subgroups of $G$. Note a
 
 \begin{proposition}
     \label{6.4i}
-(i) $N_L(S_1) \subset H$, where $S_1$ is any subgroup of $T$ with order greater than 1. \\
+(i) $N_{\SL_2(F)}(S_1) \subset H$, where $S_1$ is any subgroup of $T$ with order greater than 1. \\
 \\
-(ii) $C_L(\pm s_\sigma) = \times Z$ where $\lambda \neq 0$.
+(ii) $C_{\SL_2(F)}(\pm s_\sigma) = \times Z$ where $\lambda \neq 0$.
 \end{proposition}
 
 \begin{proof}
@@ -400,7 +416,7 @@ Both the centraliser and normaliser of a subset $H$ are subgroups of $G$. Note a
 \\[1.5ex] &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \delta \lambda - \gamma & \alpha - \beta \lambda \end{bmatrix}
 \\[1.5ex] &= \begin{bmatrix} \alpha \delta - \beta \gamma + \beta \delta \lambda & \minus \beta^2  \lambda \\ \delta^2 \lambda & \alpha \delta - \beta \gamma - \beta \delta \lambda \end{bmatrix}.
 \end{align*}
-Since $x s_\sigma x^{-1} \in S_1$ we have $\minus \beta^2  \lambda = 0$ and since $\lambda \neq 0$, we have $\beta = 0$. Since $s_\sigma$ was chosen arbitrarily, any element which normalises $S_1$ is a lower diagonal matrix and is therefore in $H$ by (\ref{Hlowertri}). Thus $N_L(S_1) \subset H$ as required. \\
+Since $x s_\sigma x^{-1} \in S_1$ we have $\minus \beta^2  \lambda = 0$ and since $\lambda \neq 0$, we have $\beta = 0$. Since $s_\sigma$ was chosen arbitrarily, any element which normalises $S_1$ is a lower diagonal matrix and is therefore in $H$ by (\ref{Hlowertri}). Thus $N_{\SL_2(F)}(S_1) \subset H$ as required. \\
 \\
 (ii) To determine the centraliser of $s_\sigma$ in $L$, we consider which $y \in \SL_2(F)$satisfy $y s_\sigma = s_\sigma y$ for an arbitrarily chosen $s_\sigma$, with $\lambda \neq 0$. \\
 \vspace{-0.5mm}
@@ -410,20 +426,20 @@ Since $x s_\sigma x^{-1} \in S_1$ we have $\minus \beta^2  \lambda = 0$ and sinc
 \end{align}
 \vspace{.5mm}
 
-Equating the top left entries of (\ref{6.3proof2}) gives $\alpha + \beta \lambda = \alpha$ which means $\beta = 0$ since $\lambda \neq 0$ by assumption. Equating the bottom left entries gives that $\alpha = \delta$. Finally, since det$(y) = 1$, we have $\alpha \delta = 1$ so $\alpha = \pm 1$. Thus a $y \in C_L(s_\sigma)$ is
+Equating the top left entries of (\ref{6.3proof2}) gives $\alpha + \beta \lambda = \alpha$ which means $\beta = 0$ since $\lambda \neq 0$ by assumption. Equating the bottom left entries gives that $\alpha = \delta$. Finally, since det$(y) = 1$, we have $\alpha \delta = 1$ so $\alpha = \pm 1$. Thus a $y \in C_{\SL_2(F)}(s_\sigma)$ is
 
 \begin{align*} y &= \begin{bmatrix} \alpha & 0 \\ \gamma & \alpha \end{bmatrix}. \tag{where $\alpha = \pm 1$}
 \end{align*}
 
-So $y = \pm t_\sigma$ for some $\sigma \in F$, and $TZ = \{ \pm t_\sigma \} \subset C_L(s_\sigma)$. Now take an arbitrary $s_\gamma z \in TZ$.
+So $y = \pm t_\sigma$ for some $\sigma \in F$, and $TZ = \{ \pm t_\sigma \} \subset C_{\SL_2(F)}(s_\sigma)$. Now take an arbitrary $s_\gamma z \in TZ$.
 \begin{align*} (s_\gamma z) s_\sigma &= s_\sigma (s_\gamma z),
 \\ s_\gamma s_\sigma z &= s_\sigma s_\gamma z, \tag{since $z \in Z$}
 \\ t_{\gamma + \lambda} &= t_{\gamma + \lambda}.
 \end{align*}
 
-Thus $s_\gamma z$ and indeed the whole of $TZ$ is contained in $ C_L(s_\sigma)$, so $C_L(s_\sigma) = TZ$. \\
+Thus $s_\gamma z$ and indeed the whole of $TZ$ is contained in $ C_{\SL_2(F)}(s_\sigma)$, so $C_{\SL_2(F)}(s_\sigma) = TZ$. \\
 \\
-Since $T$ commutes elementwise with $Z$ and $\cap Z = \{ I_G \}$, we can apply Corollary \ref{directproductZ} and assert that $C_L(s_\sigma) = TZ \cong \times Z$ as required. The centraliser of $\minus s_\sigma$ is also $\times Z$, since an element $x$ commutes with $\minus s_\sigma$ if and only if it commutes with $s_\sigma$:
+Since $T$ commutes elementwise with $Z$ and $\cap Z = \{ I_G \}$, we can apply Corollary \ref{directproductZ} and assert that $C_{\SL_2(F)}(s_\sigma) = TZ \cong \times Z$ as required. The centraliser of $\minus s_\sigma$ is also $\times Z$, since an element $x$ commutes with $\minus s_\sigma$ if and only if it commutes with $s_\sigma$:
 \begin{align*} 
     xt_\lambda = s_\sigma x \iff \minus(x s_\sigma) = \minus (s_\sigma x) \iff x(\minus s_\sigma) = (\minus s_\sigma)x.
 \end{align*}
@@ -433,9 +449,9 @@ Note that in case of $\lambda = 0$, $\pm s_\sigma \in Z$ and thus it's centralis
 \end{proof}
 
 \begin{proposition}\label{6.4ii}
-(i) $N_L(D_1) = \langle D , w \rangle$, where  $D_1$ is any subgroup of $D$ with order greater than 2. \\
+(i) $N_{\SL_2(F)}(D_1) = \langle D , w \rangle$, where  $D_1$ is any subgroup of $D$ with order greater than 2. \\
 \\
-(ii) $C_L(d_\delta)= D$ where $\delta \neq \pm 1$.
+(ii) $C_{\SL_2(F)}(d_\delta)= D$ where $\delta \neq \pm 1$.
 \end{proposition}
 
 \begin{proof} (i) Since $|D_1| > 3$, we can choose a $d_\delta \in D_1 \! \setminus \! Z$, that is where $\delta \neq 1$. To determine the normaliser of $D_1$ in $\SL_2(F)$we consider which $x \in \SL_2(F)$satisfy $x d_\delta x^{-1} \in D_1$.
@@ -448,7 +464,7 @@ Since (\ref{6.3proof3}) is in $D_1$, the top right and bottom left entries must 
 \\
  \space If $\alpha = 0$, then $\beta$ and $\gamma$ are non-zero since det$(x) = 1$, thus $\delta = 0$. So det$(x) = \minus \gamma \beta = 1$  and $\minus \gamma = \beta^{-1}$. (\ref{6.3proof3}) becomes $$\begin{bmatrix} \delta^{-1} & 0 \\ 0 & \delta \end{bmatrix} = d^{-1}_\delta.$$Since $D_1$ is a group, it contains the inverse of each of it's elements, so $d^{-1}_\delta \in D_1$ as required. In this case we have $x \in wD$. \\
 \\
- \space If $\alpha \neq 0$, then similarly $\beta = 0$, $\delta = \alpha^{-1}$ and $\gamma = 0$. (\ref{6.3proof3}) now becomes $$\begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} = d_\delta \in D_1.$$This time we have $x \in D$. So $x \in D \cup wD = \langle D , w \rangle$ and any element which normalises $D_1$ is in $\langle D , w \rangle$, thus $N_L(D_1) \subset \langle D , w \rangle$. \\
+ \space If $\alpha \neq 0$, then similarly $\beta = 0$, $\delta = \alpha^{-1}$ and $\gamma = 0$. (\ref{6.3proof3}) now becomes $$\begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} = d_\delta \in D_1.$$This time we have $x \in D$. So $x \in D \cup wD = \langle D , w \rangle$ and any element which normalises $D_1$ is in $\langle D , w \rangle$, thus $N_{\SL_2(F)}(D_1) \subset \langle D , w \rangle$. \\
 \\
 Now take an arbitrary $y \in \langle D , w \rangle = D \cup wD$. If $y \in D$ then $y = d_{\rho 1}$, for some $\rho 1 \in F^\times$.
 \begin{align*} d_{\rho 1} d_\delta d^{-1}_{\rho 1} = d_\delta \in D_1. \tag{by Lemma \ref{6.1}}
@@ -460,7 +476,7 @@ If $y \in wD$ then $y = w d_{\rho 2}$, for some $ d_{\rho 2} \in F^\times$.
 \\ &= d^{-1}_\delta \in D_1 \tag{by Lemma \ref{6.1}}.
 \end{align*}
 
-Thus $y$ indeed who whole of $\langle D , w \rangle$ is contained in $N_L(D_1)$. This inclusion gives the desired result, $N_L(D_1) = \langle D , w \rangle$. \\
+Thus $y$ indeed who whole of $\langle D , w \rangle$ is contained in $N_{\SL_2(F)}(D_1)$. This inclusion gives the desired result, $N_{\SL_2(F)}(D_1) = \langle D , w \rangle$. \\
 \\
 (ii) Now we consider which $y \in \SL_2(F)$satisfy $y d_\delta = d_\delta y$ for an arbitrarily chosen $d_\delta$, with $\delta \neq \pm 1$.
 \begin{align}\label{6.3proof4} y d_ \delta &= d_\lambda y, \nonumber \\[1.5ex]
@@ -472,10 +488,10 @@ Equating the top right and bottom left entries of (\ref{6.3proof4}) gives that $
 \begin{align*} x = \begin{bmatrix} \alpha & 0 \\ 0 & \alpha^{-1} \end{bmatrix} \in D. 
 \end{align*}
 
-Thus $x$ and indeed the whole of $C_L(d_\delta)$ is contained in $D$. Now take an arbitrary $d_\rho \in D$.
+Thus $x$ and indeed the whole of $C_{\SL_2(F)}(d_\delta)$ is contained in $D$. Now take an arbitrary $d_\rho \in D$.
 \begin{align*} d_\rho d_\delta = d_{\rho \delta} = d_\delta d_\rho.
 \end{align*}
-So clearly $D \subset C_L(d_\delta)$ and thus $C_L(d_\delta) = D$ as required.
+So clearly $D \subset C_{\SL_2(F)}(d_\delta)$ and thus $C_{\SL_2(F)}(d_\delta) = D$ as required.
 \end{proof}
 
 \begin{proposition} \label{conjcent} Let $a$ and $b$ be conjugate elements in a group $G$. Then $\exists \, x \in G$ such that $xC_G(a)x^{-1} = C_G(b)$. \vspace{3mm}
@@ -511,7 +527,7 @@ The centraliser of an element $x$ in $\SL_2(F)$is abelian unless $x$ belongs to 
 \\ &= (s_\gamma z_2)(s_\sigma z_1).   \tag{since  $z_2 \in Z$}
 \end {align*} 
 
-Thus $\times Z$ is also abelian. Since every element of $\SL_2(F)$is conjugate to $d_\delta$ or $\pm s_\sigma$ by Proposition \ref{6.3} and conjugate elements have conjugate centralisers by Proposition \ref{conjcent}, the centraliser of each $x \in \SL_2(F)\setminus Z$ is conjugate to either $\times Z$ or $D$. Proposition \ref{conjugateprop}(iii) shows that conjugate subgroups are isomorphic and therefore have the same structure, thus since both $\times Z$ and $D$ are abelian, $C_L(x)$ is also abelian. Note that in general this does hold for $x \in Z$, since its centraliser is the whole of $\SL_2(F)$which is not abelian unless $\SL_2(F)= Z$.
+Thus $\times Z$ is also abelian. Since every element of $\SL_2(F)$is conjugate to $d_\delta$ or $\pm s_\sigma$ by Proposition \ref{6.3} and conjugate elements have conjugate centralisers by Proposition \ref{conjcent}, the centraliser of each $x \in \SL_2(F)\setminus Z$ is conjugate to either $\times Z$ or $D$. Proposition \ref{conjugateprop}(iii) shows that conjugate subgroups are isomorphic and therefore have the same structure, thus since both $\times Z$ and $D$ are abelian, $C_{\SL_2(F)}(x)$ is also abelian. Note that in general this does hold for $x \in Z$, since its centraliser is the whole of $\SL_2(F)$which is not abelian unless $\SL_2(F)= Z$.
 
 \end{proof}
 

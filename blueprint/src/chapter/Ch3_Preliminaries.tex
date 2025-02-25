@@ -44,32 +44,37 @@ Let $p$ be a prime. A group $G$ is called a \textbf{$\pmb{p}$-group} if the orde
 In each of the following results, $G$ is a finite group of order $p^r m$, where $p$ is a prime which does not divide $m$. \\
 \\
 
-\begin{theorem}
+\begin{theorem}[Sylow's first theorem]
 \lean{Sylow.exists_subgroup_card_pow_prime}
 \leanok
-\makebox[\textwidth][s]{\textbf{First Sylow Theorem.} \textit{If $p^k$ divides $|G|$, then $G$ has a subgroup of order $p^k$.}} \\
+\textit{If $p^k$ divides $|G|$, then $G$ has a subgroup of order $p^k$.} \\
 
 \end{theorem}
 
-\begin{theorem} 
+\begin{theorem}[Sylow's second theorem]
 \lean{Sylow.equiv.proof_1}
 \leanok
 \textit{All Sylow $p$-subgroups of G are conjugate.} \\
 \end{theorem}
 
-\begin{theorem} 
+\begin{theorem}[Sylow's third theorem]
 \lean{card_sylow_modEq_one}
 \leanok
 \textit{The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 ($mod $p)$.} \\
 \end{theorem}
 
-\begin{corollary}
+\begin{corollary}[Sylow's fourth theorem]
+\label{Sylow.unique_of_normal}
 \lean{Sylow.unique_of_normal}
 \leanok    
-\label{4thsylow} \textit{A Sylow $p$-subgroup of $G$ is unique if and only if it is normal.} \\
+ \textit{A Sylow $p$-subgroup of $G$ is unique if and only if it is normal.} \\
 \end{corollary}
 
-\begin{corollary}\label{5thsylow} \textit{Any $p$-subgroup of $G$ is contained in a Sylow $p$-subgroup.} \\
+\begin{corollary}[Sylow's fifth theorem]
+\label{IsPGroup.exists_le_sylow}
+\lean{IsPGroup.exists_le_sylow}
+\leanok
+\textit{Any $p$-subgroup of $G$ is contained in a Sylow $p$-subgroup.} \\
 \end{corollary}
 
 \section{Group Action}
@@ -93,7 +98,8 @@ is called the \textbf{orbit} of $x$ in $G$.
 
 The orbit and the stabiliser of an element are closely related. The following theorem is a consequence of this relationship and it will be useful throughout this paper. \\
 
-\begin{theorem} \textit{Let $G$ be a finite group acting on a set $X$. Then for each $x \in X$}, $$|G| = |\text{Orb}(x)| |\text{Stab}(x)|.$$ \\
+\begin{theorem} [Orbit-Stabilizer theorem]
+    \textit{Let $G$ be a finite group acting on a set $X$. Then for each $x \in X$}, $$|G| = |\text{Orb}(x)| |\text{Stab}(x)|.$$ \\
 \end{theorem}
 
 The following standard theorem will all play a vital roll later on.
@@ -108,27 +114,74 @@ The following standard theorem will all play a vital roll later on.
 
 \section{Conjugation}
 
-\begin{definition}
+\begin{definition}[Conjugate elements]
+\label{IsConj}
+\lean{IsConj}
 Let $G$ be a group and $a$ an element of $G$. An element $b \in G$ is said to be \textbf{conjugate} to $a$ if $b=xax^{-1}$ for some $x \in G$. \\
-\\
+\end{definition}
+
+\begin{remark}
+\label{conj_elem}
+In Lean, to state that two elements $g, h \in G$ where $G$ is a group, we use the slightly more general definition of conjugacy over monoids.
+
+That is to say, given $g, h \in G$ where $G$ is a group (or more generally monoid) and impose that $g$ and $h$ are conjugate, instead of writing the equality which has type \texttt{Prop}:
+
+\begin{verbatim}
+∃ c : α, c * a * c⁻¹ = b
+\end{verbatim}
+
+We use the following statement of type \texttt{Prop} that has been defined in Mathlib under the name of \texttt{IsConj}.
+
+The reason we would choose this over the naive statement is because Mathlib will contain a lot of very useful lemmas attached to this definition.
+
+Saying two elements are conjugate is writing something like the following:
+
+Assuming the terms \texttt{g : G} and \texttt{h : G} of the type \texttt{G} (which has the \texttt{Group} typeclass instance) are in scope.
+
+\begin{verbatim}
+IsConj g h
+\end{verbatim}
+\end{remark}
+
+
+\begin{definition}[Conjugate subgroups]
 Let $H_1$ be a proper subgroup of $G$ and fix $x \in G \setminus H_1$. The set $H_2 = \{g \in G : g= xh_1x^{-1}$, $\forall h_1 \in H_1\}$ is said to be a \textbf{conjugate subgroup} of $H_1$. We write $H_2 = xH_1x^{-1}$. It is trivial to show that $H_2$ is a subgroup of $G$.
 \end{definition}
+
+\begin{remark}
+In Lean, to state that two subgroups $H, K$ of a group $G$ are conjugate subgroups similar to how is done in \ref{conj_elem} we can open the \texttt{MulAut} namespace to make use of the custom syntax:
+
+\begin{verbatim}
+conj c • H = K 
+\end{verbatim}
+
+This notation and API is useful because conjugation by a particular element is defined to be an element in the automorphism group of $G$, $\Aut(G)$. 
+
+This becomes particularly crucial when formalizing the interactions of subgroups with the complete lattice structure on the set of subgroups of a group. 
+
+These interactions and more discussion about this lattice structure will happen later on.
+\end{remark}
 
 Conjugation plays an important roll thoughout the paper, in particularly the following properties about conjugate elements and subgroups.
 
 \begin{proposition}\label{conjugateprop} Let $a$, $b$ be conjugate elements of a group $G$ and $A$, $B$ be conjugate subgroups of $G$. Then the following properites hold: \vspace{3mm} \\
 (i) If either $a$ or $b$ has finite order, then both $a$ and $b$ have the same order. \vspace{3mm} \\
+\end{proposition}
+\begin{proof}
+    (i) Since $a$ and $b$ are conjugate elements in $G$, $b = xax^{-1}$ for some $x \in G$. Suppose that $b$ has finite order and $b^k = I_G$ for some $k \in \mathbb{Z}^+$,
+    \begin{equation*} I_G = b^k = (xax^{-1})^k = xa^{k}x^{-1} \Rightarrow a^k = I_G.
+    \end{equation*}
+    Alternatively suppose that $a$ has finite order and $a^k = I_G$ for some $k \in \mathbb{Z}^+$,
+    \begin{equation*} a^k = I_G \Rightarrow I_G = xa^{k}x^{-1} = (xax^{-1})^k = b^k.
+    \end{equation*}
+    Thus $a^k = I_G \iff b^k = I_G$. Thus $a$ and $b$ have the same order. \\
+\end{proof}
+
+\begin{proposition}
 (ii) $A \cong B$. \\
 \end{proposition}
 
 \begin{proof}
-(i) Since $a$ and $b$ are conjugate elements in $G$, $b = xax^{-1}$ for some $x \in G$. Suppose that $b$ has finite order and $b^k = I_G$ for some $k \in \mathbb{Z}^+$,
-\begin{equation*} I_G = b^k = (xax^{-1})^k = xa^{k}x^{-1} \Rightarrow a^k = I_G.
-\end{equation*}
-Alternatively suppose that $a$ has finite order and $a^k = I_G$ for some $k \in \mathbb{Z}^+$,
-\begin{equation*} a^k = I_G \Rightarrow I_G = xa^{k}x^{-1} = (xax^{-1})^k = b^k.
-\end{equation*}
-Thus $a^k = I_G \iff b^k = I_G$. Thus $a$ and $b$ have the same order. \\
 \\
 (ii) Since $A$ and $B$ are conjugate, there exists some $x \in G$ such that $B=xAx^{-1}$. Define the map $\phi$ by,
 \begin{align*}

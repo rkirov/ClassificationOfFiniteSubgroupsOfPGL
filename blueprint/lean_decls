@@ -3,6 +3,8 @@ Sylow.exists_subgroup_card_pow_prime
 Sylow.equiv.proof_1
 card_sylow_modEq_one
 Sylow.unique_of_normal
+IsPGroup.exists_le_sylow
+IsConj
 SL_monoidHom_PGL
 GeneralLinearGroup.Center.mem_center_general_linear_group_iff
 center_SL_le_ker
@@ -28,6 +30,9 @@ SpecialSubgroups.normal_S_subgroupOf_L
 Subgroup.center
 SpecialSubgroups.center_SL2_eq_Z
 SpecialSubgroups.exists_unique_orderOf_eq_two
+SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed
+Subgroup.centralizer
+Subgroup.normalizer
 IsMaximalAbelian
 IsElementaryAbelian
 MaximalAbelianSubgroups

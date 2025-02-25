@@ -306,8 +306,13 @@ Lemma 1.5.
 Each element of SL(2,F) is conjugate to either
 D δ for some δ ∈ Fˣ, or to  ± T σ for some σ ∈ F.
 -/
-theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s [DecidableEq F] [IsAlgClosed F] (S : SL(2, F)) :
-  (∃ δ : Fˣ, IsConj (d δ) S) ∨ (∃ σ : F, IsConj (s σ) S) ∨ (∃ σ : F, IsConj (- s σ) S) := by
+theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [IsAlgClosed F]
+  (S : SL(2, F)) :
+  (∃ δ : Fˣ, IsConj (d δ) S)
+  ∨
+  (∃ σ : F, IsConj (s σ) S)
+  ∨
+  (∃ σ : F, IsConj (- s σ) S) := by
   -- S is conjugate to an upper triangular matrix
   have S_IsConj_upper_triangular :
     ∃ a b d, ∃ C : SL(2,F), (C * S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
