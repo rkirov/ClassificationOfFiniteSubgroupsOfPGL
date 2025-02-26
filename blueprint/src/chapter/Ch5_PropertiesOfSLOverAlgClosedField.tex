@@ -5,7 +5,7 @@
 
 Throughout this paper, $F$ will denote an arbitrary algebraically closed field. For convenince we let $\SL_2(F)$denote the infinite group $\SL_2(F)$. The letter $p$ will be used to denote the characteristic of $F$. Recall that the characteristic of a field is the smallest number of times which the multilplicative identity of the field, say 1, needs to be summed to reach the additive identity of the field, say 0. If there is no such number, then we regard $p$ as being zero, otherwise it is always a prime. \\
 \\
-Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \lambda, \gamma$, and $\sigma$ will denote elements of $F$ and $\delta$ and $\rho$ elements of $F^\times$, where $F^\times$  are the non-zero elements of $F$.
+Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \sigma, \gamma$, and $\sigma$ will denote elements of $F$ and $\delta$ and $\rho$ elements of $F^\times$, where $F^\times$  are the non-zero elements of $F$.
 
 \section[Subsets of $L$]{Subsets of $\SL_2(F)$}
 
@@ -13,29 +13,29 @@ In this chapter we make some useful observations about specific elements and sub
 
 \subsubsection{Special matrices of $\SL_2(F)$}
 
-\begin{definition}[The shear matrix of $SL_2(F)$]
-\label{SpecialMatrices.s}
-\lean{SpecialMatrices.s}
-\leanok
-    Given an element $\delta \in F^\times$ we define the diagonal matrix:
-    \[
-    d_\delta = \begin{pmatrix}
-        \delta & 0\\
-        0 & \delta^{-1}
-    \end{pmatrix}
-    \]
-\end{definition}
-
 \begin{definition}[The diagonal matrix of $SL_2(F)$]
 \label{SpecialMatrices.d}
 \lean{SpecialMatrices.d}
 \leanok
+    Given an element $\delta \in F^\times$ we define the diagonal matrix:
+    \[
+    d_\delta = \begin{bmatrix}
+        \delta & 0\\
+        0 & \delta^{-1}
+    \end{bmatrix}
+    \]
+\end{definition}
+
+\begin{definition}[The shear matrix of $SL_2(F)$]
+\label{SpecialMatrices.s}
+\lean{SpecialMatrices.s}
+\leanok
     Given an element $\delta \in F$ we define the shear matrix:
     \[
-    s_\sigma  = \begin{pmatrix}
+    s_\sigma  = \begin{bmatrix}
     1 & 0\\
     \sigma & 1
-    \end{pmatrix}
+    \end{bmatrix}
     \]
 \end{definition}
 
@@ -45,17 +45,17 @@ In this chapter we make some useful observations about specific elements and sub
 \leanok
  We denote the matrix which corresponds to a rotation by $\pi / 2$ radians to be:
  \[
- w = \begin{pmatrix}
+ w = \begin{bmatrix}
     0 & -1\\
     1 & 0
- \end{pmatrix}
+ \end{bmatrix}
  \]
 \end{definition}
 
 The matrices $d$, $s$ and $w$ satisfy the following relations:
 
 
-\begin{lemma}
+\begin{lemma}[Closure $D$ under multiplication]
 \label{SpecialMatrices.d_mul_d_eq_d_mul}
 \uses{SpecialMatrices.d}
 \lean{SpecialMatrices.d_mul_d_eq_d_mul}
@@ -73,7 +73,7 @@ d_\delta d_\rho = d_{\delta\rho}
     \end{equation*}
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}[Closure $S$ under multiplication]
 \label{SpecialMatrices.s_mul_s_eq_s_add}
 \uses{SpecialMatrices.s}
 \lean{SpecialMatrices.s_mul_s_eq_s_add}
@@ -94,18 +94,22 @@ d_\delta d_\rho = d_{\delta\rho}
 \label{SpecialMatrices.d_mul_s_mul_d_inv_eq_s}
 \uses{SpecialMatrices.d, SpecialMatrices.s}
 \lean{SpecialMatrices.d_mul_s_mul_d_inv_eq_s}
+\leanok
     We have that for all $\delta \in F^\times$ and $\sigma \in F$
     \[
     d_\delta s_\sigma d^{-1}_\delta = s_{\sigma \delta^{-2}}.
     \]
 \end{lemma}
+
 \begin{proof}
     We verify by matrix multiplication that indeed:
 
     \begin{equation*}
-        d_\delta s_\sigma d^{-1}_\delta = \! \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \delta^{-1} & 0 \\ 0 & \delta \end{bmatrix} = \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \! \begin{bmatrix} \delta^{-1} & 0 \\ \sigma \delta^{-1} & \delta \end{bmatrix} \! = \! \begin{bmatrix} 1 & 0 \\ \sigma \delta^{-2} & 1 \end{bmatrix} \! = s_{\sigma \delta^{-2}}.
+        d_\delta s_\sigma d^{-1}_\delta = \! \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \begin{bmatrix} \delta^{-1} & 0 \\ 0 & \delta \end{bmatrix} = \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \! \begin{bmatrix} \delta^{-1} & 0 \\ \sigma \delta^{-1} & \delta \end{bmatrix} \! = \! \begin{bmatrix} 1 & 0 \\ \sigma \delta^{-2} & 1 \end{bmatrix} \! = s_{\sigma \delta^{-2}}.
     \end{equation*}
 \end{proof}
+
+
 
 \begin{lemma}
 \label{SpecialMatrices.w_mul_d_eq_d_inv_w}
@@ -117,6 +121,7 @@ For any $\delta \in F^\times$ we have:
 w d_\delta w^{-1} = d^{-1}_\delta.
 \]
 \end{lemma}
+
 \begin{proof} 
 We verify by matrix multiplication that indeed
 \begin{equation*}
@@ -134,17 +139,17 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
 \leanok
     The set of diagonal matrices with matrix multiplication is a subgroup of $\SL_2(F)$: 
     \[
-    D = \{d_\delta \} = \left\{ \begin{pmatrix}\delta & 0\\ 0 & \delta^{-1}\end{pmatrix} \; | \; \delta \in F^\times \right\}
+    D = \{d_\delta \} = \left\{ \begin{bmatrix}\delta & 0\\ 0 & \delta^{-1}\end{bmatrix} \; | \; \delta \in F^\times \right\}
     \]
 \end{definition}
 
 \begin{definition}[The subgroup of shear matrices]
 \label{SpecialSubgroups.S}
 \lean{SpecialSubgroups.S}
-\uses{S}
+\leanok
     The set of shear matrices with matrix multiplication is a subgroup of $\SL_2(F)$:
     \[
-    S = \{s_\sigma\} = \left\{\begin{pmatrix}1 & 0\\ \sigma & 1\end{pmatrix} \; | \; \sigma \in F \right\}
+    S = \{s_\sigma\} = \left\{\begin{bmatrix}1 & 0\\ \sigma & 1\end{bmatrix} \; | \; \sigma \in F \right\}
     \]
 \end{definition}
 
@@ -154,13 +159,30 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
 \leanok
     The set of lower triangular matrices with matrix multiplication is a subgroup of $\SL_2(F)$
     \[
-    \SL_2(F)= DS
+    L = DS
     \]
+
+    where $DS = \{d_\delta s_\sigma \; | \; \delta \in F^\times \text{ and } \sigma \in F \}$ is the pointwise product of $D$ and $S$.
 \end{definition}
+
+\begin{remark}
+    To define the subgroups $D$, $S$ and $L$ in Lean. One has to define what the underlying set is, the \texttt{carrier}, 
+    prove that the set is closed under multiplication \texttt{mul_mem'}, prove that the set contains the identity element of the group, \texttt{one_mem'}, 
+    and finally one must show that the group is closed under the inversion operator $\cdot^{-1}$, \texttt{inv_mem'}.
+\end{remark}
+
+
+\begin{remark}
+    Despite the definition of $L$ as being $D S$, some work has to be shown that indeed $DS = D \sqcup S$.
+    
+    If either $D$ or $S$ were normal in $\SL_2(F)$ we would be able to use \texttt{normal_mul}. However, given neither $D$ nor $S$ are normal in $\SL_2(F)$ slightly more work is needed to show this.
+    
+    It is interesting how Lean really forces either increased understanding or increased frustration.
+\end{remark}
 
 Observe that $\SL_2(F)$is the set of all lower triangular matrices in $\SL_2(F)$ whilst $Dw$ is the set of all anti-diagonal matrices.
 
-\begin{equation} \label{Hlowertri} \SL_2(F)= DS =  \{d_\delta s_\sigma\} = \left\{ \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} \delta & 0 \\ \lambda \delta^{-1} & \delta^{-1} \end{bmatrix}  \right\}. \end{equation}
+\begin{equation} \label{Hlowertri} \SL_2(F)= DS =  \{d_\delta s_\sigma\} = \left\{ \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} \delta & 0 \\ \sigma \delta^{-1} & \delta^{-1} \end{bmatrix}  \right\}. \end{equation}
 
 \begin{equation} \label{antidiag} Dw = \{ d_\delta w \} =  \left\{  \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} 0 & \delta \\ -\delta^{-1} & 0 \end{bmatrix}  \right\}. \end{equation}
 
@@ -171,7 +193,7 @@ These elements and subgroups are fundamental to this paper and this notation wil
 \uses{SpecialSubgroups.D, SpecialMatrices.d_mul_d_eq_d_mul}
 \lean{SpecialSubgroups.D_iso_units}
 \leanok
-The map $\phi : F^\times \overset{\sim}{\rightarrow} D$ defined by $d_\delta \mapsto (d_\delta)_{11}$ defines a group isomorphism.
+The map $\psi : F^\times \overset{\sim}{\rightarrow} D$ defined by $\delta \mapsto d_\delta$ defines a group isomorphism.
 \end{lemma}
 
 \begin{proof}
@@ -209,9 +231,9 @@ $S$ is a normal subgroup of $L$
 
 \begin{proof}
     Let $s_\gamma$ and $d_\delta s_\sigma$ be arbitrary elements of $T$ and $H$ respectively. Conjugating $s_\gamma$ by $d_\delta s_\sigma$ gives,
-\begin{align*} (d_\delta s_\sigma) s_\gamma (d_\delta s_\sigma)^{-1} &= (d_\delta s_\sigma) s_\gamma (t^{-1}_\lambda d^{-1}_\delta) \\[1.5ex]
+\begin{align*} (d_\delta s_\sigma) s_\gamma (d_\delta s_\sigma)^{-1} &= (d_\delta s_\sigma) s_\gamma (t^{-1}_\sigma d^{-1}_\delta) \\[1.5ex]
 &=
-d_\delta (s_\sigma s_\gamma t_{-\lambda}) d^{-1}_\delta \qquad \tag{since $t^{-1}_\lambda=t_{-\lambda}$} \\[1.5ex] 
+d_\delta (s_\sigma s_\gamma t_{-\sigma}) d^{-1}_\delta \qquad \tag{since $t^{-1}_\sigma=t_{-\sigma}$} \\[1.5ex] 
 &=
 d_\delta s_\gamma d^{-1}_\delta \tag{by Lemma \ref{6.1}} \\[1.5ex] 
 &= s_{\gamma \delta^{-2}} \in S. \tag{by Lemma \ref{6.1}}
@@ -235,41 +257,45 @@ Since $s_\gamma$ was chosen arbitrarily from $\SL_2(F)$we have ($d_\delta s_\sig
 
 
 \begin{lemma}
+\label{SpecialSubgroups.D_join_S_quot_S_subgroupOf_D_join_S_mulEquiv_D_subgroupOf_D_join_S}
+\uses{SpecialSubgroups.D, SpecialSubgroups.S, SpecialSubgroups.normal_S_subgroupOf_L}
+\lean{SpecialSubgroups.D_join_S_quot_S_subgroupOf_D_join_S_mulEquiv_D_subgroupOf_D_join_S}
+\leanok
     $L / S \cong D$.
 \end{lemma}
 
 \begin{proof} 
 The function $\pi: L \rightarrow D$ defined by $\pi(d_\delta s_\sigma) = d_\delta$ is a homomorphism between $L$ under normal matrix multiplication and $D$ under normal matrix multiplication:
-\begin{align*} \pi(d_\delta s_\sigma d_\rho s_\gamma) &= \pi(d_\delta d_\rho t_\sigma s_\gamma) \tag{where $\sigma = \lambda \rho^{2}$ by Lemma \ref{6.1}}
+\begin{align*} \pi(d_\delta s_\sigma d_\rho s_\gamma) &= \pi(d_\delta d_\rho t_\sigma s_\gamma) \tag{where $\sigma = \sigma \rho^{2}$ by Lemma \ref{6.1}}
 \\ &= d_\delta d_\rho
 \\ &= \pi(d_\delta s_\sigma)\pi(d_\rho s_\gamma).
 \end{align*}
 
 We see that $\pi$ is trivially surjective and has kernel
-\begin{align*}  ker(\pi) &= \{ d_\delta s_\sigma \in L : \pi(d_\delta s_\sigma) = I_{\SL_2(F)}\} = S.
+\begin{align*}  \ker(\pi) &= \{ d_\delta s_\sigma \in L : \pi(d_\delta s_\sigma) = I_{\SL_2(F)}\} = S.
 \end{align*}
 Thus by the First Isomorphism Theorem,
-\begin{align*} L / ker(\pi) &\cong \text{Im}(\pi), \\
+\begin{align*} L / \ker(\pi) &\cong \text{Im}(\pi), \\
 L / &\cong D.
 \end{align*}
 
 \end{proof}
 
 \begin{remark}
-Interestingly, this proof was quite hard to formalise for reasons I will expand on below, but first let me introduce some ideas
+Interestingly, this proof was quite hard to formalise for reasons I will expand on below, but first let me introduce some ideas.
 
 There are two complete lattice structures at play here: one where the top element is $\SL_2(F)$ and the sublattice of this lattice where where $D \sqcup S$ is the top element.
 This latter sublattice is necessary because we need $S$ to be normal in an ambient group, and clearly $S \not\lhd \SL_2(F)$; 
 this is why we introduce the sublattice with $\top = D \sqcup S = L$. Given $S$ is a subgroup of $D \sqcup S = L$ as $S \le S\sqcup D = L$, considered as a subgroup of $D \sqcup S = L$ we as shown in \ref{SpecialSubgroups.normal_S_subgroupOf_{\SL_2(F)}}
 it is normal $S$ a subgroup of $L$.
 
-This eventually entails to using the theorem called \texttt{QuotientGroup.quotientInfEquivProdNormalQuotient} with
+This eventually entails to using the theorem called \texttt{QuotientGroup.quotientInfEquivProdNormalQuotient} which corresponds to the statment
 
 \begin{verbatim}
     H ⧸ N.subgroupOf H ≃* (H ⊔ N) ⧸ N.subgroupOf (H ⊔ N)
 \end{verbatim}
 
-Which is in fact the second isomorphism theorem, not the first isomorphism theorem! 
+Which is in fact the second isomorphism theorem, not the first isomorphism theorem! Which contrasts to how the statement was proved informally.
 
 where in for this particular theorem, \texttt{H} is specialized to:
 
@@ -305,13 +331,37 @@ It is an immediate observation that $Z(G)$ is a normal subgroup of $G$,
 since for each $z \in Z$, $gzg^{-1} = gg^{-1}z = z$, $\forall g \in G$. It's also clear that a group is abelian if and only if $Z(G)=G$.
 \end{definition}
 
-For ease of notation, $Z(L)$ will be denoted simply by $Z$ throughout the rest of this paper.
+
+
+\begin{definition}
+\label{SpecialSubgroups.Z}
+\lean{SpecialSubgroups.Z}
+\leanok
+    Let $R$ be a commutative ring and define $Z$ to be the subgroup generated by $- I \in \SL_2(R)$
+\end{definition}
+
+\begin{remark}
+    Observer that the subgroup generated by an element $g \in G$, $\langle g \rangle$, can be thought of more generally within any lattice as the closure of a singleton set ${g}$. Therefore, the subgroup generated by $-I$ is equal to
+    
+    \[\langle -I \rangle = \overline{\{-1\}} = \inf \{ K \le G \; | \; \{-1\} \subseteq K \}.\]
+
+    When taking the closure of a singleton, when the ambient lattice is the subgroup lattice; and the closure corresponds to taking the powers of the element in the singleton $\{g\}$,
+    which is what is typically understood as the subgroup generated by $g$.
+
+    This is why we define $Z$ to be:
+
+    \begin{verbatim}
+    Z := closure { (-1 : SL(2,R))}
+    \end{verbatim}
+\end{remark}
+
 
 \begin{lemma}
 \label{SpecialSubgroups.center_SL2_eq_Z}
+\uses{SpecialSubgroups.Z}% Matrix.SpecialLinearGroup.mem_center_iff}
 \lean{SpecialSubgroups.center_SL2_eq_Z}
 \leanok
-$Z = \langle - I_{\SL_2(F)}\rangle$.
+$Z(\SL_2(F)) = \langle - I_{\SL_2(F)}\rangle = Z$.
 \end{lemma}
 
 \begin{proof} Take an arbitrary element $x=\begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \in \SL_2(F)$and  an arbitrary element $z = \begin{bmatrix} z_1 & z_2 \\ z_3 & z_4 \end{bmatrix} \in Z$ and consider their product:
@@ -332,7 +382,7 @@ Thus
 Since we are working in the special linear group, det$(z)=1$, thus $z_1 = \pm 1$ and $Z = \langle - I_\SL_2(F)\rangle$ as required. Observe that this is a cyclic group of order 2 except in the case of $p=2$ where $- I_\SL_2(F)= I_{\SL_2(F)}$. \\
 \end{proof}
 
-
+Following this result, for ease of notation, $Z(\SL_2(F))$ will be denoted simply by $Z$ throughout the rest of this paper.
 
 \begin{lemma}
 \label{SpecialSubgroups.exists_unique_orderOf_eq_two}
@@ -356,18 +406,146 @@ Consider an arbitrary element $x \in \SL_2(F)$with order 2. That is $x^2 = I_{\S
 
 \section[Conjugacy of the Elements of $L$]{Conjugacy of the Elements of $\SL_2(F)$}
 
+\subsubsection{Classification of elements of $\SL_2(F)$ up to conjugation}
+
+\begin{lemma}[Upper triangularizability criteria]
+    \label{isConj_upper_triangular_iff}
+    \lean{isConj_upper_triagnular_iff}
+    \leanok
+    A matrix $M \in \textrm{Mat}_2(F)$ is triangularizable if and only if there exists an invertible matrix $C \in \GL_2(F)$ such that the bottom left entry of
+    $C M C^{-1}$ is zero.
+\end{lemma}
+
+\begin{proof}
+    Given a matrix $U$ is in upper triangular form if and only if
+
+    \[
+    \begin{bmatrix}
+    a & b\\
+    0 & d
+    \end{bmatrix}
+    \]
+    
+    that is, the bottom left entry is zero. It then follows that 
+
+    $M$ is triangularizable if and only there exists a $C \in \GL_2(F)$ such that is in upper triangular form $C M C^{-1}$, that is, the bottom left entry of $C M C^{-1}$ is zero. 
+\end{proof}
+
+\begin{lemma}[(Upper) triangularizability of a $2 \times 2$ matrix over an algebraically closed field]
+    \label{isTriangularizable_of_algClosed}
+    \lean{isTriangularizable_of_algClosed}
+    \leanok
+    When $F$ is an algebraically closed field, 
+    for any $M \in \textrm{Mat}_2(F)$ there exists an invertible matrix $C \in \SL_2(F) \le \GL_2(F)$ such that $C M C^{-1} = U$ where
+    \[
+    U = \begin{bmatrix}
+        a & b\\
+        0 & d
+    \end{bmatrix}\] for some $a, b, d \in F$.
+
+\end{lemma}
+
+\begin{proof}
+We prove this by direct computation. 
+
+Let 
+
+\[
+M = \begin{bmatrix}
+\alpha & \beta\\
+\gamma & \delta
+\end{bmatrix} \in \textrm{Mat}_2(F)
+\]
+
+By lemma \ref{isConj_upper_triangular_iff}, we only need to show that we can find a matrix $C \in \SL_2(F)$ such that when it acts on $M$ by conjugation, the bottom left entry is annihilated.
+
+\begin{itemize}
+    \item Suppose on the one hand that $\beta \ne 0$
+    
+    Observe that 
+    
+    \begin{equation}\label{triang}
+        s_\sigma M s_\sigma^{-1} = \left(\begin{bmatrix}
+            -\beta \sigma + \alpha & \beta \\
+            -\beta \sigma^{2} + \alpha \sigma - \delta \sigma + \gamma & \beta \sigma + \delta
+            \end{bmatrix}\right)
+    \end{equation}
+
+    Given $F$ is algebraically closed we can set $\sigma \in F$ to be a root of the polynomial
+
+    \[
+    P(X) := -\beta X^{2} + \alpha X - \delta X + \gamma 
+    \]
+
+    setting $C := s_\sigma$ yields the desired element which triangularizes $M$.
+    
+
+    \item Suppose on the other hand that $\beta = 0$
+    
+    Given the top right entry is zero we only need find a matrix in $\SL_2(F)$ which flips the antidiagonal entries (modulo modifying the signs)
+    it is thus sufficient to use 
+        \[
+        w = \begin{bmatrix}
+        0 & -1\\
+        1 & 0
+        \end{bmatrix} \quad \text{as indeed} \quad w M w^{-1} = \begin{bmatrix}
+            \delta & -\gamma\\
+            0 & \alpha
+        \end{bmatrix} \text{ is in triangular form} 
+        \]
+\end{itemize}
+
+\end{proof}
+
+
+
+\begin{remark}[Upper triangular matrices are conjugate to lower triangular matrices]
+    \label{lower_triangular_isConj_upper_triangular}
+    \uses{SpecialMatrices.w}
+    \lean{lower_triangular_isConj_upper_triangular}
+    \leanok
+    For every $U \in \textrm{Mat}_2(F)$ that is upper triangular the matrix $w U w^{-1}$ is a lower triangular matrix
+\end{remark}
+
+\begin{lemma}
+    \label{upper_triangular_isConj_diagonal_of_nonzero_det}
+    \lean{upper_triangular_isConj_diagonal_of_nonzero_det}
+    \leanok
+    An upper triangular matrix $U = \begin{bmatrix}
+        \alpha & \beta\\
+        0 & \delta
+    \end{bmatrix}$ is conjugate to a diagonal matrix if $\alpha - \delta \ne 0$
+\end{lemma}
+
+\begin{proof}
+We show this by direct computation.
+
+Conjugation of $M$ by the matrix 
+
+\[
+C := \begin{bmatrix}
+    1 & \frac{\beta}{\alpha - \delta}\\
+    0 & 1
+\end{bmatrix}
+\]
+
+yields a diagonal matrix (see the Lean code!)
+\end{proof}
+
+
 \begin{proposition}
 \label{SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed}
+\uses{isTriangularizable_of_algClosed, lower_triangular_isConj_upper_triangular, upper_triangular_isConj_diagonal_of_nonzero_det}
 \lean{SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed}
 \leanok
-    Each element of $\SL_2(F)$ is conjugate to either $d_\delta$ for some $\delta \in F^\times$, or to $\pm s_\sigma$ for some $\lambda \in F$.
+    Each element of $\SL_2(F)$ is conjugate to either $d_\delta$ for some $\delta \in F^\times$, or to $\pm s_\sigma$ for some $\sigma \in F$.
 \end{proposition}
 
 \begin{proof} Since $F$ is algebraically closed, any element $x \in \SL_2(F)$can be regarded as a linear transformation in the 2 dimensional vector space over $F$, with the eigenvalues $\pi_1$ and $\pi_2$. \\
 \\
 \space If $\pi_1$ and $\pi_2$ are distinct, then $x$ is thus diagonalisable. That is, there exists an invertible matrix $a \in GL(2, F)$ such that $y = axa^{-1}$ is a diagonal matrix. Furthermore, we can multiply $a$ by a suitable scalar to find an element in $\SL_2(F)$which conjugates $x$ and $y$:
 
-\begin{align*} 
+\begin{align*}
     \text{Set } \; b = \frac{a}{\sqrt {\text{det}(a)}}, \quad \text{thus } \; bxb^{-1} =\frac{a}{\sqrt {\text{det}(a)}} \; x \; (\sqrt{\text{det}(a)} \; )\,a^{-1} = axa^{-1} = y.
 \end{align*}
 
@@ -381,9 +559,26 @@ Now assume that $x$ is not diagonalisable. Chapter 7 of \cite{matrix} shows that
     \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 & 1 \\ 0 & \pi_1 \end{bmatrix} \begin{bmatrix} \delta & \gamma^{-1} \\ -\gamma & 0 \end{bmatrix} = \begin{bmatrix} 0 & -\gamma^{-1} \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \pi_1 \delta - \gamma & \pi_1 \gamma^{-1} \\ -\pi_1 \gamma & 0 \end{bmatrix} = \begin{bmatrix} \pi_1 & 0 \\ -\gamma^{2} & \pi_1 \end{bmatrix}
 \end{align*}
 \\
-Now clearly the determinant of $x$ is equal to the determinant of $j$, namely 1, which means that $\pi_1 = \pm 1$. This shows that $j$ is conjugate in $\SL_2(F)$to some element in $\times Z$ as well as $x$. Furthermore, since conjugation is transitive, $x$ is conjugate to $\pm s_\sigma$ for some $\lambda \in F$.
+Now clearly the determinant of $x$ is equal to the determinant of $j$, namely 1, which means that $\pi_1 = \pm 1$. This shows that $j$ is conjugate in $\SL_2(F)$to some element in $\times Z$ as well as $x$. Furthermore, since conjugation is transitive, $x$ is conjugate to $\pm s_\sigma$ for some $\sigma \in F$.
 
 \end{proof}
+
+\begin{remark}
+
+This was the first tedious proof to formalise in Lean.
+
+The proof of the lemma is extracted from Christopher Butler's expostion uses the Jordan Normal Form theorem
+
+At the time of writing, this theorem is still not yet in Mathlib, there are a few reasons why: the classification of nilpotent endomorphisms has not yet been done and the classification of semisimple endomorphisms has not been completed yet either.
+
+Furthermore, it is not clear which is the cleanest way to formalise this yet; because ideally this theorem will be available in maximal generality considering it's importance for classification problems.
+
+I initally set out to prove the Jordan Normal form for the special case of $2 \times 2$ matrices the "morally" correct way, which uses the wonderful abstract machinery of linear alegbra. In particular, understanding the eigenspace and generalized eigenspace of a the associated endomorphism to the matrix. 
+
+This will be the way the more general theorem should be done to my understanding. But this task turned out to be essentially equivalent to proving the general case and then use it for the special case.
+
+Given my task has a fair amount of constraints, $2 \times 2$ matrices with determinant one over an algebraically closed field. I eventually opted after Prof. Kevin Buzzard's advice to simply classify matrices by finding suitable matrices by which to conjugate a given matrix.
+\end{remark}
 
 \section{Centralisers \& Normalisers}
 
@@ -404,29 +599,38 @@ The \textbf{normaliser} $N_G(H)$ of a subset $H$ of a group $G$ is the set of el
 Both the centraliser and normaliser of a subset $H$ are subgroups of $G$. Note also that the centraliser is a stronger condition than the normaliser and any element in the centraliser of $H$ is also in its normaliser. If $H$ is a singleton then it's clear that its centraliser and normaliser are equal.\\
 
 \begin{proposition}
-    \label{6.4i}
-(i) $N_{\SL_2(F)}(S_1) \subset H$, where $S_1$ is any subgroup of $T$ with order greater than 1. \\
-\\
-(ii) $C_{\SL_2(F)}(\pm s_\sigma) = \times Z$ where $\lambda \neq 0$.
+\label{normalizer_subgroup_S_leq_L}
+% find dependencies - move proof - rename
+\lean{normalizer_subgroup_S_leq_L}
+\leanok
+ For any subgroup $S_1 \leq S$ with order greater than 1, we have that the normalizer $N_{\SL_2(F)}(S_1) \subset L$.
+\end{propostion}
+
+\begin{proposition}
+\label{centralizer_s_eq_SZ}
+% find dependencies
+\lean{centralizer_s_eq_SZ}
+\leanok
+The centralizer $C_{\SL_2(F)}(\pm s_\sigma) =  S \times Z $ where $\sigma \neq 0$.
 \end{proposition}
 
 \begin{proof}
-(i) Let $s_\sigma$ be an arbitary element of $S_1$ with $\lambda \neq 0$. To determine the normaliser of $S_1$ in $\SL_2(F)$we consider which $x \in \SL_2(F)$ satisfy $x s_\sigma x^{-1} \in S_1$.
-\begin{align*} x s_\sigma x^{-1} &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \minus \gamma & \alpha \end{bmatrix}
-\\[1.5ex] &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \delta \lambda - \gamma & \alpha - \beta \lambda \end{bmatrix}
-\\[1.5ex] &= \begin{bmatrix} \alpha \delta - \beta \gamma + \beta \delta \lambda & \minus \beta^2  \lambda \\ \delta^2 \lambda & \alpha \delta - \beta \gamma - \beta \delta \lambda \end{bmatrix}.
+(i) Let $s_\sigma$ be an arbitary element of $S_1$ with $\sigma \neq 0$. To determine the normaliser of $S_1$ in $\SL_2(F)$we consider which $x \in \SL_2(F)$ satisfy $x s_\sigma x^{-1} \in S_1$.
+\begin{align*} x s_\sigma x^{-1} &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \minus \gamma & \alpha \end{bmatrix}
+\\[1.5ex] &= \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta & \minus \beta \\ \delta \sigma - \gamma & \alpha - \beta \sigma \end{bmatrix}
+\\[1.5ex] &= \begin{bmatrix} \alpha \delta - \beta \gamma + \beta \delta \sigma & \minus \beta^2  \sigma \\ \delta^2 \sigma & \alpha \delta - \beta \gamma - \beta \delta \sigma \end{bmatrix}.
 \end{align*}
-Since $x s_\sigma x^{-1} \in S_1$ we have $\minus \beta^2  \lambda = 0$ and since $\lambda \neq 0$, we have $\beta = 0$. Since $s_\sigma$ was chosen arbitrarily, any element which normalises $S_1$ is a lower diagonal matrix and is therefore in $H$ by (\ref{Hlowertri}). Thus $N_{\SL_2(F)}(S_1) \subset H$ as required. \\
+Since $x s_\sigma x^{-1} \in S_1$ we have $\minus \beta^2  \sigma = 0$ and since $\sigma \neq 0$, we have $\beta = 0$. Since $s_\sigma$ was chosen arbitrarily, any element which normalises $S_1$ is a lower diagonal matrix and is therefore in $H$ by (\ref{Hlowertri}). Thus $N_{\SL_2(F)}(S_1) \subset H$ as required. \\
 \\
-(ii) To determine the centraliser of $s_\sigma$ in $L$, we consider which $y \in \SL_2(F)$satisfy $y s_\sigma = s_\sigma y$ for an arbitrarily chosen $s_\sigma$, with $\lambda \neq 0$. \\
+(ii) To determine the centraliser of $s_\sigma$ in $L$, we consider which $y \in \SL_2(F)$satisfy $y s_\sigma = s_\sigma y$ for an arbitrarily chosen $s_\sigma$, with $\sigma \neq 0$. \\
 \vspace{-0.5mm}
 \begin{align}\label{6.3proof2} y s_\sigma &= s_\sigma y, \nonumber \\[1.5ex]
-\begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} &= \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}, \nonumber \\[1.5ex]
-\begin{bmatrix} \alpha + \beta \lambda & \beta \\ \gamma + \delta \lambda & \delta \end{bmatrix} &= \begin{bmatrix} \alpha & \beta \\ \gamma +  \alpha \lambda & \delta + \beta \lambda \end{bmatrix}.
+\begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} &= \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}, \nonumber \\[1.5ex]
+\begin{bmatrix} \alpha + \beta \sigma & \beta \\ \gamma + \delta \sigma & \delta \end{bmatrix} &= \begin{bmatrix} \alpha & \beta \\ \gamma +  \alpha \sigma & \delta + \beta \sigma \end{bmatrix}.
 \end{align}
 \vspace{.5mm}
 
-Equating the top left entries of (\ref{6.3proof2}) gives $\alpha + \beta \lambda = \alpha$ which means $\beta = 0$ since $\lambda \neq 0$ by assumption. Equating the bottom left entries gives that $\alpha = \delta$. Finally, since det$(y) = 1$, we have $\alpha \delta = 1$ so $\alpha = \pm 1$. Thus a $y \in C_{\SL_2(F)}(s_\sigma)$ is
+Equating the top left entries of (\ref{6.3proof2}) gives $\alpha + \beta \sigma = \alpha$ which means $\beta = 0$ since $\sigma \neq 0$ by assumption. Equating the bottom left entries gives that $\alpha = \delta$. Finally, since det$(y) = 1$, we have $\alpha \delta = 1$ so $\alpha = \pm 1$. Thus a $y \in C_{\SL_2(F)}(s_\sigma)$ is
 
 \begin{align*} y &= \begin{bmatrix} \alpha & 0 \\ \gamma & \alpha \end{bmatrix}. \tag{where $\alpha = \pm 1$}
 \end{align*}
@@ -434,17 +638,17 @@ Equating the top left entries of (\ref{6.3proof2}) gives $\alpha + \beta \lambda
 So $y = \pm t_\sigma$ for some $\sigma \in F$, and $TZ = \{ \pm t_\sigma \} \subset C_{\SL_2(F)}(s_\sigma)$. Now take an arbitrary $s_\gamma z \in TZ$.
 \begin{align*} (s_\gamma z) s_\sigma &= s_\sigma (s_\gamma z),
 \\ s_\gamma s_\sigma z &= s_\sigma s_\gamma z, \tag{since $z \in Z$}
-\\ t_{\gamma + \lambda} &= t_{\gamma + \lambda}.
+\\ t_{\gamma + \sigma} &= t_{\gamma + \sigma}.
 \end{align*}
 
 Thus $s_\gamma z$ and indeed the whole of $TZ$ is contained in $ C_{\SL_2(F)}(s_\sigma)$, so $C_{\SL_2(F)}(s_\sigma) = TZ$. \\
 \\
 Since $T$ commutes elementwise with $Z$ and $\cap Z = \{ I_G \}$, we can apply Corollary \ref{directproductZ} and assert that $C_{\SL_2(F)}(s_\sigma) = TZ \cong \times Z$ as required. The centraliser of $\minus s_\sigma$ is also $\times Z$, since an element $x$ commutes with $\minus s_\sigma$ if and only if it commutes with $s_\sigma$:
 \begin{align*} 
-    xt_\lambda = s_\sigma x \iff \minus(x s_\sigma) = \minus (s_\sigma x) \iff x(\minus s_\sigma) = (\minus s_\sigma)x.
+    xt_\sigma = s_\sigma x \iff \minus(x s_\sigma) = \minus (s_\sigma x) \iff x(\minus s_\sigma) = (\minus s_\sigma)x.
 \end{align*}
 
-Note that in case of $\lambda = 0$, $\pm s_\sigma \in Z$ and thus it's centraliser is the whole of $L$.
+Note that in case of $\sigma = 0$, $\pm s_\sigma \in Z$ and thus it's centraliser is the whole of $L$.
 
 \end{proof}
 
@@ -479,7 +683,7 @@ If $y \in wD$ then $y = w d_{\rho 2}$, for some $ d_{\rho 2} \in F^\times$.
 Thus $y$ indeed who whole of $\langle D , w \rangle$ is contained in $N_{\SL_2(F)}(D_1)$. This inclusion gives the desired result, $N_{\SL_2(F)}(D_1) = \langle D , w \rangle$. \\
 \\
 (ii) Now we consider which $y \in \SL_2(F)$satisfy $y d_\delta = d_\delta y$ for an arbitrarily chosen $d_\delta$, with $\delta \neq \pm 1$.
-\begin{align}\label{6.3proof4} y d_ \delta &= d_\lambda y, \nonumber \\[1.5ex]
+\begin{align}\label{6.3proof4} y d_ \delta &= d_\sigma y, \nonumber \\[1.5ex]
 \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix} \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} &= \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} \alpha & \beta \\ \gamma & \delta \end{bmatrix}, \nonumber \\[1.5ex]
 \begin{bmatrix} \alpha \delta & \beta \delta^{-1} \\ \gamma \delta & \delta \delta^{-1} \end{bmatrix} &= \begin{bmatrix} \alpha \delta & \beta \delta \\ \gamma \delta^{-1} & \delta \delta^{-1} \end{bmatrix}.
 \end{align}
@@ -522,10 +726,11 @@ The centraliser of an element $x$ in $\SL_2(F)$is abelian unless $x$ belongs to 
 \begin{proof} This is almost an immediate consequence of the preceding results. Propositions \ref{6.4i} and \ref{6.4ii} show that an element of the form $\pm s_\sigma$ which does not lie in the centre of $\SL_2(F)$has centraliser $\times Z$, whilst a non-central element of the form $d_\delta$ has centraliser $D$. Both $T$ and $D$ are abelian since they are isomoprhic to $F$ and $F^\times$ respectively. Let $s_\sigma z_1$ and $s_\gamma z_2$  be arbitrary elements of $\times Z$.
 
 \vspace{-.5mm}
-\begin{align*} (s_\sigma z_1)(s_\gamma z_2)  &= s_\sigma s_\gamma z_2 z_1  \tag{since  $z_1 \in Z$}
+\begin{align*} 
+    (s_\sigma z_1)(s_\gamma z_2)  &= s_\sigma s_\gamma z_2 z_1  \tag{since  $z_1 \in Z$}
 \\ &= s_\gamma s_\sigma z_2 z_1  \tag{since  $T$ is abelian}
 \\ &= (s_\gamma z_2)(s_\sigma z_1).   \tag{since  $z_2 \in Z$}
-\end {align*} 
+\end{align*} 
 
 Thus $\times Z$ is also abelian. Since every element of $\SL_2(F)$is conjugate to $d_\delta$ or $\pm s_\sigma$ by Proposition \ref{6.3} and conjugate elements have conjugate centralisers by Proposition \ref{conjcent}, the centraliser of each $x \in \SL_2(F)\setminus Z$ is conjugate to either $\times Z$ or $D$. Proposition \ref{conjugateprop}(iii) shows that conjugate subgroups are isomorphic and therefore have the same structure, thus since both $\times Z$ and $D$ are abelian, $C_{\SL_2(F)}(x)$ is also abelian. Note that in general this does hold for $x \in Z$, since its centraliser is the whole of $\SL_2(F)$which is not abelian unless $\SL_2(F)= Z$.
 
@@ -580,7 +785,7 @@ So $\theta \in SL(2,F) = \SL_2(F)$and since $P^\theta_1 = Q_1$, $P^\theta_2 = Q_
 The following proposition looks at what happens when the group $\SL_2(F)$acts on the projective line $\mathscr{L}$.
 
 \begin{proposition} \label{6.7} (i) Each element of the form $d_\delta$ (with $\delta \neq \pm 1$), fixes the same two points on the projective line $\mathscr{L}$ and fix no other point. \vspace{3mm} \\
-(ii) Each element of the form $\pm s_\sigma$ (with $\lambda \neq 0$), fixes the same point $P$ on $\mathscr{L}$ and fix no other point. Furthermore, \emph{Stab}$(P) = H$. \vspace{3mm} \\
+(ii) Each element of the form $\pm s_\sigma$ (with $\sigma \neq 0$), fixes the same point $P$ on $\mathscr{L}$ and fix no other point. Furthermore, \emph{Stab}$(P) = H$. \vspace{3mm} \\
 (iii) All conjugate elements have the same number of fixed points on $\mathscr{L}$. \vspace{3mm} \\
 (iv) Any noncentral element of $\SL_2(F)$has at most 2 fixed points on $\mathscr{L}$.
 \end{proposition}
@@ -593,14 +798,14 @@ The following proposition looks at what happens when the group $\SL_2(F)$acts on
 
 Since $\delta \neq \pm 1$, $\delta$ does not equal $\delta^{-1}$, and so either $u_1 = 0$ or $u_2 = 0$. Thus $u$ is equivalent to either the vector $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ or $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$ and these correspond to 2 distinct points of $\mathscr{L}$ which are fixed by $d_\delta$. \\
 \\
-(ii) Let $P$ be a fixed a point of an arbitrary $s_\sigma$, with $\lambda \neq 0$, and let $u$ be the corresponding element of $V$ to $P$. \\
-\begin{align*} s_\sigma u = \begin{bmatrix} 1 & 0 \\ \lambda & 1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} u_1 \\ u_1 \lambda + u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
-\\[1.5ex] u_1 u_2 &= {u_1}^2 \lambda + u_1 u_2.
+(ii) Let $P$ be a fixed a point of an arbitrary $s_\sigma$, with $\sigma \neq 0$, and let $u$ be the corresponding element of $V$ to $P$. \\
+\begin{align*} s_\sigma u = \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} u_1 \\ u_1 \sigma + u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
+\\[1.5ex] u_1 u_2 &= {u_1}^2 \sigma + u_1 u_2.
 \end{align*}
 
-This gives ${u_1}^2 \lambda = 0$ and since $\lambda \neq 0$ we have $u_1 = 0$. Thus $s_\sigma$ has just one fixed point, $P$ which corresponds to the equivalence class of $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ in $V$. We show also that $P$ is also the only fixed point of $-s_\sigma$, with $\lambda \neq 0$.
-\begin{align*} -s_\sigma u = \begin{bmatrix} -1 & 0 \\ \lambda & -1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} -u_1 \\ u_1 \lambda - u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
-\\[1.5ex] -u_1 u_2 &= {u_1}^2 \lambda - u_1 u_2.
+This gives ${u_1}^2 \sigma = 0$ and since $\sigma \neq 0$ we have $u_1 = 0$. Thus $s_\sigma$ has just one fixed point, $P$ which corresponds to the equivalence class of $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ in $V$. We show also that $P$ is also the only fixed point of $-s_\sigma$, with $\sigma \neq 0$.
+\begin{align*} -s_\sigma u = \begin{bmatrix} -1 & 0 \\ \sigma & -1 \end{bmatrix} \begin{bmatrix} u_1 \\ u_2 \end{bmatrix} &= \begin{bmatrix} -u_1 \\ u_1 \sigma - u_2 \end{bmatrix} \sim \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}, 
+\\[1.5ex] -u_1 u_2 &= {u_1}^2 \sigma - u_1 u_2.
 \end{align*}
 
 So again $u_1 =0$ and $-s_\sigma$ fixes $P$ and no other point. We now calculate the stabiliser of $P$ in $L$, by considering which $x \in \SL_2(F)$fix $P$. \\
@@ -621,7 +826,7 @@ Thus $y$ and indeed $H$ is contained in Stab$(P)$, so Stab$(P) = H$ as desired. 
 
 This shows that $P_i$ is a fixed point of $x$ if and only if $g^{-1} P_i$ is a fixed point of $y$. Thus conjugate elements have the same number of fixed points. \\
 \\
-(iv) By Proposition \ref{6.3}(i), every  element of $\SL_2(F)$is conjugate to either $d_\delta$ or $\pm s_\sigma$, so since conjugate elements have the same number of fixed points, every element of $\SL_2(F)\! \setminus \! Z$ has either the same number of fixed points as $d_\delta$ (with $\delta \neq \pm 1$), namely 2, or the same number as $\pm s_\sigma$, (with $\lambda \neq 0$), namely 1.
+(iv) By Proposition \ref{6.3}(i), every  element of $\SL_2(F)$is conjugate to either $d_\delta$ or $\pm s_\sigma$, so since conjugate elements have the same number of fixed points, every element of $\SL_2(F)\! \setminus \! Z$ has either the same number of fixed points as $d_\delta$ (with $\delta \neq \pm 1$), namely 2, or the same number as $\pm s_\sigma$, (with $\sigma \neq 0$), namely 1.
 
 \end{proof}
 

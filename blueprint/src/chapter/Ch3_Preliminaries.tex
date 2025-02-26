@@ -165,11 +165,15 @@ These interactions and more discussion about this lattice structure will happen 
 Conjugation plays an important roll thoughout the paper, particularly, the following properties about conjugate elements and subgroups.
 
 \begin{proposition}
-    \label{conjugateprop} Let $a$, $b$ be conjugate elements of a group $G$ and $A$, $B$ be conjugate subgroups of $G$. Then the following properites hold: \vspace{3mm} \\
-(i) If either $a$ or $b$ has finite order, then both $a$ and $b$ have the same order. \vspace{3mm} \\
+    \label{orderOf_injective}
+    \lean{orderOf_injective}
+    \leanok
+Let $a$, $b$ be conjugate elements of a group $G$ and $A$, $B$ be conjugate subgroups of $G$.
+If either $a$ or $b$ has finite order, then both $a$ and $b$ have the same order.
 \end{proposition}
+
 \begin{proof}
-    (i) Since $a$ and $b$ are conjugate elements in $G$, $b = xax^{-1}$ for some $x \in G$. Suppose that $b$ has finite order and $b^k = I_G$ for some $k \in \mathbb{Z}^+$,
+    Since $a$ and $b$ are conjugate elements in $G$, $b = xax^{-1}$ for some $x \in G$. Suppose that $b$ has finite order and $b^k = I_G$ for some $k \in \mathbb{Z}^+$,
     \begin{equation*} 
         I_G = b^k = (xax^{-1})^k = xa^{k}x^{-1} \Rightarrow a^k = I_G.
     \end{equation*}
@@ -181,11 +185,11 @@ Conjugation plays an important roll thoughout the paper, particularly, the follo
 \end{proof}
 
 \begin{proposition}
-(ii) $A \cong B$.
+Let $A$ and $B$ be conjugate subgroups of $G$. Then $A \cong B$.
 \end{proposition}
 
 \begin{proof}
-(ii) Since $A$ and $B$ are conjugate, there exists some $x \in G$ such that $B=xAx^{-1}$. Define the map $\phi$ by,
+Since $A$ and $B$ are conjugate, there exists some $x \in G$ such that $B=xAx^{-1}$. Define the map $\phi$ by,
 \begin{align*}
 \phi:A &\longrightarrow xAx^{-1}, \\
 a_1 &\longmapsto xa_1x^{-1} \tag{$\forall \; a_1 \in A$}. 

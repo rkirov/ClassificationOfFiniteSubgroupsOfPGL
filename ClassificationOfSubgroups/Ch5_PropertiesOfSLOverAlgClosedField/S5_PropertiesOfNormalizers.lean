@@ -22,7 +22,7 @@ def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
   if h : a * d = 1 then ⟨!![a, 0; c, d], by simp [h]⟩ else 1
 
 -- it is in fact a surjection
-lemma mem_H_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
+lemma mem_L_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
   x ∈ L F ↔ ∃ a c d, a * d = 1 ∧ (x : Matrix (Fin 2) (Fin 2) F) = !![a, 0; c, d] := by
   constructor
   · intro hx
@@ -71,12 +71,13 @@ lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
 
 /-
 Proposition 1.6.i
-N_L(T₁) ⊆ H, where T₁ is any subgroup of T with order greater than 1. -/
-lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
- (hT₀ : 1 < Nat.card T₀ ) (h : T₀ ≤ S F) : normalizer T₀ ≤ L F := by
+N_{SL(2,F)}(S₀) ⊆ L, where S₀ is any subgroup of S with order greater than 1.
+-/
+lemma normalizer_subgroup_S_leq_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
+ (hT₀ : 1 < Nat.card S₀ ) (h : S₀ ≤ S F) : normalizer S₀ ≤ L F := by
   intro x hx
   rw [mem_normalizer_iff] at hx
-  by_cases h' : ∃ σ, σ ≠ 0 ∧ s σ ∈ T₀
+  by_cases h' : ∃ σ, σ ≠ 0 ∧ s σ ∈ S₀
   · obtain ⟨σ, σ_ne_zero, hσ⟩  := h'
     specialize hx (s σ)
     rw [hx] at hσ
@@ -100,7 +101,7 @@ lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
     simp [x_eq]
     exact β_eq_zero
   · push_neg at h'
-    have T₀_eq_bot : T₀ = ⊥ := by
+    have S₀_eq_bot : S₀ = ⊥ := by
       rw [eq_bot_iff_forall]
       intro x hx
       obtain ⟨σ, rfl⟩ := h hx
@@ -108,14 +109,14 @@ lemma normalizer_subgroup_T_leq_H [DecidableEq F] { T₀ : Subgroup (SL(2,F)) }
       rw [not_imp_not] at h'
       specialize h' hx
       simp [h']
-    have : Nat.card T₀ = 1 := by simp [T₀_eq_bot]
-    -- contradiction with the assumption that Nat.card T₁ > 1
+    have : Nat.card S₀ = 1 := by simp [S₀_eq_bot]
+    -- contradiction with the assumption that Nat.card S₀ > 1
     linarith
 
 
 /-
 Proposition 1.7.
-(i) N_L (D₁) = ⟨D, W⟩, where D₁ is any subgroup of D with order greater than 2.
+(i) N_L (D₀) = ⟨D, W⟩, where D₀ is any subgroup of D with order greater than 2.
 -/
 lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
  (hD₀ : 2 < Nat.card D₀ ) (D₀_leq_D : D₀ ≤ D F) : normalizer D₀ ≤ DW F := by

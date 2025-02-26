@@ -5,6 +5,7 @@ card_sylow_modEq_one
 Sylow.unique_of_normal
 IsPGroup.exists_le_sylow
 IsConj
+orderOf_injective
 SL_monoidHom_PGL
 GeneralLinearGroup.Center.mem_center_general_linear_group_iff
 center_SL_le_ker
@@ -14,8 +15,8 @@ exists_SL_eq_scaled_GL_of_IsAlgClosed
 Surjective_PSL_monoidHom_PGL
 Bijective_PSL_monoidHom_PGL
 PGL_iso_PSL
-SpecialMatrices.s
 SpecialMatrices.d
+SpecialMatrices.s
 SpecialMatrices.w
 SpecialMatrices.d_mul_d_eq_d_mul
 SpecialMatrices.s_mul_s_eq_s_add
@@ -27,9 +28,15 @@ SpecialSubgroups.L
 SpecialSubgroups.D_iso_units
 SpecialSubgroups.S_iso_F
 SpecialSubgroups.normal_S_subgroupOf_L
+SpecialSubgroups.D_join_S_quot_S_subgroupOf_D_join_S_mulEquiv_D_subgroupOf_D_join_S
 Subgroup.center
+SpecialSubgroups.Z
 SpecialSubgroups.center_SL2_eq_Z
 SpecialSubgroups.exists_unique_orderOf_eq_two
+isConj_upper_triagnular_iff
+isTriangularizable_of_algClosed
+lower_triangular_isConj_upper_triangular
+upper_triangular_isConj_diagonal_of_nonzero_det
 SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed
 Subgroup.centralizer
 Subgroup.normalizer

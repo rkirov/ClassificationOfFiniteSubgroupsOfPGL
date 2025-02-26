@@ -14,7 +14,7 @@ universe u
 variable
   {F : Type u} [Field F]
   (n : Type u) [Fintype n]
-  (R : Type u) [CommRing R]
+  {R : Type u} [CommRing R]
   {G : Type u} [Group G]
 
 namespace SpecialSubgroups
@@ -124,7 +124,6 @@ lemma D_meet_S_eq_bot (F : Type*) [Field F] : D F ⊓ S F = ⊥ := by
     constructor
     · simp [h]; exact Subgroup.one_mem (D F)
     · simp [h]; exact Subgroup.one_mem (S F)
-
 
 def L (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ * s σ | (δ : Fˣ) (σ : F) }
@@ -457,7 +456,7 @@ lemma Dw_leq_DW : (D F : Set SL(2,F)) * ({w} : Set SL(2,F)) ⊆ (DW F :  Set SL(
 
 section Center
 
-def Z : Subgroup SL(2,R) := closure {(-1 : SL(2,R))}
+def Z (R : Type*) [CommRing R] : Subgroup SL(2,R) := closure {(-1 : SL(2,R))}
 
 lemma get_entries (x : SL(2,F)) : ∃ α β γ δ,
   α = x.1 0 0 ∧ β = x.1 0 1 ∧ γ = x.1 1 0 ∧ δ = x.1 1 1 ∧
@@ -560,6 +559,7 @@ lemma center_SL2_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,
 instance : Finite (center SL(2,F)) := by
   rw [center_SL2_eq_Z F]
   infer_instance
+
 
 lemma card_Z_eq_two_of_two_ne_zero [NeZero (2 : F)]: Nat.card (Z F) = 2 := by
   rw [@Nat.card_eq_two_iff]

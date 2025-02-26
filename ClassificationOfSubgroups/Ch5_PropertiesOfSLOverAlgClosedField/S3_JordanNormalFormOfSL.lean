@@ -74,6 +74,7 @@ lemma associated_of_dvd_mul_irreducibles {k : Type*} [Field k] {q p₁ p₂: k[X
       rw [q_eq, hk₁, hk₂, mul_assoc, ← mul_assoc k₁, mul_comm k₁, mul_assoc, ← mul_assoc,
       associated_mul_isUnit_right_iff (IsUnit.mul h₁ h₂)]
 
+
 lemma minpoly_eq_X_sub_C_implies_matrix_is_diagonal { n R : Type*} [Fintype n] [DecidableEq n]
      [ CommRing R ] [NoZeroDivisors R] {M : Matrix n n R} {a : R}
     (hM : minpoly R M = (X - C a)) : M = diagonal (fun _ ↦ a) := by
@@ -83,6 +84,9 @@ lemma minpoly_eq_X_sub_C_implies_matrix_is_diagonal { n R : Type*} [Fintype n] [
     -- This shows M is diagonal
     exact M_eq_diagonal
 
+/-
+A 2x2 matrix is lower triangular if and only the top right entry is zero.
+-/
 lemma lower_triangular_iff_top_right_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F} :
   (∃ a c d, !![a, 0; c, d] = M) ↔ M 0 1 = 0 := by
   constructor
@@ -93,6 +97,9 @@ lemma lower_triangular_iff_top_right_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F
     simp_rw [← h]
     ext <;> rfl
 
+/-
+A 2x2 matrix is upper triangular if and only if the bottom left entry is zero.
+-/
 lemma upper_triangular_iff_bottom_left_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F} :
   (∃ a b d, !![a, b; 0, d] = M) ↔ M 1 0 = 0 := by
   constructor
@@ -103,19 +110,30 @@ lemma upper_triangular_iff_bottom_left_entry_eq_zero {M : Matrix (Fin 2) (Fin 2)
     simp_rw [← h]
     ext <;> rfl
 
+/-
+The product of the top left entry and the bottom right entry equals one
+if the bottom left entry is zero.
+-/
 lemma det_eq_mul_diag_of_upper_triangular (S : SL(2,F)) (hγ : S.1 1 0  = 0) :
   S 0 0 * S 1 1 = 1 := by
   have det_eq_one : det (S.val) = 1 := by simp
   simp only [det_fin_two, hγ, mul_zero, sub_zero] at det_eq_one
   exact det_eq_one
 
+/-
+The product of the top left entry and the bottom right entry equals one
+if the top right entry is zero.
+-/
 lemma det_eq_mul_diag_of_lower_triangular (S : SL(2,F)) (hβ : S.1 0 1 = 0) :
   S 0 0 * S 1 1 = 1 := by
   have det_eq_one : det (S.val) = 1 := by simp
   simp only [det_fin_two, hβ, zero_mul, sub_zero] at det_eq_one
   exact det_eq_one
 
-
+/-
+A 2x2 matrix of the special linear group is diagonal, and can be written as `d δ` for some `δ ∈ Fˣ`
+if and only if the bottom left and top right entries are zero.
+-/
 lemma SpecialLinearGroup.fin_two_diagonal_iff (x : SL(2,F)) :
   x 0 1 = 0 ∧ x 1 0 = 0 ↔ ∃ δ : Fˣ, d δ = x := by
   constructor
@@ -133,6 +151,10 @@ lemma SpecialLinearGroup.fin_two_diagonal_iff (x : SL(2,F)) :
     rcases h with ⟨-, h₁, h₂, -⟩
     split_ands <;> simp [d, ← h₁, ← h₂]
 
+/-
+A 2x2 matrix of the special linear group is antidiagonal, and can be written as
+`d δ * w` for some `δ ∈ Fˣ` if and only if the top left and bottom right entries are zero.
+-/
 lemma SpecialLinearGroup.fin_two_antidiagonal_iff (x : SL(2,F)) :
   x 0 0 = 0 ∧ x 1 1 = 0 ↔ ∃ δ : Fˣ, (d δ) * w = x := by
   constructor
@@ -239,26 +261,24 @@ theorem isTriangularizable_of_algClosed [DecidableEq F] [IsAlgClosed F]
     ring_nf at hσ ⊢
     exact hσ
   simp at hβ
-  -- If β = 0 then we solve the linear polynomial if α - δ ≠ 0
-  by_cases had : α - δ ≠ 0
-  · let σ := -γ / (α - δ)
-    use s σ
-    simp [M_coe_eq, Matrix.conj_s_eq]
-    field_simp [hβ, σ]
-    ring_nf
-  -- If β = 0 and α = δ
   · use w
     simp [M_coe_eq, w, inv_def, hβ]
 
-
+/-
+A 2x2 upper triangular matrix is conjugate to a diagonal matrix if `a ≠ d`
+-/
 lemma upper_triangular_isConj_diagonal_of_nonzero_det  [DecidableEq F]
   {a b d : F} (had : a - d ≠ 0) : ∃ C : SL(2,F), C * !![a, b; 0, d] * C⁻¹ = !![a, 0; 0, d] := by
   use ⟨!![1, b / (a - d); 0, 1], by simp⟩
   simp
   ext
-  repeat' field_simp
+  repeat'
+  field_simp
   ring_nf
 
+/-
+A 2x2 upper triangular matrix is conjugate to a jordan block if `b ≠ 0`
+-/
 lemma upper_triangular_isConj_jordan {a b : F} (hb : b ≠ 0) :
   IsConj !![a, b; 0, a] !![a, 1; 0, a] := by
   use GeneralLinearGroup.mk' !![1 / b, 0; 0, 1]
@@ -266,13 +286,18 @@ lemma upper_triangular_isConj_jordan {a b : F} (hb : b ≠ 0) :
   ext
   repeat' field_simp
 
+/-
+A 2x2 lower triangular matrix is conjugate to an upper triangular matrix
+-/
 lemma lower_triangular_isConj_upper_triangular {a b : F} :
   ∃ C : SL(2,F), C * !![a, 0; -b, a] * C⁻¹ = !![a, b; 0, a] := by
-  have h' : det !![0, -1; (1 : F), 0] = 1 := by simp
-  use ⟨!![0,-1;(1 : F),0], h'⟩
-  simp
+  use w
+  simp [w]
 
-lemma mul_left_eq_mul_right_iff {α : Type*}[Monoid α]{N M : α }(c : αˣ) :
+/-
+If M is semiconjugate to N by a unit in a monoid if and only if M is conjugate to N by a unit
+-/
+lemma mul_left_eq_mul_right_iff {α : Type*} [Monoid α]{N M : α}(c : αˣ) :
   ((c : α) * M = N * (c : α)) ↔ M = c⁻¹ * N * c := by
   constructor
   · intro h
@@ -288,9 +313,11 @@ lemma det_eq_det_IsConj {n : ℕ}{M N : Matrix (Fin n) (Fin n) R} (h : IsConj N 
   rw [SemiconjBy, mul_left_eq_mul_right_iff] at hc
   rw [hc, Matrix.coe_units_inv, det_conj' c.isUnit N]
 
--- If underlying matrices are the same then the matrices
--- a subtypes of the special linear group are the same
-lemma SpecialLinearGroup.eq_of {S L : SL(2,F) } (h : (S : Matrix ( Fin 2) (Fin 2) F)  = L) :
+/-
+If the underlying matrices are the same then the matrices
+as subtypes of the special linear group are also the same
+-/
+lemma SpecialLinearGroup.eq_of {S L : SL(2,F) } (h : (S : Matrix (Fin 2) (Fin 2) F)  = L) :
   S = L := by ext <;> simp [h]
 
 lemma IsConj_coe {M N : Matrix (Fin 2) (Fin 2) F} (hM : det M = 1) (hN : det N = 1)
@@ -304,7 +331,8 @@ lemma IsConj_coe {M N : Matrix (Fin 2) (Fin 2) F} (hM : det M = 1) (hN : det N =
 /-
 Lemma 1.5.
 Each element of SL(2,F) is conjugate to either
-D δ for some δ ∈ Fˣ, or to  ± T σ for some σ ∈ F.
+`D δ` for some `δ ∈ Fˣ`, or to  `± s σ` for some `σ ∈ F` if
+`F` is algebraically closed.
 -/
 theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [IsAlgClosed F]
   (S : SL(2, F)) :
@@ -316,7 +344,7 @@ theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [I
   -- S is conjugate to an upper triangular matrix
   have S_IsConj_upper_triangular :
     ∃ a b d, ∃ C : SL(2,F), (C * S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
-    @isTriangularizable_of_algClosed F _ _ _ (S : Matrix (Fin 2) (Fin 2) F)
+    isTriangularizable_of_algClosed (S : Matrix (Fin 2) (Fin 2) F)
   have det_coe_S_eq_one : det (S : Matrix (Fin 2) (Fin 2) F ) = 1 := by simp
   obtain ⟨a, b, d, C, h⟩ := S_IsConj_upper_triangular
   -- Because !![a, b; 0, d] is conjugate to S it also has determinant 1
@@ -376,7 +404,7 @@ theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [I
     have isConj₂ :
       ∃ C : SL(2,F), C * ⟨!![a, b; 0,d], det_eq_one⟩ * C⁻¹ = ⟨!![a,0;0,d], det_eq_one'⟩ := by
       apply IsConj_coe
-      apply upper_triangular_isConj_diagonal_of_nonzero_det _
+      refine upper_triangular_isConj_diagonal_of_nonzero_det ?a_ne_d
       intro h
       rw [sub_eq_zero] at h
       contradiction
