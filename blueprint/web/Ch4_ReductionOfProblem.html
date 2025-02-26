@@ -225,7 +225,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  Let \(\varphi : \operatorname{SL}_n(R) \rightarrow \operatorname{PGL}_n(R)\) be the injection of \(\operatorname{PSL}_n(R)\) into \(\operatorname{PGL}_n(R)\) defined by </p>
-<div class="displaymath" id="a0000000067">
+<div class="displaymath" id="a0000000069">
   \[  S \mapsto i(S) \;  (R^\times I)  \]
 </div>
 <p>where \(i : \operatorname{SL}_n(F) \hookrightarrow \operatorname{GL}_n(F)\) is the natural injection of the special linear group into the general linear group. </p>
@@ -246,7 +246,7 @@
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#GeneralLinearGroup.Center.mem_center_general_linear_group_iff">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000068"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -277,7 +277,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000068">
+<div class="proof_wrapper" id="a0000000070">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -287,11 +287,11 @@
   <div class="proof_content">
   <ul class="itemize">
   <li><p>Suppose \(G \in GL_n(F)\) belongs to \(Z(\operatorname{GL}_n(F))\) then for all \(H \in \operatorname{GL}_n(F)\) we have that \(G H = H G\). We will find it sufficient to only consider the case where \(H\) is a transvection matrices. Let \(1 \leq i {\lt} j \leq n\), then the transvection matrices are of the form \(T_{ij} = I + E_{ij}\) where \(E_{ij}\) is the standard basis matrix given by </p>
-<div class="displaymath" id="a0000000069">
+<div class="displaymath" id="a0000000071">
   \[  E_{{ij}_{kl}} = \begin{cases}  1 &  \text{if $i = k$ and $l = j$}\\ 0 &  \text{otherwise} \end{cases}  \]
 </div>
 <p>Given \(T_{ij} G = (I + E_{ij}) G = G T_{ij} (I + E_{ij})\), and addition is commutative we can use the cancellation law to yield that </p>
-<div class="displaymath" id="a0000000070">
+<div class="displaymath" id="a0000000072">
   \[  E_{ij} G = G E_{ij}  \]
 </div>
 <p>But \(G\) only commutes with \(E_{ij}\) for all \(i \neq j\) if \(G = r \cdot I\) for some \(r \in R^\times \). </p>
@@ -315,7 +315,7 @@
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#center_SL_le_ker">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000071"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -368,7 +368,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000071">
+<div class="proof_wrapper" id="a0000000073">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -460,7 +460,7 @@
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#Injective_PSL_monoidHom_PGL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000074"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -513,7 +513,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000072">
+<div class="proof_wrapper" id="a0000000074">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -524,7 +524,7 @@
   <p>To show \(\bar{\varphi }\) is injective we must show that \(\ker \bar{\varphi } \leq \bot _{\operatorname{PSL}_n(F)}\) where \(\bot _{\operatorname{PSL}_n(F)}\) is the trivial subgroup of \(\operatorname{PSL}_n(F)\). </p>
 <p>Let \([S] \in \operatorname{PSL}_n(F)\) and suppose \([S] \in \ker \bar{\varphi }\). If \([S] \in \ker \bar{\varphi }\) then \(\bar{\varphi } ([S]) = [1]_{\operatorname{PGL}_n(F)}\). But on the other hand, \(\bar{\varphi } ([S]) = \varphi (s)\) and so \(\varphi (S) = 1_{\operatorname{PGL}_n(F)}\) </p>
 <p>and thus \(S \in Z(\operatorname{GL}_n(F))\), from <a href="Ch4_ReductionOfProblem.html#GeneralLinearGroup.Center.mem_center_general_linear_group_iff">4.2</a> it follows that \(s = r \cdot I\) for some \(r \in R^\times \). But given the restriction of \(S \in \operatorname{SL}_n(F)\) we know that </p>
-<div class="displaymath" id="a0000000073">
+<div class="displaymath" id="a0000000075">
   \begin{equation*}  \det (S) = \det (r \cdot I) = r^n = 1 \implies \text{$r$ is a $n$ \textsuperscript{th} root of unity} \end{equation*}
 </div>
 <p>Therefore, given elements of \(Z(\operatorname{SL}_n(F))\) are those matrices of the form \(\omega \cdot I\) where \(\omega \) is a \(n\)<sup>th</sup> root of unity, we can conclude that \([S] = [1]_{\operatorname{PSL}_n(F)}\) and thus \(\ker \bar{\varphi } \leq \bot _{\operatorname{PSL}_n(F)}\) as required. </p>
@@ -546,7 +546,7 @@
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#exists_SL_eq_scaled_GL_of_IsAlgClosed">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000074"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000076"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -574,13 +574,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  If \(F\) is an algebraically closed field then for every \(G \in \operatorname{GL}_n(F)\) there exists a nonzero constant \(\alpha \in F^\times \) and an element \(S \in \operatorname{SL}_n(F)\) such that </p>
-<div class="displaymath" id="a0000000075">
+<div class="displaymath" id="a0000000077">
   \begin{equation*}  G = \alpha \cdot S \end{equation*}
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000074">
+<div class="proof_wrapper" id="a0000000076">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -589,15 +589,15 @@
   </div>
   <div class="proof_content">
   <p>Let \(G \in \operatorname{GL}_n(R)\) then define </p>
-<div class="displaymath" id="a0000000076">
+<div class="displaymath" id="a0000000078">
   \begin{equation*}  P(X) := X^n - \det (G) \end{equation*}
 </div>
 <p>By assumption \(F\) is algebraically closed and \(\det (G) \in F^\times \) thus there exists a root \(\alpha \in F^\times \) such that </p>
-<div class="displaymath" id="a0000000077">
+<div class="displaymath" id="a0000000079">
   \begin{equation*}  \alpha ^n - \det (G) = 0 \iff \alpha = \sqrt[n]{\det (G)} \end{equation*}
 </div>
 <p>Let \(S = \frac{1}{\alpha } \cdot G\), by construction \(S \in \operatorname{SL}_n(F)\) as </p>
-<div class="displaymath" id="a0000000078">
+<div class="displaymath" id="a0000000080">
   \begin{equation*}  \det (S) = \left(\frac{1}{\alpha }\right) \cdot \det (G) = \frac{1}{\det (G)} \det (G) = 1 \end{equation*}
 </div>
 
@@ -616,7 +616,7 @@
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#Surjective_PSL_monoidHom_PGL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000079"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -669,7 +669,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000079">
+<div class="proof_wrapper" id="a0000000081">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -678,15 +678,15 @@
   </div>
   <div class="proof_content">
   <p>Let \(G \;  (F^\times I) = [G] \in \operatorname{PGL}_n(F)\), then \(G \in \operatorname{GL}_n(F)\) we can find a representative of \([G']\), that lies within the special linear group. Given elements of the special linear group are matrices with determinant equal to one, we must scale \(G\) to a suitable factor to yield a representative which lies within \(\operatorname{SL}_n(F)\). Suppose \(\det (G) \ne 1\) and let </p>
-<div class="displaymath" id="a0000000080">
+<div class="displaymath" id="a0000000082">
   \[  P(X) := X^n - \det (G) \in F[X]  \]
 </div>
 <p> By assumption, \(F\) is algebraically closed so there exists a root \(\alpha \ne 0\in F\) such that </p>
-<div class="displaymath" id="a0000000081">
+<div class="displaymath" id="a0000000083">
   \[  \alpha ^n - \det (G) = 0 \iff \alpha ^n = \det (G)  \]
 </div>
 <p> We can define </p>
-<div class="displaymath" id="a0000000082">
+<div class="displaymath" id="a0000000084">
   \[  G' := \frac{1}{\alpha } \cdot G \quad \text{where} \quad \det (G') = \frac{1}{\alpha ^n} \det (G) = 1.  \]
 </div>
 <p> Thus \(G' \in \operatorname{SL}_n(F) \leq \operatorname{GL}_n(F)\) and given \(G' = \frac{1}{\alpha } G\) we have that \(G' \;  (F^\times I) = G \;  (F^\times I)\). </p>
@@ -707,7 +707,7 @@
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#Bijective_PSL_monoidHom_PGL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000083"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000085"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -760,7 +760,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000083">
+<div class="proof_wrapper" id="a0000000085">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -785,7 +785,7 @@
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#PGL_iso_PSL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000084"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000086"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -838,7 +838,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000084">
+<div class="proof_wrapper" id="a0000000086">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
