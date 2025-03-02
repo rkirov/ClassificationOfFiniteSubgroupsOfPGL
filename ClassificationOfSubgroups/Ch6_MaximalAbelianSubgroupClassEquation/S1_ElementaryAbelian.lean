@@ -83,7 +83,7 @@ lemma IsPGroup {G : Type*} [Group G] (p : ℕ) (hp : Nat.Prime p)
   simp [this] at p_eq_p'
   use k, p_eq_p'▸ card_eq.symm
 
-lemma IsElementaryAbelian_subgroupOf {G : Type*} [Group G]
+lemma subgroupOf {G : Type*} [Group G]
   (H K : Subgroup G) {p : ℕ} [Fact (Nat.Prime p)] (hH : IsElementaryAbelian p H) :
   IsElementaryAbelian p (H.subgroupOf K) := by
   refine ⟨?IsCommutative, ?orderOf_eq_p⟩

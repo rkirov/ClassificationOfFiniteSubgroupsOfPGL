@@ -11,51 +11,12 @@ open SpecialMatrices SpecialSubgroups
 
 universe u
 
+
 variable
   (F : Type u) [Field F]
   (n : Type u) [Fintype n]
   (R : Type u) [CommRing R]
   {G : Type u} [Group G]
-
-
-def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
-  if h : a * d = 1 then ⟨!![a, 0; c, d], by simp [h]⟩ else 1
-
--- it is in fact a surjection
-lemma mem_L_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
-  x ∈ L F ↔ ∃ a c d, a * d = 1 ∧ (x : Matrix (Fin 2) (Fin 2) F) = !![a, 0; c, d] := by
-  constructor
-  · intro hx
-    obtain ⟨δ, σ, h⟩ := hx
-    use δ, σ * δ⁻¹, δ⁻¹
-    rw [← h]
-    split_ands
-    simp
-    ext <;> simp [d, s, mul_comm]
-  · rintro ⟨a, c, d, had, hx⟩
-    have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
-    have a_inv_eq_d : a⁻¹ = d := by exact DivisionMonoid.inv_eq_of_mul a d had
-    use a_is_unit.unit, c * a_is_unit.unit
-    simp [SpecialMatrices.d, s, lower_triangular, had]
-    ext <;> field_simp [a_inv_eq_d, had, hx]; exact Eq.symm (eq_one_div_of_mul_eq_one_right had)
-
-lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
-  x ∈ L F ↔ ∃ a c d, !![a, 0; c, d] = (x : Matrix (Fin 2) (Fin 2) F) := by
-  constructor
-  · intro hx
-    obtain ⟨δ, σ, h⟩ := hx
-    use δ, σ * δ⁻¹, δ⁻¹
-    rw [← h]
-    ext <;> simp [d, s, mul_comm]
-  · rintro ⟨a, c, d, hx⟩
-    have had : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by simp
-    simp [← hx] at had
-    have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
-    have a_inv_eq_d : a⁻¹ = d := by exact DivisionMonoid.inv_eq_of_mul a d had
-    use a_is_unit.unit, c * a_is_unit.unit
-    simp [SpecialMatrices.d, s, lower_triangular, had]
-    ext <;> field_simp [a_inv_eq_d, had, ← hx]; exact Eq.symm (eq_one_div_of_mul_eq_one_right had)
-
 
 
 
@@ -73,7 +34,7 @@ lemma mem_H_iff_lower_triangular' [DecidableEq F] {x : SL(2,F)} :
 Proposition 1.6.i
 N_{SL(2,F)}(S₀) ⊆ L, where S₀ is any subgroup of S with order greater than 1.
 -/
-lemma normalizer_subgroup_S_leq_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
+lemma normalizer_subgroup_S_le_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
  (hT₀ : 1 < Nat.card S₀ ) (h : S₀ ≤ S F) : normalizer S₀ ≤ L F := by
   intro x hx
   rw [mem_normalizer_iff] at hx
@@ -90,7 +51,7 @@ lemma normalizer_subgroup_S_leq_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     obtain ⟨σ' , hσ'⟩ := this
     simp [x_eq] at hσ'
     -- uses decidable equality
-    rw [mem_H_iff_lower_triangular', lower_triangular_iff_top_right_entry_eq_zero]
+    rw [SpecialSubgroups.mem_L_iff_lower_triangular, lower_triangular_iff_top_right_entry_eq_zero]
     have β_eq_zero : s σ' 0 1 = 0 := by simp [s]
     rw [hσ'] at β_eq_zero
     simp [x_eq, s] at β_eq_zero
@@ -113,7 +74,7 @@ lemma normalizer_subgroup_S_leq_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     -- contradiction with the assumption that Nat.card S₀ > 1
     linarith
 
-
+#check mul_normal
 /-
 Proposition 1.7.
 (i) N_L (D₀) = ⟨D, W⟩, where D₀ is any subgroup of D with order greater than 2.
@@ -121,7 +82,7 @@ Proposition 1.7.
 lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
  (hD₀ : 2 < Nat.card D₀ ) (D₀_leq_D : D₀ ≤ D F) : normalizer D₀ ≤ DW F := by
   intro x hx
-  rw [@mem_normalizer_iff] at hx
+  rw [mem_normalizer_iff] at hx
   have ⟨δ', h₀, h₁, hδ'⟩ := ex_of_card_D_gt_two hD₀ D₀_leq_D
   specialize hx (d δ')
   rw [hx] at hδ'
@@ -131,8 +92,8 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
   rcases mem_D with ⟨top_right, bottom_left⟩
   simp [d, x_eq] at top_right bottom_left
   ring_nf at top_right bottom_left
-  have top_right_eq : -(α * ↑δ' * β) + α * β * (↑δ')⁻¹ = α * β * ((↑δ')⁻¹ - ↑δ') := by ring
-  have bottom_left_eq : ↑δ' * γ * δ - (↑δ')⁻¹ * γ * δ  = γ * δ * (↑δ' - (↑δ')⁻¹) := by ring
+  have top_right_eq : -(α * (δ' : F) * β) + α * β * (δ' : F)⁻¹ = α * β * ((↑δ')⁻¹ - ↑δ') := by ring
+  have bottom_left_eq : (δ' : F) * γ * δ - (δ' : F)⁻¹ * γ * δ  = γ * δ * (↑δ' - (↑δ')⁻¹) := by ring
   replace top_right := top_right_eq ▸ top_right
   replace bottom_left := bottom_left_eq ▸ bottom_left
   have det_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by rw [SpecialLinearGroup.det_coe]

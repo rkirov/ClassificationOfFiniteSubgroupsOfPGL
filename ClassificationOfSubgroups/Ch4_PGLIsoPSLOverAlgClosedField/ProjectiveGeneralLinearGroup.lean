@@ -58,7 +58,7 @@ theorem mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group {
       rfl
 
 
-namespace Center
+section Center
 
 open Subgroup GeneralLinearGroup
 
@@ -100,7 +100,6 @@ open scoped MatrixGroups
 /-- A projective general linear group is the quotient of a special linear group by its center. -/
 abbrev ProjectiveGeneralLinearGroup : Type _ :=
     GL n R ⧸ center (GL n R)
-
 
 /-- `PGL n R` is the projective special linear group `(GL n R)/ Z(GL(n R))`. -/
 abbrev PGL := ProjectiveGeneralLinearGroup
@@ -146,7 +145,7 @@ lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
     rw [SpecialLinearGroup.mem_center_iff] at x_mem_center
     obtain ⟨ω, hω, h⟩ := x_mem_center
     simp [MonoidHom.mem_ker, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL]
-    rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
+    rw [GeneralLinearGroup.mem_center_general_linear_group_iff]
     have IsUnit_ω : IsUnit ω := IsUnit.of_pow_eq_one hω Fintype.card_ne_zero
     use IsUnit_ω.unit
     ext
@@ -204,7 +203,7 @@ open Function
 lemma lift_scalar_matrix_eq_one {n F : Type*} [hn₁ : Fintype n] [DecidableEq n]
   [Field F] [IsAlgClosed F] (c : Fˣ) : GL_monoidHom_PGL n F (c • 1)  = 1 := by
   simp [GL_monoidHom_PGL]
-  rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
+  rw [GeneralLinearGroup.mem_center_general_linear_group_iff]
   use c
 
 instance (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
@@ -224,7 +223,7 @@ theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [Decidabl
   simp only [PSL_monoidHom_PGL, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL,
     MonoidHom.mem_ker, QuotientGroup.lift_mk, MonoidHom.coe_comp, QuotientGroup.coe_mk',
     Function.comp_apply, QuotientGroup.eq_one_iff] at psl_in_ker
-  rw [GeneralLinearGroup.Center.mem_center_general_linear_group_iff] at psl_in_ker
+  rw [GeneralLinearGroup.mem_center_general_linear_group_iff] at psl_in_ker
   obtain ⟨ω, hω⟩ := psl_in_ker
   have ω_eq_root_of_unity : det S.val = 1 := SpecialLinearGroup.det_coe S
   simp [GeneralLinearGroup.ext_iff, SpecialLinearGroup.toGL] at hω
@@ -284,7 +283,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
   use (SL_monoidHom_PSL n F) S
   have class_G_eq_class_S : (⟦G⟧ : PGL n F) = ⟦S.toGL⟧ := by
     rw [Quotient.eq, QuotientGroup.leftRel_apply,
-      GeneralLinearGroup.Center.mem_center_general_linear_group_iff]
+      GeneralLinearGroup.mem_center_general_linear_group_iff]
     use c⁻¹
     suffices c⁻¹ • 1 * G = S by
       simp [← h]

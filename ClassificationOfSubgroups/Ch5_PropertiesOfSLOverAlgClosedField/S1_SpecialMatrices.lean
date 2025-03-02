@@ -66,7 +66,7 @@ lemma s_pow_eq_s_mul (σ : F) (n : ℕ) : (s σ)^n = s (n • σ) := by
     congr
     ring
 
-lemma order_t_eq_char {p : ℕ} [hp : Fact (Nat.Prime p)] [hC : CharP F p]
+lemma order_s_eq_char {p : ℕ} [hp : Fact (Nat.Prime p)] [hC : CharP F p]
   (σ : F) (hσ : σ ≠ 0) : orderOf (s σ) = p := by
   refine orderOf_eq_prime ?hg ?hg1
   · simp

@@ -47,6 +47,7 @@ def centralizer_s_eq_SZ {σ : F} (hσ : σ ≠ 0) : centralizer { s σ } = SZ F 
     rw [hy]
     simp [add_comm]
 
+
 lemma Field.self_eq_inv_iff (x : F) (x_ne_zero : x ≠ 0) : x = x⁻¹ ↔ x = 1 ∨ x = - 1 := by
   rw [← sq_eq_one_iff, sq, propext (mul_eq_one_iff_eq_inv₀ x_ne_zero)]
 
@@ -132,32 +133,9 @@ lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
       rw [hy]
       group
 
-
-lemma conjugate_IsComm_of_IsComm' {G : Type*} [Group G] (c : G)(H K : Subgroup G)
-  (hK : IsCommutative K)(h : conj c • K = H) : IsCommutative H := by
-  rw [IsCommutative_iff]
-  rintro ⟨x, hx⟩ ⟨y, hy⟩
-  rw [le_antisymm_iff] at h
-  obtain ⟨- , H_le_conj_K⟩ := h
-  rcases H_le_conj_K hx with ⟨c₁, hc₁, eq_x⟩
-  rcases H_le_conj_K hy with ⟨c₂, hc₂, eq_y⟩
-  simp at eq_x eq_y
-  have := @mul_comm_of_mem_isCommutative G _ K _ c₁ c₂ hc₁ hc₂
-  simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq]
-  rw [← eq_x, ← eq_y]
-  group
-  simp
-  rw [mul_assoc, this]
-  group
-
-lemma conjugate_IsComm_of_IsComm {G : Type*} [Group G] (c : G)(K : Subgroup G)
-  (hK : IsCommutative K) : IsCommutative (conj c • K) := by
-  let H := conj c • K
-  have H_eq : MulAut.conj c • K = H := rfl
-  exact @conjugate_IsComm_of_IsComm' G _ c H K hK H_eq
-
 lemma MulAut.conj_smul_symm {G : Type*} [Group G] (H K : Subgroup G) (c : G)
  (h : conj c • H = K) : ∃ c' : G, conj c' • K = H := ⟨c⁻¹, by simp [← h]⟩
+
 /-
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
@@ -178,8 +156,7 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
       rw [← x_IsConj_d, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_x_eq, centralizer_d_eq_D _ δ_ne_one δ_ne_neg_one]
-    apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_D
+    exact map_isCommutative _ _
   · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (s σ) x x_IsConj_s
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
@@ -187,8 +164,7 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
       rw [← x_IsConj_s, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq, centralizer_s_eq_SZ σ_ne_zero]
-    apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_SZ F
+    exact map_isCommutative _ _
   · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-s σ) x x_IsConj_neg_s
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
@@ -196,7 +172,6 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
       rw [← x_IsConj_neg_s, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_s_eq_SZ σ_ne_zero]
-    apply conjugate_IsComm_of_IsComm
-    exact IsCommutative_SZ F
+    exact map_isCommutative _ _
 
 #min_imports

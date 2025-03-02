@@ -1,3 +1,28 @@
+-- import Mathlib
+
+-- def sum_of_odd : ℕ → ℕ
+--  | 0 => 0
+--  | n + 1 => sum_of_odd n + (2*n + 1)
+
+-- #eval sum_of_odd 50
+
+
+-- theorem sum_of_odd_eq_sq : ∀ n : ℕ, sum_of_odd n = n^2 := by
+--   intro n
+--   induction n
+--   case zero => rw [sum_of_odd, sq, mul_zero]
+--   case succ k hk =>
+--     rw [sum_of_odd, hk, sq, sq]
+--     ring
+
+
+-- #moogle "add multiplied by self."
+
+-- #check add_mul_self_eq
+
+-- #synth CommSemiring ℕ
+
+
 -- lemma exists_sqrt_discriminant [IsAlgClosed F] { a b c : F} :
 --   ∃ s, s * s = discrim a b c := by
 --   rw [discrim]

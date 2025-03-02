@@ -10,7 +10,7 @@ The following theorems are all well-known fundamental results in group theory. I
 \begin{theorem}\label{lagrange} \textit{Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$.} \\
 \end{theorem} 
 
-\begin{theorem}\label{1stiso} \textit{Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/Ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/Ker \; \phi \cong G'.$$} \\
+\begin{theorem}\label{1stiso} \textit{Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/\ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/\ker \; \phi \cong G'.$$} \\
 \end{theorem} 
 
 \vspace{-10mm}
@@ -105,7 +105,7 @@ The orbit and the stabiliser of an element are closely related. The following th
 The following standard theorem will all play a vital roll later on.
 
 \begin{theorem}\label{symhomoker} Let $G$ be a group and $H$ a subgroup of $G$ of finite index $n$. Then there is a homomorphism $\phi : G \longrightarrow S_n$ such that,
-\begin{align*} ker(\phi) = \bigcap\limits_{x \in G} x H x^{-1}.
+\begin{align*} \ker(\phi) = \bigcap\limits_{x \in G} x H x^{-1}.
 \end{align*}
 \end{theorem}
 
@@ -201,13 +201,13 @@ We show that $\phi$ is a homomorphism between $A$ and $B=xAx^{-1}$.
 \phi(a_1a_2) = x a_1 a_2 x^{-1} = ( xa_1x^{-1})( xa_2x^{-1}) = \phi(a_1) \phi(a_2).
 \end{equation*}
 \\
-Now consider an arbitrary $k \in ker(\phi)$.
+Now consider an arbitrary $k \in \ker(\phi)$.
 
 \begin{equation*}
-k \in ker(\phi) \iff \phi(k) = I_G \iff  xkx^{-1} = I_G \iff k = I_G.
+k \in \ker(\phi) \iff \phi(k) = I_G \iff  xkx^{-1} = I_G \iff k = I_G.
 \end{equation*}
 \\
-So $ker(\phi) = \{ I_G \}$ which means $\phi$ is injective. Now let $b_1 \in B = xAx^{-1}$. Thus $b_1 = xa_1x^{-1}$ for some $a_1 \in A$. Since $a_1 \in A$, $\phi(a_1) = xa_1x^{-1} = b_1$ and so $\phi$ is surjective. Thus $\phi$ is an isomorphism and $A$ and $B$ are isomorphic.
+So $\ker(\phi) = \{ I_G \}$ which means $\phi$ is injective. Now let $b_1 \in B = xAx^{-1}$. Thus $b_1 = xa_1x^{-1}$ for some $a_1 \in A$. Since $a_1 \in A$, $\phi(a_1) = xa_1x^{-1} = b_1$ and so $\phi$ is surjective. Thus $\phi$ is an isomorphism and $A$ and $B$ are isomorphic.
 
 \end{proof}
 
@@ -228,7 +228,11 @@ An \textbf{inner automorphism} is an automorphism whereby $G$ acts on itself by 
 where $a_i, b_i \in G_i$. It is easy to verify that $G_1 \times G_2 \times...\times G_n$ is a group under this operation. This group is called the \textbf{direct product} of $G_1, G_2,...,G_n$.
 \end{definition}
 
-\begin{lemma} \label{directproductN} Let $A$ and $B$ be normal subgroups of $G$ with $A \cap B = \{ I_G \}$. Then $AB \cong A \times B$.
+\begin{lemma} 
+\label{SpecialSubgroups.prod_mulEquiv_join_of_disjoin_of_normal} 
+\lean{SpecialSubgroups.prod_mulEquiv_join_of_disjoin_of_normal}
+\leanok
+Let $A$ and $B$ be normal subgroups of $G$ with $A \cap B = \{ I_G \}$. Then $AB \cong A \times B$.
 \end{lemma}
 
 \begin{proof}
@@ -265,11 +269,39 @@ Since $A \cap B = \{ I_G \}$, we have $b_1 b_2^{-1} = I_G = a_1^{-1} a_2$ and so
 \\
 \end{proof}
 
-\begin{lemma}\label{directproductZ}
+\begin{remark}[Internal direct product of subgroups]
+    Given the product of subgroups is not necessarily a subgroup. It does not make sense to define the product of two subgroups as having the type of a subgroup.
+
+    To be clear, it is be possible to define this type provided the appropriate assumptions such as for example disjointness and normality of the subgroups, but what turns out to be much more sensible in the bigger picture is to again harness the complete lattice structure on subgroups.
+    It is often the case subgroups do not statisfy the appropriate conditions for the pointwise product of sets to be a subgroup, but still one wants to define the smallest subgroup which contains both subgroups, whether it turns out to be the pointwise product of the subgrops or something larger.
+
+    This notion corresponds to taking the supremum or join of two subgroups \texttt{H : Subgroup G} and \texttt{K : Subgroup G} which denoted by 
+
+    \begin{verbatim}
+        H ⊔ K : Subgroup G
+    \end{verbatim}
+
+    Naturally, as expected $H \le H \sqcup K$ and $K \le H \sqcup K$. Furthermore, if we now supply the appropriate assumptions, when peeking at the different facets of the supremum we will be able to recover the properties we desire.
+
+    For instance, the theorem \texttt{Subgroup.mul_normal} 
+    
+    \begin{verbatim}
+        ∀ {G : Type u_2} [inst : Group G] (H N : Subgroup G) [hN : N.Normal], ↑(H ⊔ N) = ↑H * ↑N
+    \end{verbatim}
+    
+    only requires one of the subgroups to be normal for us to conclude that the underlying set of the supremum is the pointwise product of sets!
+    
+    Bringing the lattice of subgroups to the forefront turns out to be extremely useful for formalising arguments,
+    and more generally, makes the arguments much more transparent.
+\end{remark}
+
+\begin{lemma}
+    \label{directproductZ}
 Let $A$ and $B$ be subgroups of $G$. If $A \cap B = \{ I_G \}$ and $ab = ba$ $\forall a \in A$, $b \in B$. Then $AB \cong A \times B$.
 \end{lemma}
 
-\begin{proof} Since $A$ and $B$ commute, the argument outlined in Lemma \ref{directproductN} also holds here.
+\begin{proof} 
+    Since $A$ and $B$ commute, the argument outlined in Lemma \ref{SpecialSubgroups.prod_mulEquiv_join_of_disjoin_of_normal} also holds here.
 \end{proof}
 
 % \newpage

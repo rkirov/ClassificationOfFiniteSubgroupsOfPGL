@@ -20,8 +20,8 @@ When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct 
 We prove a useful fact about elements that belong to the center of $\GL_n(R)$:
 
 \begin{lemma}
-    \label{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
-    \lean{GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+    \label{GeneralLinearGroup.mem_center_general_linear_group_iff}
+    \lean{GeneralLinearGroup.mem_center_general_linear_group_iff}
     Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(R)$, $Z(\GL_n(R))$ if and only if $G = r \cdot I$ where $r \in R^\times$.
     \end{lemma}
     
@@ -50,7 +50,7 @@ We prove a useful fact about elements that belong to the center of $\GL_n(R)$:
 
 \begin{lemma}
 \label{center_SL_le_ker}
-\uses{SL_monoidHom_PGL, GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+\uses{SL_monoidHom_PGL, GeneralLinearGroup.mem_center_general_linear_group_iff}
 \lean{center_SL_le_ker}
 \leanok
 Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \subseteq \ker (\varphi)$.
@@ -61,7 +61,7 @@ If $S \in Z(\SL_n(R)) \leq \SL_n(F)$ then $S = \omega I$ where $\omega$ is a pri
 
 Because $\varphi = \pi_{Z(\GL_n(F))} \circ i$, the kernel of $\varphi$ is $i^{-1}(Z(\GL_n(F)))$, where we recall that $i : \SL_n(R) \hookrightarrow \GL_n(F)$ is the injection of $SL_n(F)$ into $\GL_n(F)$.
 
-But given $i(S) = i(\omega \cdot I) = \omega \cdot I$ is of the form $r \cdot I$ where $r \in R^\times$ by \ref{GeneralLinearGroup.Center.mem_center_general_linear_group_iff} it follows that $S \in \ker \varphi$, as desired.
+But given $i(S) = i(\omega \cdot I) = \omega \cdot I$ is of the form $r \cdot I$ where $r \in R^\times$ by \ref{GeneralLinearGroup.mem_center_general_linear_group_iff} it follows that $S \in \ker \varphi$, as desired.
 \end{proof}
 
 
@@ -79,7 +79,7 @@ But given $i(S) = i(\omega \cdot I) = \omega \cdot I$ is of the form $r \cdot I$
 \begin{lemma}
 \label{Injective_PSL_monoidHom_PGL}
 \lean{Injective_PSL_monoidHom_PGL}
-\uses{PSL_monoidHom_PGL, GeneralLinearGroup.Center.mem_center_general_linear_group_iff}
+\uses{PSL_monoidHom_PGL, GeneralLinearGroup.mem_center_general_linear_group_iff}
 \leanok
     The homomorphism $\bar{\varphi}$ is injective.
 \end{lemma}
@@ -90,7 +90,7 @@ To show $\bar{\varphi}$ is injective we must show that $\ker \bar{\varphi} \leq 
 
 Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$. If $[S] \in \ker \bar{\varphi}$ then $\bar{\varphi} ([S]) = [1]_{\PGL_n(F)}$. But on the other hand, $\bar{\varphi} ([S]) = \varphi(s)$ and so $\varphi(S) = 1_{\PGL_n(F)}$
 
-and thus $S \in Z(\GL_n(F))$, from \ref{GeneralLinearGroup.Center.mem_center_general_linear_group_iff} it follows that $s = r \cdot I$ for some $r \in R^\times$. But given the restriction of $S \in \SL_n(F)$ we know that 
+and thus $S \in Z(\GL_n(F))$, from \ref{GeneralLinearGroup.mem_center_general_linear_group_iff} it follows that $s = r \cdot I$ for some $r \in R^\times$. But given the restriction of $S \in \SL_n(F)$ we know that 
 
 \begin{equation*}
     \det(S) = \det(r \cdot I) = r^n = 1 \implies \text{$r$ is a $n$ \textsuperscript{th} root of unity}

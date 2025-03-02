@@ -173,19 +173,22 @@ lemma SpecialLinearGroup.fin_two_antidiagonal_iff (x : SL(2,F)) :
     split_ands  <;>
     simp [d, w]
 
-
-lemma SpecialLinearGroup.fin_two_shear_iff (S : SL(2,F)) :
-  S 0 0 = S 1 1 ∧ S 0 1 = 0 ↔ (∃ σ, s σ = S) ∨ ∃ σ, -s σ = S := by
+/-
+A matrix `x` of `SL(2,F)` is a shear matrix if and only if either
+`x = s σ` or `x = -s σ` for some `σ ∈ F`.
+-/
+lemma SpecialLinearGroup.fin_two_shear_iff (x : SL(2,F)) :
+  x 0 0 = x 1 1 ∧ x 0 1 = 0 ↔ (∃ σ, s σ = x) ∨ ∃ σ, -s σ = x := by
   constructor
   · rintro ⟨α_eq_δ, β_eq_zero⟩
-    have α_eq_one_or_neg_one := α_eq_δ.symm ▸ det_eq_mul_diag_of_lower_triangular S β_eq_zero
+    have α_eq_one_or_neg_one := α_eq_δ.symm ▸ det_eq_mul_diag_of_lower_triangular x β_eq_zero
     rw [← sq, sq_eq_one_iff] at α_eq_one_or_neg_one
     rcases α_eq_one_or_neg_one with (α_eq_one | α_eq_neg_one)
     · left
-      use S.1 1 0
+      use x.1 1 0
       ext <;> simp [s, α_eq_one, β_eq_zero, α_eq_δ ▸ α_eq_one]
     · right
-      use - S.1 1 0
+      use - x.1 1 0
       ext <;> simp [s, α_eq_neg_one, β_eq_zero, α_eq_δ ▸ α_eq_neg_one]
   · rintro (⟨σ,h⟩ | ⟨σ, h⟩)
     repeat' rw [SpecialLinearGroup.fin_two_ext_iff] at h; rcases h with ⟨hα, hβ, -, hδ⟩
@@ -199,9 +202,9 @@ A 2×2 matrix, G is conjugate to an upper triangular if there exists an invertib
 such that when conjugated the bottom left entry is annhilated
 -/
 lemma isConj_upper_triangular_iff [DecidableEq F] [IsAlgClosed F]
-  {M : Matrix (Fin 2) (Fin 2) F} :
-  (∃ a b d , ∃ (C : SL(2,F)), (C  * M * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d]) ↔
-    ∃ c : SL(2,F), ((c * M * (c⁻¹)) : Matrix (Fin 2) (Fin 2) F) 1 0 = 0 := by
+  {m : Matrix (Fin 2) (Fin 2) F} :
+  (∃ a b d , ∃ (C : SL(2,F)), (C  * m * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d]) ↔
+    ∃ c : SL(2,F), ((c * m * (c⁻¹)) : Matrix (Fin 2) (Fin 2) F) 1 0 = 0 := by
   constructor
   · rintro ⟨a, b, d, c, hc⟩
     use c

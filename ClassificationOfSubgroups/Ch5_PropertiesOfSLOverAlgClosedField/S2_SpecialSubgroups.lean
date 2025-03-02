@@ -144,6 +144,32 @@ def L (F : Type*) [Field F] : Subgroup SL(2,F) where
               simp [d_mul_s_eq_ds, Matrix.SpecialLinearGroup.SL2_inv_expl]
               ext <;> simp [ds]
 
+
+def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
+  if h : a * d = 1 then ⟨!![a, 0; c, d], by simp [h]⟩ else 1
+
+/-
+For every lower triangular matrix, l,
+there exists a representation of l as an element of L
+-/
+lemma mem_L_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
+  x ∈ L F ↔ ∃ a c d, !![a, 0; c, d] = (x : Matrix (Fin 2) (Fin 2) F) := by
+  constructor
+  · intro hx
+    obtain ⟨δ, σ, h⟩ := hx
+    use δ, σ * δ⁻¹, δ⁻¹
+    rw [← h]
+    ext <;> simp [d, s, mul_comm]
+  · rintro ⟨a, c, d, hx⟩
+    have had : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by simp
+    simp [← hx] at had
+    have a_is_unit : IsUnit a := isUnit_of_mul_eq_one a d had
+    have a_inv_eq_d : a⁻¹ = d := DivisionMonoid.inv_eq_of_mul a d had
+    use a_is_unit.unit, c * a_is_unit.unit
+    simp [SpecialMatrices.d, SpecialMatrices.s, lower_triangular, had]
+    ext <;> field_simp [a_inv_eq_d, had, ← hx]; exact (eq_one_div_of_mul_eq_one_right had).symm
+
+
 lemma S_le_L : S F ≤ L F := by
   rintro x ⟨σ, rfl⟩
   rw [L, mem_mk, Set.mem_setOf_eq]
@@ -184,22 +210,6 @@ lemma normal_S_subgroupOf_L {F : Type*} [Field F] : ((S F).subgroupOf (L F)).Nor
       use σ' * (δ : F)⁻¹ * (δ :F)⁻¹
 
 
-lemma commute_of_disjoint_of_normal {G : Type*} [Group G] (H K : Subgroup G) (hHK : Disjoint H K) [hK : Normal K] [hH : Normal H] {h k : G} (hh : h ∈ H)
-  (hk : k ∈ K) : h * k = k * h := by
-  refine Eq.symm (Commute.eq ?_)
-  exact commute_of_normal_of_disjoint K H hK hH (Disjoint.symm hHK) k h hk hh
-  -- have conj_in_K : h * k * h⁻¹ ∈ K := hK.conj_mem k hk h
-  -- have conj_in_H : k⁻¹ * h * k ∈ H := hH.conj_mem' h hh k
-  -- rw [← (Subgroup.mul_mem_cancel_left K (inv_mem hk)), ← mul_assoc, ← mul_assoc] at conj_in_K
-  -- have key₁ := conj_in_K; clear conj_in_K
-  -- have key₂ : k⁻¹ * h * k * h⁻¹ ∈ H := mul_mem conj_in_H (inv_mem hh)
-  -- rw [← mul_inv_eq_iff_eq_mul]
-  -- rw [disjoint_iff_inf_le] at hHK
-  -- have key : k⁻¹ * h * k * h⁻¹ ∈ (⊥ : Subgroup G) := hHK <| mem_inf.mpr ⟨ key₂, key₁⟩
-  -- rw [mem_bot, mul_assoc, mul_assoc, ← mul_assoc h, inv_mul_eq_one] at key
-  -- exact key.symm
-
-
 
 def prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H] [hK : Normal K]
   (hHK : Disjoint H K) : H × K →* (H ⊔ K :) where
@@ -208,7 +218,8 @@ def prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H]
   map_mul' := by
     rintro ⟨⟨h₁, hh₁⟩, ⟨k₁, hk₁⟩⟩ ⟨⟨h₂, hh₂⟩, ⟨k₂, hk₂⟩⟩
     simp
-    rw [mul_assoc, mul_assoc, ← mul_assoc k₁, ← commute_of_disjoint_of_normal H K hHK hh₂ hk₁]
+    rw [mul_assoc, mul_assoc, ← mul_assoc k₁,
+      (Commute.eq (commute_of_normal_of_disjoint K H hK hH (Disjoint.symm hHK) k₁ h₂ hk₁ hh₂))]
     group
 
 open Function
@@ -247,7 +258,7 @@ lemma Bijective_prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH
     use ⟨⟨h, h_in_H⟩, ⟨k, k_in_K⟩⟩
     simp [prod_monoidHom_join, hh]
 
-noncomputable def prod_iso_join_of_normal {G : Type*} [Group G] (H K : Subgroup G)
+noncomputable def prod_mulEquiv_join_of_disjoin_of_normal {G : Type*} [Group G] (H K : Subgroup G)
   (hHK : Disjoint H K) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) :=
   MulEquiv.ofBijective (prod_monoidHom_join H K hHK) (Bijective_prod_monoidHom_join H K hHK)
 
@@ -474,6 +485,7 @@ lemma Odd.neg_one_zpow {α : Type*} [Group α] [HasDistribNeg α] {n : ℤ} (h :
   rw [← neg_eq_iff_eq_neg, ← neg_one_mul, Commute.neg_one_left, mul_zpow_self]
   exact Even.neg_one_zpow <| Odd.add_one h
 
+
 lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} := by
   ext x
   constructor
@@ -485,7 +497,7 @@ lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} :=
     · left
       apply Even.neg_one_zpow hk
     · right;
-      rw [Int.not_even_iff_odd, ] at hk
+      rw [Int.not_even_iff_odd] at hk
       exact Odd.neg_one_zpow hk
   · intro hx
     rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
@@ -538,7 +550,7 @@ lemma mem_Z_iff {x : SL(2,R)}: x ∈ Z R ↔ x = 1 ∨ x = -1 := by
   rw [← mem_carrier, Z_carrier_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
 
 instance : Finite (Z F) := by
-  simp [← SetLike.coe_sort_coe]
+  simp only [mem_Z_iff]
   exact Finite.Set.finite_insert 1 {-1}
 
 lemma center_SL2_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
@@ -562,7 +574,7 @@ instance : Finite (center SL(2,F)) := by
 
 
 lemma card_Z_eq_two_of_two_ne_zero [NeZero (2 : F)]: Nat.card (Z F) = 2 := by
-  rw [@Nat.card_eq_two_iff]
+  rw [Nat.card_eq_two_iff]
   -- have neg_one_mem_Z : (-1 : SL(2,F)) ∈ Z F := by simp [Z]
   use 1, ⟨-1, neg_one_mem_Z⟩
   split_ands
@@ -570,13 +582,13 @@ lemma card_Z_eq_two_of_two_ne_zero [NeZero (2 : F)]: Nat.card (Z F) = 2 := by
     rw [Subtype.ext_val_iff] at h
     -- -1 ≠ 1 for characteristic different to 2
     simp at h
-  · rw [@Set.eq_univ_iff_forall]
+  · rw [Set.eq_univ_iff_forall]
     rintro ⟨z, hz⟩
     simp at hz
     rcases hz with (rfl | rfl) <;> simp
 
 lemma card_Z_eq_one_of_two_eq_zero (two_eq_zero : (2 : F) = 0) : Nat.card (Z F) = 1 := by
-  rw [@card_eq_one]
+  rw [card_eq_one]
   ext x
   simp [(SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero two_eq_zero).symm]
 
@@ -633,7 +645,7 @@ lemma exists_unique_orderOf_eq_two [NeZero (2 : F)] : ∃! x : SL(2,F), orderOf 
   · rw [δ_eq_neg_one] at α_eq_δ
     ext <;> simp [α_eq_δ, β_eq_zero, γ_eq_zero, δ_eq_neg_one]
 
-lemma IsCyclic_Z : IsCyclic (Z F) := by
+instance IsCyclic_Z : IsCyclic (Z F) := by
   apply isCyclic_iff_exists_orderOf_eq_natCard.mpr ?_
   by_cases h : NeZero (2 : F)
   · rw [card_Z_eq_two_of_two_ne_zero]
@@ -643,6 +655,8 @@ lemma IsCyclic_Z : IsCyclic (Z F) := by
   · have two_eq_zero : (2 : F) = 0 := by exact not_neZero.mp h
     rw [card_Z_eq_one_of_two_eq_zero two_eq_zero]
     simp only [orderOf_eq_one_iff, exists_eq]
+
+instance IsCommutative_Z : IsCommutative (Z F) := inferInstance
 
 
 namespace IsPGroup
@@ -666,7 +680,6 @@ end IsPGroup
 
 end Center
 
-
 def SZ (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { s σ | σ : F } ∪ { - s σ | σ : F }
   mul_mem' := by
@@ -686,7 +699,7 @@ def SZ' (F : Type*) [Field F] : Subgroup SL(2,F) where
     simp only [SetLike.mem_coe] at hs₁ hs₂ hz₁ hz₂ ⊢
     group
     have hz₁' := hz₁
-    simp [← center_SL2_eq_Z ] at hz₁'
+    simp only [← center_SL2_eq_Z] at hz₁'
     rw [mul_assoc s₁, (mem_center_iff.mp hz₁' s₂).symm]
     group
     use s₁ * s₂
@@ -768,33 +781,6 @@ lemma S_mul_Z_subset_SZ :
   use σ
   simp
 
-
-lemma S_join_Z_eq_SZ : S F ⊔ Z F = SZ F := by
-  ext x
-  constructor
-  · intro hx
-    rw [sup_eq_closure_mul, mem_closure] at hx
-    exact hx (SZ F) (S_mul_Z_subset_SZ)
-  · rintro (⟨σ, rfl⟩ | ⟨σ, rfl⟩) <;> rw [sup_eq_closure_mul]
-    · have mem_Z_mul_T : s σ ∈ ((S F) : Set SL(2,F)) * (Z F) := by
-        rw [Set.mem_mul]
-        use s σ
-        split_ands
-        simp [Z, closure_neg_one_eq]
-        use σ
-        simp
-      apply Subgroup.subset_closure mem_Z_mul_T
-    · have mem_Z_mul_T : -s σ ∈ ((S F) : Set SL(2,F)) * (Z F) := by
-        rw [Set.mem_mul]
-        use s σ
-        split_ands
-        simp [Z, closure_neg_one_eq]
-        use σ
-        simp
-      apply Subgroup.subset_closure mem_Z_mul_T
-
-
-
 -- ordering propositions so when proving it can be done more efficiently
 #check Set.mem_mul
 
@@ -812,26 +798,24 @@ lemma IsCommutative_iff {G : Type*} [Group G] (H : Subgroup G) :
     intro y hy
     rw [mem_centralizer_iff]
     intro x hx
-    simp at hx
+    simp only [SetLike.mem_coe] at hx
     specialize h ⟨x, hx⟩ ⟨y, hy⟩
     simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq] at h
     exact h
 
-lemma IsCommutative_D : IsCommutative (D F) := by
+instance IsCommutative_D : IsCommutative (D F) := by
   rw [IsCommutative_iff]
   rintro ⟨x, ⟨δ₁, hδ₁⟩⟩ ⟨y, ⟨δ₂, hδ₂⟩⟩
-  simp [@Subtype.ext_val_iff]
-  rw [← hδ₁, ← hδ₂]
-  simp [mul_comm]
+  simp [Subtype.ext_val_iff, coe_mul, ← hδ₁, ← hδ₂, mul_comm]
 
-lemma IsCommutative_S (F : Type*) [Field F] : IsCommutative (S F) := by
+instance IsCommutative_S (F : Type*) [Field F] : IsCommutative (S F) := by
   rw [IsCommutative_iff]
   rintro ⟨x, ⟨σ₁, hσ₁⟩⟩ ⟨y, ⟨σ₂, hσ₂⟩⟩
   simp [@Subtype.ext_val_iff]
   rw [← hσ₁, ← hσ₂]
   simp [add_comm]
 
-lemma IsCommutative_SZ (F : Type*) [Field F] : IsCommutative (SZ F) := by
+instance IsCommutative_SZ (F : Type*) [Field F] : IsCommutative (SZ F) := by
   refine le_centralizer_iff_isCommutative.mp ?_
   rintro x (⟨σ₁, rfl⟩ | ⟨σ₁, rfl⟩)
   repeat
@@ -858,8 +842,7 @@ lemma ex_of_card_D_gt_two {D₀ : Subgroup SL(2,F) }(hD₀ : 2 < Nat.card D₀) 
       rw [Units.val_eq_one] at h₀
       rw [h₀, d_one_eq_one]
     · by_cases h₁ : (δ : F) = -1
-      · right;
-        push_cast at h₁
+      · right
         rw [val_eq_neg_one] at h₁
         rw [h₁, d_neg_one_eq_neg_one, Set.mem_singleton_iff]
       · rw [← ne_eq] at h₀ h₁
@@ -881,6 +864,31 @@ lemma mem_D_w_iff {x : SL(2,F)} : x ∈ (D F : Set SL(2,F)) * {w} ↔ ∃ δ : F
     simp [D]
     use δ
     rw [mul_assoc, w_mul_w_eq_neg_one, mul_neg, mul_one, neg_neg]
+
+lemma S_join_Z_eq_SZ : S F ⊔ Z F = SZ F := by
+  ext x
+  constructor
+  · intro hx
+    rw [sup_eq_closure_mul, mem_closure] at hx
+    exact hx (SZ F) (S_mul_Z_subset_SZ)
+  · rintro (⟨σ, rfl⟩ | ⟨σ, rfl⟩) <;> rw [sup_eq_closure_mul]
+    · have mem_Z_mul_S : s σ ∈ ((S F) : Set SL(2,F)) * (Z F) := by
+        rw [Set.mem_mul]
+        use s σ
+        split_ands
+        simp [Z, closure_neg_one_eq]
+        use σ
+        simp
+      apply Subgroup.subset_closure mem_Z_mul_S
+    · have mem_Z_mul_T : -s σ ∈ ((S F) : Set SL(2,F)) * (Z F) := by
+        rw [Set.mem_mul]
+        use s σ
+        split_ands
+        simp [Z, closure_neg_one_eq]
+        use σ
+        simp
+      apply Subgroup.subset_closure mem_Z_mul_T
+
 
 end SpecialSubgroups
 
