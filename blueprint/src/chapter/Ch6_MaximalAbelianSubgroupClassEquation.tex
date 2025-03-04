@@ -60,9 +60,9 @@ A group $G$ is said to be \textbf{elementary abelian} if it is abelian and every
 \end{remark}
 
 \begin{definition}
-\label{MaximalAbelianSubgroups}
+\label{MaximalAbelianSubgroupsOf}
 \uses{IsMaximalAbelian}
-\lean{MaximalAbelianSubgroups}
+\lean{MaximalAbelianSubgroupsOf}
 \leanok
 Let $\mathfrak{M}$ denote the set of all maximal abelian subgroups of $G$.
 \end{definition}
@@ -113,7 +113,7 @@ Every finite subgroup of a multiplicative group of a field is cyclic.
 
 \begin{theorem}
   \label{MaximalAbelianSubgroup.centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral}
-  \uses{IsCommutative_centralizer_of_not_mem_center, MaximalAbelianSubgroups}
+  \uses{IsCommutative_centralizer_of_not_mem_center, MaximalAbelianSubgroupsOf}
   \lean{MaximalAbelianSubgroup.centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral}
   \leanok 
   Let $G$ be an arbitrary finite subgroup of $\SL_2(F)$ containing $Z$. \\
@@ -238,7 +238,7 @@ For any two distinct subgroups $A$ and $B$ of $\mathfrak{M}$, we have
 
 \begin{lemma}
 \label{MaximalAbelianSubgroup.singleton_of_cen_eq_G}
-\uses{MaximalAbelianSubgroup.center_le, MaximalAbelianSubgroups, IsMaximalAbelian}
+\uses{MaximalAbelianSubgroup.center_le, MaximalAbelianSubgroupsOf, IsMaximalAbelian}
 \lean{MaximalAbelianSubgroup.singleton_of_cen_eq_G}
 \leanok
 Let $H$ be a subgroup of $G$ and suppose $H = Z(G)$ then the maximal abelian subgroups are $\mathfrak{M} = \{Z(G)\}$.
@@ -376,6 +376,7 @@ To show the Sylowness of the subgroup we shall construct we need the following l
  Let $S$ and $Q$ be subgroups of a group $\SL_2(F)$ where $S \le Q$ and furthermore, we have the added condition that either $I = -I$ or $-I \notin S$ and suppose $SZ = QZ$ then
  $S = Q$
 \end{lemma}
+%PROOF AND DEPENDENCIES
 
 \begin{theorem}
 \label{MaximalAbelianSubgroup.A_eq_Q_join_Z_of_IsConj_s_or_neg_s}
@@ -424,7 +425,7 @@ If $G \ne Z(G)$ then an element of $A$ of $\mathfrak{M}$, the maximal abelian su
   \\  q_1q_2z_1z_2(z_1z_2)^{-1} &= q_2q_1z_1z_2(z_1z_2)^{-1},
   \\ q_1q_2 &= q_2q_1.
   \end{align*}
-  Thus $Q$ is also abelian. Recall from the proof of Proposition \ref{6.3}(ii) that all non-trivial elements of $T$ have order $p$, so each non-trivial element of $Q$ has order $p$ which means that $Q$ is elementary abelian. Thus $Q$ has order $p^m$, for some $m \in \mathbb{Z}^+$. \\
+  Thus $Q$ is also abelian. Recall from the proof of Proposition \ref{6.3}(ii) that all non-trivial elements of $S$ have order $p$, so each non-trivial element of $Q$ has order $p$ which means that $Q$ is elementary abelian. Thus $Q$ has order $p^m$, for some $m \in \mathbb{Z}^+$. \\
   \\
   Now let $S$ be a Sylow $p$-subgroup containing $Q$. We apply Lemma \ref{IsElementaryAbelian.dvd_card} to determine that $p$ divides $|Z(S)|$, moreover $|Z(S)| \geq p$. \\
   \\
@@ -468,16 +469,14 @@ An element $A$ of $\mathfrak{M}$ is either a cyclic group whose order is relativ
   \uses{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z, normalizer_subgroup_D_eq_DW}
   \lean{MaximalAbelianSubgroup.index_normalizer_le_two}
   \leanok
-(iv) If $A \in \mathfrak{M}$ and $|A|$ is relatively prime to $p$, then we have $[N_G(A): A] \leq 2$. Furthermore, if $[N_G(A): A] = 2$, then there is an element $y$ of $N_G(A) \! \setminus \! A$ such that, 
-\vspace{-1mm}
-\begin{align*} yxy^{-1} = x^{-1} \qquad \forall x \in A.\end{align*}
+If $A \in \mathfrak{M}$ and $|A|$ is relatively prime to $p$, then we have $[N_G(A): A] \leq 2$. 
+
 \end{theorem}
-%SPLIT UP RESULT AND DEPENDENCY
 \begin{proof}
   (iv) If $|A| \leq 2$ then $A=Z=G$. So $A$ is trivially normal in $G$ and $[N_G(A): A] = 1$. \\
   \\
   Now assume that $|A| > 2$. Since $|A|$ is relatively prime to $p$, we have that $A$ is a cyclic group conjugate to a finite subgroup of $D$ in $\SL_2(F)$ by the proof of part \ref{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z}, call this subgroup ${\widetilde{A}}$. Thus both ${\widetilde{A}}$ and $D$ have orders greater than 2. Applying Proposition \ref{normalizer_subgroup_D_eq_DW} we observe that
-  \begin{align}\label{norm1}  N_L({\widetilde{A}}) = \langle D , w \rangle = N_L(D).
+  \begin{align}\label{norm1}  N_{\SL_2(F)}({\widetilde{A}}) = \langle D , w \rangle = N_{\SL_2(F)}(D).
   \end{align}
   
   Since $A$ and ${\widetilde{A}}$ are conjugate in $\SL_2(F)$, there exists an element $z \in L$ such that $zAz^{-1} = {\widetilde{A}}$. This $z$ determines an inner automorphism of $\SL_2(F)$ defined by
@@ -506,7 +505,7 @@ An element $A$ of $\mathfrak{M}$ is either a cyclic group whose order is relativ
   \begin{align}\label{6.8iv1} [N_G(A): A] = [N_{\widetilde{G}}({\widetilde{A}}): {\widetilde{A}}].
   \end{align}
   
-  Since ${\widetilde{G}} < L$, the normaliser of ${\widetilde{A}}$ in ${\widetilde{G}}$ is simply the normaliser of ${\widetilde{A}}$ in $\SL_2(F)$ restricted to ${\widetilde{G}}$, thus $N_{\widetilde{G}}({\widetilde{A}}) < N_L({\widetilde{A}}) = N_L(D)$ by (\ref{norm1}). Now since $D \vartriangleleft N_L(D)$, the Second Isomorphism Theorem shows that,
+  Since ${\widetilde{G}} < L$, the normaliser of ${\widetilde{A}}$ in ${\widetilde{G}}$ is simply the normaliser of ${\widetilde{A}}$ in $\SL_2(F)$ restricted to ${\widetilde{G}}$, thus $N_{\widetilde{G}}({\widetilde{A}}) < N_{\SL_2(F)}({\widetilde{A}}) = N_{\SL_2(F)}(D)$ by (\ref{norm1}). Now since $D \vartriangleleft N_{\SL_2(F)}(D)$, the Second Isomorphism Theorem shows that,
   \begin{align}\label{2iso} N_{\widetilde{G}}({\widetilde{A}})/( N_{\widetilde{G}}({\widetilde{A}}) \cap D) \; \cong \; DN_{\widetilde{G}}({\widetilde{A}}) / D.
   \end{align}
   \\
@@ -515,20 +514,33 @@ An element $A$ of $\mathfrak{M}$ is either a cyclic group whose order is relativ
   \end{align}
   
   Observe also that, 
-  \begin{align}\label{index1or2} DN_{\widetilde{G}}({\widetilde{A}}) = \{ D, \langle D, w \rangle \} \subset \langle D, w \rangle = N_L(D).
+  \begin{align}\label{index1or2} DN_{\widetilde{G}}({\widetilde{A}}) = \{ D, \langle D, w \rangle \} \subset \langle D, w \rangle = N_{\SL_2(F)}(D).
   \end{align}
   
   Now we piece the preceding results together to give the desired result.
   \begin{align*}  N_{\widetilde{G}}({\widetilde{A}}) / {\widetilde{A}} \; & \cong \;  N_{\widetilde{G}}({\widetilde{A}})/( N_{\widetilde{G}}({\widetilde{A}}) \cap D) \tag{by (\ref{parti})}
   \\ & \cong \; DN_{\widetilde{G}}({\widetilde{A}}) / D \tag{by (\ref{2iso})}
-  \\ & \subset N_L(D) / D \tag{by (\ref{index1or2})}
+  \\ & \subset N_{\SL_2(F)}(D) / D \tag{by (\ref{index1or2})}
   \\ &= \langle D, w \rangle / D \; \cong \; \mathbb{Z}_2.
   \end{align*}
   
   We have shown that $N_{\widetilde{G}}({\widetilde{A}}) / {\widetilde{A}}$ is isomorphic to a subset of $\mathbb{Z}_2$. Thus by (\ref{6.8iv1}) we have established that, $$[N_G(A): A] = [N_{\widetilde{G}}({\widetilde{A}}): {\widetilde{A}}] \leq 2.$$
   \vspace{-2mm}
+\end{proof}
+
+
+\begin{theorem}
+  \label{MaximalAbelianSubgroup.of_index_normalizer_eq_two}
+  \uses{MaximalAbelianSubgroup.index_normalizer_le_two}
+  \lean{MaximalAbelianSubgroup.of_index_normalizer_eq_two}
+  If $A \in \mathfrak{M}$, $|A|$ is relatively prime to $p$, and if $[N_G(A): A] = 2$, then there is an element $y$ of $N_G(A) \! \setminus \! A$ such that, 
+  \vspace{-1mm}
+  \begin{align*} yxy^{-1} = x^{-1} \qquad \forall x \in A.\end{align*}
+  \end{theorem}
+\end{theorem}
+\begin{proof}
   
-  For the second part, if $[N_G(A): A] = 2$, then the above argument shows that $N_{\widetilde{G}}({\widetilde{A}}) / {\widetilde{A}} \; \cong \; \mathbb{Z}_2$. Thus $DN_{\widetilde{G}}({\widetilde{A}}) = N_L(D) = \langle D, w \rangle$. This means that $N_{\widetilde{G}}({\widetilde{A}})$ contains some element $wd_\omega$. In fact, since $w d_\delta \not \in D$, we have $w d_\delta \in N_{\widetilde{G}}({\widetilde{A}}) \! \setminus \! {\widetilde{A}}$. Take any element $x \in A$. Since ${\widetilde{A}} = zAz^{-1}$, $zxz^{-1} \in {\widetilde{A}}$, call it $d_\sigma$. Let $y = z^{-1}w d_\delta z$. Since $wd_\omega \in N_{\widetilde{G}}({\widetilde{A}}) \! \setminus \! {\widetilde{A}}$ it follows that $y \in N_G(A)\! \setminus \! A$. We show that this $y$ inverts $x$:
+  If $[N_G(A): A] = 2$, then the above argument at \ref{MaximalAbelianSubgroup.index_normalizer_le_two} shows that $N_{\widetilde{G}}({\widetilde{A}}) / {\widetilde{A}} \; \cong \; \mathbb{Z}_2$. Thus $DN_{\widetilde{G}}({\widetilde{A}}) = N_{\SL_2(F)}(D) = \langle D, w \rangle$. This means that $N_{\widetilde{G}}({\widetilde{A}})$ contains some element $wd_\omega$. In fact, since $w d_\delta \not \in D$, we have $w d_\delta \in N_{\widetilde{G}}({\widetilde{A}}) \! \setminus \! {\widetilde{A}}$. Take any element $x \in A$. Since ${\widetilde{A}} = zAz^{-1}$, $zxz^{-1} \in {\widetilde{A}}$, call it $d_\sigma$. Let $y = z^{-1}w d_\delta z$. Since $wd_\omega \in N_{\widetilde{G}}({\widetilde{A}}) \! \setminus \! {\widetilde{A}}$ it follows that $y \in N_G(A)\! \setminus \! A$. We show that this $y$ inverts $x$:
   \begin{align*} yxy^{-1} &= (z^{-1}w d_\delta z)(z^{-1} d_\sigma z)(z^{-1}d^{-1}_\omega w^{-1} z)
   \\ &= z^{-1} w d_\delta  d_\sigma d^{-1}_\omega w^{-1} z
   \\ &=  z^{-1} w  d_\sigma  w^{-1} z 
@@ -540,19 +552,17 @@ An element $A$ of $\mathfrak{M}$ is either a cyclic group whose order is relativ
 
 \begin{theorem}
   \label{MaximalAbelianSubgroup.exists_IsCyclic_K_normalizer_eq_Q_join_K}
+  \uses{normalizer_subgroup_S_le_L, MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z}
   \lean{MaximalAbelianSubgroup.exists_IsCyclic_K_normalizer_eq_Q_join_K}
-  
-(v) Let $Q$ be a Sylow $p$-subgroup of $G$. If $Q \neq \{I_G\}$, then there is a cyclic subgroup $K$ of $G$ such that $N_G(Q) = QK$. If $|K| > |Z|$, then $K \in \mathfrak{M}$. \\
+  Let $Q$ be a Sylow $p$-subgroup of $G$. If $Q \neq \{I_G\}$, then there is a cyclic subgroup $K$ of $G$ such that $N_G(Q) = Q \sqcup K = QK$. \\
 \end{theorem}
-%SPLIT UP RESULT AND DEPENDENCY
-
-\begin{proof} 
-(v) By part (iii), $Q$ is conjugate to a finite subgroup of $S$ in $\SL_2(F)$. In fact, without loss of generality we can assume that $Q \subset S$, moreoever $Q \subset S \cap G$. We show that this is in fact an equality by showing that the reverse inclusion also holds. 
+\begin{proof}
+By part \ref{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z}, $Q$ is conjugate to a finite subgroup of $S$ in $\SL_2(F)$. In fact, without loss of generality we can assume that $Q \subset S$, moreoever $Q \subset S \cap G$. We show that this is in fact an equality by showing that the reverse inclusion also holds. 
 Let $s_\sigma$ be an arbitrary element of $S \cap G$. Then $\langle s_\sigma, Q \rangle$ is a $p$-group of $G$ which must be equal to $Q$ since it is a Sylow $p$-subgroup of $G$. Thus $s_\sigma \in Q$ and
-\begin{align}\label{Q=TNG} Q = T \cap G.
+\begin{align}\label{Q=TNG} Q = S \cap G.
 \end{align}
 
-Since $|Q| > 1$, Proposition \ref{6.4i} gives that $N_G(Q) \subset N_L(Q) \subset H$. So $N_G(Q) \subset H \cap G$. Now take an arbitrarily chosen $d_\delta s_\sigma \in H \cap G$ and $s_\gamma \in Q$.
+Since $|Q| > 1$, Proposition \ref{normalizer_subgroup_S_le_L} gives that $N_G(Q) \subset N_{\SL_2(F)}(Q) \subset H$. So $N_G(Q) \subset H \cap G$. Now take an arbitrarily chosen $d_\delta s_\sigma \in H \cap G$ and $s_\gamma \in Q$.
 \begin{align*} (d_\delta s_\sigma) s_\gamma (d_\delta s_\sigma)^{-1} &= d_\delta ( s_\sigma s_\gamma  s_{-\sigma}) d^{-1}_\delta
 \\ &=  d_\delta s_\gamma d^{-1}_\delta \tag{by Lemma \ref{6.1}}
 \\ &= t_\sigma. \tag{where $\sigma = \mu \omega^{-2}$, by Lemma \ref{6.1}}
@@ -598,8 +608,18 @@ Since $Q$ is elementary abelian, each of it's non-trivial elements has order $p$
 Thus,
 \begin{align}\label{QK} N_G(Q) &= QK.
 \end{align}
+\end{proof}
 
-Now assume $|K| > |Z|$. Since $K$ is abelian, it must be contained in some maximal abelian group $A \in \mathfrak{M}$. By part (iii), $A$ must also be a cyclic group whose order is relatively prime to $p$. \\
+
+
+\begin{theorem}
+  \label{MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K}
+  \uses{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z}
+  \lean{MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K}
+  Let $Q$ be a Sylow $p$-subgroup of $G$. If $Q \neq \{I_G\}$, then there is a cyclic subgroup $K$ of $G$ such that $N_G(Q) = Q \sqcup K = QK$. Furthermore, If $|K| > |Z|$, then $K \in \mathfrak{M}$
+\end{theorem}
+\begin{proof} 
+Assume $|K| > |Z|$. Since $K$ is abelian, it must be contained in some maximal abelian group $A \in \mathfrak{M}$. By part \ref{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z}, $A$ must also be a cyclic group whose order is relatively prime to $p$. \\
 \\
 Since $A$ is conjugate in $\SL_2(F)$ to a subgroup of $D$, each non-central element of $A$ has exactly 2 fixed points on the projective line $\mathscr{L}$ by Proposition \ref{6.7}. Let $A = \langle x \rangle$ and let $P_1$ and $P_2$ be the points fixed by $x$. We show by induction on $n$ that $x^n$ also fixes $P_1$ and $P_2$, for all $n \in \mathbb{Z^+}$. We do this by assuming first that $x^{n-1}$ fixes $P_i$.
 \begin{align*} x^n P_i = x(x^{n-1} P_i) = x (P_i) = P_i.
@@ -609,7 +629,7 @@ The importance of this is that since each element of $A$ can be expressed as som
 \begin{align}\label{stab} A \subset S_L(P_i), \qquad (\text{$i$ = 1 or 2})
 \end{align}
 
-By Proposition \ref{6.7}(ii), each element of $T$ has a common fixed point $P$ and Stab$(P) = H$. Since $K \subset H$, each element in $K$ fixes $P$. Also, since $K \subset A$, this $P$ must be equal to either $P_1$ or $P_2$. Therefore by (\ref{stab}), $A \subset \text{Stab}(P) = H$. We arrive at the following result:
+By Proposition \ref{6.7}(ii), each element of $S$ has a common fixed point $P$ and Stab$(P) = H$. Since $K \subset H$, each element in $K$ fixes $P$. Also, since $K \subset A$, this $P$ must be equal to either $P_1$ or $P_2$. Therefore by (\ref{stab}), $A \subset \text{Stab}(P) = H$. We arrive at the following result:
 \begin{align*} A &\subset H \cap G 
 \\ &= N_G(Q) \tag{by (\ref{normQ=HNG})}
 \\ &= QK. \tag{by (\ref{QK})}
@@ -633,9 +653,10 @@ For the duration of this paper, unless otherwise stated, $Q$ will denote a Sylow
 
 \begin{definition}
   \label{ConjClassOfSet}
+  \uses{MaximalAbelianSubgroupsOf}
   \lean{ConjClassOfSet}
   \leanok
-  The set $\mathcal{C}_i = \{ x A_i x^{-1} : x \in G \}$ is called the \textbf{conjugacy class} of $A_i \in \mathfrak{M}$.
+  Let $G$ be a subgroup of $\SL_2(F)$ then the set $\mathcal{C}_i = \{ x A_i x^{-1} : x \in G \}$ is called the \textbf{conjugacy class} of $A_i \in \mathfrak{M}$.
 \end{definition}
 
 \begin{definition}[Noncenter of a subgroup]
@@ -645,21 +666,114 @@ For the duration of this paper, unless otherwise stated, $Q$ will denote a Sylow
   Let $A_i^* = A_i \setminus Z$ be the non-central part of $A_i \in \mathfrak{M}$
 \end{definition}
 
+Now we define the noncenter version of \ref{ConjClassOfSet}
+
 \begin{definition}
-\label{noncenter_MaximalAbelianSubgroups}
-\lean{noncenter_MaximalAbelianSubgroups}
-\leanok
-Let $\mathfrak{M}^*$ be the set of all $A_i^*$ and let $\mathcal{C}_i^*$ be the conjugacy class of $A_i^*$. \\
-\\
-For some $A_i \in \mathfrak{M}$ and $A_i^* \in \mathfrak{M}^*$ let,
-\begin{align*} C_i = \bigcup\limits_{x \in G} x A_i x^{-1}, \quad \text{and} \quad  C_i^* = \bigcup\limits_{x \in G} x A_i^* x^{-1}.
-\end{align*}
-In other words, $C_i$ denotes the set of elements of $G$ which belong to some element of $\mathcal{C}_i$. It's evident that $C_i^* = C_i \setminus Z$ and that there is a $C_i$ corresponding to each $\mathcal{C}_i$. Clearly we have the relation,
-\begin{align}\label{orderorder} |C_i^*| = |A_i^*||\mathcal{C}_i^*|.
-\end{align}
+  \label{noncenter_ConjClassOfSet}
+  \uses{MaximalAbelianSubgroupsOf}
+  \lean{noncenter_ConjClassOfSet}
+  \leanok
+  Let $G$ be a subgroup of $\SL_2(F)$ then let the noncenter conjugacy class of a maximal abelian subgroup be defined by
+  
+  \[
+  \mathcal{C}_i* = \left\{x A_i^* x^{-1} \; | \; x \in G \right\}
+   \]
 \end{definition}
 
-\begin{theorem} \label{partitiontheorem} Let $G$ be a finite subgroup of $\SL_2(F)$ and $S$ be a subset of $\mathfrak{M}^*$  containing exactly one element from each of its conjugacy classes. \vspace{2mm}
+\begin{definition}
+\label{noncenter_MaximalAbelianSubgroupsOf}
+\uses{MaximalAbelianSubgroupsOf}
+\lean{noncenter_MaximalAbelianSubgroupsOf}
+\leanok
+Let $\mathfrak{M}^*$ be the set of all $A_i^*$ and let $\mathcal{C}_i^*$ be the conjugacy class of $A_i^*$. \\
+\end{definition}
+
+\begin{definition}[Conjugacy class of noncenter subgroup]
+\label{C}
+\lean{C}
+\leanok
+For some $A_i \in \mathfrak{M}$ and $A_i^* \in \mathfrak{M}^*$. Then let,
+\begin{align*} 
+  C_i = \bigcup_{x \in G} x A_i x^{-1}, \quad \text{and}
+\end{align*}
+\end{definition}
+
+\begin{definition}
+  \label{noncenter_C}
+  \lean{noncenter_C}
+  \leanok
+  Similary, the noncenter conjugacy class of a subgroup is
+\begin{align*}
+  C_i^* = \bigcup{x \in G} x A_i^* x^{-1}.
+\end{align*}
+\end{definition}
+
+
+In other words, $C_i$ denotes the set of elements of $G$ which belong to some element of $\mathcal{C}_i$. It's evident that $C_i^* = C_i \setminus Z$ and that there is a $C_i$ corresponding to each $\mathcal{C}_i$. Clearly we have the relation,
+
+\begin{lemma}
+\label{card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet}
+\uses{MaximalAbelianSubgroupsOf, noncenter_C, noncenter_MaximalAbelianSubgroupsOf, noncenter_ConjClassOfSet}
+\lean{card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet}
+\begin{align} |C_i^*| = |A_i^*||\mathcal{C}_i^*|.
+\end{align}
+\end{lemma}
+
+Here the argument from Christopher Butler's exposition has been modified, it turns out to be significantly more
+idiomatic to lean to first define the following equivalence relation and its corresponding quotient to eventually set up
+the maximal abelian class equation.
+
+\begin{lemma}[Equivalence relation on $\mathfrak{M}$]
+\label{lift_MaximalAbelianSubgroupsOf}
+\uses{MaximalAbelianSubgroupsOf}
+\lean{lift_MaximalAbelianSubgroupsOf}
+\leanok
+ Let $G$ be a finite subgroup of $\SL_2(F)$, then the relation $\sim$ on the set of maximal abelian subgroups of $G$, $\mathfrak{M}$ defined by
+ \[
+ A \sim B \text{ if and only if } \exists x \in G \text{ such that } x A x^{-1} = B
+ \]
+ gives an equivalence relation.
+\end{lemma}
+
+\begin{proof}
+ Define a relation $\sim$ on  $\mathfrak{M}^*$  as follows:
+
+\begin{itemize}
+\item $\sim$ is reflexive:
+
+For any $x \in A$ as conjugation by an element in the subgroup defines an automorphism and so $A = x A x^{-1}$ as this automorphism fixes the subgroup.
+
+Therefore, $A \sim A$ and $\sim$ is thus reflexive.
+
+\item $\sim$ is symmetric:
+
+If $A \sim B$, then $\exists \; x \in G$ such that,
+\begin{align*} A = xBx^{-1} \iff x^{-1}Ax = B \iff B = yAy^{-1} \quad \text{for} \; y = x^{-1} \in G.
+\end{align*}
+
+Thus $B \sim A$ and $\sim$ is symmetric.\\
+
+\item $\sim$ is transitive:
+
+If $A \sim B$ and $B \sim C$, then $\exists \; x, y \in G$  such that,
+\begin{align*} A = xBx^{-1} \; \text{and} \; B = yCy^{-1} \Rightarrow A = xyCy^{-1}x^{-1} = (xy)C(xy)^{-1}.
+\end{align*}
+Thus $A \sim C$ (since $xy \in G$), which shows that $\sim$ is transitive. \\
+\end{itemize}
+
+Therefore, we have shown that $\sim$ relation is in fact an equivalence relation on $\mathfrak{M}$
+\end{proof}
+
+\begin{remark}[Setoid type in Lean]
+  TODO
+\end{remark}
+
+Now that we have set up the equivalence relation on maximal abelian subgroups we proceed to set up the maximal abelian class equation.
+
+
+% REFACTOR TO noncenter_MaximalAbelianSubgroupsOf lift_noncenter_MaximalAbelianSubgroupsOf - No ocurrences of MaximalAbelianSubgroupsOf
+% or define bijection between sets and lifts.
+\begin{theorem}\label{partitiontheorem} Let $G$ be a finite subgroup of $\SL_2(F)$ and $S$ be a subset of $\mathfrak{M}^*$  containing exactly one element from each of its conjugacy classes. \vspace{2mm}
 
 (i) The set of $C_i^*$ form a partition of $G \! \setminus \! Z$. That is,
 \begin{align*} G \! \setminus \! Z = \bigcup\limits_{A_i^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \;  i \neq j.
@@ -674,21 +788,7 @@ In other words, $C_i$ denotes the set of elements of $G$ which belong to some el
 \end{theorem}
 
 \begin{proof}
-(i) Define a relation $\sim$ on  $\mathfrak{M}^*$  as follows:
-\begin{align*} A_i^* \sim A_j^* \quad \text{if} \quad A_i^* = xA_j^*x^{-1} \quad \text{for some} \quad x \in G.
-\end{align*}
-
- \space If we choose $x \in A_i^*$, then clearly $A_i^* = A_i^*xx^{-1} = xA_i^*x^{-1}$, thus $A_i^* \sim A_i^*$ and $\sim$ is reflexive.\\
-\\
- \space If $A_i^* \sim A_j^*$, then $\exists \; x \in G$ such that,
-\begin{align*} A_i^*= xA_j^*x^{-1} \iff x^{-1}A_i^*x = A_j^* \iff A_j^* = yA_i^*y^{-1} \quad \text{for} \; y = x^{-1} \in G.
-\end{align*}
-Thus $A_j^* \sim A_i^*$ and $\sim$ is symmetric.\\
-\\
- \space If $A_i^* \sim A_j^*$ and $A_j^* \sim A_k^*$, then $\exists \; x, y \in G$  such that,
-\begin{align*} A_i^* = xA_j^*x^{-1} \; \text{and} \; A_j^* = yA_k^*y^{-1} \Rightarrow A_i^* = xyA_k^*y^{-1}x^{-1} = (xy)A_k^*(xy)^{-1}.
-\end{align*}
-Thus $A_i^* \sim A_k^*$ (since $xy \in G$), which shows that $\sim$ is transitive and moreover an equivalence relation on $\mathfrak{M}^*$. \\
+(i)
 \\
 The equivalence class of $A_i^*$ in $\mathfrak{M}^*$ therefore coincides with the set $\mathcal{C}_i^* = \{ xA_i^*x^{-1} : x \in G \}$. Furthermore, this tells us that each $A_i^*$ belongs to exactly one conjugacy class. Thus the conjugacy classes $\mathcal{C}_i^*$ form a partition of $\mathfrak{M}^*$,
 \begin{align*} \mathfrak{M}^* = \bigcup\limits_{A_i^* \in S} \mathcal{C}_i^*,  \qquad \text{and}  \qquad \mathcal{C}_i^* \cap \mathcal{C}_j^* = \varnothing, \qquad \forall \; i \neq j.
@@ -733,7 +833,9 @@ This theorem proves that the non-central parts of the maximal abelian subgroups 
 
 It is necessary to prove the following 2 short lemmas before we proceed further.
  
-\begin{lemma}\label{unsureifneeded} $N_G(A) =N_G(A^*)$.
+\begin{lemma}
+\label{normalizer_noncentral_eq}
+\lean{normalizer_noncentral_eq} $N_G(A) =N_G(A^*)$.
 \end{lemma}
 
 \begin{proof}
@@ -747,7 +849,11 @@ This contradicts the fact that $a \in A^*$. Therefore $yay^{-1} \in A^*$ and $y 
 
 \end{proof}
 
-\begin{lemma}\label{unsure} $N_G(Q \times Z) = N_G(Q)$.
+\begin{lemma}
+\label{normalizer_Sylow_join_center_eq_normalizer_Sylow}
+\uses{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z, MaximalAbelianSubgroup.index_normalizer_le_two}
+\lean{normalizer_Sylow_join_center_eq_normalizer_Sylow}
+$N_G(Q \times Z) = N_G(Q)$.
 \end{lemma}
 
 \begin{proof} 
@@ -774,7 +880,7 @@ Hence $y \in N_G(Q)$. Furthermore, since $y$ was chosen arbitrarily, any element
 
 We now start to count the elements of the seperate components of $G$ and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of $G$, something we will call the \textbf{Maximal Abelian Subgroup Class Equation} of $G$. \\
 \\
-First we spilt $\mathfrak{M}$ into the conjugacy classes of it's elements. Theorem \ref{6.8}(iii) tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to $p$ or of the form $Q \times Z$ where $Q$ is a Sylow $p$-subgroup. Let $\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}$ (where $s, t \in \mathbb{Z}^+$) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to $p$. Recall that part (iv) of Theorem \ref{6.8} tells us that $[N_G(A): A] = 1$ or 2. Let $A_i$ be a representative from each $\mathcal{C}_i$ such that,
+First we split $\mathfrak{M}$ into the conjugacy classes of it's elements. Theorem \ref{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z} tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to $p$ or of the form $Q \times Z$ where $Q$ is a Sylow $p$-subgroup. Let $\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}$ (where $s, t \in \mathbb{Z}^+$) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to $p$. Recall that part (iv) of Theorem \ref{MaximalAbelianSubgroup.index_normalizer_le_two} tells us that $[N_G(A): A] = 1$ or 2. Let $A_i$ be a representative from each $\mathcal{C}_i$ such that,
 \begin{align*} [N_G(A_i) : A_i] &= 1, \tag{for  $i \leq s$} \\[2mm]
 [N_G(A_i) : A_i] &= 2. \tag{for  $s < i \leq s+t$}, \end{align*}
 
@@ -881,7 +987,7 @@ Therefore the total number of elements of $G$ in the noncentral part of $C_i$ fo
 \begin{align}\label{classeq2of3} \sum_{i=s+1}^{s+t} |C_i^*| = \sum_{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*| = \sum_{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}.
 \end{align}
 We next determine the order of $C_{Q \times Z}$. Let $|Q| = q$. If $p \nmid |G|$ then $q=1$ and if $p = 0$, then we consider a Sylow $p$-subgroup to simply be $I_G$. So $q$ is always at least 1. Since $Z < K$, we can let $|K| = ek$. Observe that if $K \in \mathfrak{M}$, then by Theorem \ref{6.8}(v), $K = A_i$ for some $0 < i \leq t$ and $k = g_i$. Recall that $N_G(Q) = QK$ and so,
-\begin{align*} |N_G(Q \times Z)^*| &= |N_G(Q \times Z)|  \tag{by Lemma \ref{unsureifneeded}}
+\begin{align*} |N_G(Q \times Z)^*| &= |N_G(Q \times Z)|  \tag{by Lemma \ref{normalizer_noncentral_eq}}
 \\ &= |N_G(Q)| \tag{by Lemma \ref{unsure}}
 \\ &= |QK| = eqk.
 \end{align*}
@@ -891,11 +997,13 @@ Again we count the size and number of these maximal abelian groups.
 \end{align*}
 
 Since there is only one conjugacy class of $Q \times Z$, the number of $(Q \times Z)^*$ in $\mathfrak{M}^*$ is thus,
-\begin{align*} |\mathcal{C}_{Q \times Z}^*| =  |\mathcal{C}_{Q \times Z}| =  [G: N_G(Q \times Z)] = \frac{|G|}{|N_G(Q \times Z)^*|} = \frac{eg}{eqk} = \frac{g}{qk}.
+\begin{align*} 
+  |\mathcal{C}_{Q \times Z}^*| =  |\mathcal{C}_{Q \times Z}| =  [G: N_G(Q \times Z)] = \frac{|G|}{|N_G(Q \times Z)^*|} = \frac{eg}{eqk} = \frac{g}{qk}.
 \end{align*}
 
 Therefore the total number of elements of $G$ in the noncentral parts of each $Q \times Z$ is,
-\begin{align} \label{classeq3of3} |C_{Q \times Z}^*| = |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| = \frac{eg(q-1)}{qk}.
+\begin{align} \label{classeq3of3} 
+  |C_{Q \times Z}^*| = |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| = \frac{eg(q-1)}{qk}.
 \end{align}
 
 We now sum together (\ref{classeq1of3}), (\ref{classeq2of3}) and (\ref{classeq3of3}) to create the \textbf{Maximal Abelian Subgroup Class Equation} of $G$.
@@ -918,7 +1026,7 @@ Thus we can find a lower bound for (\ref{classeq}) which limits the possible num
 \begin{align*} 1 > \frac{s}{2} + \frac{t}{4}.
 \end{align*}
 
-There are only 6 possible different pairs of values which $s$ and $t$ can take: \vspace{3mm}
+There are only 6 possible different pairs of values which $s$ and $S$ can take: \vspace{3mm}
 
 \begin{center}
 \centering
@@ -928,7 +1036,7 @@ Case & I & II & III & IV & V & VI \\ [1ex]
 \hline\hline
  $s$ & 1 & 1 & 0 & 0 & 0 & 0 \\ [1ex]
 \hline
-$t$ & 0 & 1 & 0 & 1 & 2 & 3 \\ [1ex]
+$S$ & 0 & 1 & 0 & 1 & 2 & 3 \\ [1ex]
  \hline
 \end{tabular}
 \end{center}

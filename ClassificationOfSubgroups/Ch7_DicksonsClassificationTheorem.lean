@@ -2,6 +2,7 @@ import Mathlib
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
 
 set_option linter.style.longLine true
+set_option maxHeartbeats 0
 
 open Matrix MatrixGroups Subgroup
 
@@ -17,7 +18,7 @@ open MaximalAbelianSubgroup
 /- Lemma 3.2 -/
 lemma Sylow.not_normal_subgroup_of_G {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
   [CharP F p] (G K : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G)
-  (hK : K ∈ MaximalAbelianSubgroups G)
+  (hK : K ∈ MaximalAbelianSubgroupsOf G)
   (hQK : map G.subtype (normalizer Q.toSubgroup) = (map G.subtype Q.toSubgroup) ⊔ K) :
   ¬ Normal Q.toSubgroup := by
   sorry
@@ -54,9 +55,9 @@ def Isomorphic (G H : Type*) [Group G] [Group H] :=
 -- the elements of order 4.
 
 /- Theorem 3.6 -/
-theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ} [CharP F p]
-  (hp : Prime p) (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p) (G : Subgroup (SL(2,F)))
-  [Finite G] :
+theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
+  {p : ℕ} [CharP F p] (hp : Prime p) (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p)
+  (G : Subgroup (SL(2,F)))  [Finite G] :
   IsCyclic G ∨
   Isomorphic G (DihedralGroup n)
   ∨
@@ -70,15 +71,72 @@ theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClos
 
 -- def myGroup : Subgroup :=
 
--- How to embed d (x : GaloisField p (2k)) into SL(2, GaloisField p k)?
--- def monoidHom' {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
---   Ga
+
+
+/- Embed GF(p^k) into GF(p^m) where k ∣ m -/
+noncomputable
+def finite_field_inclusion (p : ℕ) [Fact (Nat.Prime p)] (K L : Type*) [Field K] [Field L]
+  [Algebra (ZMod p) K] [Algebra (ZMod p) L] [Finite K] (h : Nat.card K ∣ Nat.card L) :
+    K →ₐ[ZMod p] L := by
+  let k := Nat.log p (Nat.card K)
+  let l := Nat.log p (Nat.card L)
+  have hk : Nat.card K = p ^ k := sorry
+  have hl : Nat.card L = p ^ l := sorry
+  let e : K ≃ₐ[ZMod p] GaloisField p k := GaloisField.algEquivGaloisField _ _ hk
+  let e' : L ≃ₐ[ZMod p] GaloisField p l := GaloisField.algEquivGaloisField _ _ hl
+  let hb := Basis.exists_basis (ZMod p) (GaloisField p k)
+  let ι := hb.choose
+  let b := Classical.choice hb.choose_spec
+  let hbf : Fintype ι := FiniteDimensional.fintypeBasisIndex b
+  let hb' := Basis.exists_basis (ZMod p) (GaloisField p l)
+  let ι' := hb'.choose
+  let b' := Classical.choice hb'.choose_spec
+  let hbf' : Fintype ι' := FiniteDimensional.fintypeBasisIndex b'
+  have : Fintype.card ι ≤ Fintype.card ι' := sorry
+  let f : ι → ι' := sorry
+  have hf : Function.Injective f := sorry
+  refine {
+    toFun x := e'.symm (Basis.constr b (ZMod p) (fun i ↦ b'.equivFun.symm (fun i' ↦ sorry)) (e x))
+    map_one' := sorry
+    map_mul' := sorry
+    map_zero' := sorry
+    map_add' := sorry
+    commutes' := sorry
+  }
+
+def ringHom {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+}: GaloisField p k →+* GaloisField p (2*k) := by
+
+  sorry
+#leansearch "less than or equal to of dvd."
+
+lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n : ℕ+}
+  (m_dvd_n : m ∣ n) :  Nat.card (GaloisField p m.val) ∣ Nat.card (GaloisField p n.val) := by
+  rw [GaloisField.card p m m.ne_zero, GaloisField.card p n n.ne_zero]
+  apply pow_dvd_pow
+  suffices m.val ∣ n.val by exact Nat.le_of_dvd n.prop this
+  exact PNat.dvd_iff.mp m_dvd_n
+
+
+instance {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
+  Algebra (ZMod p) (GaloisField p (2 * k.val)) := by sorry
+
+
 -- (x) The group hSL(2, Fq ), dπ i, where SL(2, Fq ) C hSL(2, Fq ), dπ i.
-def monoidHom {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
-  SL(2, GaloisField p k) →* SL(2, GaloisField p (2*k)) where
-  toFun A := sorry
-  map_one' := sorry
-  map_mul' := sorry
+noncomputable def GaloisField_ringHom (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) :=
+  (@finite_field_inclusion p _ (GaloisField p k.val) (GaloisField p (2*k.val)) _ _ _ _ _
+    (@card_GaloisField_dvd_card_GaloisField p _ k (2*k) ((dvd_mul_left k 2)))).toRingHom
+
+#check GaloisField_ringHom
+
+noncomputable def monoidHom  {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
+  SL(2, GaloisField p k.val) →* SL(2, GaloisField p (2* k.val)) :=
+    Matrix.SpecialLinearGroup.map (GaloisField_ringHom p k)
+
+
+open Polynomial
+
+lemma foo {p n : ℕ} : (X ^ p ^ n - X : (ZMod p)[X]) ∣ (X ^ n ^ (2*k) - X) := by
+  sorry
 
 
 
@@ -90,13 +148,13 @@ def monoidHom {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
 
 #check GaloisField.equivZmodP
 
-noncomputable instance {p n : ℕ} [Fact (Nat.Prime p)] : Algebra (ZMod p) (GaloisField p n) := by infer_instance
+#check Polynomial.IsSplittingField.splits
 
-noncomputable instance {p n : ℕ} [Fact (Nat.Prime p)] : CharP (GaloisField p n) p := by infer_instance
+noncomputable instance {p n : ℕ} [Fact (Nat.Prime p)] :
+  Algebra (ZMod p) (GaloisField p n) := by infer_instance
 
--- define algebra from GaloisField p k to GaloisField p (2*k) -- is there a splitting field
-
-#leansearch "galois field of p^k elements is a vector space over the galois field of p elements."
+noncomputable instance {p n : ℕ} [Fact (Nat.Prime p)] :
+  CharP (GaloisField p n) p := by infer_instance
 
 theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClosed F]{p : ℕ}
   [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup (SL(2,F))) [Finite G] (hp : p ∣ Nat.card G)  :

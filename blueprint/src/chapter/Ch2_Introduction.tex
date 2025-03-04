@@ -30,14 +30,66 @@ theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
 
 \section{Fermat's Last Theorem}
 
-TODO:
 
--History of Fermat's Equation
+\subsubsection{Problem statement}
+Fermat's Last Theorem, before it was proved that is, A conjecture about the \textit{Fermat equation} which is defined to be
 
--Problem statements
+\begin{definition}[Fermat Equation]
+    The equation $a^n + b^n = c^n$ is Fermat's Equation
+\end{definition}
 
--Developments in number theory that lead to the resolution of the conjecture.
+When $a, b, c$ and $n$ in this equation are restricted to positive integers, we are defining a particular family of what are called \textit{Diophantine equation}.
+Diophantus, an ancient greek mathematician was interested in positive integers which satisfy this equation. For instance, a particular set of numbers which satisfy this equation 
+are the \textit{Pythagorean triples}, such triples have been known since Babylonian times. For example, when we substitute the Pythagorean triple $(a,b,c) = (3,4,5)$ and set $n = 2$ we find that 
+indeed Fermat's equation holds for this choice of numbers since:
 
+\[
+3^2 + 4^2 = 5^2
+\]
+
+In fact, much is known about the case when $n = 2$; it is known that all Pythagorean triples are of the form:
+
+\begin{theorem}[Pythagorean triples]
+    All pythagorean triples are of the form:
+
+    \[
+    a = r \cdot (s^2 - t^2), \qquad b = r \cdot (2st) = r \cdot (s^2 + t^2)
+    \]
+\end{theorem}
+
+The natural question to ask from such an extremely satisfying theorem is whether the same can be said for when $n \ge 2$. Initially, mathematicians set out to
+to find solutions $n = 3$. However, it seemed only the "trivial" triple satsfied Fermat's equation for when $n = 2$
+
+\[
+0^3 + 1^3 = 1^3
+\]
+
+Among these mathematicians was Pierre de Fermat, who suspected it was not possible to find a nontrivial triple for the exponent $n= 3$ and what is more he believed
+it was not possible to find any nontrivial triple for any exponent $n > 2$. In fact, Pierre de Fermat wrote in the margin of his copy of \textit{Arithmetic} written by Diophantus:
+"
+It is impossible... for any number which is a power greater than the second to be written as the sum of two like powers 
+\[ 
+x^n + y^n = z^n \text{ for } n > 2.
+\]
+I have a truly marvelous demonstration of this proposition which this margin is too narrow to contain.
+"
+
+This copy and many of Pierre de Fermat's belongings were searched in the hope of finding such a proof. Nonetheless, to this date no proof has been found.
+
+
+It took Euler to provide a (flawed) proof for the nonexistence of nontrivial solutions to Fermat's equation for the exponent $n = 3$, so far so good, Fermat's conjecture held true for $n = 3$.
+The case where $n = 4$ was also proved by Euler. %Fermat's conjecture was shown to be true for particular values of $n > 2$.  
+
+TODO
+
+\subsubsection{History of Fermat's Equation}
+
+The proof of Fermat's Last Theorem is the culmination of countless contributions which span many generations.
+
+From Diophantus, the first known person to systematically study what we now call \textit{Diophantine equations}, to Fermat developing the elementary theory of number theory and then due to the invaluable work of countless mathematicians 
+around the world which built upon each other's work a list of such mathematicians contains the names of: Gauss, Galois, Euler, Abel, Dedekind, Noether, Euler, Kummer, Mazur, Kronecker, etc.
+
+TODO
 
 \section{Formalizing Fermat's Last Theorem}
 
@@ -49,13 +101,30 @@ At the time of writing, since October of 2024, a digital blueprint has been set 
 
 Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task.
 
-TODO:
+\subsubsection{Goal of the formalization of Fermat's Last Theorem}
 
-- Current goal of the formalization
+The goal of the ongoing efforts of the formalization is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \text{Mazur's Theorem}.
 
-- Explain somewhat the modern approach and the highly sought after Modularity Lifting Theorem.
+However, it should be mentioned that the proof being formalised is not the proof Andrew Wiles and Richard Taylor initially came up with during 1994, but a more modernised approach that has been refined over the last 20 years.
 
-- My task: Classification of finite subgroups of $\PGL_2(\bar{\F}_p)$
+At the time of writing, the first target set by Prof. Kevin Buzzard is to formalise the \textbf{Modularity Lifting Theorem}
+% https://imperialcollegelondon.github.io/FLT/blueprint/ch_overview.html#a0000000021
+% , which states:
+
+% \begin{theorem}
+
+% \end{theorem}
+
+After all, the ultimate goal is to formalise all of mathematics and so far the library relevant to Algebraic Number Theory, Algebraic Geometry and Arithmetic Geometry is not developed enough
+to be even able to state the propositions and let alone formalise their corresponding proofs.
+
+Morally, the goal of the formalization of Fermat's Last Theorem is to formalise much of Algebraic Number Theory, Algebraic Geometry, Arithmetic Geometry and so forth so that one day
+the mathematics library of Lean contains all mathematics known to human kind.
+
+
+
+\subsubsection{Classification of finite subgroups of $\PGL_2(\Fbar_p)$}
+
 
 
 

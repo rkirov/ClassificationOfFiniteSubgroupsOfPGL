@@ -12,7 +12,7 @@ open Subgroup
 
 def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal (IsCommutative) G
 
-def MaximalAbelianSubgroups { L : Type*} [Group L] (G : Subgroup L) : Set (Subgroup L) :=
+def MaximalAbelianSubgroupsOf { L : Type*} [Group L] (G : Subgroup L) : Set (Subgroup L) :=
   { K : Subgroup L | IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G}
 
 structure MaximalAbelian {G : Type*} [Group G] (H : Subgroup G) extends Subgroup G where
@@ -181,7 +181,7 @@ instance SZ_Comm {F : Type*} [Field F] : CommGroup (S F ⊔ Z F :) := by
 namespace MaximalAbelianSubgroup
 
 theorem le_centralizer_meet {G : Type*} [Group G] (A H : Subgroup G)
-  (hA : A ∈ MaximalAbelianSubgroups H) (x : G) (x_in_A : x ∈ A) :
+  (hA : A ∈ MaximalAbelianSubgroupsOf H) (x : G) (x_in_A : x ∈ A) :
   A ≤ centralizer {x} ⊓ H := by
   intro y y_in_M
   obtain ⟨⟨hA, -⟩, A_le_H⟩ := hA
@@ -201,7 +201,7 @@ theorem le_centralizer_meet {G : Type*} [Group G] (A H : Subgroup G)
   · exact A_le_H y_in_M
 
 lemma not_le_of_ne {G : Type*} [Group G] (A B H : Subgroup G)
-  (hA : A ∈ MaximalAbelianSubgroups H) (hB : B ∈ MaximalAbelianSubgroups H) (A_ne_B : A ≠ B):
+  (hA : A ∈ MaximalAbelianSubgroupsOf H) (hB : B ∈ MaximalAbelianSubgroupsOf H) (A_ne_B : A ≠ B):
   ¬ B ≤ A  := by
   intro h
   obtain ⟨⟨hA, -⟩, A_le_H⟩ := hA
@@ -224,7 +224,7 @@ lemma not_le_of_ne {G : Type*} [Group G] (A B H : Subgroup G)
 
 
 lemma le_centralizer_of_mem {G : Type*} [Group G] {A H : Subgroup G}
-  (hA : A ∈ MaximalAbelianSubgroups H) {x : G} (x_in_A : x ∈ A) : A ≤ centralizer {x} := by
+  (hA : A ∈ MaximalAbelianSubgroupsOf H) {x : G} (x_in_A : x ∈ A) : A ≤ centralizer {x} := by
   intro a a_in_A
   obtain ⟨⟨A_IsCommutative', -⟩, A_le_G⟩ := hA
   have hA : IsCommutative (A ⊓ H) := IsCommutative_of_IsCommutative_subgroupOf A H A_IsCommutative'
@@ -234,8 +234,8 @@ lemma le_centralizer_of_mem {G : Type*} [Group G] {A H : Subgroup G}
   exact this
 
 
-lemma lt_cen_meet_G {G : Type*} [Group G] {A B H : Subgroup G} (hA : A ∈ MaximalAbelianSubgroups H)
-  (hB : B ∈ MaximalAbelianSubgroups H) (A_ne_B: A ≠ B) {x : G} (x_in_A : x ∈ A) (x_in_B : x ∈ B):
+lemma lt_cen_meet_G {G : Type*} [Group G] {A B H : Subgroup G} (hA : A ∈ MaximalAbelianSubgroupsOf H)
+  (hB : B ∈ MaximalAbelianSubgroupsOf H) (A_ne_B: A ≠ B) {x : G} (x_in_A : x ∈ A) (x_in_B : x ∈ B):
   A < centralizer {x} ⊓ H := by
   suffices (A : Set G) < centralizer {x} ⊓ H by exact this
   apply lt_of_lt_of_le (b := (A : Set G) ∪ B)
@@ -255,7 +255,7 @@ lemma lt_cen_meet_G {G : Type*} [Group G] {A B H : Subgroup G} (hA : A ∈ Maxim
     · exact hA.right
     · exact hB.right
 
-lemma center_le {G : Type*} [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbelianSubgroups H)
+lemma center_le {G : Type*} [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbelianSubgroupsOf H)
   (hH : center G ≤ H) : center G ≤ A := by
   by_contra h
   rw [SetLike.not_le_iff_exists] at h
@@ -281,7 +281,7 @@ lemma center_le {G : Type*} [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbel
 
 
 lemma singleton_of_cen_eq_G {G : Type*} [Group G] (H : Subgroup G) (hH : H = center G) :
-  MaximalAbelianSubgroups H = {center G} := by
+  MaximalAbelianSubgroupsOf H = {center G} := by
   ext A
   have cen_le_G : center G ≤ H := le_of_eq hH.symm
   constructor
@@ -291,7 +291,7 @@ lemma singleton_of_cen_eq_G {G : Type*} [Group G] (H : Subgroup G) (hH : H = cen
     -- A = center G
     simp [le_antisymm A_le_center center_le_A]
   · rintro ⟨rfl⟩
-    simp [MaximalAbelianSubgroups, IsMaximalAbelian]
+    simp [MaximalAbelianSubgroupsOf, IsMaximalAbelian]
     split_ands
     · exact subgroupOf_isCommutative H (center G)
     · intro A _A_IsComm _cen_le_A
@@ -305,7 +305,7 @@ open scoped MatrixGroups
 -- #leansearch "A = B of B ⊆ A Nat.card A ≤ Nat.card B?"
 
 lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
-  (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G)
+  (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
   (card_A_le_two : Nat.card A ≤ 2):
   A = center SL(2,F) := by
   have cen_le_A := center_le G A hA center_le_G
@@ -323,11 +323,11 @@ lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
 theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} [Field F]
   [IsAlgClosed F] [DecidableEq F] (G : Subgroup SL(2,F)) (x : SL(2,F))
   (hx : x ∈ (G.carrier \ (center SL(2,F)))) :
-  centralizer {x} ⊓ G ∈ MaximalAbelianSubgroups G := by
+  centralizer {x} ⊓ G ∈ MaximalAbelianSubgroupsOf G := by
   obtain ⟨x_in_G, x_not_in_Z⟩ := hx
   simp at x_not_in_Z
   have IsCommutative_centralizer_S := IsCommutative_centralizer_of_not_mem_center x x_not_in_Z
-  dsimp [MaximalAbelianSubgroups]
+  dsimp [MaximalAbelianSubgroupsOf]
   split_ands
   · rw [inf_subgroupOf_right]
     apply subgroupOf_isCommutative
@@ -350,8 +350,8 @@ theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} 
 
 /- Theorem 2.3 (ii) For any two distinct subgroups A and B of M, we have A ∩ B = Z. -/
 theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAlgClosed F]
-  [DecidableEq F] (A B G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
-  (hB : B ∈ MaximalAbelianSubgroups G) (A_ne_B: A ≠ B)(center_le_G : center SL(2,F) ≤ G) :
+  [DecidableEq F] (A B G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroupsOf G)
+  (hB : B ∈ MaximalAbelianSubgroupsOf G) (A_ne_B: A ≠ B)(center_le_G : center SL(2,F) ≤ G) :
   A ⊓ B = center SL(2,F) := by
   ext x
   constructor
@@ -393,7 +393,7 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAl
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
 of G. -/
 theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {F : Type*} [Field F] {p : ℕ}
-  (hp : Nat.Prime p) [C : CharP F p] (A G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
+  (hp : Nat.Prime p) [C : CharP F p] (A G : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroupsOf G)
   (hG : G = center SL(2,F)) : IsCyclic A ∧ Nat.Coprime (Nat.card A) p := by
   rw [singleton_of_cen_eq_G G hG] at hA
   simp at hA
@@ -420,7 +420,7 @@ theorem IsCyclic_and_card_Coprime_CharP_of_center_eq {F : Type*} [Field F] {p : 
 open IsElementaryAbelian
 
 lemma center_not_mem {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] (G : Subgroup SL(2,F))
-  (hG : center SL(2,F) ≠ G) : center SL(2,F) ∉ MaximalAbelianSubgroups G := by
+  (hG : center SL(2,F) ≠ G) : center SL(2,F) ∉ MaximalAbelianSubgroupsOf G := by
   intro h
   by_cases h' : center SL(2,F) ≤ G
   · obtain ⟨x, x_in_G, x_not_in_cen⟩ := SetLike.exists_of_lt (lt_of_le_of_ne h' hG)
@@ -447,7 +447,7 @@ lemma center_not_mem {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] (G : 
 open SpecialSubgroups SpecialMatrices
 
 lemma eq_centralizer_meet_of_center_lt {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
-  (A G : Subgroup SL(2,F)) (center_lt : center SL(2,F) < A) (hA : A ∈ MaximalAbelianSubgroups G) :
+  (A G : Subgroup SL(2,F)) (center_lt : center SL(2,F) < A) (hA : A ∈ MaximalAbelianSubgroupsOf G) :
   ∃ x : SL(2,F), x ∈ G.carrier \ center SL(2,F) ∧ A = centralizer {x} ⊓ G := by
   rw [SetLike.lt_iff_le_and_exists] at center_lt
   obtain ⟨-, x, x_in_A, x_not_in_center⟩ := center_lt
@@ -753,7 +753,7 @@ theorem mul_center_inj {F : Type*} [Field F] (S Q : Subgroup SL(2,F))
 
 theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
   [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
-  (G : Subgroup SL(2,F))[hG₀ : Finite G] (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroups G)
+  (G : Subgroup SL(2,F))[hG₀ : Finite G] (A : Subgroup SL(2,F)) (hA : A ∈ MaximalAbelianSubgroupsOf G)
   (center_le_G : center SL(2,F) ≤ G) (center_lt_A : center SL(2,F) < A) (x : SL(2,F))
   (x_in_G : x ∈ G.carrier) (x_not_in_center : x ∉ center SL(2,F))
   (A_eq_centra : A = centralizer {x} ⊓ G) (σ : F)
@@ -1112,7 +1112,7 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
 theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z_of_center_ne
   {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)]
   [hC : CharP F p] (G : Subgroup SL(2,F))[hG₀ : Finite G] (A : Subgroup SL(2,F))
-  (hA : A ∈ MaximalAbelianSubgroups G) (center_le_G : center SL(2,F) ≤ G)
+  (hA : A ∈ MaximalAbelianSubgroupsOf G) (center_le_G : center SL(2,F) ≤ G)
   (center_ne_G : G ≠ center SL(2,F)) : (IsCyclic A ∧ Nat.Coprime (Nat.card A) p)
   ∨
   (
@@ -1158,7 +1158,7 @@ Theorem 2.3 (iii)
 theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z {F : Type*}
   [Field F] [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
   (G : Subgroup SL(2, F)) [hG₀ : Finite ↥G] (A : Subgroup SL(2, F))
-  (hA : A ∈ MaximalAbelianSubgroups G) (center_le_G : center SL(2, F) ≤ G)  :
+  (hA : A ∈ MaximalAbelianSubgroupsOf G) (center_le_G : center SL(2, F) ≤ G)  :
   IsCyclic ↥A ∧ (Nat.card ↥A).Coprime p
   ∨
   ∃ Q : Subgroup SL(2,F),
@@ -1180,7 +1180,7 @@ theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z {F : Type*}
 
 /- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
 theorem index_normalizer_le_two {F : Type*} [Field F] {p : ℕ}(A G : Subgroup SL(2,F))
-  (center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroups G)
+  (center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
   (hA' : Nat.Coprime (Nat.card A) p) : (A.subgroupOf G).normalizer.index ≤ 2 := by
   by_cases h : Nat.card A ≤ 2
   · have A_eq_Z : A = Z F := by
@@ -1201,7 +1201,7 @@ Theorem 2.3 (iv b) Furthermore, if [NG (A) : A] = 2,
 then there is an element y of NG (A)\A such that, yxy⁻¹ = x⁻¹  for all x ∈ A.
  -/
 theorem of_index_normalizer_eq_two {F : Type*} [Field F] {p : ℕ }(A G : Subgroup SL(2,F))
-  (hA : A ∈ MaximalAbelianSubgroups G) (hA' : Nat.Coprime (Nat.card A) p)
+  (hA : A ∈ MaximalAbelianSubgroupsOf G) (hA' : Nat.Coprime (Nat.card A) p)
   (hNA : A.normalizer.index = 2) (x : A) :
   ∃ y ∈ A.normalizer.carrier \ A, y * x * y⁻¹ = x⁻¹ := by sorry
 
@@ -1222,7 +1222,7 @@ Theorem 2.3 (v b)If |K| > |Z|, then K ∈ M.
 theorem K_mem_MaximalAbelianSubgroups_of_center_lt_card_K {F : Type*} [Field F] { p : ℕ } [hp' : Fact (Nat.Prime p)] (G : Subgroup SL(2,F))
   (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) (K : Subgroup G)(hK : IsCyclic K)
   (hNG : normalizer Q.toSubgroup = Q.toSubgroup ⊔ K) (h : Nat.card K > Nat.card (center SL(2,F))) :
-  map G.subtype K ∈ MaximalAbelianSubgroups G := by
+  map G.subtype K ∈ MaximalAbelianSubgroupsOf G := by
   sorry
 
 end MaximalAbelianSubgroup

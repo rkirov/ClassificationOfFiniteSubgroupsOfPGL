@@ -193,7 +193,7 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
 \leanok
     The set of diagonal matrices with matrix multiplication is a subgroup of $\SL_2(F)$: 
     \[
-    D = \{d_\delta \} = \left\{ \begin{bmatrix}\delta & 0\\ 0 & \delta^{-1}\end{bmatrix} \; | \; \delta \in F^\times \right\}
+    D = \{d_\delta \; | \; \delta \in F^\times \} = \left\{ \begin{bmatrix}\delta & 0\\ 0 & \delta^{-1}\end{bmatrix} \; | \; \delta \in F^\times \right\}
     \]
 \end{definition}
 
@@ -203,7 +203,7 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
 \leanok
     The set of shear matrices with matrix multiplication is a subgroup of $\SL_2(F)$:
     \[
-    S = \{s_\sigma\} = \left\{\begin{bmatrix}1 & 0\\ \sigma & 1\end{bmatrix} \; | \; \sigma \in F \right\}
+    S = \{s_\sigma \; | \sigma \in F\} = \left\{\begin{bmatrix}1 & 0\\ \sigma & 1\end{bmatrix} \; | \; \sigma \in F \right\}
     \]
 \end{definition}
 
@@ -469,7 +469,7 @@ since for each $z \in Z$, $gzg^{-1} = gg^{-1}z = z$, $\forall g \in G$. It's als
 \label{SpecialSubgroups.closure_neg_one_eq}
 \lean{SpecialSubgroups.closure_neg_one_eq}
 \leanok
-The subgroup closure of $\overline{\{-I\}} = \{I, I\}$
+The subgroup closure of $\overline{\{-I\}} = \{I, -I\}$
 \end{lemma}
 
 \begin{lemma}
@@ -734,13 +734,14 @@ Now clearly the determinant of $x$ is equal to the determinant of $j$, namely 1,
 
 \end{proof}
 
+% TODO -- MAKE MORE FORMAL
 \begin{remark}
 
 This was the first tedious proof to formalise in Lean.
 
 Given the (informal) proof presented of propostion \ref{SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed} extracted from Christopher Butler's exposition uses the Jordan Normal Form theorem. 
 
-Furtrmore, since at the time of writing, the Jordan Normal form theorem is still not yet in Mathlib this theorem turned out to be quite difficult to formalise.
+Furthermore, since at the time of writing, the Jordan Normal form theorem is still not yet in Mathlib this theorem turned out to be quite difficult to formalise.
 
 Ultimately, I initially set out to prove the Jordan Normal Form theorem for $2 \times 2$ matrices by studying the eigenspace and generalized eigenspaces of the endomorphism associated to a $2 \times 2$ matrix - It turned out to be much more effort and did not manage to complete it. 
 Eventually I understood that I might have well formalised the general theorem and furthemore, understood why the theorem is not yet in mathlib; and more in general, it is clear to me why certain "standard" results are not in Mathlib. 
