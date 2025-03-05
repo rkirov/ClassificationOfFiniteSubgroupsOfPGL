@@ -54,7 +54,7 @@
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="Ch2_Introduction.html#a0000000006"><span class="toc_ref"></span> <span class="toc_entry">Problem statement</span></a>
+  <a href="Ch2_Introduction.html#a0000000006"><span class="toc_ref"></span> <span class="toc_entry">Problem statement and its history</span></a>
  </li>
 <li class="">
   <a href="Ch2_Introduction.html#a0000000007"><span class="toc_ref"></span> <span class="toc_entry">History of Fermat’s Equation</span></a>
@@ -2787,7 +2787,7 @@
 <div class="displaymath" id="a0000000252">
   \begin{align*}  A & = QK \cap A \\ & = QK \cap AK \tag {$K \subset A$ so $A = AK$} \\ & = (Q \cap A)K \\ & = K \tag {$Q \cap A = I_G$} \end{align*}
 </div>
-<p>Thus \(K \in \mathfrak {M}\). <br /><br /></p>
+<p>Thus \(K \in \mathfrak {M}\).<br /><br /></p>
 
   </div>
 </div>
@@ -2852,7 +2852,10 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   Let \(G\) be a subgroup of \(\operatorname{SL}_2(F)\) then the set \(\mathcal{C}_i = \{  x A_i x^{-1} : x \in G \} \) is called the <b class="bfseries">conjugacy class</b> of \(A_i \in \mathfrak {M}\). </p>
+  <p>   Let \(G\) be a subgroup of \(\operatorname{SL}_2(F)\) and let \(A \in \mathfrak {M}\) then define the conjugacy class of \(A\) to be </p>
+<div class="displaymath" id="a0000000253">
+  \[  \mathcal{C}(A) = \{  x A x^{-1} : x \in G \} .  \]
+</div>
 
   </div>
 </div>
@@ -2896,7 +2899,7 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   Let \(A_i^* = A_i \setminus Z\) be the non-central part of \(A_i \in \mathfrak {M}\) </p>
+  <p>   Let \(A\) be a subgroup of a group \(G\) let \(A^* = A \setminus Z(G)\) be the "noncenter" part of \(A\). </p>
 
   </div>
 </div>
@@ -2931,6 +2934,8 @@
           
           <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroupsOf">Definition 6.5</a></li>
           
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#Subgroup.noncenter">Definition 6.41</a></li>
+          
         </ul>
     
       </div>
@@ -2960,9 +2965,9 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   Let \(G\) be a subgroup of \(\operatorname{SL}_2(F)\) then let the noncenter conjugacy class of a maximal abelian subgroup be defined by </p>
-<div class="displaymath" id="a0000000253">
-  \[  \mathcal{C}_i* = \left\{ x A_i^* x^{-1} \;  | \;  x \in G \right\}   \]
+  <p>   Let \(G\) be a subgroup of \(\operatorname{SL}_2(F)\) and let \(A^* \in \mathfrak {M}^*\) then define the conjugacy class of \(A^*\) to be </p>
+<div class="displaymath" id="a0000000254">
+  \[  \mathcal{C}(A^*) = \left\{ x A^* x^{-1} \;  | \;  x \in G \right\}   \]
 </div>
 
   </div>
@@ -2996,6 +3001,8 @@
         <ul class="uses">
           
           <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroupsOf">Definition 6.5</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#Subgroup.noncenter">Definition 6.41</a></li>
           
         </ul>
     
@@ -3036,7 +3043,7 @@
     Definition
     </span>
     <span class="definition_thmlabel">6.44</span>
-    <span class="definition_thmtitle">Conjugacy class of noncenter subgroup</span>
+    <span class="definition_thmtitle">Conjugacy class of subgroup</span>
     <div class="thm_header_extras">
 
     
@@ -3070,19 +3077,21 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   For some \(A_i \in \mathfrak {M}\) and \(A_i^* \in \mathfrak {M}^*\). Then let, </p>
-<div class="displaymath" id="a0000000254">
-  \begin{align*}  C_i = \bigcup _{x \in G} x A_i x^{-1}, \quad \text{and} \end{align*}
+  <p>   Let \(A \in \mathfrak {M}\) and define the union of the conjugacy classes of \(A\) to </p>
+<div class="displaymath" id="a0000000255">
+  \begin{align*}  C(A) = \bigcup _{x \in G} x A x^{-1} \end{align*}
 </div>
 
   </div>
 </div>
+<p>Similarly, we define the analogous for the noncenter part of a maximal abelian subgroup: </p>
 <div class="definition_thmwrapper theorem-style-definition" id="noncenter_C">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">6.45</span>
+    <span class="definition_thmtitle">Union of conjugacy class of noncenter part of a subgroup</span>
     <div class="thm_header_extras">
 
     
@@ -3116,9 +3125,9 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Similary, the noncenter conjugacy class of a subgroup is </p>
-<div class="displaymath" id="a0000000255">
-  \begin{align*}  C_i^* = \bigcup {x \in G} x A_i^* x^{-1}. \end{align*}
+  <p>   Let \(A^* \in \mathfrak {M}^*\) then denote union of the conjugacy class of \(A^*\) to be </p>
+<div class="displaymath" id="a0000000256">
+  \begin{align*}  C(A^*) = \bigcup _{x \in G} x A^* x^{-1} = \bigcup _{B \in \mathcal{C}(A^*)} B. \end{align*}
 </div>
 
   </div>
@@ -3150,13 +3159,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroupsOf">Definition 6.5</a></li>
-          
-          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_C">Definition 6.45</a></li>
-          
           <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_MaximalAbelianSubgroupsOf">Definition 6.43</a></li>
-          
-          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_ConjClassOfSet">Definition 6.42</a></li>
           
         </ul>
     
@@ -3188,28 +3191,28 @@
   </div>
   <div class="lemma_thmcontent">
   
-<div class="displaymath" id="a0000000256">
+<div class="displaymath" id="a0000000257">
   \begin{align}  |C_i^*| = |A_i^*||\mathcal{C}_i^*|. \end{align}
 </div>
 
   </div>
 </div>
 <p>Here the argument from Christopher Butler’s exposition has been modified, it turns out to be significantly more idiomatic to lean to first define the following equivalence relation and its corresponding quotient to eventually set up the maximal abelian class equation. </p>
-<div class="lemma_thmwrapper theorem-style-plain" id="lift_MaximalAbelianSubgroupsOf">
+<div class="lemma_thmwrapper theorem-style-plain" id="lift_noncenter_MaximalAbelianSubgroupsOf">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">6.47</span>
-    <span class="lemma_thmtitle">Equivalence relation on \(\mathfrak {M}\)</span>
+    <span class="lemma_thmtitle">Equivalence relation on \(\mathfrak {M}^*\)</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_MaximalAbelianSubgroupsOf">#</a>
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_MaximalAbelianSubgroupsOf">#</a>
     
-    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000257"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000258"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3245,7 +3248,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/lift_MaximalAbelianSubgroupsOf" class="lean_decl">lift_MaximalAbelianSubgroupsOf</a></li>
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/lift_noncenter_MaximalAbelianSubgroupsOf" class="lean_decl">lift_noncenter_MaximalAbelianSubgroupsOf</a></li>
           
         </ul>
     
@@ -3256,15 +3259,15 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>    Let \(G\) be a finite subgroup of \(\operatorname{SL}_2(F)\), then the relation \(\sim \) on the set of maximal abelian subgroups of \(G\), \(\mathfrak {M}\) defined by </p>
-<div class="displaymath" id="a0000000258">
+  <p>    Let \(G\) be a finite subgroup of \(\operatorname{SL}_2(F)\), then the relation \(\sim \) on the set of noncenter part of maximal abelian subgroups of \(G\), \(\mathfrak {M}^*\) defined by </p>
+<div class="displaymath" id="a0000000259">
   \[  A \sim B \text{ if and only if } \exists x \in G \text{ such that } x A x^{-1} = B  \]
 </div>
 <p> gives an equivalence relation. </p>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000257">
+<div class="proof_wrapper" id="a0000000258">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3272,7 +3275,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>Define a relation \(\sim \) on \(\mathfrak {M}^*\) as follows: </p>
+  <p>We show the relation \(\sim \) defined above is in fact an equivalence relation on \(\mathfrak {M}^*\): </p>
 <ul class="itemize">
   <li><p>\(\sim \) is reflexive: </p>
 <p>For any \(x \in A\) as conjugation by an element in the subgroup defines an automorphism and so \(A = x A x^{-1}\) as this automorphism fixes the subgroup. </p>
@@ -3280,14 +3283,14 @@
 </li>
   <li><p>\(\sim \) is symmetric: </p>
 <p>If \(A \sim B\), then \(\exists \;  x \in G\) such that, </p>
-<div class="displaymath" id="a0000000259">
+<div class="displaymath" id="a0000000260">
   \begin{align*}  A = xBx^{-1} \iff x^{-1}Ax = B \iff B = yAy^{-1} \quad \text{for} \;  y = x^{-1} \in G. \end{align*}
 </div>
 <p>Thus \(B \sim A\) and \(\sim \) is symmetric.<br /></p>
 </li>
   <li><p>\(\sim \) is transitive: </p>
 <p>If \(A \sim B\) and \(B \sim C\), then \(\exists \;  x, y \in G\) such that, </p>
-<div class="displaymath" id="a0000000260">
+<div class="displaymath" id="a0000000261">
   \begin{align*}  A = xBx^{-1} \;  \text{and} \;  B = yCy^{-1} \Rightarrow A = xyCy^{-1}x^{-1} = (xy)C(xy)^{-1}. \end{align*}
 </div>
 <p> Thus \(A \sim C\) (since \(xy \in G\)), which shows that \(\sim \) is transitive. <br /></p>
@@ -3297,7 +3300,7 @@
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000261">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000262">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
@@ -3309,7 +3312,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000261">#</a>
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000262">#</a>
     
     
     
@@ -3320,43 +3323,481 @@
 
   </div>
 </div>
-<p>Now that we have set up the equivalence relation on maximal abelian subgroups we proceed to set up the maximal abelian class equation. </p>
-<div class="theorem_thmwrapper theorem-style-plain" id="partitiontheorem">
-  <div class="theorem_thmheading">
-    <span class="theorem_thmcaption">
-    Theorem
+<p>Now that we have set up the equivalence relation on maximal abelian subgroups we proceed to lift particular functions that will be of interest to set up the maximal abelian class equation and other suitable results. </p>
+<div class="lemma_thmwrapper theorem-style-plain" id="noncenter_C_eq_of_related">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
     </span>
-    <span class="theorem_thmlabel">6.49</span>
+    <span class="lemma_thmlabel">6.49</span>
+    <span class="lemma_thmtitle">Equivalent noncenter subgroups of \(\mathfrak {M}^*\) have the equal union of their conjugacy class</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#partitiontheorem">#</a>
-    
-    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000262"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
-</a>
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_C_eq_of_related">#</a>
     
     
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_C">Definition 6.45</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_MaximalAbelianSubgroupsOf">Definition 6.43</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/noncenter_C_eq_of_related" class="lean_decl">noncenter_C_eq_of_related</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
     
         </div>
   </div>
-  <div class="theorem_thmcontent">
-  <p> Let \(G\) be a finite subgroup of \(\operatorname{SL}_2(F)\) and \(S\) be a subset of \(\mathfrak {M}^*\) containing exactly one element from each of its conjugacy classes.  </p>
-<p>(i) The set of \(C_i^*\) form a partition of \(G \!  \setminus \!  Z\). That is, </p>
+  <div class="lemma_thmcontent">
+  <p>    Let \(G\) be a subgroup of \(\operatorname{SL}_2(F)\) and let \(A , B \in \mathfrak {M}*\) be a noncenter maximal abelian subgroups of \(G\) where \(A \sim B\) then </p>
 <div class="displaymath" id="a0000000263">
-  \begin{align*}  G \!  \setminus \!  Z = \bigcup \limits _{A_i^* \in S} C_i^*, \qquad \text{and} \qquad C_i^* \cap C_j^* = \varnothing , \qquad \forall \;  i \neq j. \end{align*}
-</div>
-<p>(ii)    \(|\mathcal{C}_i^*| = |\mathcal{C}_i|\).  </p>
-<p>(iii)   \(|\mathcal{C}_i| = [G : N_G(A_i)]\).  </p>
-<p>(iv) </p>
-<div class="displaymath" id="a0000000264">
-  \[ |G \!  \setminus \!  Z| = \sum _{A_i^* \in S} |A_i^*| [G:N_G(A_i)]. \]
+  \[  \bigcup _{x \in G} x A x^{-1} = \bigcup _{x \in G} x B x^{-1}  \]
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000262">
+<div class="definition_thmwrapper theorem-style-definition" id="lift_noncenter_C">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">6.50</span>
+    <span class="definition_thmtitle">Lift of the union of the conjugacy class of noncenter of a subgroup</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_C">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_C">Definition 6.45</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_C_eq_of_related">Lemma 6.49</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_MaximalAbelianSubgroupsOf">Definition 6.43</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/lift_noncenter_C" class="lean_decl">lift_noncenter_C</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    Let \([A^*] \in \mathfrak {M}^* / \sim \), given for all \(A^* \sim B^*\) we have that \(C(A^*) = C(B^*)\) by <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_C_eq_of_related">6.49</a> we can define the lift of \(C : \mathfrak {M}^* \rightarrow \mathcal{P}(\operatorname{SL}_2(F))\) to be \(\tilde{C}([A^*]) = \bigcup _{x \in G} x A^* x^{-1}\) where this map is well-defined for any choice of a representative of \([A^*]\). </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="union_lift_noncenter_C_eq_G_diff_center">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">6.51</span>
+    <span class="theorem_thmtitle">The union of conjugacy classes of the set representatives of \(\mathfrak {M}^* / \sim \) cover \(G \setminus Z(\operatorname{SL}_2(F))\)</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#union_lift_noncenter_C_eq_G_diff_center">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_MaximalAbelianSubgroupsOf">Lemma 6.47</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_C">Definition 6.50</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/union_lift_noncenter_C_eq_G_diff_center" class="lean_decl">union_lift_noncenter_C_eq_G_diff_center</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \(G\) be a finite subgroup of \(\operatorname{SL}_2(F)\) provided \(\mathfrak {M}^* / \sim \) is a finite then we have the set equality </p>
+<div class="displaymath" id="a0000000264">
+  \[  G \setminus Z(\operatorname{SL}_2(F)) = \bigcup _{[A^*] \in \mathfrak {M}^* / \sim } C([A^*])  \]
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="disjoint_of_ne_lift_noncenter_MaximalAbelianSubgroupsOf">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">6.52</span>
+    <span class="theorem_thmtitle">Distinct elements of \(\mathfrak {M}^* / \sim \) are mapped to disjoint sets through \(\tilde{C}\)</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#disjoint_of_ne_lift_noncenter_MaximalAbelianSubgroupsOf">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_MaximalAbelianSubgroupsOf">Lemma 6.47</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_C">Definition 6.50</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/disjoint_of_ne_lift_noncenter_MaximalAbelianSubgroupsOf" class="lean_decl">disjoint_of_ne_lift_noncenter_MaximalAbelianSubgroupsOf</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \([A^*], [B^*] \in \mathfrak {M}^* / \sim \) then </p>
+<div class="displaymath" id="a0000000265">
+  \[  \tilde{C}([A^*]) = \tilde{C}([B^*]) \iff [A^*] = [B^*]  \]
+</div>
+<p> Or equivalently, </p>
+<div class="displaymath" id="a0000000266">
+  \[  C(A^*) \cap C(B^*) = \varnothing , \qquad \forall \;  A^* \not\sim B^*  \]
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">6.53</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroupsOf">Definition 6.5</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_MaximalAbelianSubgroupsOf">Definition 6.43</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#noncenter_ConjClassOfSet">Definition 6.42</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#ConjClassOfSet">Definition 6.40</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet" class="lean_decl">card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   For all maximal abelian subgroups \(A \in \mathfrak {M}\) we have that </p>
+<div class="displaymath" id="a0000000267">
+  \[  |\mathcal{C}(A)| = |\mathcal{C}(A^*)|  \]
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="card_ConjClassOfSet_eq_index_normalizer">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">6.54</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#card_ConjClassOfSet_eq_index_normalizer">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroupsOf">Definition 6.5</a></li>
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#ConjClassOfSet">Definition 6.40</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/card_ConjClassOfSet_eq_index_normalizer" class="lean_decl">card_ConjClassOfSet_eq_index_normalizer</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+<p>Let \(G\) be a finite subgroup of \(\operatorname{SL}_2(F)\) and let \(A\) be a maximal abelian subgroup of \(G\), \(A \in \mathfrak {M}\) then \(|\mathcal{C}(A)| = [G : N_G(A)]\). </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">6.55</span>
+    <span class="theorem_thmtitle">The maximal subgroup class equation</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer">#</a>
+    
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000268"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_MaximalAbelianSubgroupsOf">Lemma 6.47</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs/find/#doc/card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer" class="lean_decl">card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+<p>Let \(G\) be a finite subgroup of \(\operatorname{SL}_2(F)\), define the equivalence relation on the maximal abelian subgroups of \(G\), \(\mathfrak {M}^*\) as above in <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#lift_noncenter_MaximalAbelianSubgroupsOf">6.47</a> then \(|G \!  \setminus \!  Z| = \sum _{[A^*] \in \mathfrak {M}^* / \sim } |A^*| [\tilde{C}([A^*])].\) </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000268">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3365,27 +3806,27 @@
   </div>
   <div class="proof_content">
   <p>(i) <br />The equivalence class of \(A_i^*\) in \(\mathfrak {M}^*\) therefore coincides with the set \(\mathcal{C}_i^* = \{  xA_i^*x^{-1} : x \in G \} \). Furthermore, this tells us that each \(A_i^*\) belongs to exactly one conjugacy class. Thus the conjugacy classes \(\mathcal{C}_i^*\) form a partition of \(\mathfrak {M}^*\), </p>
-<div class="displaymath" id="a0000000265">
+<div class="displaymath" id="a0000000269">
   \begin{align*}  \mathfrak {M}^* = \bigcup \limits _{A_i^* \in S} \mathcal{C}_i^*, \qquad \text{and} \qquad \mathcal{C}_i^* \cap \mathcal{C}_j^* = \varnothing , \qquad \forall \;  i \neq j. \end{align*}
 </div>
 <p>Since the set of \(\mathcal{C}_i^*\) are pairwise disjoint, it follows that the set of \(C_i^*\) are also pairwise disjoint and we get the desired result, </p>
-<div class="displaymath" id="a0000000266">
+<div class="displaymath" id="a0000000270">
   \begin{align*}  G \!  \setminus \!  Z = \bigcup \limits _{A_i^* \in S} C_i^*, \qquad \text{and} \qquad C_i^* \cap C_j^* = \varnothing , \qquad \forall \;  i \neq j. \end{align*}
 </div>
 <p>(ii) Let \(x A_i x^{-1} \in \mathcal{C}_i\) and \(x A_i^* x^{-1} \in \mathcal{C}_i^*\). Since \(x A_i x^{-1} \!  \setminus \!  Z = x A_i^* x^{-1}\), it is quite clear that, </p>
-<div class="displaymath" id="a0000000267">
+<div class="displaymath" id="a0000000271">
   \begin{align*}  x A_i x^{-1} \in \mathcal{C}_i \iff x A_i^* x^{-1} \in \mathcal{C}_i^*. \end{align*}
 </div>
 <p> Thus \(|\mathcal{C}_i^*| = |\mathcal{C}_i|\) as desired. <br /><br />(iii) Now we define a map \(\phi \) by: </p>
-<div class="displaymath" id="a0000000268">
+<div class="displaymath" id="a0000000272">
   \begin{align*}  \phi : \mathcal{C}_i & \longrightarrow G / N_G(A_i), \\ \phi (xA_ix^{-1}) & = xN_G(A_i). \tag {$\forall \;  x \in G, \;  A_i \in \mathfrak {M}$} \end{align*}
 </div>
 <p>Clearly \(\phi \) is trivially surjective. We now show that it is both well-defined and injective. </p>
-<div class="displaymath" id="a0000000269">
+<div class="displaymath" id="a0000000273">
   \begin{align*}  xN_G(A_i) = yN_G(A_i) & \iff y^{-1}xN_G(A_i) = N_G(A_i) \\ & \iff y^{-1}x \in N_G(A_i) \\ & \iff (y^{-1}x)A_i(y^{-1}x)^{-1} = A_i \\ & \iff y^{-1}xA_ix^{-1}y = A_i \\ & \iff xA_ix^{-1} = yA_iy^{-1}. \end{align*}
 </div>
 <p>Hence \(\phi \) is well-defined and injective. This shows that \(\phi \) is a bijection proving that \(|\mathcal{C}_i| = [G:N_G(A_i)]\). This is a crucial result which shows that the number of maximal abelian subgroups conjugate to \(A_i\) is equal to the index of the normaliser of \(A_i\) in \(G\). <br /><br />(iv) This follows directly from parts (i), (ii) and (iii) and ??. </p>
-<div class="displaymath" id="a0000000270">
+<div class="displaymath" id="a0000000274">
   \begin{align*}  G \!  \setminus \!  Z & = \bigcup \limits _{A_i^* \in S} C_i^*, \qquad \text{and} \qquad C_i^* \cap C_j^* = \varnothing , \qquad \forall \;  i \neq j, \\ |G \!  \setminus \!  Z| & = \sum _{A_i^* \in S} |C_i^*| = \sum _{A_i^* \in S} |A_i^*||\mathcal{C}_i^*| = \sum _{A_i^* \in S} |A_i^*||\mathcal{C}_i| \\ & = \sum _{A_i^* \in S} |A_i^*| [G:N_G(A_i)]. \end{align*}
 </div>
 
@@ -3399,7 +3840,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">6.50</span>
+    <span class="lemma_thmlabel">6.56</span>
     <div class="thm_header_extras">
 
         </div>
@@ -3407,7 +3848,7 @@
 
     <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#normalizer_noncentral_eq">#</a>
     
-    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000271"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000275"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3438,7 +3879,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000271">
+<div class="proof_wrapper" id="a0000000275">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3447,7 +3888,7 @@
   </div>
   <div class="proof_content">
   <p>(iii) Let \(x \in N_G(A^*)\). Take an arbitary \(a \in A = A^* \cup Z\). If \(a \in A^*\), then since \(x \in N_G(A^*)\), we have \(xax^{-1} \in A^* \subset A\). If \(a \in Z\), then \(xzx^{-1} = zxx^{-1} = z \in A\). Therefore \(x\) is in the normaliser of \(A\) and \(N_G(A^*) \subset N_G(A)\). <br /><br />Conversely, take \(y \in N_G(A)\) and \(a \in A^*\). \(yay^{-1} \in A = A^* \cup Z\). If \(yay^{-1} \in Z\), then </p>
-<div class="displaymath" id="a0000000272">
+<div class="displaymath" id="a0000000276">
   \begin{align*}  yay^{-1} & = z, \tag {some $z \in Z$} \\ a & = y^{-1}zy = y^{-1}yz = z \not\in A^*. \end{align*}
 </div>
 <p> This contradicts the fact that \(a \in A^*\). Therefore \(yay^{-1} \in A^*\) and \(y \in N_G(A^*)\). Since \(y\) was chosen arbitrarily we get \(N_G(A) \subset N_G(A^*)\) and hence \(N_G(A) =N_G(A^*)\). </p>
@@ -3459,7 +3900,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">6.51</span>
+    <span class="lemma_thmlabel">6.57</span>
     <div class="thm_header_extras">
 
         </div>
@@ -3467,7 +3908,7 @@
 
     <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#normalizer_Sylow_join_center_eq_normalizer_Sylow">#</a>
     
-    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000273"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000277"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3520,7 +3961,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000273">
+<div class="proof_wrapper" id="a0000000277">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3528,16 +3969,16 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>If \(p= 2\) then \(Z = I_G\) and the result is trivial. Now assume \(p \neq 2\). Thus \(|Z| = 2\). Let \(x\) and \(q_1\) be arbitrarily chosen elements of \(N_G(Q)\) and \(Q\) respectively. </p>
-<div class="displaymath" id="a0000000274">
+  <p>If \(p = 2\) then \(Z = I_G\) and the result is trivial. Now assume \(p \neq 2\). Thus \(|Z| = 2\). Let \(x\) and \(q_1\) be arbitrarily chosen elements of \(N_G(Q)\) and \(Q\) respectively. </p>
+<div class="displaymath" id="a0000000278">
   \begin{align*}  xq_1x^{-1} & = q_2, \tag {for some $q_2 \in Q$} \\ xq_1x^{-1}z_1 & = q_2z_1, \\ xq_1z_1x^{-1} & = q_2z_1 \in Q \times Z. \end{align*}
 </div>
 <p> Thus any element \(x\) which is in \(N_G(Q)\) is also in \(N_G(Q \times Z)\) so we have \(N_G(Q) \subset N_G(Q \times Z)\). <br /><br />Let \(q_1 z_1\) be an arbitrarily chosen element of \(Q \times Z\) such that \(q_1 \in Q\) and \(z_1 \in Z\). Now let \(y\) be an arbitrarily chosen element of \(N_G(Q \times Z)\). </p>
-<div class="displaymath" id="a0000000275">
+<div class="displaymath" id="a0000000279">
   \begin{align*}  y q_1 z_1 y^{-1} = q_2 z_2 \in Q \times Z. \qquad (\text{where $q_2 \in Q$ and $z_2 \in Z$}) \end{align*}
 </div>
 <p>Consider now the order of \(q_1z_1\) in \(G\). Since \(p \neq 2\), \(Q \cap Z = I_G\) and \(|q_1 z_1| = |q_1| |z_1|\). Note that \(q_1 z_1\) and \(q_2 z_2\) are conjugate in \(G\), and thus their orders are equal. This means that \(|z_1| = |z_2|\), because otherwise 2 would divide one of them and not the other. Thus \(z_1 = z_2\) and, </p>
-<div class="displaymath" id="a0000000276">
+<div class="displaymath" id="a0000000280">
   \begin{align*}  y q_1z_1 y^{-1} & = q_2z_2 = q_2z_1 \\ y q_1 y^{-1} z_1 & = q_2z_1, \\ y q_1 y^{-1} & = q_2 \in Q \end{align*}
 </div>
 <p> Hence \(y \in N_G(Q)\). Furthermore, since \(y\) was chosen arbitrarily, any element which is in \(N_G(Q \times Z)\) is also in \(N_G(Q)\), so \(N_G(Q \times Z) = N_G(Q)\) as desired. </p>
@@ -3545,24 +3986,24 @@
   </div>
 </div>
 <p>We now start to count the elements of the seperate components of \(G\) and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of \(G\), something we will call the <b class="bfseries">Maximal Abelian Subgroup Class Equation</b> of \(G\). <br /><br />First we split \(\mathfrak {M}\) into the conjugacy classes of it’s elements. Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z">6.35</a> tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to \(p\) or of the form \(Q \times Z\) where \(Q\) is a Sylow \(p\)-subgroup. Let \(\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}\) (where \(s, t \in \mathbb {Z}^+\)) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to \(p\). Recall that part (iv) of Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.index_normalizer_le_two">6.36</a> tells us that \([N_G(A): A] = 1\) or 2. Let \(A_i\) be a representative from each \(\mathcal{C}_i\) such that, </p>
-<div class="displaymath" id="a0000000277">
+<div class="displaymath" id="a0000000281">
   \begin{align*}  [N_G(A_i) : A_i] & = 1, \tag {for $i \leq s$} \\[2mm] [N_G(A_i) : A_i] & = 2. \tag {for $s {\lt} i \leq s+t$}, \end{align*}
 </div>
 <p>Now let \(Q_1\) and \(Q_2\) be any two Sylow \(p\)-subgroups of \(G\). By the Second Sylow Theorem, \(Q_1\) and \(Q_2\) are conjugate to each other in \(G\). That is, there exists a \(g \in G\) such that \(gQ_1g^{-1} = Q_2\). </p>
-<div class="displaymath" id="a0000000278">
+<div class="displaymath" id="a0000000282">
   \begin{align*}  gQ_1g^{-1} = Q_2 & \iff gQ_1g^{-1}Z = Q_2Z \\ & \iff gQ_1Zg^{-1} = Q_2Z \\ & \iff g(Q_1 \times Z)g^{-1} = (Q_2 \times Z). \tag {by Corollary \ref{directproductZ}} \end{align*}
 </div>
 <p>So \(Q_1 \times Z\) and \(Q_2 \times Z\) belong to the same conjugacy class, furthermore there is thus only 1 conjugacy class of elements of this form in \(\mathfrak {M}\). Let \(\mathcal{C}_{Q \times Z}\) denote this conjugacy class and let \(Q \times Z\) be a representative from it. The following diagram provides a visual representation of \(G\) divided into it’s maximal abelian subgroups. </p>
-<p>We can reformulate the counting formula in Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#partitiontheorem">6.49</a>(iv) using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests. </p>
-<div class="displaymath" id="a0000000279">
+<p>We can reformulate the counting formula in Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer">6.55</a> using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests. </p>
+<div class="displaymath" id="a0000000283">
   \begin{align*}  |G \!  \setminus \!  Z| = \sum _{A_i^* \in S} |A_i^*| [G:N_G(A_i)] = \sum _{A_i^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|. \end{align*}
 </div>
 <p>We are now able to begin to evaluate \(G\). Firstly, let \(|Z| = e\) and \(|G| = eg\). We know well by now that \(e = 1\) or 2 depending on whether \(p\) equals 2 or not, and by Lagrange’s Theorem, the order of a subgroup divides the order of the group, so \(e\) divides \(|G|\) since \(Z {\lt} G\). <br /><br />We consider the cyclic case first. Again, by Lagrange’s Theorem, since \(Z\) is a subgroup of each \(A_i\), \(e\) divides \(|A_i|\). So set \(|A_i| = eg_i\). Since \(Z \notin \mathfrak {M}\), each \(A_i\) is therefore strictly larger than \(Z\) and so each \(g_i\) is an integer greater than or equal to 2. <br /><br />To determine the order of each \(C_i\), we return to the set \(\mathfrak {M}^*\). The size of one representative of each class is, </p>
-<div class="displaymath" id="a0000000280">
+<div class="displaymath" id="a0000000284">
   \begin{align*}  |A_i^*| = |A_i \!  \setminus \!  Z| = eg_i-e = e(g_i-1). \end{align*}
 </div>
 <p> The number of \(A_i^*\) in each conjugacy class \(\mathcal{C}_i\) for \(i \leq s\) is thus, </p>
-<div class="displaymath" id="a0000000281">
+<div class="displaymath" id="a0000000285">
   \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{|A_i|} = \frac{eg}{eg_i} = \frac{g}{g_i}. \end{align*}
 </div>
 <p> <br />Therefore the total number of elements of \(G\) in the noncentral part of \(C_i\) for \(i \leq s\) is, </p>
@@ -3570,7 +4011,7 @@
   \begin{align}  \label{classeq1of3} \sum _{i=1}^{s} |C_i^*| = \sum _{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| = \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i}. \end{align}
 </div>
 <p> <br />The number of \(A_i^*\) in each conjugacy class \(\mathcal{C}_i\) for \(s {\lt} i \leq s+t\) is thus, </p>
-<div class="displaymath" id="a0000000282">
+<div class="displaymath" id="a0000000286">
   \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{2|A_i|} = \frac{eg}{2eg_i} = \frac{g}{2g_i}. \end{align*}
 </div>
 <p> <br />Therefore the total number of elements of \(G\) in the noncentral part of \(C_i\) for \(s {\lt} i \leq s+t\) is, </p>
@@ -3578,15 +4019,15 @@
   \begin{align} \label{classeq2of3} \sum _{i=s+1}^{s+t} |C_i^*| = \sum _{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*| = \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}. \end{align}
 </div>
 <p> We next determine the order of \(C_{Q \times Z}\). Let \(|Q| = q\). If \(p \nmid |G|\) then \(q=1\) and if \(p = 0\), then we consider a Sylow \(p\)-subgroup to simply be \(I_G\). So \(q\) is always at least 1. Since \(Z {\lt} K\), we can let \(|K| = ek\). Observe that if \(K \in \mathfrak {M}\), then by Theorem ??(v), \(K = A_i\) for some \(0 {\lt} i \leq t\) and \(k = g_i\). Recall that \(N_G(Q) = QK\) and so, </p>
-<div class="displaymath" id="a0000000283">
+<div class="displaymath" id="a0000000287">
   \begin{align*}  |N_G(Q \times Z)^*| & = |N_G(Q \times Z)| \tag {by Lemma \ref{normalizer_noncentral_eq}} \\ & = |N_G(Q)| \tag {by Lemma \ref{unsure}} \\ & = |QK| = eqk. \end{align*}
 </div>
 <p>Again we count the size and number of these maximal abelian groups. </p>
-<div class="displaymath" id="a0000000284">
+<div class="displaymath" id="a0000000288">
   \begin{align*}  |(Q \times Z)^*| = |QZ| - |Z| = e(q-1). \end{align*}
 </div>
 <p>Since there is only one conjugacy class of \(Q \times Z\), the number of \((Q \times Z)^*\) in \(\mathfrak {M}^*\) is thus, </p>
-<div class="displaymath" id="a0000000285">
+<div class="displaymath" id="a0000000289">
   \begin{align*}  |\mathcal{C}_{Q \times Z}^*| = |\mathcal{C}_{Q \times Z}| = [G: N_G(Q \times Z)] = \frac{|G|}{|N_G(Q \times Z)^*|} = \frac{eg}{eqk} = \frac{g}{qk}. \end{align*}
 </div>
 <p>Therefore the total number of elements of \(G\) in the noncentral parts of each \(Q \times Z\) is, </p>
@@ -3598,15 +4039,15 @@
   \begin{align} \label{classeq} |G \!  \setminus \!  Z| & = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|, \nonumber \\ |G \!  \setminus \!  Z| & = |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| + \sum _{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| + \sum _{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*|, \nonumber \\ eg - e & = \frac{eg(q-1)}{qk} + \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i} + \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}, \nonumber \\ 1 & = \frac{1}{g} + \frac{q-1}{qk} + \sum _{i=1}^{s} \frac{g_i-1}{g_i} + \sum _{i=s+1}^{s+t} \frac{g_i-1}{2g_i}. \end{align}
 </div>
 <p>Since \(g,k,q \in \mathbb {Z}^+\) this implies that, </p>
-<div class="displaymath" id="a0000000286">
+<div class="displaymath" id="a0000000290">
   \begin{align*}  \frac{1}{g} {\gt} 0 \quad \text{and} \quad \frac{q-1}{qk} \geq 0. \end{align*}
 </div>
 <p>Also, since \(g_i \geq 2\) for \(1 \leq i \leq s + t\), we have, </p>
-<div class="displaymath" id="a0000000287">
+<div class="displaymath" id="a0000000291">
   \begin{align*}  \frac{g_i-1}{g_i} \geq \frac{1}{2}, \quad \sum _{i=1}^{s} \frac{g_i-1}{g_i} \geq \frac{s}{2} \quad \text{and} \quad \sum _{i=s+1}^{s+t} \frac{g_i-1}{2g_i} \geq \frac{t}{4}. \end{align*}
 </div>
 <p>Thus we can find a lower bound for (<a href="Ch6_MaximalAbelianSubgroupClassEquation.html#classeq">16</a>) which limits the possible number of conjugacy classes somewhat, </p>
-<div class="displaymath" id="a0000000288">
+<div class="displaymath" id="a0000000292">
   \begin{align*}  1 {\gt} \frac{s}{2} + \frac{t}{4}. \end{align*}
 </div>
 <p>There are only 6 possible different pairs of values which \(s\) and \(S\) can take:  </p>

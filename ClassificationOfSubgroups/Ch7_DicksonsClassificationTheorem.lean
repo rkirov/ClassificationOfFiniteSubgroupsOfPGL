@@ -43,16 +43,48 @@ lemma card_SL_field {𝔽 : Type u_1} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
 -- #leansearch "group theory correspondence theorem?"
 #check QuotientGroup.comapMk'OrderIso
 
-
-instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
-
-
+#leansearch "quotient group."
 
 def Isomorphic (G H : Type*) [Group G] [Group H] :=
   Nonempty (G ≃* H)
 
--- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to
+/-
+When $s = 1$ and $t = 0$
+-/
+lemma case_I {F : Type*} {p : ℕ} [Field F] [CharP F p ] (G : Subgroup SL(2,F)) [Finite G]
+  (Q : Sylow p G) (Q_ne_G : (⊤ : Subgroup G) ≠ Q.toSubgroup)
+  (hQ : IsElementaryAbelian p Q.toSubgroup) [Normal Q.toSubgroup] :
+  IsCyclic (G ⧸ Q.toSubgroup) ∧ Nat.Coprime p (Nat.card (G ⧸ Q.toSubgroup)) := by sorry
+
+/-
+When $s = t = 1$
+-/
+lemma case_II {F : Type*} {p : ℕ} [Field F] [CharP F p ]
+  (G : Subgroup SL(2,F)) [Finite G] (hG : Nat.Coprime p (Nat.card G)) :
+  Isomorphic G SL(2, ZMod 3) ∨ ∃ n, Odd n ∧ Isomorphic G (DihedralGroup (4*n)) := by sorry
+
+/-
+When $s = t = 0$
+-/
+lemma case_III {F : Type*} {p : ℕ} [Field F] [CharP F p ]
+  (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) :
+  Isomorphic G ((Subgroup.map G.subtype Q.toSubgroup) ⊔ (center SL(2,F)) :) := by sorry
+
+/-
+When $s = 0$ and $t = 1$
+-/
+lemma case_IV {F : Type*} {p : ℕ} [Field F] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] :
+ (p = 2 ∧ (∃ n, Odd n ∧ Isomorphic G (DihedralGroup (2*n))))
+ ∨
+ (p = 3) ∧ Isomorphic G (SL(2, ZMod 3)) := by sorry
+
+-- lemma case_V {F : Type*} {p : ℕ} [Field F] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] :
+
+
+ -- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to
 -- the elements of order 4.
+
+instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
 
 /- Theorem 3.6 -/
 theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
@@ -71,42 +103,71 @@ theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClos
 
 -- def myGroup : Subgroup :=
 
-
+open Polynomial
 
 /- Embed GF(p^k) into GF(p^m) where k ∣ m -/
+variable {p : ℕ} [hp : Fact (Nat.Prime p)] {n m : ℕ+}
+
+variable (p n) in
+protected noncomputable
+abbrev GaloisField.polynomial : (ZMod p)[X] := X ^ p ^ n.val - X
+
+#leansearch "prime greater than 1."
+
+lemma GaloisField.polynomial_ne_zero : GaloisField.polynomial p n ≠ 0 := by
+  rw [GaloisField.polynomial]
+  exact FiniteField.X_pow_card_pow_sub_X_ne_zero (ZMod p) n.ne_zero hp.out.one_lt
+
+lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
+    Splits (algebraMap (ZMod p) (GaloisField p m)) (GaloisField.polynomial p n) := by
+  have hsk : Splits (algebraMap (ZMod p) (GaloisField p m)) (GaloisField.polynomial p m) :=
+    IsSplittingField.splits (GaloisField p m) (GaloisField.polynomial p m)
+  have hsk' : Splits (algebraMap (ZMod p) (GaloisField p m)) (X ^ (p ^ m.val - 1) - 1) := by
+    refine splits_of_splits_of_dvd _ polynomial_ne_zero hsk ⟨X, ?_⟩
+    suffices (X : (ZMod p)[X]) ^ p ^ m.val = X ^ (p ^ m.val - 1 + 1) by
+      simpa [GaloisField.polynomial, sub_mul, ← pow_succ]
+    rw [tsub_add_cancel_of_le]
+    exact Nat.pow_pos (Nat.Prime.pos Fact.out)
+  obtain ⟨k, rfl⟩ := hn
+  have hd : (p ^ n.val - 1) ∣ (p ^ (n.val * k) - 1) := by
+    exact nat_pow_one_sub_dvd_pow_mul_sub_one p ↑n ↑k
+  have hdx : (X : (ZMod p)[X]) ^ (p ^ n.val - 1) - 1 ∣ X ^ (p ^ (n.val * k) - 1) - 1 := by
+    let  Y : (ZMod p)[X] := X ^ (p ^ n.val - 1)
+    obtain ⟨m, hm⟩ := hd
+    simp_rw [hm, pow_mul]
+    suffices Y - 1 ∣ Y^m -1 by
+      simp [Y] at this
+      exact this
+    exact sub_one_dvd_pow_sub_one Y m
+  have hs' : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (X ^ (p ^ n.val - 1) - 1) := by
+    refine splits_of_splits_of_dvd _ ?_ hsk' hdx
+    refine Monic.ne_zero_of_ne ?_ ?_
+    exact zero_ne_one' (ZMod p)
+    refine monic_X_pow_sub ?_
+    simp [hp.out.one_lt]
+  have hs : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (GaloisField.polynomial p n) := by
+    rw [GaloisField.polynomial]
+    suffices Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (X * (X ^ (p ^ n.val - 1) - 1)) by
+      convert this using 1
+      simp only [mul_sub, mul_one, sub_left_inj]
+      nth_rewrite 2 [← pow_one X]
+      rw [← pow_add, Nat.one_add, Nat.sub_one, Nat.succ_pred]
+      exact Ne.symm (NeZero.ne' (p ^ n.val))
+    rw [splits_mul_iff]
+    exact ⟨splits_X _, hs'⟩
+    exact X_ne_zero
+    refine Monic.ne_zero_of_ne ?_ ?_
+    exact zero_ne_one' (ZMod p)
+    refine monic_X_pow_sub ?_
+    simp [hp.out.one_lt]
+  exact hs
+
+
 noncomputable
-def finite_field_inclusion (p : ℕ) [Fact (Nat.Prime p)] (K L : Type*) [Field K] [Field L]
-  [Algebra (ZMod p) K] [Algebra (ZMod p) L] [Finite K] (h : Nat.card K ∣ Nat.card L) :
-    K →ₐ[ZMod p] L := by
-  let k := Nat.log p (Nat.card K)
-  let l := Nat.log p (Nat.card L)
-  have hk : Nat.card K = p ^ k := sorry
-  have hl : Nat.card L = p ^ l := sorry
-  let e : K ≃ₐ[ZMod p] GaloisField p k := GaloisField.algEquivGaloisField _ _ hk
-  let e' : L ≃ₐ[ZMod p] GaloisField p l := GaloisField.algEquivGaloisField _ _ hl
-  let hb := Basis.exists_basis (ZMod p) (GaloisField p k)
-  let ι := hb.choose
-  let b := Classical.choice hb.choose_spec
-  let hbf : Fintype ι := FiniteDimensional.fintypeBasisIndex b
-  let hb' := Basis.exists_basis (ZMod p) (GaloisField p l)
-  let ι' := hb'.choose
-  let b' := Classical.choice hb'.choose_spec
-  let hbf' : Fintype ι' := FiniteDimensional.fintypeBasisIndex b'
-  have : Fintype.card ι ≤ Fintype.card ι' := sorry
-  let f : ι → ι' := sorry
-  have hf : Function.Injective f := sorry
-  refine {
-    toFun x := e'.symm (Basis.constr b (ZMod p) (fun i ↦ b'.equivFun.symm (fun i' ↦ sorry)) (e x))
-    map_one' := sorry
-    map_mul' := sorry
-    map_zero' := sorry
-    map_add' := sorry
-    commutes' := sorry
-  }
+def GaloisField.algHom_of_dvd (hn : n ∣ m) : GaloisField p n →ₐ[ZMod p] GaloisField p m :=
+  Polynomial.SplittingField.lift _ (splits_of_dvd hn)
 
-def ringHom {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+}: GaloisField p k →+* GaloisField p (2*k) := by
 
-  sorry
 #leansearch "less than or equal to of dvd."
 
 lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n : ℕ+}
@@ -117,44 +178,18 @@ lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n 
   exact PNat.dvd_iff.mp m_dvd_n
 
 
-instance {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
-  Algebra (ZMod p) (GaloisField p (2 * k.val)) := by sorry
 
 
 -- (x) The group hSL(2, Fq ), dπ i, where SL(2, Fq ) C hSL(2, Fq ), dπ i.
 noncomputable def GaloisField_ringHom (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) :=
-  (@finite_field_inclusion p _ (GaloisField p k.val) (GaloisField p (2*k.val)) _ _ _ _ _
-    (@card_GaloisField_dvd_card_GaloisField p _ k (2*k) ((dvd_mul_left k 2)))).toRingHom
+  (@GaloisField.algHom_of_dvd p _ k (2*k) (dvd_mul_left k 2)).toRingHom
 
-#check GaloisField_ringHom
 
 noncomputable def monoidHom  {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
   SL(2, GaloisField p k.val) →* SL(2, GaloisField p (2* k.val)) :=
     Matrix.SpecialLinearGroup.map (GaloisField_ringHom p k)
 
-
-open Polynomial
-
-lemma foo {p n : ℕ} : (X ^ p ^ n - X : (ZMod p)[X]) ∣ (X ^ n ^ (2*k) - X) := by
-  sorry
-
-
-
-#leansearch "field characteristic of galois field."
-
-#check RingHom.toMonoidHom
-
-#check GaloisField
-
-#check GaloisField.equivZmodP
-
-#check Polynomial.IsSplittingField.splits
-
-noncomputable instance {p n : ℕ} [Fact (Nat.Prime p)] :
-  Algebra (ZMod p) (GaloisField p n) := by infer_instance
-
-noncomputable instance {p n : ℕ} [Fact (Nat.Prime p)] :
-  CharP (GaloisField p n) p := by infer_instance
+#leansearch "X^n - 1 ∣ X^(n*m) -1."
 
 theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClosed F]{p : ℕ}
   [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup (SL(2,F))) [Finite G] (hp : p ∣ Nat.card G)  :

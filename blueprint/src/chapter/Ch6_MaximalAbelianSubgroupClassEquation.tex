@@ -642,7 +642,7 @@ Furthermore, we get,
 \\ &= K \tag{$Q \cap A = I_G$}
 \end{align*}
 
-Thus $K \in \mathfrak{M}$. \\
+Thus $K \in \mathfrak{M}$.\\
 \\
 \end{proof}
 
@@ -656,55 +656,59 @@ For the duration of this paper, unless otherwise stated, $Q$ will denote a Sylow
   \uses{MaximalAbelianSubgroupsOf}
   \lean{ConjClassOfSet}
   \leanok
-  Let $G$ be a subgroup of $\SL_2(F)$ then the set $\mathcal{C}_i = \{ x A_i x^{-1} : x \in G \}$ is called the \textbf{conjugacy class} of $A_i \in \mathfrak{M}$.
+  Let $G$ be a subgroup of $\SL_2(F)$ and let $A \in \mathfrak{M}$ then define the conjugacy class of $A$ to be 
+  \[
+  \mathcal{C}(A) = \{ x A x^{-1} : x \in G \}.
+  \]
 \end{definition}
 
 \begin{definition}[Noncenter of a subgroup]
   \label{Subgroup.noncenter}
   \lean{Subgroup.noncenter}
   \leanok
-  Let $A_i^* = A_i \setminus Z$ be the non-central part of $A_i \in \mathfrak{M}$
+  Let $A$ be a subgroup of a group $G$ let $A^* = A \setminus Z(G)$ be the "noncenter" part of $A$.
 \end{definition}
 
 Now we define the noncenter version of \ref{ConjClassOfSet}
 
 \begin{definition}
   \label{noncenter_ConjClassOfSet}
-  \uses{MaximalAbelianSubgroupsOf}
+  \uses{MaximalAbelianSubgroupsOf, Subgroup.noncenter}
   \lean{noncenter_ConjClassOfSet}
   \leanok
-  Let $G$ be a subgroup of $\SL_2(F)$ then let the noncenter conjugacy class of a maximal abelian subgroup be defined by
-  
+  Let $G$ be a subgroup of $\SL_2(F)$ and let $A^* \in \mathfrak{M}^*$ then define the conjugacy class of $A^*$ to be
   \[
-  \mathcal{C}_i* = \left\{x A_i^* x^{-1} \; | \; x \in G \right\}
+  \mathcal{C}(A^*) = \left\{x A^* x^{-1} \; | \; x \in G \right\}
    \]
 \end{definition}
 
 \begin{definition}
 \label{noncenter_MaximalAbelianSubgroupsOf}
-\uses{MaximalAbelianSubgroupsOf}
+\uses{MaximalAbelianSubgroupsOf, Subgroup.noncenter}
 \lean{noncenter_MaximalAbelianSubgroupsOf}
 \leanok
 Let $\mathfrak{M}^*$ be the set of all $A_i^*$ and let $\mathcal{C}_i^*$ be the conjugacy class of $A_i^*$. \\
 \end{definition}
 
-\begin{definition}[Conjugacy class of noncenter subgroup]
+\begin{definition}[Conjugacy class of subgroup]
 \label{C}
 \lean{C}
 \leanok
-For some $A_i \in \mathfrak{M}$ and $A_i^* \in \mathfrak{M}^*$. Then let,
+Let $A \in \mathfrak{M}$ and define the union of the conjugacy classes of $A$ to
 \begin{align*} 
-  C_i = \bigcup_{x \in G} x A_i x^{-1}, \quad \text{and}
+  C(A) = \bigcup_{x \in G} x A x^{-1}
 \end{align*}
 \end{definition}
 
-\begin{definition}
+Similarly, we define the analogous for the noncenter part of a maximal abelian subgroup:
+
+\begin{definition}[Union of conjugacy class of noncenter part of a subgroup]
   \label{noncenter_C}
   \lean{noncenter_C}
   \leanok
-  Similary, the noncenter conjugacy class of a subgroup is
+  Let $A^* \in \mathfrak{M}^*$ then denote union of the conjugacy class of $A^*$ to be
 \begin{align*}
-  C_i^* = \bigcup{x \in G} x A_i^* x^{-1}.
+  C(A^*) = \bigcup_{x \in G} x A^* x^{-1} = \bigcup_{B \in \mathcal{C}(A^*)} B.
 \end{align*}
 \end{definition}
 
@@ -713,7 +717,7 @@ In other words, $C_i$ denotes the set of elements of $G$ which belong to some el
 
 \begin{lemma}
 \label{card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet}
-\uses{MaximalAbelianSubgroupsOf, noncenter_C, noncenter_MaximalAbelianSubgroupsOf, noncenter_ConjClassOfSet}
+\uses{noncenter_MaximalAbelianSubgroupsOf, card_noncenter_C, card_noncenter_MaximalAbelianSubgroupsOf, card_noncenter_ConjClassOfSet}
 \lean{card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet}
 \begin{align} |C_i^*| = |A_i^*||\mathcal{C}_i^*|.
 \end{align}
@@ -723,12 +727,12 @@ Here the argument from Christopher Butler's exposition has been modified, it tur
 idiomatic to lean to first define the following equivalence relation and its corresponding quotient to eventually set up
 the maximal abelian class equation.
 
-\begin{lemma}[Equivalence relation on $\mathfrak{M}$]
-\label{lift_MaximalAbelianSubgroupsOf}
+\begin{lemma}[Equivalence relation on $\mathfrak{M}^*$]
+\label{lift_noncenter_MaximalAbelianSubgroupsOf}
 \uses{MaximalAbelianSubgroupsOf}
-\lean{lift_MaximalAbelianSubgroupsOf}
+\lean{lift_noncenter_MaximalAbelianSubgroupsOf}
 \leanok
- Let $G$ be a finite subgroup of $\SL_2(F)$, then the relation $\sim$ on the set of maximal abelian subgroups of $G$, $\mathfrak{M}$ defined by
+ Let $G$ be a finite subgroup of $\SL_2(F)$, then the relation $\sim$ on the set of noncenter part of maximal abelian subgroups of $G$, $\mathfrak{M}^*$ defined by
  \[
  A \sim B \text{ if and only if } \exists x \in G \text{ such that } x A x^{-1} = B
  \]
@@ -736,7 +740,7 @@ the maximal abelian class equation.
 \end{lemma}
 
 \begin{proof}
- Define a relation $\sim$ on  $\mathfrak{M}^*$  as follows:
+ We show the relation $\sim$ defined above is in fact an equivalence relation on  $\mathfrak{M}^*$:
 
 \begin{itemize}
 \item $\sim$ is reflexive:
@@ -768,24 +772,89 @@ Therefore, we have shown that $\sim$ relation is in fact an equivalence relation
   TODO
 \end{remark}
 
-Now that we have set up the equivalence relation on maximal abelian subgroups we proceed to set up the maximal abelian class equation.
+Now that we have set up the equivalence relation on maximal abelian subgroups we proceed to lift particular functions that will be of interest to set up the maximal abelian class equation and 
+other suitable results.
+
+\begin{lemma}[Equivalent noncenter subgroups of $\mathfrak{M}^*$ have the equal union of their conjugacy class]
+  \label{noncenter_C_eq_of_related}
+  \uses{noncenter_C, noncenter_MaximalAbelianSubgroupsOf}
+  \lean{noncenter_C_eq_of_related}
+  Let $G$ be a subgroup of $\SL_2(F)$ and let $A , B \in \mathfrak{M}*$ be a noncenter maximal abelian subgroups of $G$ where $A \sim B$
+  then 
+  \[
+  \bigcup_{x \in G} x A x^{-1} = \bigcup_{x \in G} x B x^{-1}
+  \]
+\end{lemma}
+% PROOF
+
+\begin{definition}[Lift of the union of the conjugacy class of noncenter of a subgroup]
+\label{lift_noncenter_C}
+\uses{noncenter_C, noncenter_C_eq_of_related, noncenter_MaximalAbelianSubgroupsOf}
+\lean{lift_noncenter_C}
+\leanok
+ Let $[A^*] \in \mathfrak{M}^* / \sim$, given for all $A^* \sim B^*$ we have that $C(A^*) = C(B^*)$ by \ref{noncenter_C_eq_of_related} we can define the lift of $C : \mathfrak{M}^* \rightarrow \mathcal{P}(\SL_2(F))$ to be 
+  $\tilde{C}([A^*]) = \bigcup_{x \in G} x A^* x^{-1}$ where this map is well-defined for any choice of a representative of $[A^*]$.
+\end{definition}
+
+\begin{theorem}[The union of conjugacy classes of the set representatives of $\mathfrak{M}^* / \sim$ cover $G \setminus Z(\SL_2(F))$]
+\label{union_lift_noncenter_C_eq_G_diff_center}
+\uses{lift_noncenter_MaximalAbelianSubgroupsOf, lift_noncenter_C}
+\lean{union_lift_noncenter_C_eq_G_diff_center}
+  Let $G$ be a finite subgroup of $\SL_2(F)$ provided $\mathfrak{M}^* / \sim$ is a finite then we have the set equality
+  \[
+   G \setminus Z(\SL_2(F)) = \bigcup_{[A^*] \in \mathfrak{M}^* / \sim} C([A^*])
+  \]
+\end{theorem}
+% PROOF
+
+\begin{theorem}[Distinct elements of $\mathfrak{M}^* / \sim$ are mapped to disjoint sets through $\tilde{C}$]
+  \label{disjoint_of_ne_lift_noncenter_MaximalAbelianSubgroupsOf}
+  \uses{lift_noncenter_MaximalAbelianSubgroupsOf, lift_noncenter_C}
+  \lean{disjoint_of_ne_lift_noncenter_MaximalAbelianSubgroupsOf}
+  Let $[A^*], [B^*] \in \mathfrak{M}^* / \sim$ then
+  \[
+  \tilde{C}([A^*]) = \tilde{C}([B^*]) \iff [A^*] = [B^*]
+  \]
+  Or equivalently,
+  \[ 
+  C(A^*) \cap C(B^*) = \varnothing, \qquad \forall \;  A^* \not\sim B^* 
+  \]
+\end{theorem}
+% PROOF
+
+\begin{theorem}
+  \label{card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet}
+  \uses{MaximalAbelianSubgroupsOf, noncenter_MaximalAbelianSubgroupsOf, noncenter_ConjClassOfSet, ConjClassOfSet}
+  \lean{card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet}
+  For all maximal abelian subgroups $A \in \mathfrak{M}$ we have that 
+  \[
+  |\mathcal{C}(A)| = |\mathcal{C}(A^*)|
+  \]
+\end{theorem}
+% PROOF
 
 
-% REFACTOR TO noncenter_MaximalAbelianSubgroupsOf lift_noncenter_MaximalAbelianSubgroupsOf - No ocurrences of MaximalAbelianSubgroupsOf
-% or define bijection between sets and lifts.
-\begin{theorem}\label{partitiontheorem} Let $G$ be a finite subgroup of $\SL_2(F)$ and $S$ be a subset of $\mathfrak{M}^*$  containing exactly one element from each of its conjugacy classes. \vspace{2mm}
+\begin{theorem}
+\label{card_ConjClassOfSet_eq_index_normalizer}
+\uses{MaximalAbelianSubgroupsOf, ConjClassOfSet}
+\lean{card_ConjClassOfSet_eq_index_normalizer}
 
-(i) The set of $C_i^*$ form a partition of $G \! \setminus \! Z$. That is,
-\begin{align*} G \! \setminus \! Z = \bigcup\limits_{A_i^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \;  i \neq j.
-\end{align*}
+Let $G$ be a finite subgroup of $\SL_2(F)$ and let $A$ be a maximal abelian subgroup of $G$, 
+$A \in \mathfrak{M}$ then $|\mathcal{C}(A)| = [G : N_G(A)]$.
+\end{theorem}
+%PROOF
 
-(ii) \: \! $|\mathcal{C}_i^*| = |\mathcal{C}_i|$. \vspace{4mm}
+\begin{theorem}[The maximal subgroup class equation]
+  \label{card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer}
+  \uses{lift_noncenter_MaximalAbelianSubgroupsOf, lift_card_noncenter, lift_card_noncenter_C}
+  \lean{card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer}
 
-(iii) \: $|\mathcal{C}_i| = [G : N_G(A_i)]$. \vspace{4mm}
-
-(iv) $$|G \! \setminus  \! Z| = \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)].$$
+Let $G$ be a finite subgroup of $\SL_2(F)$, define the equivalence relation on the maximal abelian subgroups of $G$, $\mathfrak{M}^*$ as above in \ref{lift_noncenter_MaximalAbelianSubgroupsOf}
+then 
+$|G \! \setminus  \! Z| = \sum_{[A^*] \in \mathfrak{M}^* / \sim} |A^*| [\tilde{C}([A^*])].$
 
 \end{theorem}
+% PROOF
 
 \begin{proof}
 (i)
@@ -843,7 +912,7 @@ It is necessary to prove the following 2 short lemmas before we proceed further.
 \\
 Conversely, take $y \in N_G(A)$ and $a \in A^*$. $yay^{-1} \in A = A^* \cup Z$. If  $yay^{-1} \in Z$, then
 \begin{align*} yay^{-1} &= z, \tag{some $z \in Z$}
-\\ a &= y^{-1}zy =   y^{-1}yz = z \not \in A^*.
+\\ a &= y^{-1}zy = y^{-1}yz = z \not \in A^*.
 \end{align*}
 This contradicts the fact that $a \in A^*$. Therefore $yay^{-1} \in A^*$ and $y \in N_G(A^*)$. Since $y$ was chosen arbitrarily we get $N_G(A) \subset N_G(A^*)$ and hence $N_G(A) =N_G(A^*)$.
 
@@ -858,7 +927,7 @@ $N_G(Q \times Z) = N_G(Q)$.
 
 \begin{proof} 
 
-If $p= 2$ then $Z = I_G$ and the result is trivial. Now assume $p \neq 2$. Thus $|Z| = 2$. Let $x$ and $q_1$ be arbitrarily chosen elements of $N_G(Q)$ and $Q$ respectively.
+If $p = 2$ then $Z = I_G$ and the result is trivial. Now assume $p \neq 2$. Thus $|Z| = 2$. Let $x$ and $q_1$ be arbitrarily chosen elements of $N_G(Q)$ and $Q$ respectively.
 \begin{align*} xq_1x^{-1} &= q_2, \tag{for some $q_2 \in Q$}
 \\ xq_1x^{-1}z_1 &= q_2z_1,
 \\ xq_1z_1x^{-1} &= q_2z_1 \in Q \times Z.
@@ -962,9 +1031,11 @@ So $Q_1 \times Z$ and $Q_2 \times Z$ belong to the same conjugacy class, further
 % \end{tikzpicture}
 % \end{center}
 
-We can reformulate the counting formula in Theorem \ref{partitiontheorem}(iv) using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests.
+We can reformulate the counting formula in Theorem \ref{card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer} using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests.
+% MODIFY NOTATION
 
-\begin{align*} |G \! \setminus \! Z| = \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)] = \sum_{A_i^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum_{i=1}^{s+t} |C_i^*|.
+\begin{align*} 
+  |G \! \setminus \! Z| = \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)] = \sum_{A_i^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum_{i=1}^{s+t} |C_i^*|.
 \end{align*}
 
 We are now able to begin to evaluate $G$. Firstly, let $|Z| = e$ and $|G| = eg$. We know well by now that $e = 1$ or 2 depending on whether $p$ equals 2 or not, and by Lagrange's Theorem, the order of a subgroup divides the order of the group, so $e$ divides $|G|$ since $Z < G$. \\
@@ -1019,7 +1090,8 @@ Since $g,k,q \in \mathbb{Z}^+$ this implies that,
 \end{align*} 
 
 Also, since $g_i \geq 2$ for $1 \leq i \leq s + t$, we have,
-\begin{align*} \frac{g_i-1}{g_i} \geq \frac{1}{2}, \quad \sum_{i=1}^{s} \frac{g_i-1}{g_i} \geq \frac{s}{2} \quad \text{and} \quad \sum_{i=s+1}^{s+t} \frac{g_i-1}{2g_i} \geq \frac{t}{4}.
+\begin{align*} 
+  \frac{g_i-1}{g_i} \geq \frac{1}{2}, \quad \sum_{i=1}^{s} \frac{g_i-1}{g_i} \geq \frac{s}{2} \quad \text{and} \quad \sum_{i=s+1}^{s+t} \frac{g_i-1}{2g_i} \geq \frac{t}{4}.
 \end{align*}
 
 Thus we can find a lower bound for (\ref{classeq}) which limits the possible number of conjugacy classes somewhat,
