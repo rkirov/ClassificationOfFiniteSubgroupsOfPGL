@@ -7,16 +7,15 @@ set_option maxHeartbeats 0
 
 universe u v w
 
-open Matrix
+
+open Matrix LinearMap Subgroup
 
 open scoped MatrixGroups
 
-variable {n : Type u} [DecidableEq n] [Fintype n] {R : Type v} [CommRing R] (F : Type w) [Field F]
-
-
 scoped[MatrixGroups] notation "SL"  => Matrix.SpecialLinearGroup
 
-def Matrix.transvection.toSL {i j : n} (hij : i ≠ j) (c : R): SL n R :=
+def Matrix.transvection.toSL {n : Type u} [DecidableEq n] [Fintype n] {R : Type v} [CommRing R]
+  {i j : n} (hij : i ≠ j) (c : R): SL n R :=
   ⟨Matrix.transvection i j c, (det_transvection_of_ne i j hij (c : R))⟩
 
 
@@ -24,22 +23,27 @@ namespace Matrix.TransvectionStruct
 
 open Matrix
 
-def toSL (t : TransvectionStruct n R) : SL n R := Matrix.transvection.toSL t.hij t.c
+def toSL {n : Type u} [DecidableEq n] [Fintype n] {R : Type*} [CommRing R]
+  (t : TransvectionStruct n R) : SL n R := Matrix.transvection.toSL t.hij t.c
 
-def toGL (t : TransvectionStruct n R) : GL n R := Matrix.transvection.toSL t.hij t.c
+def toGL {n : Type u} [DecidableEq n] [Fintype n] {R : Type*} [CommRing R]
+  (t : TransvectionStruct n R) : GL n R := Matrix.transvection.toSL t.hij t.c
 
 end Matrix.TransvectionStruct
 
 namespace GeneralLinearGroup
 
-def scalar (n : Type*) [DecidableEq n] [Fintype n] (r : Rˣ) : GL n R :=
+def scalar (n : Type*) [DecidableEq n] [Fintype n] {R : Type*} [CommRing R]
+  (r : Rˣ) : GL n R :=
   Units.map (Matrix.scalar n).toMonoidHom r
 
 /-- The scalar matrix `r • 1` belongs to `GL n R` if and only if `r` is a unit -/
-theorem coe_scalar_matrix (r : Rˣ) : Matrix.scalar n r.val = GeneralLinearGroup.scalar n r := rfl
+theorem coe_scalar_matrix {n : Type u} [DecidableEq n] [Fintype n] {R : Type*} [CommRing R]
+  (r : Rˣ) : Matrix.scalar n r.val = GeneralLinearGroup.scalar n r := rfl
 
-theorem mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group {M : GL n R}
-  (hM : (M : Matrix n n R) ∈ Set.range (Matrix.scalar n)) :
+theorem mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group
+  {n : Type u} [DecidableEq n] [Fintype n] {R : Type*} [CommRing R]
+  {M : GL n R} (hM : (M : Matrix n n R) ∈ Set.range (Matrix.scalar n)) :
     ∃ r : Rˣ, r • 1 = M := by
     obtain ⟨r', hr'⟩ := hM
     have det_scalar : (Matrix.scalar n r').det = r'^(Nat.card n) := by simp
@@ -62,7 +66,8 @@ section Center
 
 open Subgroup GeneralLinearGroup
 
-theorem mem_center_general_linear_group_iff {M : GL n R} :
+theorem mem_center_general_linear_group_iff {n : Type u} [DecidableEq n]
+  [Fintype n] {R : Type*} [CommRing R] {M : GL n R} :
   M ∈ center (GL n R) ↔ (∃ r : Rˣ, (r • 1) = M) := by
   rw [mem_center_iff]
   refine ⟨?mp, ?mpr⟩
@@ -93,7 +98,6 @@ end GeneralLinearGroup
 
 variable (n : Type u) [DecidableEq n] [Fintype n] (R : Type v) [CommRing R]
 
-open Matrix LinearMap Subgroup
 
 open scoped MatrixGroups
 

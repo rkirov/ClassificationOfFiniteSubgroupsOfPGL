@@ -1,7 +1,7 @@
 \chapter[The Maximal Abelian Subgroup Class Equation]{The Maximal Abelian Subgroup Class Equation}\label{Ch6_MaximalAbelianSubgroupClassEquation}
 % \chaptermark{The Class Equation}
 
-\section[A finite subgroup of $\SL_2(F)$]{A Finite Subgroup of $\pmb{L}$}
+\section[A finite subgroup of $\SL_2(F)$]{A Finite Subgroup of $\SL_2(F)$}
 
 We now return to the realm of finite groups and consider $G$ to be an arbitrary finite subgroup of $\SL_2(F)$. We will still continue to use $Z$ to denote the centre of $\SL_2(F)$, and will use $Z(G)$ whenever we refer to the centre of $G$. \\
 \\
@@ -39,7 +39,7 @@ In Lean this statement looks like the following:
 
   Which informally means that an object $M$ that satisfies a property is maximal if any other object $K$ that also satisfies the property and is related to $M$ by $M \le K$ then in fact we must have the symmetric relation $K \le M$.
 
-  When $\le := \subseteq$ then this is the natural notion of maximal.
+  When we define, $\le \; := \;  \subseteq$ then this is the natural notion of maximal.
 \end{remark}
 
 
@@ -105,7 +105,7 @@ Since $|G| = p^m$, each subgroup of $G$ is of order $p^k$ for some $k \leq m$. I
   \leanok
 Every finite subgroup of a multiplicative group of a field is cyclic.
 \end{lemma}
-%PROOF AND DEPENDENCIES
+%STATEMENT, PROOF AND DEPENDENCIES
 
 \begin{proof} 
   See \cite[p.41]{suzuki}.
@@ -157,9 +157,9 @@ Let $H, K$ be two subgroups of a group $G$ then $H \sqcap K = H \cap K$ is commu
 
 
 \begin{lemma}
-  \label{center_mul_subset_center_mul}
+  \label{MaximalAbelianSubgroup.center_mul_subset_center_mul}
   \uses{center_mul}
-  \lean{center_mul_subset_center_mul}
+  \lean{MaximalAbelianSubgroup.center_mul_subset_center_mul}
   \leanok
 \end{lemma}
 
@@ -407,15 +407,15 @@ If $G \ne Z(G)$ then an element of $A$ of $\mathfrak{M}$, the maximal abelian su
   \end{align*}
   Thus $\omega \neq \pm 1$. Let $A = C_G(x)$, since $C_G(x) \in \mathfrak{M}$ by part (i). Observe that
   \begin{align*}  C_G(d_\delta) &<  C_{\SL_2(F)}(d_\delta)  \tag{see proof of (i)}
-  \\ &= D  \tag{by Lemma \ref{6.4ii}}
-  \\ &\cong F^*.  \tag{by Lemma \ref{6.1b}}
+  \\ &= D  \tag{by Lemma \ref{centralizer_d_eq_D}}
+  \\ &\cong F^\times.  \tag{by Lemma \ref{SpecialSubgroups.D_iso_units}}
   \end{align*}
   
-  Since $A$ is conjugate to $C_G(d_\delta)$ by Proposition \ref{conjcent}, we have that $A$ is isomorphic to a finite subgroup of $F^*$ and by Lemma \ref{finsubcyc}, $A$ is cyclic. By Lagrange's Theorem any finite subgroup of $F^*$ has an order which divides $p^m - 1$ for some $m \in \mathbb{Z}^+$, and since $p \nmid (p^m - 1)$, $|A|$ is relatively prime to $p$. \\
+  Since $A$ is conjugate to $C_G(d_\delta)$ by Proposition \ref{centralizer_d_eq_D}, we have that $A$ is isomorphic to a finite subgroup of $F^*$ and by Lemma \ref{finsubcyc}, $A$ is cyclic. By Lagrange's Theorem any finite subgroup of $F^*$ has an order which divides $p^m - 1$ for some $m \in \mathbb{Z}^+$, and since $p \nmid (p^m - 1)$, $|A|$ is relatively prime to $p$. \\
   \\
    \space $\pmb{x}$ \textbf{conjugate to} $\pmb{\pm s_\sigma}$ \textbf{in} $\pmb{L}$. Again let $A = C_G(x) \in \mathfrak{M}$. $A$ is conjugate to $C_G({\pm s_\sigma})$ in $\SL_2(F)$ by Proposition \ref{conjcent}. Since $x \notin Z$, we have $\lambda \neq 0$. Observe that
   \begin{align*}  C_G({\pm s_\sigma}) &<  C_{\SL_2(F)}({\pm s_\sigma})
-  \\&= T \times Z  \tag{by Lemma \ref{6.4i}}
+  \\&= S \times Z  \tag{by Lemma \ref{6.4i}}
   \\&\cong F \times Z. \tag{by Lemma \ref{6.1b}}
   \end{align*}
   
@@ -651,7 +651,7 @@ For the duration of this paper, unless otherwise stated, $Q$ will denote a Sylow
 
 \section{Conjugacy of Maximal Abelian Subgroups}
 
-\begin{definition}
+\begin{definition}[Conjugacy class of subgroup]
   \label{ConjClassOfSet}
   \uses{MaximalAbelianSubgroupsOf}
   \lean{ConjClassOfSet}
@@ -671,7 +671,7 @@ For the duration of this paper, unless otherwise stated, $Q$ will denote a Sylow
 
 Now we define the noncenter version of \ref{ConjClassOfSet}
 
-\begin{definition}
+\begin{definition}[Conjugacy class of \textit{noncenter} subgroup]
   \label{noncenter_ConjClassOfSet}
   \uses{MaximalAbelianSubgroupsOf, Subgroup.noncenter}
   \lean{noncenter_ConjClassOfSet}
@@ -687,10 +687,10 @@ Now we define the noncenter version of \ref{ConjClassOfSet}
 \uses{MaximalAbelianSubgroupsOf, Subgroup.noncenter}
 \lean{noncenter_MaximalAbelianSubgroupsOf}
 \leanok
-Let $\mathfrak{M}^*$ be the set of all $A_i^*$ and let $\mathcal{C}_i^*$ be the conjugacy class of $A_i^*$. \\
+Let $\mathfrak{M}^*$ be the set of all $A^*$ where $A \in \mathfrak{M}$.
 \end{definition}
 
-\begin{definition}[Conjugacy class of subgroup]
+\begin{definition}
 \label{C}
 \lean{C}
 \leanok
@@ -702,29 +702,54 @@ Let $A \in \mathfrak{M}$ and define the union of the conjugacy classes of $A$ to
 
 Similarly, we define the analogous for the noncenter part of a maximal abelian subgroup:
 
-\begin{definition}[Union of conjugacy class of noncenter part of a subgroup]
+\begin{definition}[Cover of conjugacy class of a noncenter part of a subgroup]
   \label{noncenter_C}
   \lean{noncenter_C}
   \leanok
-  Let $A^* \in \mathfrak{M}^*$ then denote union of the conjugacy class of $A^*$ to be
+  Let $A^* \in \mathfrak{M}^*$ then denote union of the conjugacy class of $A^*$ to be the
+  map $C : \mathfrak{M}^* \rightarrow \mathcal{P}(\SL_2(F))$ be defined by
 \begin{align*}
-  C(A^*) = \bigcup_{x \in G} x A^* x^{-1} = \bigcup_{B \in \mathcal{C}(A^*)} B.
+  A^* \mapsto \bigcup_{x \in G} x A^* x^{-1} = \bigcup_{B \in \mathcal{C}(A^*)} B.
 \end{align*}
 \end{definition}
 
+Then we define the following maps as we will need to prove some properties about them, and eventually we will need to lift them to
+state and prove the maximal abelian class equation.
+
+% \begin{definition}
+%   \label{card_noncenter_C}
+%   \lean{card_noncenter_C}
+%   Let $A^* \in \mathfrak{M}^*$ then denote the cardinality of the cover generated by the conjugacy class
+%   by the map $\varphi_{C^*} : \mathfrak{M}^* \rightarrow \N$ which maps $A^* \maspto |C(A^*)|$
+% \end{definition}
+
+\begin{definition}
+  \label{card_noncenter}
+  \lean{card_noncenter}
+  Let $A^* \in \mathfrak{M}^*$ then denote the cardinality the noncenter 
+  by the map $| \; \cdot \; | : \mathfrak{M}^* \rightarrow \N$ which is defined by $A^* \mapsto |A^*|$.
+\end{definition}
+
+\begin{definition}
+  \label{card_noncenter_ConjClassOfSet}
+  \lean{card_noncenter_ConjClassOfSet}
+  Let $A^* \in \mathfrak{M}^*$ then denote the cardinality of the conjugacy class of $A^*$
+  by the map $\varphi_{\mathcal{C}^*} : \mathfrak{M}^* \rightarrow \N$  which is defined by $A^* \mapsto |\mathcal{C}(A^*)|$.
+\end{definition}
 
 In other words, $C_i$ denotes the set of elements of $G$ which belong to some element of $\mathcal{C}_i$. It's evident that $C_i^* = C_i \setminus Z$ and that there is a $C_i$ corresponding to each $\mathcal{C}_i$. Clearly we have the relation,
-
 \begin{lemma}
 \label{card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet}
-\uses{noncenter_MaximalAbelianSubgroupsOf, card_noncenter_C, card_noncenter_MaximalAbelianSubgroupsOf, card_noncenter_ConjClassOfSet}
+\uses{noncenter_MaximalAbelianSubgroupsOf, noncenter_C, card_noncenter_ConjClassOfSet}
 \lean{card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet}
-\begin{align} |C_i^*| = |A_i^*||\mathcal{C}_i^*|.
+For all $A^* \in \mathfrak{M}^*$, noncenter maximal abelian subgroups we have that
+\begin{align} 
+  |C(A^*)| = |A^*||\mathcal{C}(A^*)|.
 \end{align}
 \end{lemma}
 
 Here the argument from Christopher Butler's exposition has been modified, it turns out to be significantly more
-idiomatic to lean to first define the following equivalence relation and its corresponding quotient to eventually set up
+idiomatic to Lean to first define the following equivalence relation and its corresponding quotient to eventually set up
 the maximal abelian class equation.
 
 \begin{lemma}[Equivalence relation on $\mathfrak{M}^*$]
@@ -736,12 +761,11 @@ the maximal abelian class equation.
  \[
  A \sim B \text{ if and only if } \exists x \in G \text{ such that } x A x^{-1} = B
  \]
- gives an equivalence relation.
+ is in fact an equivalence relation.
 \end{lemma}
 
 \begin{proof}
  We show the relation $\sim$ defined above is in fact an equivalence relation on  $\mathfrak{M}^*$:
-
 \begin{itemize}
 \item $\sim$ is reflexive:
 
@@ -752,7 +776,8 @@ Therefore, $A \sim A$ and $\sim$ is thus reflexive.
 \item $\sim$ is symmetric:
 
 If $A \sim B$, then $\exists \; x \in G$ such that,
-\begin{align*} A = xBx^{-1} \iff x^{-1}Ax = B \iff B = yAy^{-1} \quad \text{for} \; y = x^{-1} \in G.
+\begin{align*}
+  A = xBx^{-1} \iff x^{-1}Ax = B \iff B = yAy^{-1} \quad \text{for} \; y = x^{-1} \in G.
 \end{align*}
 
 Thus $B \sim A$ and $\sim$ is symmetric.\\
@@ -775,14 +800,42 @@ Therefore, we have shown that $\sim$ relation is in fact an equivalence relation
 Now that we have set up the equivalence relation on maximal abelian subgroups we proceed to lift particular functions that will be of interest to set up the maximal abelian class equation and 
 other suitable results.
 
+\begin{lemma}
+  \label{card_noncenter_eq_of_related}
+  \lean{card_noncenter_eq_of_related}
+  \leanok
+  Let $A^*, B^* \in \mathfrak{M}$ and suppose $A^* \sim B^*$ then $|A^*| = |B^*|$
+\end{lemma}
+\begin{proof}
+  Let $G$ be a finite subgroup of $\SL_2(F)$, recall that if $A^* \sim B^*$ then there exists a $x \in G$ such that $x A x^{-1} = B^*$.
+  Since conjugation by an element $x \in G$ of group defines an automorphism, $\phi_x : \SL_2(F) \rightarrow \SL_2(F)$. In particular, an automorphism is injective; 
+  therefore the cardinality of the image of a finite set
+  \[
+  |A^*| = |\phi_x(A^*)| = |B^*|
+  \]
+\end{proof}
+
+We are now ready to lift the function which computes the cardinality of a noncenter maximal abelian subgroup
+
+\begin{definition}
+  \label{lift_card_noncenter}
+  \lean{lift_card_noncenter}
+  \leanok 
+  Given for all $A^* \sim B^* \in \mathfrak{M}^*$ we have that $|A^*| = |B^*|$ by \ref{card_noncenter_eq_of_related} we can define the lift
+  $|\; \cdot \;| : \mathfrak{M}^* / \sim \; \rightarrow \N$ which is given by $[A^*] \mapsto |A^*|$.
+\end{definition}
+
+Similarly, we now proceed to show that the map which sends a noncenter maximal abelian subgroup to the cover generated by its conjugacy class is respected by the equivalence relation $\sim$ on $mathfrak{M}^*$
+
 \begin{lemma}[Equivalent noncenter subgroups of $\mathfrak{M}^*$ have the equal union of their conjugacy class]
   \label{noncenter_C_eq_of_related}
   \uses{noncenter_C, noncenter_MaximalAbelianSubgroupsOf}
   \lean{noncenter_C_eq_of_related}
-  Let $G$ be a subgroup of $\SL_2(F)$ and let $A , B \in \mathfrak{M}*$ be a noncenter maximal abelian subgroups of $G$ where $A \sim B$
+  \leanok
+  Let $G$ be a subgroup of $\SL_2(F)$ and let $A^* , B^* \in \mathfrak{M}*$ be a noncenter maximal abelian subgroups of $G$ where $A^* \sim B^*$
   then 
   \[
-  \bigcup_{x \in G} x A x^{-1} = \bigcup_{x \in G} x B x^{-1}
+  \bigcup_{x \in G} x A^* x^{-1} = \bigcup_{x \in G} x B^* x^{-1}
   \]
 \end{lemma}
 % PROOF
@@ -792,7 +845,7 @@ other suitable results.
 \uses{noncenter_C, noncenter_C_eq_of_related, noncenter_MaximalAbelianSubgroupsOf}
 \lean{lift_noncenter_C}
 \leanok
- Let $[A^*] \in \mathfrak{M}^* / \sim$, given for all $A^* \sim B^*$ we have that $C(A^*) = C(B^*)$ by \ref{noncenter_C_eq_of_related} we can define the lift of $C : \mathfrak{M}^* \rightarrow \mathcal{P}(\SL_2(F))$ to be 
+ Given for all $A^* \sim B^* \in \mathfrak{M}^*$ we have that $C(A^*) = C(B^*)$ by \ref{noncenter_C_eq_of_related} we can define the lift of $C : \mathfrak{M}^* \rightarrow \mathcal{P}(\SL_2(F))$ to be 
   $\tilde{C}([A^*]) = \bigcup_{x \in G} x A^* x^{-1}$ where this map is well-defined for any choice of a representative of $[A^*]$.
 \end{definition}
 
@@ -846,7 +899,7 @@ $A \in \mathfrak{M}$ then $|\mathcal{C}(A)| = [G : N_G(A)]$.
 
 \begin{theorem}[The maximal subgroup class equation]
   \label{card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer}
-  \uses{lift_noncenter_MaximalAbelianSubgroupsOf, lift_card_noncenter, lift_card_noncenter_C}
+  \uses{lift_noncenter_MaximalAbelianSubgroupsOf, lift_card_noncenter}
   \lean{card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer}
 
 Let $G$ be a finite subgroup of $\SL_2(F)$, define the equivalence relation on the maximal abelian subgroups of $G$, $\mathfrak{M}^*$ as above in \ref{lift_noncenter_MaximalAbelianSubgroupsOf}
@@ -859,39 +912,39 @@ $|G \! \setminus  \! Z| = \sum_{[A^*] \in \mathfrak{M}^* / \sim} |A^*| [\tilde{C
 \begin{proof}
 (i)
 \\
-The equivalence class of $A_i^*$ in $\mathfrak{M}^*$ therefore coincides with the set $\mathcal{C}_i^* = \{ xA_i^*x^{-1} : x \in G \}$. Furthermore, this tells us that each $A_i^*$ belongs to exactly one conjugacy class. Thus the conjugacy classes $\mathcal{C}_i^*$ form a partition of $\mathfrak{M}^*$,
-\begin{align*} \mathfrak{M}^* = \bigcup\limits_{A_i^* \in S} \mathcal{C}_i^*,  \qquad \text{and}  \qquad \mathcal{C}_i^* \cap \mathcal{C}_j^* = \varnothing, \qquad \forall \; i \neq j.
+The equivalence class of $A^*$ in $\mathfrak{M}^*$ therefore coincides with the set $\mathcal{C}_i^* = \{ xA^*x^{-1} : x \in G \}$. Furthermore, this tells us that each $A^*$ belongs to exactly one conjugacy class. Thus the conjugacy classes $\mathcal{C}_i^*$ form a partition of $\mathfrak{M}^*$,
+\begin{align*} \mathfrak{M}^* = \bigcup\limits_{A^* \in S} \mathcal{C}_i^*,  \qquad \text{and}  \qquad \mathcal{C}_i^* \cap \mathcal{C}_j^* = \varnothing, \qquad \forall \; i \neq j.
 \end{align*}
 
 Since the set of $\mathcal{C}_i^*$ are pairwise disjoint, it follows that the set of $C_i^*$ are also pairwise disjoint and we get the desired result,
 
-\begin{align*} G \! \setminus \! Z = \bigcup\limits_{A_i^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \; i \neq j.
+\begin{align*} G \! \setminus \! Z = \bigcup\limits_{A^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \; i \neq j.
 \end{align*}
 
-(ii) Let $x A_i x^{-1} \in \mathcal{C}_i$ and $x A_i^* x^{-1} \in \mathcal{C}_i^*$. Since $x A_i x^{-1} \! \setminus \! Z = x A_i^* x^{-1}$, it is quite clear that,
-\begin{align*} x A_i x^{-1} \in \mathcal{C}_i \iff x A_i^* x^{-1} \in \mathcal{C}_i^*.
+(ii) Let $x A x^{-1} \in \mathcal{C}_i$ and $x A^* x^{-1} \in \mathcal{C}_i^*$. Since $x A x^{-1} \! \setminus \! Z = x A^* x^{-1}$, it is quite clear that,
+\begin{align*} x A x^{-1} \in \mathcal{C}_i \iff x A^* x^{-1} \in \mathcal{C}_i^*.
 \end{align*}
 Thus $|\mathcal{C}_i^*| = |\mathcal{C}_i|$ as desired. \\
 \\
 (iii) Now we define a map $\phi$ by:
-\begin{align*} \phi: \mathcal{C}_i &\longrightarrow G / N_G(A_i),
-\\ \phi(xA_ix^{-1}) &= xN_G(A_i). \tag{$\forall \; x \in G, \; A_i \in \mathfrak{M}$}
+\begin{align*} \phi: \mathcal{C}_i &\longrightarrow G / N_G(A),
+\\ \phi(xAx^{-1}) &= xN_G(A). \tag{$\forall \; x \in G, \; A \in \mathfrak{M}$}
 \end{align*}
 
 Clearly $\phi$ is trivially surjective. We now show that it is both well-defined and injective.
-\begin{align*} xN_G(A_i) = yN_G(A_i) &\iff y^{-1}xN_G(A_i) = N_G(A_i) \\
-&\iff y^{-1}x \in N_G(A_i) \\
-&\iff (y^{-1}x)A_i(y^{-1}x)^{-1} = A_i \\
-&\iff y^{-1}xA_ix^{-1}y = A_i \\
-&\iff xA_ix^{-1} = yA_iy^{-1}.
+\begin{align*} xN_G(A) = yN_G(A) &\iff y^{-1}xN_G(A) = N_G(A) \\
+&\iff y^{-1}x \in N_G(A) \\
+&\iff (y^{-1}x)A(y^{-1}x)^{-1} = A \\
+&\iff y^{-1}xAx^{-1}y = A \\
+&\iff xAx^{-1} = yAy^{-1}.
 \end{align*}
 
-Hence $\phi$ is well-defined and injective. This shows that $\phi$ is a bijection proving that $|\mathcal{C}_i| = [G:N_G(A_i)]$. This is a crucial result which shows that the number of maximal abelian subgroups conjugate to $A_i$ is equal to the index of the normaliser of $A_i$ in $G$. \\
+Hence $\phi$ is well-defined and injective. This shows that $\phi$ is a bijection proving that $|\mathcal{C}_i| = [G:N_G(A)]$. This is a crucial result which shows that the number of maximal abelian subgroups conjugate to $A$ is equal to the index of the normaliser of $A$ in $G$. \\
 \\
-(iv) This follows directly from parts (i), (ii) and (iii) and \eqref{orderorder}.
-\begin{align*} G \! \setminus \! Z &= \bigcup\limits_{A_i^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \;  i \neq j, \\
- |G \! \setminus \! Z| &=  \sum_{A_i^* \in S} |C_i^*| = \sum_{A_i^* \in S} |A_i^*||\mathcal{C}_i^*| = \sum_{A_i^* \in S} |A_i^*||\mathcal{C}_i|
-\\ &= \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)].
+(iv) This follows directly from parts (i), (ii) and (iii) and \eqref{card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet}.
+\begin{align*} G \! \setminus \! Z &= \bigcup\limits_{A^* \in S} C_i^*,  \qquad \text{and}  \qquad C_i^* \cap C_j^* = \varnothing, \qquad \forall \;  i \neq j, \\
+ |G \! \setminus \! Z| &=  \sum_{A^* \in S} |C_i^*| = \sum_{A^* \in S} |A^*||\mathcal{C}_i^*| = \sum_{A^* \in S} |A^*||\mathcal{C}_i|
+\\ &= \sum_{A^* \in S} |A^*| [G:N_G(A)].
 \end{align*}
 
 \end{proof}
@@ -949,9 +1002,9 @@ Hence $y \in N_G(Q)$. Furthermore, since $y$ was chosen arbitrarily, any element
 
 We now start to count the elements of the seperate components of $G$ and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of $G$, something we will call the \textbf{Maximal Abelian Subgroup Class Equation} of $G$. \\
 \\
-First we split $\mathfrak{M}$ into the conjugacy classes of it's elements. Theorem \ref{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z} tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to $p$ or of the form $Q \times Z$ where $Q$ is a Sylow $p$-subgroup. Let $\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}$ (where $s, t \in \mathbb{Z}^+$) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to $p$. Recall that part (iv) of Theorem \ref{MaximalAbelianSubgroup.index_normalizer_le_two} tells us that $[N_G(A): A] = 1$ or 2. Let $A_i$ be a representative from each $\mathcal{C}_i$ such that,
-\begin{align*} [N_G(A_i) : A_i] &= 1, \tag{for  $i \leq s$} \\[2mm]
-[N_G(A_i) : A_i] &= 2. \tag{for  $s < i \leq s+t$}, \end{align*}
+First we split $\mathfrak{M}$ into the conjugacy classes of it's elements. Theorem \ref{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z} tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to $p$ or of the form $Q \times Z$ where $Q$ is a Sylow $p$-subgroup. Let $\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}$ (where $s, t \in \mathbb{Z}^+$) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to $p$. Recall that part (iv) of Theorem \ref{MaximalAbelianSubgroup.index_normalizer_le_two} tells us that $[N_G(A): A] = 1$ or 2. Let $A$ be a representative from each $\mathcal{C}_i$ such that,
+\begin{align*} [N_G(A) : A] &= 1, \tag{for  $i \leq s$} \\[2mm]
+[N_G(A) : A] &= 2. \tag{for  $s < i \leq s+t$}, \end{align*}
 
 Now let $Q_1$ and $Q_2$ be any two Sylow $p$-subgroups of $G$. By the Second Sylow Theorem, $Q_1$ and $Q_2$ are conjugate to each other in $G$. That is, there exists a $g \in G$ such that $gQ_1g^{-1} = Q_2$.
 
@@ -1035,29 +1088,29 @@ We can reformulate the counting formula in Theorem \ref{card_noncenter_fin_subgr
 % MODIFY NOTATION
 
 \begin{align*} 
-  |G \! \setminus \! Z| = \sum_{A_i^* \in S} |A_i^*| [G:N_G(A_i)] = \sum_{A_i^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum_{i=1}^{s+t} |C_i^*|.
+  |G \! \setminus \! Z| = \sum_{[A^*] \in S} |A^*| [G:N_G(A)] = \sum_{A^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum_{i=1}^{s+t} |C_i^*|.
 \end{align*}
 
 We are now able to begin to evaluate $G$. Firstly, let $|Z| = e$ and $|G| = eg$. We know well by now that $e = 1$ or 2 depending on whether $p$ equals 2 or not, and by Lagrange's Theorem, the order of a subgroup divides the order of the group, so $e$ divides $|G|$ since $Z < G$. \\
 \\
-We consider the cyclic case first. Again, by Lagrange's Theorem, since $Z$ is a subgroup of each $A_i$, $e$ divides $|A_i|$. So set $|A_i| = eg_i$. Since $Z \notin \mathfrak{M}$, each $A_i$ is therefore strictly larger than $Z$ and so each $g_i$ is an integer greater than or equal to 2. \\
+We consider the cyclic case first. Again, by Lagrange's Theorem, since $Z$ is a subgroup of each $A$, $e$ divides $|A|$. So set $|A| = eg_i$. Since $Z \notin \mathfrak{M}$, each $A$ is therefore strictly larger than $Z$ and so each $g_i$ is an integer greater than or equal to 2. \\
 \\
 To determine the order of each $C_i$, we return to the set $\mathfrak{M}^*$. The size of one representative of each class is,
-\begin{align*} |A_i^*| = |A_i \! \setminus \! Z| = eg_i-e = e(g_i-1). \end{align*}
-The number of $A_i^*$ in each conjugacy class $\mathcal{C}_i$ for $i \leq s$ is thus,
-\begin{align*} |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{|A_i|} = \frac{eg}{eg_i} = \frac{g}{g_i}. \end{align*}
+\begin{align*} |A^*| = |A \! \setminus \! Z| = eg_i-e = e(g_i-1). \end{align*}
+The number of $A^*$ in each conjugacy class $\mathcal{C}_i$ for $i \leq s$ is thus,
+\begin{align*} |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A)] = \frac{|G|}{|A|} = \frac{eg}{eg_i} = \frac{g}{g_i}. \end{align*}
 \\
 Therefore the total number of elements of $G$ in the noncentral part of $C_i$ for $i \leq s$ is,
-\begin{align} \label{classeq1of3} \sum_{i=1}^{s} |C_i^*| = \sum_{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| = \sum_{i=1}^{s} \frac{eg(g_i-1)}{g_i}.
+\begin{align} \label{classeq1of3} \sum_{i=1}^{s} |C_i^*| = \sum_{i=1}^{s} |A^*| |\mathcal{C}_i^*| = \sum_{i=1}^{s} \frac{eg(g_i-1)}{g_i}.
 \end{align}
 \\
-The number of $A_i^*$ in each conjugacy class $\mathcal{C}_i$ for $s < i \leq s+t$ is thus,
-\begin{align*} |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{2|A_i|} = \frac{eg}{2eg_i} = \frac{g}{2g_i}. \end{align*}
+The number of $A^*$ in each conjugacy class $\mathcal{C}_i$ for $s < i \leq s+t$ is thus,
+\begin{align*} |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A)] = \frac{|G|}{2|A|} = \frac{eg}{2eg_i} = \frac{g}{2g_i}. \end{align*}
 \\
 Therefore the total number of elements of $G$ in the noncentral part of $C_i$ for $s < i \leq s+t$ is,
-\begin{align}\label{classeq2of3} \sum_{i=s+1}^{s+t} |C_i^*| = \sum_{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*| = \sum_{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}.
+\begin{align}\label{classeq2of3} \sum_{i=s+1}^{s+t} |C_i^*| = \sum_{i=s+1}^{s+t} |A^*| |\mathcal{C}_i^*| = \sum_{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}.
 \end{align}
-We next determine the order of $C_{Q \times Z}$. Let $|Q| = q$. If $p \nmid |G|$ then $q=1$ and if $p = 0$, then we consider a Sylow $p$-subgroup to simply be $I_G$. So $q$ is always at least 1. Since $Z < K$, we can let $|K| = ek$. Observe that if $K \in \mathfrak{M}$, then by Theorem \ref{6.8}(v), $K = A_i$ for some $0 < i \leq t$ and $k = g_i$. Recall that $N_G(Q) = QK$ and so,
+We next determine the order of $C_{Q \times Z}$. Let $|Q| = q$. If $p \nmid |G|$ then $q=1$ and if $p = 0$, then we consider a Sylow $p$-subgroup to simply be $I_G$. So $q$ is always at least 1. Since $Z < K$, we can let $|K| = ek$. Observe that if $K \in \mathfrak{M}$, then by Theorem \ref{MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K}, $K = A$ for some $0 < i \leq t$ and $k = g_i$. Recall that $N_G(Q) = QK$ and so,
 \begin{align*} |N_G(Q \times Z)^*| &= |N_G(Q \times Z)|  \tag{by Lemma \ref{normalizer_noncentral_eq}}
 \\ &= |N_G(Q)| \tag{by Lemma \ref{unsure}}
 \\ &= |QK| = eqk.
@@ -1080,7 +1133,7 @@ Therefore the total number of elements of $G$ in the noncentral parts of each $Q
 We now sum together (\ref{classeq1of3}), (\ref{classeq2of3}) and (\ref{classeq3of3}) to create the \textbf{Maximal Abelian Subgroup Class Equation} of $G$.
 
 \begin{align}\label{classeq} |G \! \setminus \! Z| &= |C_{Q \times Z}^*| + \sum_{i=1}^{s+t} |C_i^*|, \nonumber \\
-|G \! \setminus \! Z| &= |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| + \sum_{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| + \sum_{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*|, \nonumber \\
+|G \! \setminus \! Z| &= |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| + \sum_{i=1}^{s} |A^*| |\mathcal{C}_i^*| + \sum_{i=s+1}^{s+t} |A^*| |\mathcal{C}_i^*|, \nonumber \\
 eg - e &= \frac{eg(q-1)}{qk} + \sum_{i=1}^{s} \frac{eg(g_i-1)}{g_i} + \sum_{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}, \nonumber \\
 1 &= \frac{1}{g} + \frac{q-1}{qk} + \sum_{i=1}^{s} \frac{g_i-1}{g_i} + \sum_{i=s+1}^{s+t} \frac{g_i-1}{2g_i}.
 \end{align}
@@ -1098,7 +1151,7 @@ Thus we can find a lower bound for (\ref{classeq}) which limits the possible num
 \begin{align*} 1 > \frac{s}{2} + \frac{t}{4}.
 \end{align*}
 
-There are only 6 possible different pairs of values which $s$ and $S$ can take: \vspace{3mm}
+There are only 6 possible different pairs of values which $s$ and $t$ can take: \vspace{3mm}
 
 \begin{center}
 \centering
@@ -1108,7 +1161,7 @@ Case & I & II & III & IV & V & VI \\ [1ex]
 \hline\hline
  $s$ & 1 & 1 & 0 & 0 & 0 & 0 \\ [1ex]
 \hline
-$S$ & 0 & 1 & 0 & 1 & 2 & 3 \\ [1ex]
+$t$ & 0 & 1 & 0 & 1 & 2 & 3 \\ [1ex]
  \hline
 \end{tabular}
 \end{center}

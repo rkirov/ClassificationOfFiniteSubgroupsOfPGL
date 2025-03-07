@@ -1,10 +1,14 @@
 import Mathlib
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
+import ClassificationOfSubgroups.Ch4_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup
+import Mathlib.GroupTheory.PresentedGroup
 
 set_option linter.style.longLine true
 set_option maxHeartbeats 0
 
-open Matrix MatrixGroups Subgroup
+open Matrix Subgroup LinearMap
+
+open scoped MatrixGroups
 
 
 /- Lemma 3.1 -/
@@ -34,7 +38,7 @@ instance field_R {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
 /- Lemma 3.4 -/
 #check Matrix.card_GL_field
 
-abbrev SL := Matrix.SpecialLinearGroup
+-- abbrev SL := Matrix.SpecialLinearGroup
 
 lemma card_SL_field {𝔽 : Type u_1} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
   Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by sorry
@@ -78,30 +82,9 @@ lemma case_IV {F : Type*} {p : ℕ} [Field F] [CharP F p] (G : Subgroup SL(2,F))
  ∨
  (p = 3) ∧ Isomorphic G (SL(2, ZMod 3)) := by sorry
 
--- lemma case_V {F : Type*} {p : ℕ} [Field F] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] :
 
-
- -- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to
--- the elements of order 4.
-
-instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
-
-/- Theorem 3.6 -/
-theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
-  {p : ℕ} [CharP F p] (hp : Prime p) (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p)
-  (G : Subgroup (SL(2,F)))  [Finite G] :
-  IsCyclic G ∨
-  Isomorphic G (DihedralGroup n)
-  ∨
-  Isomorphic G SL(2, ZMod 3)
-  ∨
-  Isomorphic G SL(2, ZMod 5)
-  ∨
-  Isomorphic G (GL (Fin 2) (ZMod 3))
-  := by sorry
-
-
--- def myGroup : Subgroup :=
+-- We first need to define the homomorphism of
+-- SL(2, GaloisField p k) into SL(2, GaloisField p (2*k))
 
 open Polynomial
 
@@ -112,7 +95,6 @@ variable (p n) in
 protected noncomputable
 abbrev GaloisField.polynomial : (ZMod p)[X] := X ^ p ^ n.val - X
 
-#leansearch "prime greater than 1."
 
 lemma GaloisField.polynomial_ne_zero : GaloisField.polynomial p n ≠ 0 := by
   rw [GaloisField.polynomial]
@@ -168,7 +150,81 @@ def GaloisField.algHom_of_dvd (hn : n ∣ m) : GaloisField p n →ₐ[ZMod p] Ga
   Polynomial.SplittingField.lift _ (splits_of_dvd hn)
 
 
-#leansearch "less than or equal to of dvd."
+-- (x) The group hSL(2, Fq ), dπ i, where SL(2, Fq ) C hSL(2, Fq ), dπ i.
+noncomputable def GaloisField_ringHom (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) :=
+  (@GaloisField.algHom_of_dvd p _ k (2*k) (dvd_mul_left k 2)).toRingHom
+
+
+noncomputable def SL2_monoidHom_SL2  {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
+  SL(2, GaloisField p k.val) →* SL(2, GaloisField p (2* k.val)) :=
+    Matrix.SpecialLinearGroup.map (GaloisField_ringHom p k)
+
+open SpecialMatrices
+
+noncomputable def SL2_join_d (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) (π : (GaloisField p (2* k.val))ˣ ) :=
+ (Subgroup.map (@SL2_monoidHom_SL2 p _ k) (⊤ : Subgroup SL(2, GaloisField p k.val)))
+  ⊔
+  Subgroup.closure { d π }
+
+
+lemma case_V {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
+  (G : Subgroup SL(2,F)) [Finite G] :
+  ∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)
+  ∨
+  ∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ, Isomorphic G (SL2_join_d p k π)
+  ∨
+  Isomorphic G SL(2, ZMod 5) := by sorry
+
+inductive Symbols
+ | x
+ | y
+
+open FreeGroup Symbols PresentedGroup
+
+/-
+Relations for the group presentation ⟨x, y | x^n = y^2, y * x * y⁻¹ = x⁻¹ ⟩
+-/
+def Relations (n : ℕ) : Set (FreeGroup (Symbols)) :=
+  {.of x ^ n * (.of y)⁻¹ * (.of y)⁻¹ } ∪
+  {.of y * .of x * (.of y)⁻¹ * .of x }
+
+variable (n : ℕ)
+
+abbrev myGroup :=
+  PresentedGroup <| Relations n
+
+#synth Group (myGroup _)
+
+
+lemma case_VI {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
+  (G : Subgroup SL(2,F)) [Finite G] :
+  ∃ n, Even n ∧ Isomorphic G (myGroup n)
+  ∨
+  Isomorphic G (GL (Fin 2) (ZMod 5))
+  ∨
+  Isomorphic G SL(2, ZMod 5) := by sorry
+
+
+ -- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to
+-- the elements of order 4.
+
+instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
+
+/- Theorem 3.6 -/
+theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
+  {p : ℕ} [CharP F p] (hp : Prime p) (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p)
+  (G : Subgroup (SL(2,F)))  [Finite G] :
+  IsCyclic G ∨
+  Isomorphic G (DihedralGroup n)
+  ∨
+  Isomorphic G SL(2, ZMod 3)
+  ∨
+  Isomorphic G SL(2, ZMod 5)
+  ∨
+  Isomorphic G (GL (Fin 2) (ZMod 3))
+  := by sorry
+
+-- Ŝ₄ is isomorphic to GL₂(F₃)
 
 lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n : ℕ+}
   (m_dvd_n : m ∣ n) :  Nat.card (GaloisField p m.val) ∣ Nat.card (GaloisField p n.val) := by
@@ -176,20 +232,6 @@ lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n 
   apply pow_dvd_pow
   suffices m.val ∣ n.val by exact Nat.le_of_dvd n.prop this
   exact PNat.dvd_iff.mp m_dvd_n
-
-
-
-
--- (x) The group hSL(2, Fq ), dπ i, where SL(2, Fq ) C hSL(2, Fq ), dπ i.
-noncomputable def GaloisField_ringHom (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) :=
-  (@GaloisField.algHom_of_dvd p _ k (2*k) (dvd_mul_left k 2)).toRingHom
-
-
-noncomputable def monoidHom  {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
-  SL(2, GaloisField p k.val) →* SL(2, GaloisField p (2* k.val)) :=
-    Matrix.SpecialLinearGroup.map (GaloisField_ringHom p k)
-
-#leansearch "X^n - 1 ∣ X^(n*m) -1."
 
 theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClosed F]{p : ℕ}
   [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup (SL(2,F))) [Finite G] (hp : p ∣ Nat.card G)  :
@@ -222,13 +264,6 @@ open scoped MatrixGroups
 abbrev ProjectiveGeneralLinearGroup' : Type _ :=
     GL n R ⧸ center (GL n R)
 
-/-- `PGL n R` is the projective special linear group `(GL n R)/ Z(GL(n R))`. -/
-abbrev PGL := ProjectiveGeneralLinearGroup'
-
-/-- `PSL(n, R)` is the projective special linear group `SL(n, R)/Z(SL(n, R))`. -/
-abbrev PSL := Matrix.ProjectiveSpecialLinearGroup
-
-
 
 
 theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ} [Fact (Nat.Prime p)] (𝕂 : Type*)
@@ -256,15 +291,4 @@ theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ} 
   case caseI =>
     sorry
 
--- #leansearch "not or."
 
-
-
--- implicit normality condition on Q
-
--- ∧ IsCyclic (Subgroup.map (@QuotientGroup.mk' G _ (Q.subgroupOf G) (by sorry)) ⊤) -- needs to know quotient is a group
-
--- (IsCyclic (QuotientGroup.Quotient.group Q (nN := by sorry)))
-
--- (vi) Q is elementary abelian, Q C G and G/Q is a cyclic group whose order is
---relatively prime to p.
