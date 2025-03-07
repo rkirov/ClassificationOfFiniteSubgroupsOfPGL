@@ -1,8 +1,8 @@
 \chapter{Introduction}\label{Ch2_Introduction}
 
-\section{What is the formalization of mathematics?}
+\section{What is the formalisation of mathematics?}
 
-Formalization of mathematics is the art of teaching a computer what a piece of mathematics means.
+formalisation of mathematics is the art of teaching a computer what a piece of mathematics means.
 
 That is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. 
 
@@ -14,11 +14,14 @@ For this project I have opted to use Lean due to its rapid growing mathematics l
 
 \subsubsection{What is Lean?}
 
-Lean is both a functional programming language and an interactive theorem prover that is being developed at Microsoft research and AWS by Leonardo de Moura and his team. It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems where correctness is of extreme
+Lean is both a functional programming language and an interactive theorem prover that is being developed at Microsoft research and AWS by Leonardo de Moura and his team.
+It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems where correctness is of extreme
 TODO:
+
 
 - Brief explanation of type theory and curry-howard isomorphism.
 
+% Proof that the sum of odd numbers are the squares.
 - Example of formal proof and comparison with informal proof.
 
 
@@ -93,17 +96,17 @@ TODO
 
 \section{Formalizing Fermat's Last Theorem}
 
-Following the sequence of success stories ranging from the Liquid Tensor Experiment to the formalization of the Polynomial Freiman-Rusza conjecture. 
+Following the sequence of success stories ranging from the Liquid Tensor Experiment to the formalisation of the Polynomial Freiman-Rusza conjecture. 
 
-Prof. Kevin Buzzard from Imperial College London has received a five-year grant that will allow him to lead the formalization of Fermat's Last Theorem. This grant kicked in in October of 2024. 
+Prof. Kevin Buzzard from Imperial College London has received a five-year grant that will allow him to lead the formalisation of Fermat's Last Theorem. This grant kicked in in October of 2024. 
 
 At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project.
 
 Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task.
 
-\subsubsection{Goal of the formalization of Fermat's Last Theorem}
+\subsubsection{Goal of the formalisation of Fermat's Last Theorem}
 
-The goal of the ongoing efforts of the formalization is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \text{Mazur's Theorem}.
+The goal of the ongoing efforts of the formalisation is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \text{Mazur's Theorem}.
 
 However, it should be mentioned that the proof being formalised is not the proof Andrew Wiles and Richard Taylor initially came up with during 1994, but a more modernised approach that has been refined over the last 20 years.
 
@@ -118,7 +121,7 @@ At the time of writing, the first target set by Prof. Kevin Buzzard is to formal
 After all, the ultimate goal is to formalise all of mathematics and so far the library relevant to Algebraic Number Theory, Algebraic Geometry and Arithmetic Geometry is not developed enough
 to be even able to state the propositions and let alone formalise their corresponding proofs.
 
-Morally, the goal of the formalization of Fermat's Last Theorem is to formalise much of Algebraic Number Theory, Algebraic Geometry, Arithmetic Geometry and so forth so that one day
+Morally, the goal of the formalisation of Fermat's Last Theorem is to formalise much of Algebraic Number Theory, Algebraic Geometry, Arithmetic Geometry and so forth so that one day
 the mathematics library of Lean contains all mathematics known to human kind.
 
 
@@ -151,7 +154,7 @@ The primary concern of this project is to formalise Theorem 2.47 of [DTT] which 
 \end{enumerate}
 
 
-By definition the Projective General Linear Group is:
+The Projective General Linear Group is:
 
 \begin{equation}
     \PGL_n(F) = \GL_n(F) / (Z(\GL_n(F))) = \GL_n(F) / (F^\times I) 

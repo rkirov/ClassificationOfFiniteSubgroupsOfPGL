@@ -1,4 +1,4 @@
-\chapter{Abstract and Acknowledgements}\label{Ch1_AbstractAndAcknowledgements}
+\chapter{Abstract and Summary}\label{Ch1_AbstractAndAcknowledgements}
 
 \section{Acknowledgements}
 
@@ -26,20 +26,99 @@ this also includes assistance with technical issues with setting up the blueprin
     \item Aron Liu
 \end{itemize}
 
-\section{Abstract}
+\section{Summary}
 
-This project is a blueprint for the ongoing formalization of the classification of finite subgroups of $\PGL_2(\Fbar_p)$. 
-The project brings together both informal, or pen-and-paper mathematics; alongside the formal mathematics into one cohesive interactive website that hopes to complement the strength of both
-forms of mathematics.
+The primary aim of this project is to present the ongoing formalisation of the classification of finite subgroups of $\PGL_2(\Fbar_p)$ in the Lean proof assistant. This result fits into to the much larger and more ambitious project
+of formalising Fermat's Last Theorem \href{https://imperialcollegelondon.github.io/FLT/blueprint/}{FLT} in Lean, an effort being led by Prof. Kevin Buzzard at Imperial College London. In fact, this theorem corresponds to theorem 12.7 in \href{https://imperialcollegelondon.github.io/FLT/blueprint/ch_bestiary.html}{Appendix}.
+Furthermore, another goal of this project is to serve as a Rosetta stone for how informal mathematics corresponds to formal mathematics; the hope is that the blueprint will serve as an example of how late undergraduate mathematics is formalised using \texttt{mathlib}, the mathematics library of Lean.
+A pleasant outcome of presenting both the informal and formal mathematics alongside into one cohesive website is that it allows to new ways of presenting mathematics, where the informal and formal mathematics complement each other.
 
 
 \section{How to read this blueprint}
 
+\subsection{Navigating the blueprint}
+
+The main distinctions are due to the interactive side of this blueprint:
+
+\begin{itemize}
+    \item In the bottom right corner there should a subset of the following buttons: 
+        \begin{enumerate}
+            \item Eye-minus $\boxdot^-$: Will toggle the blueprint to display less text.
+            \item Eye-plus $\boxdot^+$: Will toggle the blueprint to display more text. 
+            \item Arrow-left $\Leftarrow$: Will navigate the page to the previous chapter
+            \item Arrow-up $\Uparrow$: Will navigate the page to the index.
+            \item Arrow-right $\Rightarrow$: Will navigate to the next chapter.
+        \end{enumerate}
+\end{itemize}
+
+\textbf{Important note}
+
+There are three states for toggling how much text, ordered from least to most text being displayed.
+
+\begin{enumerate}
+    \item Displays only definitions and statements of theorems.
+    \item Displays definitions, statements, accompanying text and allows to toggle proofs being displayed or being hidden always
+    \item Displays defintions, statements, accompanying text and proofs.
+\end{enumerate}
+
+\subsection{Note on \texttt{remarks}}
+
+Any content that is within the \texttt{remark}, that is anything within a box like:
+
+\begin{remark}[A remark]
+    Content of remark
+\end{remark}
+environment will be dedicated towards explaining or illustrating how the mathematics formalised in Lean might differ to 
+how the informal mathematics is often presented, may often omit implicit details, or how \texttt{mathlib} or myself have come up with particular
+abstractions which ease the process of formalisation.
+
+\subsubsection{The dependency graph}
+
+To the left of the website there should be an index which lists out the chapters of this blueprint which will eventually contain all proofs and intermediate formal statements necessary
+to prove the overarching claim. But, in addition to the index of chapters and bibliography there is an entry for the \texttt{Dependency graph}.
+
+This will display a directed acyclic graph which demonstrates how all relevant definitions and statements feed into each to produce the final claim \ref{FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod}.
+
+\subsection{Distinguishing my work from Christopher Butler's work}
+
+
+Naturally, the largest bulk of my original work in this project consists of the formalisation of mathematics since Christopher Butler has kindly provided the TeX for his original master's thesis exposition on
+the classification of finite subgroups of $\SL_2(F)$. Bear in mind, the goal of the formalisation is this classification of finite subgroups of $\PGL_2(\Fbar)$, it turns out the classifications problems are tightly
+related and this is why a lot of Christopher Butler's work is reused here.
+
+Nonetheless, it may be surprising to understand that so far I having formalised around two thirds of the exposition alognside additional results relevant to concrete goal for formalising Fermat's Last Theorem.
+It turns out, that so far there is a rough correspondence for two lines of code/formal mathematics per one line of informal/pen-and-paper mathematics. That is to say, if 50 lines of code were displayed per page, all
+the code I have written would constitute a total of around 86 pages, since there are 4344 lines of Lean.
+
+Moreover, on the basis of academic integrity I provide an overview of what constitutes my work and what constitutes Christopher Butler's work.
+
+\begin{itemize}
+    \item My work:
+    
+    Chapter 2, Chapter 4, Chapter 6
+
+    \item Christopher Butler's work:
+    
+    Aside from particular points where I have completely modified the approach to prove a particular statement, most proofs belong to Christopher Butler's exposition. Part of the intention of this is to highlight how the formal proof differs from the 
+    original informal proof, at every stage I have tried to faithfully follow Christopher Butler's proof. Therefore, it should be interesting to observe how the formal proof may or may not be similar to the informal proof.
+    There are parts where I have had to stray from the original path:
+    
+    \begin{itemize}
+        \item When classifying elements of $\SL_2(F)$ up to conjugacy.
+        \item When formalising arguments using group homomorphisms and isomorphisms.
+        \item When formalising arguments which hinge on the complete lattice structure of subgroups.
+        \item When formalizing the maximal abelian subgroup class equation.
+    \end{itemize}
+    
+    Often, I have broken up theorems into smaller lemmas to allow mapping Lean lemmas one-to-one with the corresponding lemma. 
+    This has often meant I have to define and prove intermediate definitions and theorems or prove particular statements more explicitly, and other terms, more generally.
+\end{itemize}
 
 
 \section{Christopher Butler's acknowledgements and popular science summary}
 
-Considering this project hinges very heavily on the work of Christopher Butler, I feel obliged to include his own acknowledgements, abstract and popular science summary on $\textbf{Dickson's Classification Theorem}$ for $\SL_2(F)$ over an algebraically closed field.
+Considering this project hinges very heavily on the work of Christopher Butler, I feel obligated to include his own acknowledgements, abstract and popular science summary on $\textbf{Dickson's Classification Theorem}$ for $\SL_2(F)$ over an algebraically closed field. I am very thankful for his work, it has been
+extremely useful for the process of formalisation.
 
 \subsection{Christopher Butler's Abstract }
 

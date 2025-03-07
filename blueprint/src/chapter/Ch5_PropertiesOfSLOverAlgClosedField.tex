@@ -3,13 +3,40 @@
 
 \section{General Notation}
 
-Throughout this paper, $F$ will denote an arbitrary algebraically closed field. For convenince we let $\SL_2(F)$denote the infinite group $\SL_2(F)$. The letter $p$ will be used to denote the characteristic of $F$. Recall that the characteristic of a field is the smallest number of times which the multilplicative identity of the field, say 1, needs to be summed to reach the additive identity of the field, say 0. If there is no such number, then we regard $p$ as being zero, otherwise it is always a prime. \\
+Throughout this paper, $F$ will denote an arbitrary algebraically closed field. The letter $p$ will be used to denote the characteristic of $F$. 
+Recall that the definition of the characteristic of a field is:
+
+\begin{definition}[Characteristic of a field]
+    Let $F$ be a field, the characteristic of a field, denoted by $\textrm{char}(F) \in \N$, is the smallest natural number $p \in \N_0$ such that
+
+    \[
+    \underbrace{1 + \ldots + 1}_{p} = 0
+    \]
+
+    where in the case there is no such number then $p = 0$.
+\end{definition}
+
+\begin{example}
+    $\Z /p\Z$ is a field of characteristic $\textrm{char}(\Z/p\Z) = p$ as $p \cdot 1 = 0$.
+\end{example}
+
+\begin{example}
+    The field $\Q$ is a field with $\textrm{char}(\Q) = 0$ as $n \cdot 1 \ne 0$ for all $n \in \N \subset \Q$.
+\end{example}
+
+\begin{remark}[The characteristic is either prime or zero]
+    The characteristic of a field is either a prime number or zero.
+\end{remark}
+
 \\
-Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta, \sigma$, and $\sigma$ will denote elements of $F$ and $\delta$ and $\rho$ elements of $F^\times$, where $F^\times$  are the non-zero elements of $F$.
+Unless otherwise stated, the letters $\alpha, \beta, \gamma, \delta$, and $\sigma$ will denote elements of $F$; 
+whereas $\delta$ and $\rho$ will denote elements of $F^\times$, where $F^\times$ are the invertible, or equivalently, non-zero elements of $F$.
 
 \section{Subsets of $\SL_2(F)$}
 
-In this chapter we make some useful observations about specific elements and subgroups of $L$. We define the following elements of $\SL_2(F)$as follows.
+In this chapter we make some useful observations about specific elements and subgroups of $\SL_2(F)$. 
+
+First, we define the following elements of $\SL_2(F)$.
 
 \subsubsection{Special matrices of $\SL_2(F)$}
 
@@ -288,7 +315,7 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
 
 Observe that $\SL_2(F)$is the set of all lower triangular matrices in $\SL_2(F)$ whilst $Dw$ is the set of all anti-diagonal matrices.
 
-\begin{equation} \label{Hlowertri} \SL_2(F)= DS =  \{d_\delta s_\sigma\} = \left\{ \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} \delta & 0 \\ \sigma \delta^{-1} & \delta^{-1} \end{bmatrix}  \right\}. \end{equation}
+\begin{equation} \label{Hlowertri} L = DS =  \{d_\delta s_\sigma\} = \left\{ \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 1 & 0 \\ \sigma & 1 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} \delta & 0 \\ \sigma \delta^{-1} & \delta^{-1} \end{bmatrix}  \right\}. \end{equation}
 
 \begin{equation} \label{antidiag} Dw = \{ d_\delta w \} =  \left\{  \begin{bmatrix} \delta & 0 \\ 0 & \delta^{-1} \end{bmatrix} \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \right\} = \left\{ \begin{bmatrix} 0 & \delta \\ -\delta^{-1} & 0 \end{bmatrix}  \right\}. \end{equation}
 
@@ -753,7 +780,7 @@ The reason why the Jordan Normal Form theorem is not yet in Mathlib is because i
     \item The classification of semisimple endomorphisms.
 \end{enumerate}
 
-Such formalization would be an amazing project to undertake. Bear in mind, the theorem formalized is the more general Jordan-Chevallier theorem.
+Such formalisation would be an amazing project to undertake. Bear in mind, the theorem formalized is the more general Jordan-Chevallier theorem.
 
 To my understanding, the general theorem will be formalised by studying the eigenspace and general eigenspace. This approach turned out to be essentially equivalent in difficuly to the way I was initially formalising the special case of $2 \times 2$ matrices over an algebraically closed field.
 
@@ -761,16 +788,16 @@ Therefore, given my task has a fair amount of constraints, namely, my task being
 by finding the suitable matrices by which to conjugate to put them in either the form of $d_\delta$ or $\pm s_\sigma$.
 \end{remark}
 
-\section{Centralisers \& Normalisers}
+\section{Centralizers \& Normalizers}
 
-Both the centraliser and normaliser of a subset $H$ are subgroups of $G$. Note also that the centraliser is a stronger condition than the normaliser and any element in the centraliser of $H$ is also in its normaliser. If $H$ is a singleton then it's clear that its centraliser and normaliser are equal.\\
+Both the centraliser and normalizer of a subset $H$ are subgroups of $G$. Note also that the centraliser is a stronger condition than the normalizer and any element in the centraliser of $H$ is also in its normaliser. If $H$ is a singleton then it's clear that its centraliser and normaliser are equal.\\
 
-\subsubsection{Normalisers}
+\subsubsection{Normalizers}
 
 \begin{definition}
 \lean{Subgroup.normalizer}
 \leanok
-The \textbf{normaliser} $N_G(H)$ of a subset $H$ of a group $G$ is the set of elements of $G$ which stabilise $H$ under conjugation.
+The \textbf{normalizer} $N_G(H)$ of a subset $H$ of a group $G$ is the set of elements of $G$ which stabilise $H$ under conjugation.
 \begin{equation*} N_G(H) = \{ g \in G : gHg^{-1}=H\}. \end{equation*}
 \end{definition}
 
