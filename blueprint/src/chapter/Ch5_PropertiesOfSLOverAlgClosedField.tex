@@ -275,7 +275,7 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
 \begin{remark}
     Despite the definition of $L$ as being $D S$, some work has to be shown that indeed $DS = D \sqcup S$.
     
-    If either $D$ or $S$ were normal in $\SL_2(F)$ we would be able to use \texttt{mul_normal} or \texttt{normal\textunderscore mul}:
+    If either $D$ or $S$ were normal in $\SL_2(F)$ we would be able to use \texttt{mul\_normal} or \texttt{normal\_mul}:
     
     \begin{verbatim}
         ∀ {G : Type u_2} [inst : Group G] (N H : Subgroup G) [inst_1 : N.Normal], ↑(N ⊔ H) = ↑N * ↑H
