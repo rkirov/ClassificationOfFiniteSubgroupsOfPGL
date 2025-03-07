@@ -263,9 +263,9 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
     
     \begin{enumerate}
         \item Define what the underlying set is, what is called the \texttt{carrier}.
-        \item Prove that the set is closed under multiplication, \texttt{mul_mem'}.
-        \item Prove that the set contains the identity element of the group, \texttt{one_mem'}.
-        \item Show that the group is closed under the inversion operator $(-)^{-1}$, \texttt{inv_mem'}.
+        \item Prove that the set is closed under multiplication, \texttt{mul\textunderscore mem'}.
+        \item Prove that the set contains the identity element of the group, \texttt{one\textunderscore mem'}.
+        \item Show that the group is closed under the inversion operator $(-)^{-1}$, \texttt{inv\textunderscore mem'}.
     \end{enumerate}
 
     Once these four fields have been filled in, one has succesfully defined a subgroup in Lean.
@@ -275,7 +275,7 @@ From these relations we can now single out the following subgroups of $\SL_2(F)$
 \begin{remark}
     Despite the definition of $L$ as being $D S$, some work has to be shown that indeed $DS = D \sqcup S$.
     
-    If either $D$ or $S$ were normal in $\SL_2(F)$ we would be able to use \texttt{mul_normal} or \texttt{normal_mul}:
+    If either $D$ or $S$ were normal in $\SL_2(F)$ we would be able to use \texttt{mul_normal} or \texttt{normal\textunderscore mul}:
     
     \begin{verbatim}
         ∀ {G : Type u_2} [inst : Group G] (N H : Subgroup G) [inst_1 : N.Normal], ↑(N ⊔ H) = ↑N * ↑H

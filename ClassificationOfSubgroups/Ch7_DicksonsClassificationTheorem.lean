@@ -1,7 +1,12 @@
-import Mathlib
-import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
 import ClassificationOfSubgroups.Ch4_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
+import Mathlib.FieldTheory.Finite.GaloisField
+import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 import Mathlib.GroupTheory.PresentedGroup
+import Mathlib.GroupTheory.SpecificGroups.Alternating
+import Mathlib.GroupTheory.QuotientGroup.Basic
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
+import Mathlib
 
 set_option linter.style.longLine true
 set_option maxHeartbeats 0
@@ -46,8 +51,6 @@ lemma card_SL_field {𝔽 : Type u_1} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
 /- Lemma 3.5. Correspondence theorem -/
 -- #leansearch "group theory correspondence theorem?"
 #check QuotientGroup.comapMk'OrderIso
-
-#leansearch "quotient group."
 
 def Isomorphic (G H : Type*) [Group G] [Group H] :=
   Nonempty (G ≃* H)
@@ -188,9 +191,8 @@ def Relations (n : ℕ) : Set (FreeGroup (Symbols)) :=
   {.of x ^ n * (.of y)⁻¹ * (.of y)⁻¹ } ∪
   {.of y * .of x * (.of y)⁻¹ * .of x }
 
-variable (n : ℕ)
-
-abbrev myGroup :=
+-- this may be the dihedral group
+abbrev myGroup (n : ℕ) :=
   PresentedGroup <| Relations n
 
 #synth Group (myGroup _)
@@ -291,4 +293,4 @@ theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ} 
   case caseI =>
     sorry
 
-
+#min_imports

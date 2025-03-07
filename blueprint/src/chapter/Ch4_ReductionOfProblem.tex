@@ -22,11 +22,12 @@ We prove a useful fact about elements that belong to the center of $\GL_n(R)$:
 \begin{lemma}
     \label{GeneralLinearGroup.mem_center_general_linear_group_iff}
     \lean{GeneralLinearGroup.mem_center_general_linear_group_iff}
-    \proves
+    \leanok
      Let $R$ be a commutative ring, then $G \in GL_n(F)$ belongs to center of $\GL_n(R)$, $Z(\GL_n(R))$ if and only if $G = r \cdot I$ where $r \in R^\times$.
     \end{lemma}
     
     \begin{proof}
+        \leanok
         \begin{itemize}
         \item Suppose $G \in GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
         Let $1 \leq i < j \leq n$, then the transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
@@ -51,13 +52,15 @@ We prove a useful fact about elements that belong to the center of $\GL_n(R)$:
 
 \begin{lemma}
 \label{center_SL_le_ker}
-\uses{SL_monoidHom_PGL, GeneralLinearGroup.mem_center_general_linear_group_iff}
+\uses{SL_monoidHom_PGL}
 \lean{center_SL_le_ker}
 \leanok
 Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \subseteq \ker (\varphi)$.
 \end{lemma}
 
 \begin{proof}
+\uses{GeneralLinearGroup.mem_center_general_linear_group_iff}
+\leanok
 If $S \in Z(\SL_n(R)) \leq \SL_n(F)$ then $S = \omega I$ where $\omega$ is a primitive root of unity.
 
 Because $\varphi = \pi_{Z(\GL_n(F))} \circ i$, the kernel of $\varphi$ is $i^{-1}(Z(\GL_n(F)))$, where we recall that $i : \SL_n(R) \hookrightarrow \GL_n(F)$ is the injection of $SL_n(F)$ into $\GL_n(F)$.
@@ -68,7 +71,7 @@ But given $i(S) = i(\omega \cdot I) = \omega \cdot I$ is of the form $r \cdot I$
 
 \begin{definition}
 \label{PSL_monoidHom_PGL}
-\uses{center_SL_le_ker, SL_monoidHom_PGL}
+\uses{SL_monoidHom_PGL}
 \lean{PSL_monoidHom_PGL}
 \leanok
     Given $Z(\SL_n(F)) \leq \ker \varphi$ as shown in \ref{center_SL_le_ker}, by the universal property there exists a unique homomorphism $\bar{\varphi} : \PSL_n(F) \rightarrow \PGL_n(F)$ which is the lift of $\varphi$. 
