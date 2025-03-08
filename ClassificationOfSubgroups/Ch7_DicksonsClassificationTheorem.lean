@@ -6,7 +6,6 @@ import Mathlib.GroupTheory.PresentedGroup
 import Mathlib.GroupTheory.SpecificGroups.Alternating
 import Mathlib.GroupTheory.QuotientGroup.Basic
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
-import Mathlib
 
 set_option linter.style.longLine true
 set_option maxHeartbeats 0

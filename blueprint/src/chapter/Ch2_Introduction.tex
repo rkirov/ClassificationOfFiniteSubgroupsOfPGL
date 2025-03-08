@@ -33,7 +33,7 @@ it is possible for any $r,s \in R$ to find a unique linear combination which is 
           b &= q_1 r_1 + r_2\\
           r_1 &= q_2 r_2 + r_3\\
           &\vdots\\
-          r_{i-1} = q_i r_i + r_{i + 1}&
+          r_{i-1} &= q_i r_i + r_{i + 1}&
       \end{align}
   
       by the definition of a euclidean domain, we have a strictly decreasing sequence $\nu(r_1) > \nu(r_2) > \ldots > \nu(r_k)$ that must eventually terminate in at most $\nu(r_1) + 1$ steps,
@@ -114,48 +114,71 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
     %         | n + 1 => sum_of_n_odd n + (2*n + 1)
     % \end{verbatim}
 
-    This definition is equivalent up to reindexing to the definition above.
+    This definition of summing the odd numbers is equivalent up to reindexing to the definition above. The reason we do not use subtraction is because
+    the natural numbers are a commutative semiring, in particular, it does not always make sense to subtract one from a natural number, the predecessor of
+    zero is not defined. We only need understand that a natural number is either zero or a successor of a natural number. In essence, when defining a function from the natural,
+    we only need to think about where to send zero and where to send the successor of a natural number, such functions are defined inductively/recursively.
+    This pattern of thought is continually used throughout Lean.
 
     Given the code definition above is a program one can indeed compute using the
     function, this might be how one would first conjecture that such a theorem about 
-    the sums of the first odd natural numbers is true.
+    the sums of the first odd natural numbers is true in the first place!
 
-    To state the theorem in Lean, we use the keyword \texttt{thorem} or \texttt{lemma}
-    followed by the name we would like to give the theorem, then followed by a list of arguments
-    which will either be the objects 
+    To state the theorem in Lean, we use the keyword \texttt{thorem} or \texttt{lemma};
+    followed by the name we would like to give the theorem, in this case it is, \texttt{closed\_eq\_sum\_of\_first\_n\_odd\_nat};
+    then followed by a list of arguments which will either be the objects and assumptions on the objects, in this case we only
+    specify that \texttt{n} is a natural number; then after a colon \texttt{:}, we specify the mathematical statement,
+    in this case that \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. 
+    We will walk through the formal proof after providing the Lean code
+
 
     % \begin{verbatim}
-    %     theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : (sum_of_first_n_odd_nat n) = n * n := by
+    %     theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : sum_of_first_n_odd_nat n = n * n := by
     %         induction n
     %         -- Prove the base case.
     %         case zero =>
     %             rw [mul_zero, sum_of_first_n_odd_nat]
     %         -- Prove the induction step.
     %         case succ m hm =>
-    %             rw [sum_of_first_n_odd_nat]
-    %             -- Apply the induction hypothesis
-    %             rw [hm]
+    %             rewrite [sum_of_first_n_odd_nat]
+    %              -- Apply the induction hypothesis
+    %             rewrite [hm]
     %             -- Multiply out the square of sum
-    %             rw [add_mul_self_eq]
+    %             rewrite [add_mul_self_eq]
     %             -- We finish it off by hand
-    %             rw [mul_one, mul_one, add_assoc]
-    %         done
+    %             rewrite [mul_one, mul_one, add_assoc]
+    %             rfl
+    %             done
     % \end{verbatim}
+
+    after the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}, it is possible to
+    define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \texit{tactic mode}.
+    As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics
+    in Lean; to enter tactic mode one must begin the proof with the \texttt{by} tactic. Furthermore, using tactic mode allows access to an extremely useful
+    interactive \textit{infoview} which displays the objects at play in the proof, the assumptions on the objects, the state of the proof
+
+    Once in tactic mode, we have access to other tactics accessible throught the keywords \texttt{induction}, \texttt{case}, \texttt{rw}, \texttt{rw}, \texttt{ring}, \texttt{simp} and so on.
+    Given the natural number are defined inductively in Lean, Lean understands that to prove that a property $P$ holds true for all natural numbers
+    it is sufficient to provide a proof term for $P(0)$ and supposing $P(n)$ holds we can show that then $P(n+1)$ holds, in Lean terminology, the natural numbers
+    have their own induction principle. In fact this will be automatically true for any inductive datatype, but we will not go into this.
+    
+    To access this fact, we must invoke the \texttt{induction} tactic which splits the original goal of \texttt{sum\_of\_first\_n\_odd\_nat n = n * n} into two smaller goals
+
+    \begin{enumerate}
+        \item The base case: \texttt{sum\_of\_first\_n\_odd\_nat 0 = 0 * 0}.
+        \item The induction step: \texttt{sum\_of\_first\_n\_odd\_nat (m + 1) = (m + 1) * (m + 1)}
+    \end{enumerate}
+
+    the \texttt{case} tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label \textit{zero} to prove the base case;
+    then we focus in on the induction step by typing \texttt{case succ m hm} which also introduces two new objects into the proof context, the natural number $m$ and the assumption
+    on \texttt{m} which says that $m$ satisfies the induction hypothesis, \texttt{sum\_of\_first\_n\_odd\_nat m = m * m}. We then proceed to use the rewrite tactic, \texttt{rewrite},
+    which allows to replace equal or logically equivalent terms, so if you have the theorem \texttt{h : a = b}, then \texttt{rw [h]} will replace every ocurrence of \texttt{a} in the goal
+    for a \texttt{b}, in the new modified goal.
+
+    Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation.
+
+    Theorems and lemmas in Lean are given an identifier by which to access through, for example: 
 \end{example}
-
-
-
-
-
-
-% Proof that the sum of odd numbers are the squares.
-TODO - Example of formal proof and comparison with informal proof + tactics - easy
-
-
-\begin{verbatim}
-theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
-  Nat.add\textunderscore comm a b
-\end{verbatim}
 
 
 \section{Fermat's Last Theorem}
@@ -282,11 +305,11 @@ Recall that the Projective General Linear Group is defined to be:
 
 Similarly, the Projective Special Linear Group is defined to be:
 
-\begin{lemma}[Projective special linear group]
+\begin{definition}[Projective special linear group]
     \[
     \PSL_n(F) = \SL_n(F) / (Z(\SL_n(F))) = \SL_n(F) / (\langle -I\rangle)
     \]
-\end{lemma}
+\end{definition}
 
 At first glance, neither the statement or the definitions seem to indicate how the classification of finite subgroups of $\PGL_2(\Fbar_p)$ play a role in the proof of Fermat's Last Theorem, after all, Fermat's Last Theorem is a statement
 regarding natural numbers. 
@@ -303,13 +326,15 @@ very loosely the key idea is that the two key players:
 
 \begin{enumerate}
     \item The local ring $R_\Sigma$ which is called the universal deformation ring for representations of type $\Sigma$.
-    where $\Sigma_{\bar{\rho}}$ is the set of primes $p$ satisfying
+    
+    \item The ring $\mathbb{T}_\Sigma$ is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms.
+\end{enumerate}
+
+Where $\Sigma_{\bar{\rho}}$ is the set of primes $p$ satisfying
     \begin{itemize}
         \item $p = \ell$ and $\bar{\rho}|_{G_{\ell}}$ is good and ordinary; or
         \item $p \ne \ell$ and $\bar{\rho}$ is unramified at $p$.
     \end{itemize}
-    \item The ring $\mathbb{T}_\Sigma$ is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms.
-\end{enumerate}
 
 TODO - explain why this isomorphism is crucial.
 

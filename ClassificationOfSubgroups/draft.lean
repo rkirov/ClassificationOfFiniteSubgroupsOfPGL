@@ -1,4 +1,25 @@
+import Mathlib
 
+def sum_of_first_n_odd_nat : ℕ → ℕ
+| 0 => 0
+| (Nat.succ n) => sum_of_first_n_odd_nat n + (2*n+1)
+
+
+theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : (sum_of_first_n_odd_nat n) = n * n := by
+  induction n
+  -- Prove the base case.
+  case zero =>
+    rw [mul_zero, sum_of_first_n_odd_nat]
+  -- Prove the induction step.
+  case succ m hm =>
+    rewrite [sum_of_first_n_odd_nat]
+    -- Apply the induction hypothesis
+    rewrite [hm]
+    -- Multiply out the square of sum
+    rewrite [add_mul_self_eq]
+    -- We finish it off by hand
+    rewrite [mul_one, mul_one, add_assoc]
+    rfl
 
 
 -- import Mathlib

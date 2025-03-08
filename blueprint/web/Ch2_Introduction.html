@@ -286,37 +286,19 @@
 
     <a class="icon proof" href="Ch2_Introduction.html#a0000000050">#</a>
     
-    
-    
-        </div>
-  </div>
-  <div class="example_thmcontent">
-  <div class="theorem_thmwrapper theorem-style-plain" id="a0000000051">
-  <div class="theorem_thmheading">
-    <span class="theorem_thmcaption">
-    Theorem
-    </span>
-    <span class="theorem_thmlabel">2.2</span>
-    <div class="thm_header_extras">
-
-        </div>
-    <div class="thm_header_hidden_extras">
-
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000051">#</a>
-    
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000052"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000051"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
     
         </div>
   </div>
-  <div class="theorem_thmcontent">
-  <p>Let \(R\) be a ring with a euclidean function \(\nu : R \setminus \{ 0\}  \rightarrow \mathbb {Z}_{\geq 0}\) which satisfies that for all \(x, y \in R\) with \(y \ne 0\), there exist \(q, r \in \mathbb {R}\) such that \(a = qb + r\) where either \(r = 0\) or \(\nu (r) {\lt} \nu (b)\); it is possible for any \(r,s \in R\) to find a unique linear combination which is the greatest common divisor of \(r\) and \(s\), that is, there exist coefficients \(a, b \in R\) such that \(ar + bs = \gcd (r, s)\). </p>
+  <div class="example_thmcontent">
+  <p> Let \(R\) be a ring with a euclidean function \(\nu : R \setminus \{ 0\}  \rightarrow \mathbb {Z}_{\geq 0}\) which satisfies that for all \(x, y \in R\) with \(y \ne 0\), there exist \(q, r \in \mathbb {R}\) such that \(a = qb + r\) where either \(r = 0\) or \(\nu (r) {\lt} \nu (b)\); it is possible for any \(r,s \in R\) to find a unique linear combination which is the greatest common divisor of \(r\) and \(s\), that is, there exist coefficients \(a, b \in R\) such that \(ar + bs = \gcd (r, s)\). </p>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000052">
+<div class="proof_wrapper" id="a0000000051">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -325,26 +307,14 @@
   </div>
   <div class="proof_content">
   <p>We construct \(a\) and \(b\) by the extended euclidean algorithm, we sequentially divide in the following fashion: </p>
-<div class="displaymath" id="a0000000053">
-  \begin{align}  r & = q_0 s + r_1\\ b & = q_1 r_1 + r_2\\ r_1 & = q_2 r_2 + r_3\\ & \vdots \\ r_{i-1} = q_i r_i + r_{i + 1}& \end{align}
+<div class="displaymath" id="a0000000052">
+  \begin{align}  r & = q_0 s + r_1\\ b & = q_1 r_1 + r_2\\ r_1 & = q_2 r_2 + r_3\\ & \vdots \\ r_{i-1} & = q_i r_i + r_{i + 1}& \end{align}
 </div>
 <p>by the definition of a euclidean domain, we have a strictly decreasing sequence \(\nu (r_1) {\gt} \nu (r_2) {\gt} \ldots {\gt} \nu (r_k)\) that must eventually terminate in at most \(\nu (r_1) + 1\) steps, and must have that \(\nu (r_k) = 0\) for some \(k \in \mathbb {N}\). It will then be that \(r_{k -1} = \gcd (r, s)\), and by back substitution we can recover the values for the coefficients \(a\) and \(b\). </p>
 
   </div>
 </div>
 <p>In <span class="ttfamily">mathlib</span>, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout’s lemma </p>
-<pre class="verbatim">
-    def xgcdAux (r s t r' s' t' : R) : R × R × R :=
-    if _hr : r = 0 then (r', s', t')
-    else
-      let q := r' / r
-      have _ := mod_lt r' _hr
-      xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
-  termination_by r
-</pre>
-
-  </div>
-</div>
 <p>It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless, and it is known as the <b class="bfseries">Curry-Howard correspondence</b> where formulas correspond to <i class="itshape">types</i>, which correspond to the notion of a specification, proofs for formulas correspond to constructing a term of the corresponding type and so forth. In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. For our purposes, we will not provide a deep overview of this fundamental correspondence, but rather we will illustrate the core principle with a suitable example. </p>
 <p>Furthermore, within the block of Lean code there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. the following example hopes to illustrate a simpler example and give an overview of how to: </p>
 <ul class="itemize">
@@ -356,19 +326,19 @@
 </li>
 </ul>
 <p>Loosely speaking, a <span class="ttfamily">tactic</span> in Lean is a me </p>
-<div class="example_thmwrapper theorem-style-remark" id="a0000000054">
+<div class="example_thmwrapper theorem-style-remark" id="a0000000053">
   <div class="example_thmheading">
     <span class="example_thmcaption">
     Example
     </span>
-    <span class="example_thmlabel">2.3</span>
+    <span class="example_thmlabel">2.2</span>
     <span class="example_thmtitle">Proving and formalising the sum of the first \(n\) odd integers</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000054">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000053">#</a>
     
     
     
@@ -387,7 +357,7 @@
 <p>There are many ways to prove this statement, other proofs can be found at <span class="cite">
 	[
 </span>. The proof that is best suited to be formalise is the proof by induction which goes as the following: </p>
-<div class="proof_wrapper" id="a0000000055">
+<div class="proof_wrapper" id="a0000000054">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -401,7 +371,7 @@
 </li>
   <li><p>Let \(m \in \mathbb {N}\) be a natural number and suppose the statement <a href="Ch2_Introduction.html#ih" class="eqref">6</a> holds for \(n = m\) then we will show that it then follows that it must hold for \(n = m + 1\). Indeed, </p>
 <p>Consider the sum \(\sum _{k = 1}^{m + 1} 2k - 1\), then we have that </p>
-<div class="displaymath" id="a0000000056">
+<div class="displaymath" id="a0000000055">
   \begin{align}  \sum _{k = 1}^{m + 1} 2k - 1 & = \left(\sum _{k = 1}^{m} 2k - 1\right) + 2(m + 1) - 1 \tag {by definition of the summation}\\ & = n^2 + 2n + 1 \tag {by the induction hypothesis}\\ & = (n + 1)^2 \end{align}
 </div>
 <p>This proves the induction step, and therefore by the principle of mathematical induction. The claim holds true for all \(n \in \mathbb {N}\). </p>
@@ -411,40 +381,36 @@
   </div>
 </div>
 <p>To define this statement in Lean we first must define what we mean by \(\sum _{k = 1}^{n} 2k - 1\), to define this sum in Lean we use the recursive definition for the summation where </p>
-<div class="displaymath" id="a0000000057">
+<div class="displaymath" id="a0000000056">
   \begin{align*}  \sum _{k = 1}^{n + 1} f(k) & = \sum _{k = 1}^{n} f(k) + f(n + 1) \tag {for $n \geq 0$}\\ & \text{and}\\ \sum _{k = 1}^{0} f(k) & = 0 \end{align*}
 </div>
 <p>where in Lean that naturals numbers include zero. </p>
-<pre class="verbatim">
-        def sum_of_n_odd : ℕ → ℕ
-            | 0 =&gt; 0
-            | n + 1 =&gt; sum_of_n_odd n + (2*n + 1)
-    </pre>
-<p>This definition is equivalent up to reindexing to the definition above. </p>
+<p>This definition of summing the odd numbers is equivalent up to reindexing to the definition above. The reason we do not use subtraction is because the natural numbers are a commutative semiring, in particular, it does not always make sense to subtract one from a natural number, the predecessor of zero is not defined. We only need understand that a natural number is either zero or a successor of a natural number. In essence, when defining a function from the natural, we only need to think about where to send zero and where to send the successor of a natural number, such functions are defined inductively/recursively. This pattern of thought is continually used throughout Lean. </p>
+<p>Given the code definition above is a program one can indeed compute using the function, this might be how one would first conjecture that such a theorem about the sums of the first odd natural numbers is true in the first place! </p>
+<p>To state the theorem in Lean, we use the keyword <span class="ttfamily">thorem</span> or <span class="ttfamily">lemma</span>; followed by the name we would like to give the theorem, in this case it is, <span class="ttfamily">closed_eq_sum_of_first_n_odd_nat</span>; then followed by a list of arguments which will either be the objects and assumptions on the objects, in this case we only specify that <span class="ttfamily">n</span> is a natural number; then after a colon <span class="ttfamily">:</span>, we specify the mathematical statement, in this case that <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>. We will walk through the formal proof after providing the Lean code </p>
+<p>after the <span class="ttfamily">:=</span> Lean expects a proof term of the type <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>, it is possible to define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as tactic mode. As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics in Lean; to enter tactic mode one must begin the proof with the <span class="ttfamily">by</span> tactic. Furthermore, using tactic mode allows access to an extremely useful interactive <i class="itshape">infoview</i> which displays the objects at play in the proof, the assumptions on the objects, the state of the proof </p>
+<p>Once in tactic mode, we have access to other tactics accessible throught the keywords <span class="ttfamily">induction</span>, <span class="ttfamily">case</span>, <span class="ttfamily">rw</span>, <span class="ttfamily">ring</span>, <span class="ttfamily">simp</span> and so on. Given the natural number are defined inductively in Lean, Lean understands that to prove that a property \(P\) holds true for all natural numbers it is sufficient to provide a proof term for \(P(0)\) and supposing \(P(n)\) holds we can show that then \(P(n+1)\) holds, in Lean terminology, the natural numbers have their own induction principle. In fact this will be automatically true for any inductive datatype, but we will not go into this. </p>
+<p>To access this fact we must invoke the <span class="ttfamily">induction</span> tactic which </p>
+<p>TODO - writing this as we speak but this is how it will go </p>
 
   </div>
 </div>
-<p>TODO - Example of formal proof and comparison with informal proof + tactics - easy </p>
-<pre class="verbatim">
-theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
-  Nat.add\textunderscore comm a b
-</pre>
 <h1 id="a0000000017">2.2 Fermat’s Last Theorem</h1>
 <h3 id="a0000000018">Problem statement and its history</h3>
 <p> Fermat’s Last Theorem, before it was proved that is, A conjecture about the <i class="itshape">Fermat equation</i> which is defined to be </p>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000058">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000057">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">2.4</span>
+    <span class="definition_thmlabel">2.3</span>
     <span class="definition_thmtitle">Fermat Equation</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000058">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000057">#</a>
     
     
     
@@ -456,23 +422,23 @@ theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
   </div>
 </div>
 <p>When \(a, b, c\) and \(n\) in this equation are restricted to positive integers, we are defining a particular family of what are called <i class="itshape">Diophantine equation</i>. Diophantus, an ancient greek mathematician was interested in positive integers which satisfy this equation. For instance, a particular set of numbers which satisfy this equation are the <i class="itshape">Pythagorean triples</i>, such triples have been known since Babylonian times. For example, when we substitute the Pythagorean triple \((a,b,c) = (3,4,5)\) and set \(n = 2\) we find that indeed Fermat’s equation holds for this choice of numbers since: </p>
-<div class="displaymath" id="a0000000059">
+<div class="displaymath" id="a0000000058">
   \[  3^2 + 4^2 = 5^2  \]
 </div>
 <p>In fact, much is known about the case when \(n = 2\); it is known that all Pythagorean triples are of the form: </p>
-<div class="theorem_thmwrapper theorem-style-plain" id="a0000000060">
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000059">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">2.5</span>
+    <span class="theorem_thmlabel">2.4</span>
     <span class="theorem_thmtitle">Pythagorean triples</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000060">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000059">#</a>
     
     
     
@@ -480,18 +446,18 @@ theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
   </div>
   <div class="theorem_thmcontent">
   <p> All pythagorean triples are of the form: </p>
-<div class="displaymath" id="a0000000061">
+<div class="displaymath" id="a0000000060">
   \[  a = r \cdot (s^2 - t^2), \qquad b = r \cdot (2st), \qquad c = r \cdot (s^2 + t^2)  \]
 </div>
 
   </div>
 </div>
 <p>The natural question to ask from such an extremely satisfying theorem is whether the same can be said for when \(n \ge 2\). Initially, mathematicians set out to to find solutions \(n = 3\). However, it seemed only the "trivial" triple satsfied Fermat’s equation for when \(n = 2\) </p>
-<div class="displaymath" id="a0000000062">
+<div class="displaymath" id="a0000000061">
   \[  0^3 + 1^3 = 1^3  \]
 </div>
 <p>Among these mathematicians was Pierre de Fermat, who suspected it was not possible to find a nontrivial triple for the exponent \(n= 3\) and what is more he believed it was not possible to find any nontrivial triple for any exponent \(n {\gt} 2\). In fact, Pierre de Fermat wrote in the margin of his copy of <i class="itshape">Arithmetic</i> written by Diophantus: " It is impossible... for any number which is a power greater than the second to be written as the sum of two like powers </p>
-<div class="displaymath" id="a0000000063">
+<div class="displaymath" id="a0000000062">
   \[  x^n + y^n = z^n \text{ for } n {\gt} 2.  \]
 </div>
 <p> I have a truly marvelous demonstration of this proposition which this margin is too narrow to contain. " </p>
@@ -531,19 +497,19 @@ theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
 </li>
 </ol>
 <p>Recall that the Projective General Linear Group is defined to be: </p>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000064">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000063">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">2.6</span>
+    <span class="definition_thmlabel">2.5</span>
     <span class="definition_thmtitle">Projective general linear group</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000064">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000063">#</a>
     
     
     
@@ -551,33 +517,33 @@ theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
   </div>
   <div class="definition_thmcontent">
   <p> The projective general linear group is the quotient group </p>
-<div class="displaymath" id="a0000000065">
+<div class="displaymath" id="a0000000064">
   \[  \operatorname{PGL}_n(F) = \operatorname{GL}_n(F) / (Z(\operatorname{GL}_n(F))) = \operatorname{GL}_n(F) / (F^\times I)  \]
 </div>
 
   </div>
 </div>
 <p>Similarly, the Projective Special Linear Group is defined to be: </p>
-<div class="lemma_thmwrapper theorem-style-plain" id="a0000000066">
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000065">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">2.7</span>
+    <span class="lemma_thmlabel">2.6</span>
     <span class="lemma_thmtitle">Projective special linear group</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000066">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000065">#</a>
     
     
     
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <div class="displaymath" id="a0000000067">
+  <div class="displaymath" id="a0000000066">
   \[  \operatorname{PSL}_n(F) = \operatorname{SL}_n(F) / (Z(\operatorname{SL}_n(F))) = \operatorname{SL}_n(F) / (\langle -I\rangle )  \]
 </div>
 
@@ -587,19 +553,19 @@ theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
 <p>Upon inspection of the proof it turns out that Theorem 2.47 of <span class="cite">
 	[
 </span> is required is for Theorem 2.49, Remark 2.47 and Lemma 4.11. Where in particular, Theorem 2.49 is a key component in Theorem 3.42 which states that: </p>
-<div class="theorem_thmwrapper theorem-style-plain" id="a0000000068">
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000067">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">2.8</span>
+    <span class="theorem_thmlabel">2.7</span>
     <span class="theorem_thmtitle">Theorem 3.42</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000068">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000067">#</a>
     
     
     
@@ -614,32 +580,33 @@ theorem add\textunderscore comm (a b : Nat) : a + b = b + a :=
 	[
 </span> would be the indicated source to truly understand what these statements claim and how they fit together in the big picture of proving Fermat’s Last Theorem; but for completeness, very loosely the key idea is that the two key players: </p>
 <ol class="enumerate">
-  <li><p>The local ring \(R_\Sigma \) which is called the universal deformation ring for representations of type \(\Sigma \). where \(\Sigma _{\bar{\rho }}\) is the set of primes \(p\) satisfying </p>
+  <li><p>The local ring \(R_\Sigma \) which is called the universal deformation ring for representations of type \(\Sigma \). </p>
+</li>
+  <li><p>The ring \(\mathbb {T}_\Sigma \) is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms. </p>
+</li>
+</ol>
+<p>Where \(\Sigma _{\bar{\rho }}\) is the set of primes \(p\) satisfying </p>
 <ul class="itemize">
   <li><p>\(p = \ell \) and \(\bar{\rho }|_{G_{\ell }}\) is good and ordinary; or </p>
 </li>
   <li><p>\(p \ne \ell \) and \(\bar{\rho }\) is unramified at \(p\). </p>
 </li>
 </ul>
-</li>
-  <li><p>The ring \(\mathbb {T}_\Sigma \) is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms. </p>
-</li>
-</ol>
 <p>TODO - explain why this isomorphism is crucial. </p>
 <p>Moreover, the statement of Theorem 2.49 is the following: </p>
-<div class="theorem_thmwrapper theorem-style-plain" id="a0000000069">
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000068">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">2.9</span>
+    <span class="theorem_thmlabel">2.8</span>
     <span class="theorem_thmtitle">Theorem 2.49</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch2_Introduction.html#a0000000069">#</a>
+    <a class="icon proof" href="Ch2_Introduction.html#a0000000068">#</a>
     
     
     

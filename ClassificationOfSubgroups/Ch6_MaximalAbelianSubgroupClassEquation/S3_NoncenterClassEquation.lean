@@ -1,7 +1,5 @@
-import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S2_SpecialSubgroups
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_MaximalAbelianSubgroup
-import Mathlib.GroupTheory.ClassEquation
-import Mathlib
+import Mathlib.Data.Setoid.Partition
 
 set_option linter.style.longLine true
 set_option autoImplicit false
