@@ -23,36 +23,34 @@ Theorem provers like Lean harness the tight bond between proofs and programs. Of
 For example, such is the case for the following theorem:
 
 \begin{example}[Algorithm corresponds to a proof - Bézout's lemma]
-\begin{theorem}
     Let $R$ be a ring with a euclidean function $\nu : R \setminus \{0\} \rightarrow \Z_{\geq 0}$ which satisfies that for all $x, y \in R$ with $y \ne 0$, there exist $q, r \in \R$ such that $a  = qb + r$ where either $r = 0$ or $\nu(r) < \nu(b)$;
 it is possible for any $r,s \in R$ to find a unique linear combination which is the greatest common divisor of $r$ and $s$, that is, there exist coefficients $a, b \in R$ such that $ar + bs = \gcd(r, s)$.
-\end{theorem }    
+\end{example}
 \begin{proof}
-        We construct $a$ and $b$ by the extended euclidean algorithm, we sequentially divide in the following fashion:
-          \begin{align}
-              r &= q_0 s + r_1\\
-              b &= q_1 r_1 + r_2\\
-              r_1 &= q_2 r_2 + r_3\\
-              &\vdots\\
-              r_{i-1} = q_i r_i + r_{i + 1}&
-          \end{align}
-      
-          by the definition of a euclidean domain, we have a strictly decreasing sequence $\nu(r_1) > \nu(r_2) > \ldots > \nu(r_k)$ that must eventually terminate in at most $\nu(r_1) + 1$ steps,
-          and must have that $\nu(r_k) = 0$ for some $k \in \N$. It will then be that $r_{k -1} = \gcd(r, s)$, and by back substitution we can recover the values for the coefficients $a$ and $b$.
-      \end{proof}
+    We construct $a$ and $b$ by the extended euclidean algorithm, we sequentially divide in the following fashion:
+      \begin{align}
+          r &= q_0 s + r_1\\
+          b &= q_1 r_1 + r_2\\
+          r_1 &= q_2 r_2 + r_3\\
+          &\vdots\\
+          r_{i-1} = q_i r_i + r_{i + 1}&
+      \end{align}
+  
+      by the definition of a euclidean domain, we have a strictly decreasing sequence $\nu(r_1) > \nu(r_2) > \ldots > \nu(r_k)$ that must eventually terminate in at most $\nu(r_1) + 1$ steps,
+      and must have that $\nu(r_k) = 0$ for some $k \in \N$. It will then be that $r_{k -1} = \gcd(r, s)$, and by back substitution we can recover the values for the coefficients $a$ and $b$.
+  \end{proof}
 
 In \texttt{mathlib}, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
 
 \begin{verbatim}
-    def xgcdAux (r s t r' s' t' : R) : R × R × R :=
-    if _hr : r = 0 then (r', s', t')
-    else
-      let q := r' / r
-      have _ := mod_lt r' _hr
-      xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
-  termination_by r
+def xgcdAux (r s t r' s' t' : R) : R × R × R :=
+if _hr : r = 0 then (r', s', t')
+else
+  let q := r' / r
+  have _ := mod_lt r' _hr
+  xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
+termination_by r
 \end{verbatim}
-\end{example}
 
 It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless, and it is known as the \textbf{Curry-Howard correspondence} where formulas correspond to \textit{types}, which correspond to the notion of a specification, 
 proofs for formulas correspond to constructing a term of the corresponding type and so forth. In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. 
@@ -118,16 +116,31 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
 
     This definition is equivalent up to reindexing to the definition above.
 
+    Given the code definition above is a program one can indeed compute using the
+    function, this might be how one would first conjecture that such a theorem about 
+    the sums of the first odd natural numbers is true.
 
+    To state the theorem in Lean, we use the keyword \texttt{thorem} or \texttt{lemma}
+    followed by the name we would like to give the theorem, then followed by a list of arguments
+    which will either be the objects 
 
-    
-
-    
-
-
-
-    
-
+    \begin{verbatim}
+        theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : (sum_of_first_n_odd_nat n) = n * n := by
+            induction n
+            -- Prove the base case.
+            case zero =>
+                rw [mul_zero, sum_of_first_n_odd_nat]
+            -- Prove the induction step.
+            case succ m hm =>
+                rw [sum_of_first_n_odd_nat]
+                -- Apply the induction hypothesis
+                rw [hm]
+                -- Multiply out the square of sum
+                rw [add_mul_self_eq]
+                -- We finish it off by hand
+                rw [mul_one, mul_one, add_assoc]
+            done
+    \end{verbatim}
 \end{example}
 
 
@@ -315,7 +328,7 @@ Moreover, the statement of Theorem 2.49 is the following:
 
 The place where the theorem 2.47 is of interest, the theorem that this project aims to be a blueprint for, is because proving proving the claim above requires showing that the 
 cohomology group  $H^1(\textrm{Gal}(F_n / F_0), \textrm{ad}^0\bar{\rho}(1))^G_{\mathbb{Q}}$ is trivial, which in turn reduces to showing that $\ell$, an odd prime, does not divide the Galois group $\Gal(F_0 /\Q)$ which is isomorphic to a finite subgroup $\PGL_2(\Fbar_\ell)$
-and has $\Gal(\Q(\zeta_\ell/\Q))$ as a quotient.
+and has $\Gal(\Q(\zeta_\ell)/\Q)$ as a quotient.
 
 Provided the classification of finite subgroups of $\PGL_2(\Fbar_\ell)$, it suffices to prove that the cohomology group is trivial for the case where $\ell = 3$.
 

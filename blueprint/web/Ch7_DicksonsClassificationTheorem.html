@@ -277,7 +277,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#IsPGroup.not_le_normalizer">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000319"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000323"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -308,7 +308,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000319">
+<div class="proof_wrapper" id="a0000000323">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -317,23 +317,23 @@
   </div>
   <div class="proof_content">
   <p>Let \(S\) denote the set of left cosets of \(H\) in \(G\). That is, </p>
-<div class="displaymath" id="a0000000320">
+<div class="displaymath" id="a0000000324">
   \begin{align*}  S = \{  x H : x \in G \} , \quad \text{and} \; \; \;  |S| = [G : H] = p^k. \quad \text{ (for some $k \geq 1$)} \end{align*}
 </div>
 <p>Consider the action of \(H\) on \(S\) by left multiplication. We calculate the stabiliser of \(xH \in S\) in \(H\). </p>
-<div class="displaymath" id="a0000000321">
+<div class="displaymath" id="a0000000325">
   \begin{align*}  \text{Stab}(xH) & = \{  y \in H : yxH = xH \}  \\ & = \{  y \in H : x^{-1}yx \in H \} . \end{align*}
 </div>
 <p>If \(x \in H\) then \(x^{-1}yx \in H\) for all \(y \in H\). Thus the Stab\((xH) = H\) and by the Orbit-Stabiliser Theorem, </p>
-<div class="displaymath" id="a0000000322">
+<div class="displaymath" id="a0000000326">
   \begin{align*}  |\text{Orb}(xH)| = [H : \text{Stab}(xH)] = 1. \end{align*}
 </div>
 <p>Observe that, </p>
-<div class="displaymath" id="a0000000323">
+<div class="displaymath" id="a0000000327">
   \begin{align*}  S = \bigcup \limits _{xH \in S} \text{Orb}(xH), \end{align*}
 </div>
 <p>where the orbits are pairwise disjoint. Now since \(p\) divides \(|S|\), \(p\) divides the sum of all the orbit sizes. Furthermore, since each orbit size is 1 or a multiple of \(p\), there must be at least \(p\) elements of \(S\) which have an orbit of 1. In particular, there exists an \(x_1 H \in S\) which has an orbit of 1 and \(x_1 \not\in H\). That is, </p>
-<div class="displaymath" id="a0000000324">
+<div class="displaymath" id="a0000000328">
   \begin{align*}  y x_1 H & = x_1 H, \tag {$\forall y \in H$} \\ x_1^{-1} y x_1 & \in H, \\ x_1^{-1} H x_1 & \subset H, \\ x_1 & \in N_G(H) \!  \setminus \!  H. \qedhere \end{align*}
 </div>
 
@@ -352,7 +352,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#Sylow.not_normal_subgroup_of_G">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000325"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000329"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -383,7 +383,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000325">
+<div class="proof_wrapper" id="a0000000329">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -392,23 +392,23 @@
   </div>
   <div class="proof_content">
   <p>The approach here is proof by contradiction, so we begin by assuming that \(Q \vartriangleleft G\). Thus \(N_G(Q) = G\) and \(N_G(K) \subset N_G(Q)\). Consider the natural homomorphism of \(N_G(Q)\) onto \(N_G(Q)/Q\), </p>
-<div class="displaymath" id="a0000000326">
+<div class="displaymath" id="a0000000330">
   \begin{align*}  \phi : N_G(Q) & \longrightarrow N_G(Q)/Q, \\ \phi (x) & = xQ, \\ ker(\phi ) & = \{  x \in N_G(Q) : \phi (x) = I_G Q \}  = Q. \end{align*}
 </div>
 <p>Let \(\phi '\) be the restiction of \(\phi \) to \(N_G(K)\): </p>
-<div class="displaymath" id="a0000000327">
+<div class="displaymath" id="a0000000331">
   \begin{equation*}  \phi ’ = \left.\phi \right|_{N_G(K)} : N_G(K) \longrightarrow N_G(Q)/Q. \end{equation*}
 </div>
 <p>Thus \(ker(\phi ') = ker(\phi ) \cap N_G(K) = Q \cap N_G(K)\). By the 1st Isomorphism Theorem, </p>
-<div class="displaymath" id="a0000000328">
+<div class="displaymath" id="a0000000332">
   \begin{align*}  \text{Im}(\phi ’) & \cong N_G(K) / ker(\phi ’), \\ N_G(Q)/Q & \cong N_G(K) / (Q \cap N_G(K)), \\ K & \cong N_G(K) / (Q \cap N_G(K)) \tag {$N_G(Q) = QK$}, \\ |Q \cap N_G(K)| & = [N_G(K) : K] = 2. \tag {by assumption} \end{align*}
 </div>
 <p>So \(2\) divides \(|Q|\), which implies that \(2 \nmid |K|\) since \(Q \cap K = \{  I_G \} \). Moreover, \(|Q \cap N_G(K)|\) and \(|K|\) are relatively prime. <br /><br />Take \(a \in ker(\phi ') = Q \cap N_G(K)\) and \(b \in N_G(K)\). </p>
-<div class="displaymath" id="a0000000329">
+<div class="displaymath" id="a0000000333">
   \begin{align*}  \phi ’(bab^{-1}) & = \phi ’(b)\phi ’(a)\phi ’(b^{-1}) \\ & = \phi ’(b)(I_G Q) \phi ’(b^{-1}) \\ & = \phi ’(b)\phi ’(b^{-1})(I_G Q) = I_G Q. \end{align*}
 </div>
 <p>Thus \(bab^{-1} \in ker(\phi ') = Q \cap N_G(K)\) and so \(Q \cap N_G(K) \vartriangleleft N_G(K)\). <br /><br />Now let \(x \in Q \cap N_G(K)\) and \(y \in K\). Notice that both \(x\) and \(y\) are elements of \(N_G(K)\), </p>
-<div class="displaymath" id="a0000000330">
+<div class="displaymath" id="a0000000334">
   \begin{align*}  xyx^{-1}y^{-1} & = (xyx^{-1})y^{-1} \in K, \tag {since $K \vartriangleleft N_G(K)$} \\ xyx^{-1}y^{-1} & = x(yx^{-1}y^{-1}) \in Q \cap N_G(K), \tag {since $Q \cap N_G(K) \vartriangleleft N_G(K)$} \\ xyx^{-1}y^{-1} & \in K \cap ( Q \cap N_G(K)) \\ & = I_G, \tag {since gcd$(|Q \cap N_G(K)|,|K|) = 1$} \\ xy & = yx. \\ \end{align*}
 </div>
 <p>Therefore \((Q\) \(\cap \) \(N_G(K)) \times K\) is an abelian subgroup of which \(K\) is a proper subgroup. This contradicts the fact that \(K\) is a maximal abelian subgroup, thus \(Q\) is not a normal subgroup of \(G\). </p>
@@ -428,7 +428,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#subfield">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000331"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000335"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -444,7 +444,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000331">
+<div class="proof_wrapper" id="a0000000335">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -453,11 +453,11 @@
   </div>
   <div class="proof_content">
   <p>Since \(R\) is a subset of \(F\) it suffices to show that the following 3 criteria are met: <br /><br />(i) \(0, 1 \in R\). <br />(ii) If \(\lambda _1, \lambda _2 \in R\), then \(\lambda _1 - \lambda _2 \in R\). <br />(iii) If \(\lambda _1, \lambda _2 \in R\) and \(\lambda _1 \neq 0 \neq \lambda _2\), then \(\lambda _1 \lambda ^{-1}_2 \in R\). <br /><br />We see immediately that (i) is satified. Since \(p\) is the characteristic of \(F\), any coeffiecients which are a multiple of \(p\) vanish. We get, </p>
-<div class="displaymath" id="a0000000332">
+<div class="displaymath" id="a0000000336">
   \begin{align*}  (\lambda _1 - \lambda _2)^q = (\lambda ^p_1 - \lambda ^p_2)^{p^{k-1}} = ... = \lambda ^q_1 - \lambda ^q_2 = \lambda _1 - \lambda _2. \end{align*}
 </div>
 <p>Thus \(\lambda _1 - \lambda _2 \in R\) and (ii) is also satisifed. Finally observe that if \(\lambda _2\) is a non-zero element of \(R\), then \(\lambda ^{-1}_2 = \lambda ^{-q}_2\) and, </p>
-<div class="displaymath" id="a0000000333">
+<div class="displaymath" id="a0000000337">
   \begin{align*}  (\lambda _1 \lambda ^{-1}_2)^q = \lambda ^q_1 \lambda ^{-q}_2 = \lambda _1 \lambda ^{-1}_2. \end{align*}
 </div>
 <p>So \(\lambda _1 \lambda ^{-1}_2 \in R\) and \(R\) is a subfield of \(F\). </p>
@@ -483,7 +483,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#Matrix.card_GL_field">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000334"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000338"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -514,7 +514,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000334">
+<div class="proof_wrapper" id="a0000000338">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -539,7 +539,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#card_SL_field">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000335"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000339"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -591,7 +591,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000335">
+<div class="proof_wrapper" id="a0000000339">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -600,15 +600,15 @@
   </div>
   <div class="proof_content">
   <p>Consider the map \(\phi \) defined as, </p>
-<div class="displaymath" id="a0000000336">
+<div class="displaymath" id="a0000000340">
   \begin{align*}  \phi : GL(2,\mathbb {F}_q) \longrightarrow \mathbb {F}^*_q, \qquad \text{where} \quad \!  \!  \phi (x) = \text{det}(x), \quad \forall \;  x \in GL(2,\mathbb {F}_q). \end{align*}
 </div>
 <p>Next we determine the kernel of \(\phi \). </p>
-<div class="displaymath" id="a0000000337">
+<div class="displaymath" id="a0000000341">
   \begin{align*}  ker(\phi ) & = \{  GL(2,\mathbb {F}_q) : \text{det}(x) = 1 \}  = \operatorname{SL}_2(\mathbb {F}_q). \end{align*}
 </div>
 <p>We show that \(\phi \) is a group homomorphism. Take \(x,y \in GL(2,\mathbb {F}_q)\), </p>
-<div class="displaymath" id="a0000000338">
+<div class="displaymath" id="a0000000342">
   \begin{align*}  \phi (xy) = \text{det}(xy) = \text{det}(x) \text{det}(y) = \phi (x) \phi (y). \end{align*}
 </div>
 <p>Clearly \(\phi \) is surjective, since \(\alpha \in \mathbb {F}^*_q\) is the determinant of \(\begin{bmatrix}  \alpha 
@@ -620,11 +620,11 @@
 &  1 
 
 \end{bmatrix} \in GL(2,\mathbb {F}_q)\). Therefore because \(\operatorname{SL}_2(F) \lhd \operatorname{GL}_2(F)\), by the First Isomorphism Theorem, </p>
-<div class="displaymath" id="a0000000339">
+<div class="displaymath" id="a0000000343">
   \begin{align*}  GL(2,\mathbb {F}_q) / \operatorname{SL}_2(\mathbb {F}_q) \cong \mathbb {F}^*_q. \end{align*}
 </div>
 <p> Thus, </p>
-<div class="displaymath" id="a0000000340">
+<div class="displaymath" id="a0000000344">
   \begin{align*}  |\operatorname{SL}_2(\mathbb {F}_q)| = \frac{|GL(2,\mathbb {F}_q)|}{|\mathbb {F}^*_q|} = \frac{(q^2-1)(q^2-q)}{q-1} = q(q^2-1). \end{align*}
 </div>
 
@@ -643,7 +643,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#QuotientGroup.comapMk'OrderIso">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000341"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000345"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -671,13 +671,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Let \(N\) be a normal subgroup of a group \(G\) and let \(H\) be a subgroup of \(G\) which contains \(N\).Then, </p>
-<div class="displaymath" id="a0000000342">
+<div class="displaymath" id="a0000000346">
   \begin{align*}  H / N \vartriangleleft G / N \iff H \vartriangleleft G \end{align*}
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000341">
+<div class="proof_wrapper" id="a0000000345">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -686,7 +686,7 @@
   </div>
   <div class="proof_content">
   <p>If \(H \vartriangleleft G\), then it follows from the Third Isomorphism Theorem that \( H / N \vartriangleleft G / N\). Conversely, assume that \(H / N\) is normal in \(G / N\). Let \(x\) be an arbitrary element of \(G\) and \(h\) be an arbitrary element of \(H\). Since \(H / N\) is normal in \(G / N\) we have, </p>
-<div class="displaymath" id="a0000000343">
+<div class="displaymath" id="a0000000347">
   \begin{align*}  x h x^{-1}N = (xN)(hN)(x^{-1}N) = (xN)(hN)(xN)^{-1} \in H / N. \end{align*}
 </div>
 <p> Thus \(x h x^{-1} \in H\). Since \(x\) and \(h\) were chosen arbitrarily, we have that \(H \vartriangleleft G\). </p>
@@ -709,7 +709,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#case_I">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000344"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000348"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -762,7 +762,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000344">
+<div class="proof_wrapper" id="a0000000348">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -775,15 +775,15 @@
   \begin{align} \label{case1a} 1 & = \frac{1}{g} + \frac{q-1}{qk} + \frac{g_1-1}{g_1}, \nonumber \\ 1 & = \frac{1}{g} + \frac{1}{k} - \frac{1}{qk} + 1 - \frac{1}{g_1}, \nonumber \\ \frac{1}{qk} + \frac{1}{g_1} & = \frac{1}{g} + \frac{1}{k}. \end{align}
 </div>
 <p>  <b class="bfseries">Case Ia:</b> \(\pmb {q = 1}\). Here we have \(Q = I_G\) and is trivially an elementary abelian normal subgroup of \(G\). Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case1a">3</a>) gives \(g=g_1\), thus \(G/Q = G = A_1\), which indeed is a cyclic group whose order is relatively prime to \(p\). <br /><br /> <b class="bfseries">Case Ib:</b> \(\pmb {q {\gt} 1}\). If \(k=1\) then (<a href="Ch7_DicksonsClassificationTheorem.html#case1a">3</a>) gives, </p>
-<div class="displaymath" id="a0000000345">
+<div class="displaymath" id="a0000000349">
   \begin{align*}  \frac{1}{q} + \frac{1}{g_1} & = \frac{1}{g} + 1 \;  {\gt} \;  1. \end{align*}
 </div>
 <p> But since both \(1/q\) and \(1/g_i\) are at most \(1/2\) each, this is a contradiction. Thus \(k {\gt} 1\). This means that \(|K| = ek {\gt} e = |Z|\), so \(k = g_1\) by Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K">6.39</a>. Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case1a">3</a>) now gives \(qk = g\). </p>
-<div class="displaymath" id="a0000000346">
+<div class="displaymath" id="a0000000350">
   \begin{align*}  |G| = eg = eqk = |N_G(Q)|. \end{align*}
 </div>
 <p> Thus \(G = N_G(Q)\) and so \(Q \vartriangleleft G\). Therefore \(Q \neq G\) and is an elementary abelian normal subgroup of \(G\). Also, </p>
-<div class="displaymath" id="a0000000347">
+<div class="displaymath" id="a0000000351">
   \begin{align*}  G/Q = N_G(Q)/Q \cong K = A_1. \end{align*}
 </div>
 <p> Thus \(G/Q\) is a cyclic group whose order is relatively prime to \(p\). </p>
@@ -804,7 +804,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#case_II">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000348"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000352"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -854,13 +854,13 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    Claim: <i class="itshape">The order of \(G\) is relatively prime to \(p\) and either \(G \cong \operatorname{SL}_2(3)\) or \(G\) is the group of order \(4n\), where \(n\) is odd, defined by the presentation:</i> </p>
-<div class="displaymath" id="a0000000349">
+<div class="displaymath" id="a0000000353">
   \begin{align*}  \langle \,  x,y \,  | \,  x^n = y^2, \,  yxy^{-1} = x^{-1} \,  \rangle . \\ \end{align*}
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000348">
+<div class="proof_wrapper" id="a0000000352">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -873,11 +873,11 @@
   \begin{align} \label{case2a} 1 & = \frac{1}{g} + \frac{q-1}{qk} + \frac{g_1-1}{g_1} + \frac{g_2-1}{2g_2}, \nonumber \\ 1 & = \frac{1}{g} + \frac{q-1}{qk} + 1 - \frac{1}{g_1} + \frac{1}{2} - \frac{1}{2g_2}, \nonumber \\ \frac{1}{g_1} + \frac{1}{2g_2} & = \frac{1}{2} + \frac{1}{g} + \frac{q-1}{qk}. \end{align}
 </div>
 <p>First assume that \(q{\gt}1\). This means \((q-1)/qk \geq 1/2k\) and consequently we bound (<a href="Ch7_DicksonsClassificationTheorem.html#case2a">4</a>) from below: </p>
-<div class="displaymath" id="a0000000350">
+<div class="displaymath" id="a0000000354">
   \begin{align*}  \frac{1}{2g_2} & = \frac{1}{2} - \frac{1}{g_1} + \frac{1}{g} + \frac{q-1}{qk} \;  {\gt} \;  \frac{1}{2k}. \end{align*}
 </div>
 <p>Thus \(k {\gt} g_2 \geq 2\). So \(K \in \mathfrak {M}\) and \(k=g_i\) for some \(i\). Since it is strictly greater than \(g_2\), we have \(k=g_1\). Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case2a">4</a>) now becomes </p>
-<div class="displaymath" id="a0000000351">
+<div class="displaymath" id="a0000000355">
   \begin{align*}  \frac{1}{g_1} + \frac{1}{2g_2} \;  & = \;  \frac{1}{2} + \frac{1}{g} + \frac{q-1}{qg_1}, \\ \frac{1}{g_1} + \frac{1}{2g_2} \;  & {\gt} \;  \frac{1}{2} + \frac{1}{2g_1}, \\ \frac{1}{4} + \frac{1}{4} \;  \geq \;  \frac{1}{2g_1} + \frac{1}{2g_2} \;  & {\gt} \;  \frac{1}{2}. \end{align*}
 </div>
 <p>This contradiction disproves the assumption that \(q {\gt} 1\), so we have that \(q = 1\). This means that \(Q\), a Sylow \(p\)-subgroup of \(G\), is simply the identity element and so \(|G|\) is relatively prime to \(p\). Also, Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case2a">4</a>) now reduces to: </p>
@@ -885,60 +885,60 @@
   \begin{align} \label{case2b} \frac{1}{g_1} + \frac{1}{2g_2} & = \frac{1}{2} + \frac{1}{g}. \end{align}
 </div>
 <p>If \(g_1 \geq 4\) we get </p>
-<div class="displaymath" id="a0000000352">
+<div class="displaymath" id="a0000000356">
   \begin{align*}  \frac{1}{2g_2} & = \frac{1}{2} + \frac{1}{g} - \frac{1}{g_1} \;  {\gt} \;  \frac{1}{4}. \end{align*}
 </div>
 <p>Since \(g_2 {\gt} 1\) this gives a contradiction and thus \(g_1 {\lt} 4\). We now have two seperate cases to consider.<br /><br /> <b class="bfseries">Case IIa:</b> \(\pmb {g_1 = 2}\). Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case2b">5</a>) becomes </p>
-<div class="displaymath" id="a0000000353">
+<div class="displaymath" id="a0000000357">
   \begin{align*}  \frac{1}{2g_2} & = \frac{1}{g}, \;  \;  \Longrightarrow \;  \;  g = 2g_2. \end{align*}
 </div>
 <p>If \(e=1\), then \(p=2\). Also since \(q=1\), 2 does not divide \(|G|\), but \(|G| = eg = e2g_2\) which is a contradiction. So \(e=2\) and \(p \neq 2\). We now have: </p>
-<div class="displaymath" id="a0000000354">
+<div class="displaymath" id="a0000000358">
   \begin{align*}  |N_G(A_2)| & = 2|A_2| = 2eg_2 = eg = |G|, \tag {since $s+t = 2$} \\ |N_G(A_1)| & = |A_1| = eg_1 = 4. \tag {since $s=1$} \end{align*}
 </div>
 <p> Thus \(G = N_G(A_2)\), that is \(A_2 \vartriangleleft G\).<br /><br />By Corollary ??, \(A_1\) is contained in a Sylow 2-subgroup of \(G\), call it \(S\). If \(S\) is strictly larger than \(A_1\), then by Lemma ??, \(A_1 \subsetneq N_S(A_1) \subset N_G(A_1)\). Since \(A_1 = N_G(A_1)\) we conclude that \(A_1\) is a Sylow 2-subgroup of \(G\). This means that 8 does not divide \(|G| = 4g_2\) and so \(g_2 = n\), where \(n\) is odd. <br /><br />Since \(A_2\) is cyclic it is generated by a single element, so let \(A_2 = \langle x \rangle \) and thus \(x^{2n}= I_G\). Recall that because \([N_G(A_2): A_2] = 2\), Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.of_index_normalizer_eq_two">6.37</a> tells us that there exists a \(y \in N_G(A_2) \!  \setminus \!  A_2\) such that \(yxy^{-1} = x^{-1}\). <br /><br />Recall from Chapter 2 that the number of \(A_i\) in each conjugacy class \(\mathcal{C}_i\) is equal to \([G : N_G(A_i)]\) so, </p>
-<div class="displaymath" id="a0000000355">
+<div class="displaymath" id="a0000000359">
   \begin{align*}  |\mathcal{C}_2| = [G:N_G(A_2)] & = 1. \end{align*}
 </div>
 <p>Due to the fact that \(y\) belongs to some maximal abelian subgroup of \(G\), and since \(y \not\in A_2\) and \(|\mathcal{C}_2| = 1\), it must be that \(y\) belongs to \(A_1\) or one of its conjugate subgroups. Thus \(y\) has an order which divides \(|A_1| = 4\) and since the only elements of order 1 and 2 lie in \(Z\), the order of \(y\) is 4. Furthermore, both \(x^n\) and \(y^2\) have order 2. Recalling that \(G\) has at most 1 element of order 2, this gives the relation \(x^n = y^2\). <br /><br />Let \(H\) be the group generated by \(x\) and \(y\) and the above relations: </p>
-<div class="displaymath" id="a0000000356">
+<div class="displaymath" id="a0000000360">
   \begin{align*}  H = \langle \,  x,y \,  | \,  x^n = y^2, \,  yxy^{-1} = x^{-1} \rangle . \end{align*}
 </div>
 <p>Notice that the second relation gives that \(y x^n y^{-1} = x^{-n}\), so </p>
-<div class="displaymath" id="a0000000357">
+<div class="displaymath" id="a0000000361">
   \begin{align*}  x^{-n} = y x^n y^{-1} = y y^2 y^{-1} = y^2 = x^n. \end{align*}
 </div>
 <p>This shows that \(y^4 = x^{2n} = I_G\) and that \(H\) is finite. Moreoever, </p>
-<div class="displaymath" id="a0000000358">
+<div class="displaymath" id="a0000000362">
   \begin{align*}  H = \{  x^k, x^ky : 0 {\lt} k \leq 2n \} . \end{align*}
 </div>
 <p>Thus \(|H| = 4n = |G|\) and \(H = G\). <br /><br /> <b class="bfseries">Case IIb:</b> \(\pmb {g_1 = 3}\). Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case2b">5</a>) becomes </p>
-<div class="displaymath" id="a0000000359">
+<div class="displaymath" id="a0000000363">
   \begin{align*}  \frac{1}{2g_2} & = \frac{1}{6} + \frac{1}{g} \;  {\gt} \;  \frac{1}{6}. \end{align*}
 </div>
 <p> Therefore \(g_2 = 2\) and \(g = 12\). Again, since \(q=1\) and 2 divides \(|G|\), we have \(p \neq 2\) and so \(e = 2\). Thus we have, </p>
-<div class="displaymath" id="a0000000360">
+<div class="displaymath" id="a0000000364">
   \begin{align*}  |G| = eg = 24, \qquad |A_1| = eg_1 = 6, \qquad |A_2| = eg_2 = 4. \end{align*}
 </div>
 <p> Again we determine the number of maximal abelian subgroups in each conjugacy class. </p>
-<div class="displaymath" id="a0000000361">
+<div class="displaymath" id="a0000000365">
   \begin{align*}  |\mathcal{C}_1| = [G:N_G(A_1)] & = \frac{|G|}{|A_1|} = \frac{24}{6} = 4, \\[1.5ex] |\mathcal{C}_2| = [G:N_G(A_2)] & = \frac{|G|}{2|A_2|} = \frac{24}{8} = 3. \end{align*}
 </div>
 <p>The figure below shows \(G\) divided into it’s maximal abelian subgroups: </p>
 <p>Let \(A_2 = \langle x \rangle \). By Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.of_index_normalizer_eq_two">6.37</a>, there is an element \(y \in N_G(A_2) \!  \setminus \!  A_2\) such that \(y x y^{-1} = x^{-1}\). Since \(N_G(A_2)\) has order 8, the order of \(y\) must divide 8. The order of \(y\) cannot be 8 since \(N_G(A_2)\) is not cyclic and the only elements with order 1 or 2 are found in \(Z\), thus \(y\) has order 4. By the uniqueness of the element of order 2, we have \(x^2 = y^2\). So </p>
-<div class="displaymath" id="a0000000362">
+<div class="displaymath" id="a0000000366">
   \begin{align*}  N_G(A_2) = \langle x, y \;  | \;  x^2 = y^2, y x y^{-1} = x^{-1} \rangle . \end{align*}
 </div>
 <p> For simplicity let \(N = N_G(A_2)\) . Since \(|A_1| = 6\), the only elements in \(C_1\) with order \(2^k\) are those in \(Z\), so every element of \(G\) with order \(2^k\) must belong to \(C_2\). Since \(C_2\) has order 8 it is equal to \(N\) because each element of \(N\) has order \(2^k\). Furthermore, \(N\) is thus a unique Sylow \(2\)-subgroup of \(G\) and by Corollary ??, we have \(N \vartriangleleft G\). <br /><br />Now consider the quotient group \(G / N\), that is the set of left (or right) cosets of \(N\) in \(G\). </p>
-<div class="displaymath" id="a0000000363">
+<div class="displaymath" id="a0000000367">
   \begin{align*}  G / N = \{  N, rN, r^2N \}  \cong \langle r \rangle \cong \mathbb {Z}_3, \end{align*}
 </div>
 <p> where \(r\) is some element of \(G\!  \setminus \!  N\) with order 3. Without loss of generality we may regard \(r\) to be a generator of \(H\), where \(H\) is the cyclic subgroup of \(A_1\) of order 3. <br /><br />Let \(H\) act on \(N\) by conjugation. Since \(|H| = 3\) the orbit of \(x \in N\) has size 1 or 3. </p>
-<div class="displaymath" id="a0000000364">
+<div class="displaymath" id="a0000000368">
   \begin{align*}  \text{Orb}(x) = \{  r^k x r^{-k} : r^k \in H \} . \end{align*}
 </div>
 <p>Since \(H\) is not contained in the centraliser of \(x\) we conclude that the orbit of \(x\) has size 3. Let \(A_2, A'_2\) and \(A''_2\) be the 3 elements of \(\mathcal{C}_2\). Without loss of generality we may assume \(y \in A'_2\) and consequently \(xy \in A''_2\). Using the two relations between \(x\) and \(y\) we observe that, </p>
-<div class="displaymath" id="a0000000365">
+<div class="displaymath" id="a0000000369">
   \begin{align*}  (xy)^{-1} = y^{-1} x^{-1} = y^{-1} (y x y^{-1}) = x y^{-1} = x^{-1} x^2 y^{-1} = x^{-1} y = yx \end{align*}
 </div>
 <p>The elements of \(Z\) are fixed points under this group action and the remaining 6 elements of \(N\) form 2 orbit cycles of order 3, with each cycle containing exactly one element from the noncentral parts of \(A_2, A'_2\) and \(A''_2\) in some order. If \(y\) inverts \(x\), then \(y\) inverts all powers of \(x\) including \(x^{-1}\). Also, if \(y\) inverts \(x\), then \(y^{-1}\) inverts \(x^{-1}\) and thus inverts \(x\) also. So the 2 relations we have established between \(x\) and \(y\) actually hold for any pair of elements of \(N \!  \setminus \!  Z\) which belong to different elements of \(\mathfrak {M}\). Therefore without loss of generality, we may assume that \(x\) and \(y\) are in the same orbit cycle and that \(r x r^{-1} = y\). Fig 3 shows that there are only 2 elements which could complete this cycle, \(xy\) and \(yx\). If \(r y r^{-1} = xy\), then we have the following 3 relations on \(G\). </p>
@@ -946,15 +946,15 @@
   \begin{align} \label{3rel} r x r^{-1} = y, \qquad r y r^{-1} = xy, \qquad r xy x^{-1} = x. \end{align}
 </div>
 <p>Otherwise \(r y r^{-1} = yx\). In this case, consider the orbit of \(x\) under conjugation by \(r^2\) instead. This gives the same orbit cycle but in the opposite direction: </p>
-<div class="displaymath" id="a0000000366">
+<div class="displaymath" id="a0000000370">
   \begin{align*}  r^2 x r^{-2} = yx, \qquad r^2 yx r^{-2} = y, \qquad r^2 y r^{-2} = x. \end{align*}
 </div>
 <p> Observe that \(x(yx) = x (x^{-1} y) = y\). Thus without loss of generality we can rename \(r^2\) as \(r\), \(yx\) as \(y\) and \(y\) as \(xy\). Notice that this now gives the same relations as in <a href="Ch7_DicksonsClassificationTheorem.html#3rel" class="eqref">6</a>. Since \(x\) and \(y\) generate a group of order 8 and \(r\) has order 3, the group given by the following presentation has order at most 24 and is thus a presentation of \(G\). </p>
-<div class="displaymath" id="a0000000367">
+<div class="displaymath" id="a0000000371">
   \begin{align*}  \langle x, y, r \,  | \,  x^2= y^2, \,  y x y^{-1} = x^{-1}, \,  r^3 = I, \,  r x r^{-1} = y, \,  r y r^{-1} = xy, \,  r xy r^{-1} = x \rangle , \end{align*}
 </div>
 <p>By Lemma ??, we observe that the order of \(\operatorname{SL}_2(3)\) is \(3(3^2-1) = 24\). Now consider the following the elements of \(\operatorname{SL}_2(3)\): </p>
-<div class="displaymath" id="a0000000368">
+<div class="displaymath" id="a0000000372">
   \begin{align*}  a = \begin{bmatrix}  1 
 
 &  1 
@@ -982,11 +982,11 @@
 \end{bmatrix}. \end{align*}
 </div>
 <p>One can verify easily that each of the following relations hold: </p>
-<div class="displaymath" id="a0000000369">
+<div class="displaymath" id="a0000000373">
   \begin{align*}  a^2 & = b^2, \qquad b a b^{-1} = a^{-1}, \qquad \quad \;  c^3 = I, \\ c a c^{-1} & = b, \qquad \;  \:  c b c^{-1} = ab, \qquad \!  c ab c^{-1} = a. \end{align*}
 </div>
 <p>Since \(G\) and \(\operatorname{SL}_2(3)\) have the same order and since their respective generators satisfy the corresponding relations, there is an isomorphism mapping \(x \mapsto a\), \(y \mapsto b\) and \(r \mapsto c\). Thus, </p>
-<div class="displaymath" id="a0000000370">
+<div class="displaymath" id="a0000000374">
   \begin{align*}  G = \langle x, y, r \rangle \cong \langle a, b, c \rangle = \operatorname{SL}_2(3). \end{align*}
 </div>
 
@@ -1006,7 +1006,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#case_III">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000371"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000375"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1059,7 +1059,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000371">
+<div class="proof_wrapper" id="a0000000375">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1072,11 +1072,11 @@
   \begin{align} \label{case3a} 1 & = \frac{1}{g} + \frac{q-1}{qk}, \nonumber \\ 1 & = \frac{1}{g} + \frac{1}{k} - \frac{1}{qk}, \nonumber \\ 1 + \frac{1}{qk} & = \frac{1}{g} + \frac{1}{k}. \end{align}
 </div>
 <p>Since \(s = 0 = t\), there are no cyclic maximal abelian subgroups whose order is relatively prime to \(p\), so \(K \not\in \mathfrak {M}\). Then by Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K">6.39</a> we have, </p>
-<div class="displaymath" id="a0000000372">
+<div class="displaymath" id="a0000000376">
   \begin{align*}  ek = |K| \leq |Z| = e. \end{align*}
 </div>
 <p> Thus \(k = 1\) and equation (<a href="Ch7_DicksonsClassificationTheorem.html#case3a">7</a>) reduces to \(1/q = 1/g\), that is \(g=q\). </p>
-<div class="displaymath" id="a0000000373">
+<div class="displaymath" id="a0000000377">
   \begin{align*}  |G| = eg & = eq = |Q \times Z|, \\ G & = Q \times Z. \end{align*}
 </div>
 <p> <span class="qed">□</span></p>
@@ -1097,7 +1097,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#case_IV">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000374"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000378"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1128,7 +1128,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000374">
+<div class="proof_wrapper" id="a0000000378">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1141,51 +1141,51 @@
   \begin{align} \label{case4a} 1 & = \frac{1}{g} + \frac{q-1}{qk} + \frac{g_1-1}{2g_1}, \nonumber \\ 1 & = \frac{1}{g} + \frac{q-1}{qk} + \frac{1}{2} - \frac{1}{2g_1}, \nonumber \\ \frac{1}{2} + \frac{1}{2g_1} & = \frac{1}{g} + \frac{q-1}{qk}. \end{align}
 </div>
 <p>Recall that \(|A_1|=eg_1\) and \([N_G(A_1): A_1] = 2\) and so, </p>
-<div class="displaymath" id="a0000000375">
+<div class="displaymath" id="a0000000379">
   \begin{align*}  eg = |G| \geq |N_G(A_1)| = 2eg_1. \end{align*}
 </div>
 <p>So \(g \geq 2g_1\) and \(1/2g_1 \geq 1/g\) and hence we can bound Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case4a">8</a>): </p>
-<div class="displaymath" id="a0000000376">
+<div class="displaymath" id="a0000000380">
   \begin{align*}  \frac{1}{2} \;  \leq \;  \frac{1}{2} + \frac{1}{2g_1} - \frac{1}{g} & = \frac{q-1}{qk}. \end{align*}
 </div>
 <p>Clearly this forces \(k = 1\) and also \(q {\gt} 1\). We can now simplify and bound Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case4a">8</a>) as follows: </p>
-<div class="displaymath" id="a0000000377">
+<div class="displaymath" id="a0000000381">
   \begin{align*}  \frac{1}{q} + \frac{1}{4} \;  \geq \;  \frac{1}{q} + \frac{1}{2g_1} & = \frac{1}{g} + \frac{1}{2} \;  {\gt} \;  \frac{1}{2}. \end{align*}
 </div>
 <p>This gives \(1/q {\gt} 1/4\) and so \(q\) is equal to either 2 or 3. We examine each case individually. <br /><br /> <b class="bfseries">Case IVa:</b> \(\pmb {q = 2}\). Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case4a">8</a>) becomes </p>
-<div class="displaymath" id="a0000000378">
+<div class="displaymath" id="a0000000382">
   \begin{align*}  \frac{1}{2g_1} & = \frac{1}{g}, \;  \;  \Longrightarrow \;  \;  g = 2g_1, \end{align*}
 </div>
 <p>and we show that \(A_1\) is a normal subgroup of \(G\): </p>
-<div class="displaymath" id="a0000000379">
+<div class="displaymath" id="a0000000383">
   \begin{align*}  |G| = eg = e2g_1 = 2|A_1| = |N_G(A_1)|. \end{align*}
 </div>
 <p> In this case, a Sylow \(p\)-subgroup has order 2 so we have \(p=2\) and also \(e=1\). By it’s definition, the order of \(A_1\) is relatively prime to \(p=2\), so we have that \(|A_1|= g_1 = n\), where \(n\) is odd, and consequently \(G\) has order \(2n\). <br /><br />We now know enough about the structure of \(G\) to establish some relations on it. Let \(A_1 = \langle x \rangle \), so \(x^n = I_G\). By Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.of_index_normalizer_eq_two">6.37</a> there exists a \(y \in N_G(A_1) \!  \setminus \!  A_1\) such that \(y x y^{-1} = x^{-1}\). </p>
-<div class="displaymath" id="a0000000380">
+<div class="displaymath" id="a0000000384">
   \begin{align*}  |\mathcal{C}_1| & = [G : N_G(A_1)] = 1. \\ |\mathcal{C}_{Q \times Z}| & = [G : N_G(Q \times Z)] = \frac{|G|}{eqk} = \frac{2n}{2} = n. \end{align*}
 </div>
 <p> The only maximal abelian subgroups of \(G\) are thus \(A_1\) and the \(n\) conjugate subgroups of \(\mathcal{C}_{Q \times Z}\). </p>
 <p>Since \(y\) belongs to some maximal abelian subgroup and \(y \not\in A_1\), \(y\) must belong to some element of \(\mathcal{C}_{Q \times Z}\). Since \(|Q \times Z|\) = 2, the order of \(y\) is 2 and \(y^2 = I_G\). We have established the following presentation of G. </p>
-<div class="displaymath" id="a0000000381">
+<div class="displaymath" id="a0000000385">
   \begin{align*}  G = \langle x, y \;  | \;  x^n = I_G = y^2, \;  y x y^{-1} = x^{-1} \rangle . \end{align*}
 </div>
 <p>Let \(D_n\) denote the dihedral group of order \(2n\), that is the group of symmetries of a regular polygon wih \(n\) vertices. Let \(r\) denote a clockwise rotation by \(2\theta /n\) radians and \(s\) denote a reflection. For \(n\) odd, it can easily be verified that \(D_n\) has the following presentation. </p>
-<div class="displaymath" id="a0000000382">
+<div class="displaymath" id="a0000000386">
   \begin{align*}  D_n = \langle r, s \;  | \;  r^n = I = s^2, \;  s r s^{-1} = r^{-1} \rangle . \end{align*}
 </div>
 <p>Since \(G\) and \(D_n\) have the same order and since their respective generators satisfy the corresponding relations, there is an isomorphism mapping \(x \mapsto r\) and \(y \mapsto s\). Thus, </p>
-<div class="displaymath" id="a0000000383">
+<div class="displaymath" id="a0000000387">
   \begin{align*}  G = \langle x, y \rangle \cong \langle r, s \rangle = D_n. \end{align*}
 </div>
 <p> <b class="bfseries">Case IVb:</b> \(\pmb {q = 3}\). Now equation (<a href="Ch7_DicksonsClassificationTheorem.html#case4a">8</a>) becomes </p>
-<div class="displaymath" id="a0000000384">
+<div class="displaymath" id="a0000000388">
   \begin{align*}  \frac{1}{2g_1} & = \frac{1}{g} + \frac{1}{6} \;  {\gt} \;  \frac{1}{6}. \end{align*}
 </div>
 <p> This means that \(g_1 = 2\) and \(g = 12\). Since \(q=3\) we have \(p=3\) and \(e=2\). Furthermore we have, </p>
-<div class="displaymath" id="a0000000385">
+<div class="displaymath" id="a0000000389">
   \begin{align*}  |G| = 24, \quad |A_1| & = 4, \quad |N_G(A_1)| = 8, \quad |Q \times Z| = 6 \quad |N_G(Q \times Z)| = 6 \end{align*}
 </div>
-<div class="displaymath" id="a0000000386">
+<div class="displaymath" id="a0000000390">
   \begin{align*}  |\mathcal{C}_1| & = [G : N_G(A_1)] = \frac{24}{8} = 3 \\ |\mathcal{C}_{Q \times Z}| & = [G : N_G(Q \times Z)] = \frac{24}{6} = 4 \end{align*}
 </div>
 <p>Notice that Fig 5 is almost identical to Fig 2 in the study of Case IIb. This is a strong indication that these 2 cases are isomorphic to each other and hence also to \(\operatorname{SL}_2(3)\), albeit not a proof. However, an argument analogous to the one outlined in the proof of Case IIb can be directly applied here with a simple renaming of the conjugacy classes and representatives. It would be to repeat this argument again and I will leave it to the reader to verify. </p>
@@ -1206,7 +1206,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#case_V">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000387"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000391"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1261,7 +1261,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000387">
+<div class="proof_wrapper" id="a0000000391">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1274,15 +1274,15 @@
   \begin{align}  \label{case5a} 1 & = \frac{1}{g} + \frac{q-1}{qk} + \frac{g_1 -1}{2g_1} + \frac{g_2 -1}{2g_2}, \nonumber \\ \frac{1}{2g_1} + \frac{1}{2g_2} & = \frac{1}{g} + \frac{q-1}{qk}. \end{align}
 </div>
 <p>Recall that, </p>
-<div class="displaymath" id="a0000000388">
+<div class="displaymath" id="a0000000392">
   \begin{align*}  eg = |G| \geq |N_G(A_i)| \geq 2eg_i, \qquad \text{thus} \quad \!  \frac{1}{g} \leq \frac{1}{2g_i}. \end{align*}
 </div>
 <p> Equation (<a href="Ch7_DicksonsClassificationTheorem.html#case5a">9</a>) is therefore bounded from below: </p>
-<div class="displaymath" id="a0000000389">
+<div class="displaymath" id="a0000000393">
   \begin{align*}  \frac{2}{g} \leq \frac{1}{2g_1} + \frac{1}{2g_2} = \frac{1}{g} + \frac{q-1}{qk}. \end{align*}
 </div>
 <p> Therefore \(q{\gt}1\), since if \(q=1\) we arrive at the contradiction \(2/g \leq 1/g\). With this in mind we have \((q-1)/q \geq 1/2\) and since \(g_i \geq 2\) this allows us to bound (<a href="Ch7_DicksonsClassificationTheorem.html#case5a">9</a>) on either side. </p>
-<div class="displaymath" id="a0000000390">
+<div class="displaymath" id="a0000000394">
   \begin{align*}  \frac{1}{2} & \geq \frac{1}{2g_1} + \frac{1}{2g_2} = \frac{1}{g} + \frac{q-1}{qk} {\gt} \frac{q-1}{qk} \geq \frac{1}{2k}. \end{align*}
 </div>
 <p>This gives \(k {\gt} 1\) and so by Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K">6.39</a>, \(k\) must equal \(g_1\) or \(g_2\) since the inequality \(ek = |K| {\gt} |Z| = e\) holds. Without loss of generality we let \(k=g_1\) and (<a href="Ch7_DicksonsClassificationTheorem.html#case5a">9</a>) becomes, </p>
@@ -1290,11 +1290,11 @@
   \begin{align}  \label{case5b} \frac{1}{2g_1} + \frac{1}{2g_2} & = \frac{1}{g} + \frac{q-1}{qg_1} = \frac{1}{g} + \frac{1}{g_1} - \frac{1}{qg_1}, \nonumber \\[1.5ex] \frac{1}{2g_2} & = \frac{1}{g} + \frac{1}{2g_1} - \frac{1}{qg_1}. \end{align}
 </div>
 <p> <br />Let \(N_G(Q)\) act on \(Q \!  \setminus \!  I_G\) by conjugation and consider the stabiliser in \(N_G(Q)\) of an arbitrarily chosen \(x \in Q \!  \setminus \!  I_G\). </p>
-<div class="displaymath" id="a0000000391">
+<div class="displaymath" id="a0000000395">
   \begin{align*}  \text{Stab}(x) & = \{  g \in N_G(Q) : g x g^{-1} = x \}  \\ & = C_G(x) \cap N_G(Q) \\ & = (Q \times Z) \cap N_G(Q) \tag {by Theorem \ref{MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z}} \\ & = Q \times Z. \tag {since $Q \times Z \subset N_G(Q)$} \end{align*}
 </div>
 <p>Thus by the Orbit-Stabiliser Theorem, </p>
-<div class="displaymath" id="a0000000392">
+<div class="displaymath" id="a0000000396">
   \begin{align*}  |\text{Orb}(x)| = [N_G(Q) : Q \times Z] = \frac{eqk}{eq} = k \end{align*}
 </div>
 <p>Since \(x\) was chosen arbitrarily from \(Q \!  \setminus \!  I_G\), each element of \(Q \!  \setminus \!  I_G\) has an orbit in \(N_G(Q)\) of size \(k\). Considering also the fact that \(Q \!  \setminus \!  I_G\) is equal to the union of the pairwise disjoint orbits of its elements, we conclude that \(k = g_1\) divides \(|Q \!  \setminus \!  I_G|\). Thus there exists some \(d \in \mathbb {Z^+}\) such that, </p>
@@ -1318,7 +1318,7 @@
   \begin{align} \label{6.16a} g_1 q & = i + (q-1) g_2 - g_2 \nonumber \\ & = i + d g_1 g_2 - g_2, \nonumber \\ g_2 & = i + (d g_2 - q) g_1. \end{align}
 </div>
 <p>Applying Lemma ?? we observe that \(Q\) is not normal in \(G\), and so </p>
-<div class="displaymath" id="a0000000393">
+<div class="displaymath" id="a0000000397">
   \begin{align*}  eg = |G| & {\gt} |N_G(Q)| = eqk = eqg_1, \\[1.5ex] \frac{1}{qg_1} & {\gt} \frac{1}{g}. \end{align*}
 </div>
 <p> And (<a href="Ch7_DicksonsClassificationTheorem.html#case5b">10</a>) gives us, </p>
@@ -1326,11 +1326,11 @@
   \begin{align} \label{6.13} \frac{1}{2g_2} & = \frac{1}{g} - \frac{1}{qg_1} + \frac{1}{2g_1} {\lt} \frac{1}{2g_1}, \nonumber \\[1.5ex] g_1 & {\lt} g_2. \end{align}
 </div>
 <p>Consider now, </p>
-<div class="displaymath" id="a0000000394">
+<div class="displaymath" id="a0000000398">
   \begin{align*}  [G : N_G(Q)] = \frac{eg}{e q k} = \frac{g}{q g_1} = \frac{2 g_2}{i} \in \mathbb {Z}. \tag {by \eqref{6.14a}} \end{align*}
 </div>
 <p> Thus \(i\) divides \(2 g_2\). Recall that the order of \(A_2\) is relatively prime to \(p\) by Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z">6.35</a>, so \(g_2\) is also relatively prime to \(p\). Therefore if \(p \neq 2\), \(i\) is relatively prime to \(p\) and if \(p=2\) then \(p\) divides \(i\) but \(p^2\) does not. Now since \(Q\) is a Sylow \(p\)-subgroup of \(G\), this means that greatest common denominator of \(i\) and \(q\) is either 1 or 2. Now consider, </p>
-<div class="displaymath" id="a0000000395">
+<div class="displaymath" id="a0000000399">
   \begin{align*}  [G : N_G(A_2)] = \frac{eg}{2 e g_2} = \frac{g_1 q}{i} \in \mathbb {Z}. \tag {by \eqref{6.14a}} \end{align*}
 </div>
 <p> Thus \(i\) divides \(g_1 q\) and since gcd\((i, q) = 1\) or 2, i must divide \(2 g_1\). So there exists some \(m \in \mathbb {Z^+}\) such that, </p>
@@ -1338,7 +1338,7 @@
   \begin{align} \label{6.17} i = \frac{2 g_1}{m}. \end{align}
 </div>
 <p>We consider now the separate cases which arise for different values of \(q\). <br /><br /> <b class="bfseries">Cases Va and Vb:</b> \(\pmb {q \geq 4}\). This condition gives us a lower bound for the inequality in <a href="Ch7_DicksonsClassificationTheorem.html#6.16b" class="eqref">14</a>, </p>
-<div class="displaymath" id="a0000000396">
+<div class="displaymath" id="a0000000400">
   \begin{align*}  g_1 {\gt} \frac{(q-2) g_2}{q} {\gt} \frac{g_2}{2}. \end{align*}
 </div>
 <p> Combining this with <a href="Ch7_DicksonsClassificationTheorem.html#6.13" class="eqref">16</a> we have, </p>
@@ -1346,11 +1346,11 @@
   \begin{align} \label{6.18} g_1 {\lt} g_2 {\lt} 2 g_1. \end{align}
 </div>
 <p>Substituting <a href="Ch7_DicksonsClassificationTheorem.html#6.17" class="eqref">17</a> into <a href="Ch7_DicksonsClassificationTheorem.html#6.16a" class="eqref">15</a> gives, </p>
-<div class="displaymath" id="a0000000397">
+<div class="displaymath" id="a0000000401">
   \begin{align*}  g_2 = \left( \frac{2}{m} + d g_2 - q \right) g_1 \end{align*}
 </div>
 <p> Thus <a href="Ch7_DicksonsClassificationTheorem.html#6.18" class="eqref">18</a> gives that, </p>
-<div class="displaymath" id="a0000000398">
+<div class="displaymath" id="a0000000402">
   \begin{align*}  1 {\lt} \frac{2}{m} + d g_2 - q {\lt} 2. \end{align*}
 </div>
 <p>This means that \(2/m\) is some fraction between 0 and 1 and \(d g_2 - q = 1\). So <a href="Ch7_DicksonsClassificationTheorem.html#6.16a" class="eqref">15</a> becomes, </p>
@@ -1358,11 +1358,11 @@
   \begin{align} \label{6.19} g_2 = g_1 + i. \end{align}
 </div>
 <p>Substituting this into <a href="Ch7_DicksonsClassificationTheorem.html#case5b" class="eqref">10</a> we find that, </p>
-<div class="displaymath" id="a0000000399">
+<div class="displaymath" id="a0000000403">
   \begin{align*}  g_1 q & = i + (q - 2)(g_1 + i), \\ 2 g_1 & = i(q - 1) = i d g_1, \tag {by \eqref{6.14}} \\ 2 & = i d. \end{align*}
 </div>
 <p>We remark that since both \(i\) and \(d\) are positive integers, \(i\) (and indeed \(d\)) must equal 1 or 2. Thus by <a href="Ch7_DicksonsClassificationTheorem.html#6.19" class="eqref">19</a> and <a href="Ch7_DicksonsClassificationTheorem.html#6.14a" class="eqref">12</a>, </p>
-<div class="displaymath" id="a0000000400">
+<div class="displaymath" id="a0000000404">
   \begin{align*}  g_1 & = \frac{i(q-1)}{2}, \qquad g_2 = \frac{i(q + 1)}{2}, \qquad g = \frac{2 g_1 g_2 q}{i} = \frac{iq(q^2 - 1)}{2}. \end{align*}
 </div>
 <p>Thus we have the following expressions for the orders of \(K\) and \(G\): </p>
@@ -1370,7 +1370,7 @@
   \begin{align} \label{orderGK} |K| = \frac{ei(q-1)}{2}, \qquad |G| = \frac{eiq(q^2-1)}{2}. \end{align}
 </div>
 <p>By Proposition <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.7">5.61</a>, each noncentral element of \(Q\) has a unique common fixed point on the projective line \(\mathscr {L}\), call it \(P_1\). Furthermore, we saw in the proof of Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K">6.39</a> that each noncentral element of \(K\) also fixes \(P_1\) as well as one other point, call it \(P_2\). Let \(u\) be a noncentral element of \(Q\) and set \(P_3 = P_2^u\). Clearly \(P_3\) is different from \(P_1\) and \(P_2\) because otherwise a contradiction is reached. By Theorem <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.6">5.60</a>, \(PSL(\mathscr {L})\) is triply transitive, so there exists a \(v \in L\) such that, </p>
-<div class="displaymath" id="a0000000401">
+<div class="displaymath" id="a0000000405">
   \begin{align*}  P_1^v = R_1 = \begin{bmatrix}  0 
 
 \\ 1 
@@ -1386,11 +1386,11 @@
 \end{bmatrix}. \end{align*}
 </div>
 <p>Observe that, </p>
-<div class="displaymath" id="a0000000402">
+<div class="displaymath" id="a0000000406">
   \begin{align*}  vQv^{-1}R_1 & = vQP_1 = vP_1 = R_1, \\ vKv^{-1}R_i & = vKP_i = vP_i = R_i. \qquad (i=1,2) \end{align*}
 </div>
 <p>Thus \(vQv^{-1}\) fixes \(R_1\) whilst \(vKv^{-1}\) fixes both \(R_1\) and \(R_2\). The only elements of \(L\) that fix \(R_1\) are the lower triangular matrices, thus \(vQv^{-1} \subset H\), whilst the only elements that fix \(R_2\) are the upper triangular matrices, thus \(vKv^{-1} \subset D\). Furthermore, each noncentral element of \(vQv^{-1}\) has order \(p\). The only elements of \(H\) with order \(p\) are those in \(T\), thus \(vQv^{-1} \subset T\). Since \(u \in Q \setminus I_G\), we have that \(v u v^{-1} = t_\gamma \) for some \(\gamma \in F\). </p>
-<div class="displaymath" id="a0000000403">
+<div class="displaymath" id="a0000000407">
   \begin{align*}  v u v^{-1}R_2 & = v u P_2 = v P_3 = R_3, \\[1.5ex]\begin{bmatrix}  1 
 
 &  0
@@ -1414,15 +1414,15 @@
 \end{bmatrix}. \Longrightarrow \gamma = 1. \end{align*}
 </div>
 <p>So \(v u v^{-1} = t_1\). If we now consider \(\widetilde{G} = vGv^{-1}\) instead of \(G\), we can assume without loss of generality that, </p>
-<div class="displaymath" id="a0000000404">
+<div class="displaymath" id="a0000000408">
   \begin{align*}  Q \subset T, \qquad K \subset D, \qquad u = t_1. \end{align*}
 </div>
 <p>Let \(x\) be a generator of \(K\). By Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.of_index_normalizer_eq_two">6.37</a> there exists a \(y \in N_{\widetilde{G}}(K) \!  \setminus \!  K\) such that \(y x = x^{-1} y\). Since \(R_1\) is fixed by both \(x\) and \(x^{-1}\) we have, </p>
-<div class="displaymath" id="a0000000405">
+<div class="displaymath" id="a0000000409">
   \begin{align*}  x^{-1} y R_1 = y x R_1 = y R_1. \end{align*}
 </div>
 <p> Thus \(x^{-1}\) fixes \(y R_1\), that is \(y R_1 \in \{  R_1, R_2 \} \). Similarly, \(y R_2 \in \{  R_1, R_2 \} \). Assume \(y R_1 = R_1\). Since \(R_1\) and \(R_2\) are distinct points in \(\mathscr {L}\) this implies that \(y R_2 = R_2\). </p>
-<div class="displaymath" id="a0000000406">
+<div class="displaymath" id="a0000000410">
   \begin{align*}  y R_1 = \begin{bmatrix}  \alpha 
 
 &  \beta 
@@ -1470,7 +1470,7 @@
   \begin{align} \label{yinterchange} y R_1 = R_2, \qquad \text{and} \quad y R_2 = R_1. \end{align}
 </div>
 <p>This allows us to determine more about \(y\), </p>
-<div class="displaymath" id="a0000000407">
+<div class="displaymath" id="a0000000411">
   \begin{align*}  y R_1 = \begin{bmatrix}  \alpha 
 
 &  \beta 
@@ -1514,7 +1514,7 @@
 \end{bmatrix} \Longrightarrow \alpha = 0. \end{align*}
 </div>
 <p>Thus \(y\) is an anti-diagonal matrix. Recalling <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#antidiag" class="eqref">2</a>, for some \(\rho \in F^*\) we have, </p>
-<div class="displaymath" id="a0000000408">
+<div class="displaymath" id="a0000000412">
   \begin{align*}  y = d_\rho w = \begin{bmatrix}  0 
 
 &  \rho 
@@ -1526,7 +1526,7 @@
 \end{bmatrix}. \end{align*}
 </div>
 <p>Consider now the set of right cosets of \(N_{\widetilde{G}}(Q)\) of the form \(N_{\widetilde{G}}(Q) y q\), (where \(q \in Q\)) in \(N_{\widetilde{G}}(Q) y Q\). For \(q_1, q_2 \in Q\) we have,  </p>
-<div class="displaymath" id="a0000000409">
+<div class="displaymath" id="a0000000413">
   \begin{align*}  N_{\widetilde{G}}(Q) y q_1 = N_{\widetilde{G}}(Q) y q_2 & \iff y q_2 {q_1}^{-1} y^{-1} \in N_{\widetilde{G}}(Q) \\ & \iff q_2 {q_1}^{-1} \in y^{-1} N_{\widetilde{G}}(Q) y \\ & \iff (Q \cap y^{-1} N_{\widetilde{G}}(Q) y) q_2 = (Q \cap y^{-1} N_{\widetilde{G}}(Q) y) q_1. \\ \end{align*}
 </div>
 <p>So the number of right cosets of \(N_{\widetilde{G}}(Q)\) in \(N_{\widetilde{G}}(Q) y Q\) is equal to the number of right cosets of \(Q \cap y^{-1} N_{\widetilde{G}}(Q) y\) in \(Q\). That is,  </p>
@@ -1534,7 +1534,7 @@
   \begin{align} \label{doublecoset} [N_{\widetilde{G}}(Q) y Q : N_{\widetilde{G}}(Q)] = [Q : Q \cap y^{-1} N_{\widetilde{G}}(Q) y]. \\ \nonumber \end{align}
 </div>
 <p>Let \(g\) be an arbitrary element of \(N_{\widetilde{G}}(Q)\). By Theorems ??(i) and <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.7">5.61</a>(ii) we have \(N_{\widetilde{G}}(Q) \subset H = \text{Stab}(R_1)\), thus \(g\) fixes \(R_1\). Using <a href="Ch7_DicksonsClassificationTheorem.html#yinterchange" class="eqref">21</a> we see that,  </p>
-<div class="displaymath" id="a0000000410">
+<div class="displaymath" id="a0000000414">
   \begin{align*}  y^{-1} g y R_2 = y^{-1} g R_1 = y^{-1} R_1 = R_2. \\ \end{align*}
 </div>
 <p>Hence \(R_2\) is a fixed point of \(y^{-1} g y\). Since \(g\) was chosen arbitrarily, we assert that each element of \(y^{-1} N_{\widetilde{G}}(Q) y\) fixes \(R_2\). On the contrary, the only element of \(Q\) which fixes \(R_2\) is \(I_{\widetilde{G}}\), thus \(Q \cap y N_{\widetilde{G}}(Q) y^{-1} = I_{\widetilde{G}}\).  </p>
@@ -1602,7 +1602,7 @@
 \end{bmatrix}. \end{align}
 </div>
 <p>Since \(\omega \), \(\rho \in F^*\), the top right entry of <a href="Ch7_DicksonsClassificationTheorem.html#onemore" class="eqref">24</a> is non-zero. Recall also that \(N_{\widetilde{G}}(Q) \subset H\) by Theorem ??(i) and that \(H\) is the set of all lower triangular matrices of \(L\). Since \(t_\lambda d_\omega d_\rho w t_\mu \) was chosen arbitraily, no element of \(N_{\widetilde{G}}(Q) y Q\) is in \(H\) whilst the whole of \(N_{\widetilde{G}}(Q)\) is contained in \(H\), thus they are disjoint. Using <a href="Ch7_DicksonsClassificationTheorem.html#qwed" class="eqref">23</a> and <a href="Ch7_DicksonsClassificationTheorem.html#orderGK" class="eqref">20</a> we also observe that, </p>
-<div class="displaymath" id="a0000000411">
+<div class="displaymath" id="a0000000415">
   \begin{align*}  |N_{\widetilde{G}}(Q) y Q| + |N_{\widetilde{G}}(Q)| = (q+1)|N_{\widetilde{G}}(Q)| = (q+1)eqg_1 = \frac{eiq(q^2-1)}{2} = |{\widetilde{G}}|. \end{align*}
 </div>
 <p> Since \(N_{\widetilde{G}}(Q) y Q\) and \(N_{\widetilde{G}}(Q)\) are disjoint and the sum of their orders is equal to the order of \({\widetilde{G}}\), they partition \({\widetilde{G}}\) into the set of elements that belong to \(H\) and the set that don’t. </p>
@@ -1610,7 +1610,7 @@
   \begin{align} \label{gsplit} {\widetilde{G}} = N_{\widetilde{G}}(Q) y Q \cup N_{\widetilde{G}}(Q). \end{align}
 </div>
 <p>Let \(\mathbb {N} = \{  \lambda : t_\lambda \in Q \} \). We will show that \(\mathbb {N} =\mathbb {F}_q\). For each \(t_\lambda \in Q \setminus Z\), the element \(y t_\lambda y^{-1} \notin H\), so by \(\eqref{gsplit}\), \(y t_\lambda y^{-1} \in N_{\widetilde{G}}(Q) y Q\). Thus there exists \(t_\mu , t_\upsilon \in Q\) and \(d_\omega \in K\) such that, </p>
-<div class="displaymath" id="a0000000412">
+<div class="displaymath" id="a0000000416">
   \begin{align*}  y t_\lambda y^{-1} & = t_\mu d_\omega y t_\upsilon , \\[1.5ex]\begin{bmatrix}  0 
 
 &  \rho 
@@ -1738,15 +1738,15 @@
   \begin{align}  \label{rootsI} \omega ^{2(q-1)} = 1. \end{align}
 </div>
 <p> As in the case of \(i=1\), each element of \(\mathbb {F}^*_q\) is a root of the polynomial in <a href="Ch7_DicksonsClassificationTheorem.html#rootsx" class="eqref">29</a>, as are each \(\omega ^2\). Thus \(\omega ^2\) ranges over \(\mathbb {F}^*_q\) and by <a href="Ch7_DicksonsClassificationTheorem.html#subfield" class="eqref">2</a>, \(\omega \in \mathbb {F}_{q^2} \setminus \mathbb {F}_q\). Simple matrix multiplication shows that, <br /></p>
-<div class="displaymath" id="a0000000413">
+<div class="displaymath" id="a0000000417">
   \begin{align*}  d_\omega ^{-1} t_\lambda d_\omega = t_{\omega ^2 \lambda }. \end{align*}
 </div>
 <p> Hence since \(t_0, t_1 \in Q\), it follows that \(t_{\omega ^2} \in Q\) for each \(\omega ^2 \in \mathbb {F}^*_q\), thus \(\mathbb {N} = \mathbb {F}_q\). Since \(K\) is a cyclic group of order \(2(q-1)\), so too is \(\mathbb {M}\). Let \(\pi \) be a generator of \(\mathbb {M}\). It follows that \(\pi ^2\) has order \(q-1\) and is therefore a generator of \(\mathbb {F}^*_q\). Since \(K = \langle d_\pi \rangle \), we have: </p>
-<div class="displaymath" id="a0000000414">
+<div class="displaymath" id="a0000000418">
   \begin{align*}  {\widetilde{G}} = \langle t_\lambda , d_\pi , w : \lambda \in \mathbb {F}_q \rangle = \langle \operatorname{SL}_2(\mathbb {F}_q), d_\pi \rangle . \end{align*}
 </div>
 <p> Again, since \({\widetilde{G}}\) is conjugate in \(L\) to \(G\), we have \(G \cong \langle \operatorname{SL}_2(\mathbb {F}_q), d_\pi \rangle \) as desired. Now we take an arbitrary \(x\) from \(\operatorname{SL}_2(\mathbb {F}_q)\) and conjugate it by \(d_\pi \). </p>
-<div class="displaymath" id="a0000000415">
+<div class="displaymath" id="a0000000419">
   \begin{align*}  d_\pi x d_\pi ^{-1} & = \begin{bmatrix}  \pi 
 
 &  0 
@@ -1798,27 +1798,27 @@
 \end{bmatrix}. \end{align*}
 </div>
 <p> Since \(\pi ^2 \in \mathbb {F}_q\), we have that \(d_\pi x d_\pi ^{-1} \in \operatorname{SL}_2(\mathbb {F}_q)\) and since \(x\) was chosen arbitrarily, \(d_\pi \) belongs to the normaliser of \(\operatorname{SL}_2(\mathbb {F}_q)\) in \(\langle \operatorname{SL}_2(\mathbb {F}_q), d_\pi \rangle \). This shows that \(\operatorname{SL}_2(\mathbb {F}_q) \vartriangleleft \langle \operatorname{SL}_2(\mathbb {F}_q), d_\pi \rangle \) as desired. <br /><br /> <b class="bfseries">Cases Vc and Vd:</b> \(\pmb {q \leq 3}\). Since \(q - 1 = d g_1 \geq 2\) by <a href="Ch7_DicksonsClassificationTheorem.html#6.14" class="eqref">11</a>, \(q\) cannot equal 2. So \(q = 3 = p\), \(e = 2\) and thus \(g_1 = 2\). The inequalities in <a href="Ch7_DicksonsClassificationTheorem.html#6.13" class="eqref">16</a> and <a href="Ch7_DicksonsClassificationTheorem.html#6.16b" class="eqref">14</a> give, </p>
-<div class="displaymath" id="a0000000416">
+<div class="displaymath" id="a0000000420">
   \begin{align*}  2 {\lt} g_2 {\lt} 6. \end{align*}
 </div>
 <p> Also, since \(g_2\) is relatively prime to \(p=3\), we have \(g_2 = 4\) or 5. Let <b class="bfseries">Case Vc</b> be the case when \(g_2 = 4\). <a href="Ch7_DicksonsClassificationTheorem.html#case5b" class="eqref">10</a> becomes, </p>
-<div class="displaymath" id="a0000000417">
+<div class="displaymath" id="a0000000421">
   \begin{align*}  \frac{1}{8} = \frac{1}{g} + \frac{1}{4} - \frac{1}{6}, \end{align*}
 </div>
 <p>which gives \(g = 24\). Observe that, </p>
-<div class="displaymath" id="a0000000418">
+<div class="displaymath" id="a0000000422">
   \begin{align*}  |K| = 4 = i(q-1), \qquad |G| = 48 = iq(q^2-1), \end{align*}
 </div>
 <p> where \(i=2\), thus we have the situation as described in Case Vb. That is, \(G \cong \langle \operatorname{SL}_2(\mathbb {F}_q), d_\pi \rangle \) with \(q=3\).<br /><br />Alternatively, <b class="bfseries">Case Vd</b> occurs when \(g_2 = 5\). <a href="Ch7_DicksonsClassificationTheorem.html#case5b" class="eqref">10</a> becomes, </p>
-<div class="displaymath" id="a0000000419">
+<div class="displaymath" id="a0000000423">
   \begin{align*}  \frac{1}{10} = \frac{1}{g} + \frac{1}{4} - \frac{1}{6}. \end{align*}
 </div>
 <p>Thus \(g = 60 \) and \(|G| = 120\). We verify, using Proposition ??, that \(\operatorname{SL}_2(5)\) has the same order as \(G\), that is \(|\operatorname{SL}_2(5)| = 5(5^2-1) =120\). Observe that, </p>
-<div class="displaymath" id="a0000000420">
+<div class="displaymath" id="a0000000424">
   \begin{align*}  |\mathcal{C}_1| & = [G : N_G(A_1)] = \frac{eg}{2eg_1} = 15, \\[1ex] |\mathcal{C}_2| & = [G : N_G(A_2)] = \frac{eg}{2eg_2} = 6, \\[1ex] |\mathcal{C}_{Q \times Z}| & = [G : N_G(Q \times Z)] = \frac{eg}{ekq} = 10. \end{align*}
 </div>
 <p>Now consider the quotient group \(G / Z\) of order 60. It’s trivial that for all \(A_i, A_j \in \mathfrak {M}\), \(A_i / Z\) belongs to the same conjugacy class as \(A_j / Z\) if and only \(A_i\) and \(A_j\) belong to the same conjugacy class. So the number of subgroups conjugate to \(A_i / Z\) is \(|\mathcal{C}_i|\). Similarly, the number of subgroups conjugate to \((Q\times Z) / Z\) is \(|\mathcal{C}_{Q \times Z}|\). <br /><br />We now calculate the order of each maximal abelian subgroup of \(G\) when we quotient out \(Z\). </p>
-<div class="displaymath" id="a0000000421">
+<div class="displaymath" id="a0000000425">
   \begin{align*}  |A_1 / Z| = 2, \qquad |A_2 / Z| = 5, \qquad |(Q \times Z) / Z| = 3. \end{align*}
 </div>
 <p>We now know enough about \(G / Z\) to determine the order of each of it’s elements: <br /><br /> The identity has order 1.gives <br /> The non-central element of \(A_1 / Z\) has order 2, as does the non-central element in each of the \(|\mathcal{C}_1| = 15\) subgroups conjugate to \(A_1 / Z\). So there are \(15\) elements of order 2. <br /> The 4 non-central elements of \(A_2 / Z\) have order 5, as do the non-central elements in each of the \(|\mathcal{C}_2| = 6\) subgroups conjugate to \(A_2 / Z\). Thus there are \(24\) elements of order 5. <br /> The 2 non-central elements of \((Q \times Z) / Z\) have order 3, as do the non-central elements in each of the \(|\mathcal{C}_{Q \times Z}| = 10\) subgroups conjugate to \((Q \times Z) / Z\). Thus there are \(20\) elements of order 3. <br /><br />Since \(1+15+24+20=60\), all elements of \(G / Z\) are accounted for. <br /><br />Let \(N\) be a normal subgroup of \(G / Z\). Observe that each non-central element of \(A_2 / Z\) is a generator of it, so if \(N\) contains one non-central element of \(A_2 / Z\), then it contains the whole of it, due to the closure of the group under multiplication and the fact that each element of \(A_2 / Z\) is a power of any non-central element. Also, it can easily be seen that normal subgroups are composed of whole conjugacy classes, so since \(N\) is normal in \(G\), if it contains \(A_2 / Z\), it must contain all subgroups conjugate to \(A_2 / Z\). The consequence of this is that if \(N\) has an element of order 5, then it contains all 24 elements of \(G / Z\) of order 5. Similarly, if it contains an element of order 2, it contains all 15 of them and if it contains an element of order 3, it contains all 20 of them. This means that \(|N|\) is partitioned by some or all of the elements in \(\{  1, 15, 20, 24 \} \). Bearing in mind that the order of \(N\) divides 60 and that \(N\) contains the identity element, this means that \(N\) is equal to either the identity element or it is the whole of \(G / Z\), since it’s easy to see that no other partition of those numbers divides 60. Thus \(G / Z\) has no non-trivial normal subgroups and is simple. <br /><br />By <span class="cite">
@@ -1843,7 +1843,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#case_VI">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000422"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000426"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1896,7 +1896,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000422">
+<div class="proof_wrapper" id="a0000000426">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1909,11 +1909,11 @@
   \begin{align}  \label{case6a} 1 & = \frac{1}{g} + \frac{q-1}{qk} + \frac{g_1 -1}{2g_1} + \frac{g_2 -1}{2g_2} + \frac{g_3 -1}{2g_3}, \nonumber \\[1ex] \frac{1}{2g_1} + \frac{1}{2g_2} + \frac{1}{2g_3} & = \frac{1}{g} + \frac{q-1}{qk} + \frac{1}{2}. \end{align}
 </div>
 <p>First assume that \(q {\gt} 1\) and \(k=1\). <a href="Ch7_DicksonsClassificationTheorem.html#case6a" class="eqref">31</a> is thus bounded as follows, </p>
-<div class="displaymath" id="a0000000423">
+<div class="displaymath" id="a0000000427">
   \begin{align*}  \frac{3}{4} {\gt} \frac{1}{2g_1} + \frac{1}{2g_2} + \frac{1}{2g_3} & = \frac{1}{g} + \frac{q-1}{qk} + \frac{1}{2} {\gt} 1, \end{align*}
 </div>
 <p> which is a contradiction. Now assume that \(q {\gt} 1\) and \(k {\gt} 1\). This means that \(k=g_i\) for some \(i\). Without loss of generality we can assume that \(k=g_1\). Now <a href="Ch7_DicksonsClassificationTheorem.html#case6a" class="eqref">31</a> becomes, </p>
-<div class="displaymath" id="a0000000424">
+<div class="displaymath" id="a0000000428">
   \begin{align*}  \frac{1}{2} \geq \frac{1}{2g_2} + \frac{1}{2g_3} & \geq \frac{1}{g} + \frac{1}{2} {\gt} \frac{1}{2}, \end{align*}
 </div>
 <p> which again is a contradiction, thus we conclude that \(q=1\). <a href="Ch7_DicksonsClassificationTheorem.html#case6a" class="eqref">31</a> simplifies and we can now determine the possible values of each \(g_i\). </p>
@@ -1921,7 +1921,7 @@
   \begin{align}  \label{case6b} \frac{1}{2g_1} + \frac{1}{2g_2} + \frac{1}{2g_3} & = \frac{1}{g} + \frac{1}{2}. \end{align}
 </div>
 <p>Without loss of generality we may assume that \(2 \leq g_1 \leq g_2 \leq g_3\). If \(g_1 \neq 2\) we arrive at the following contradiction </p>
-<div class="displaymath" id="a0000000425">
+<div class="displaymath" id="a0000000429">
   \begin{align*}  \frac{1}{6} + \frac{1}{6} + \frac{1}{6} \geq \frac{1}{2g_1} + \frac{1}{2g_2} + \frac{1}{2g_3} & = \frac{1}{g} + \frac{1}{2}. \end{align*}
 </div>
 <p> Thus \(g_1 = 2\) and we have, </p>
@@ -1933,43 +1933,43 @@
   \begin{align} \label{case6d} A_i \cong \mathbb {Z}_6 \cong \mathbb {Z}_3 \times \mathbb {Z}_2 \cong B_i \times Z \cong B_i Z. \end{align}
 </div>
 <p> Let \(b_2 \in B_2\), \(b_3 \in B_3\) and \(z \in Z\). Recall that \(B_2\) and \(B_3\) are conjugate in \(G\) by Sylow’s Second Theorem, so there exists an \(x \in G\) such that, </p>
-<div class="displaymath" id="a0000000426">
+<div class="displaymath" id="a0000000430">
   \begin{align*}  x b_2 x^{-1} & = b_3, \\ x b_2 x^{-1} z & = b_3 z, \\ x b_2 z x^{-1} & = b_3 z. \end{align*}
 </div>
 <p> Since \(b_2\), \(b_3\) and \(z\) were chosen arbitrarily, we observe that \(B_2 Z\) is conjuagate to \(B_3 Z\) and thus by <a href="Ch7_DicksonsClassificationTheorem.html#case6d" class="eqref">34</a>, \(A_2 \cong A_3\). This contradicts the fact that \(A_2\) and \(A_3\) are representatives of different conjugacy classes of maximal abelian subgroups of \(G\), which means that \(g_2\) and \(g_3\) cannot both equal 3. Thus we are left with the following three cases: </p>
-<div class="displaymath" id="a0000000427">
+<div class="displaymath" id="a0000000431">
   \begin{align*}  g_1 = 2, \qquad g_2& =2, \qquad g=2 g_3. \\[1ex] g_1 = 2, \qquad g_2& =3, \qquad g_3 = 4. \\[1ex] g_1 = 2, \qquad g_2& =3, \qquad g_3 = 5. \end{align*}
 </div>
 <p> <br /> <b class="bfseries">Case VIa:</b> \(\pmb {g_1 = 2, g_2 = 2, g=2 g_3}\). First observe that, </p>
-<div class="displaymath" id="a0000000428">
+<div class="displaymath" id="a0000000432">
   \begin{align*}  [G : N_G(A_1)] = \frac{eg}{2eg_1} = \frac{g_3}{2}. \end{align*}
 </div>
 <p> Thus \(g_3/2\) is an integer which means that \(g_3\) must be even, call it \(n\). Now let \(A_3 = \langle x \rangle \). Since \(|A_3| = eg_3\), the order of \(x\) is \(2n\) and \(x^n\) has order 2. By Theorem ??(iv) there exists a \(y \in N_G(A_3) \!  \setminus \!  A_3\) such that \(y x y^{-1} = x^{-1}\). Also, </p>
-<div class="displaymath" id="a0000000429">
+<div class="displaymath" id="a0000000433">
   \begin{align*}  |\mathcal{C}_3| = [G : N_G(A_3)] = 1. \end{align*}
 </div>
 <p> Since \(y \not\in A_3\) and \(A_3\) has no conjugate subgroups (aside from itself), \(y\) must lie in a maximal abelian subgroup conjugate to either \(A_1\) or \(A_2\). This means that since \(|A_1| = 4 = |A_2|\) and \(y \not\in Z\), the order of \(y\) must be 4. By the uniqueness of the element of order 2, we have the relation \(x^n = y^2\) and \(G\) is given by the presentation, </p>
-<div class="displaymath" id="a0000000430">
+<div class="displaymath" id="a0000000434">
   \begin{align*}  G = \langle \,  x,y \,  | \,  x^n = y^2, \,  yxy^{-1} = x^{-1} \,  \rangle . \qquad \text{(where $n$ is even)} \end{align*}
 </div>
 <p> <b class="bfseries">Case VIb:</b> \(\pmb {g_1 = 2, g_2 = 3, g_3 = 4}\). In this case <a href="Ch7_DicksonsClassificationTheorem.html#case6b" class="eqref">32</a> becomes, </p>
-<div class="displaymath" id="a0000000431">
+<div class="displaymath" id="a0000000435">
   \begin{align*}  \frac{1}{4} + \frac{1}{6} + \frac{1}{8} & = \frac{1}{g} + \frac{1}{2}. \end{align*}
 </div>
 <p> Thus \(g = 24\) and \(|G| = 48\). Consider the quotient group \(G / Z\) of order 24 and the quotient group \(N_G(A_2) / Z\) which, for convenience, we will call \(H\). </p>
-<div class="displaymath" id="a0000000432">
+<div class="displaymath" id="a0000000436">
   \begin{align*}  |H| = \frac{2eg_2}{e} = 6. \end{align*}
 </div>
 <p>Let \(x\) be an element of order 6 from \(A_2\). By Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.of_index_normalizer_eq_two">6.37</a> there exists a \(y \in N_G(A_2) \!  \setminus \!  A_2\) such that \(y x = x^{-1} y\). Thus for \(xZ, yZ, x^{-1}Z \in H\) we have, </p>
-<div class="displaymath" id="a0000000433">
+<div class="displaymath" id="a0000000437">
   \begin{align*}  yZ xZ = yxZ = x^{-1}yZ = x^{-1}Z yZ. \end{align*}
 </div>
 <p> If \(H\) is abelian, then \(xZ = x^{-1}Z\) and thus \(x^2 \in Z\). Also, since \(x\) has order 6, \(x^2\) has order 3. This is contradiction since there is no element of order 3 in \(Z\). Thus \(H\) is non-abelian and is therefore isomorphic to the symmetric group \(S_3\). <br /><br />Now we determine the normal subgroups of \(H\). The identity and \(H\) itself are trivially normal. Furthermore, the elementary result that any subgroup of index 2 is normal implies that \(A_2 / Z\), the subgroup of \(H\) of order 3, is normal. It remains to check the subgroups of order 2. Let r be a generator of one of the subgroups of order 2 and let \(x\) be an arbitrary element of \(H\). If \(\langle r \rangle \) is normal in \(H\), then \(x r x^{-1} \in \{  I , r \} \). Since \(r \neq I\) it follows that \(x r x^{-1} \neq I\). Alternatively if \(x r x^{-1} = r\), then \(r \in Z(H)\). By the elementary result that \(Z(S_n) = \{  I \} \) for \(n {\gt} 2\), we have that \(Z(H) = \{  I \} \) and the contradiction \(r=I\). Thus \(x r x^{-1} \not\in \langle r \rangle \) and \(H\) has no normal subgroup of order 2. We conclude that the only normal subgroups of \(H\) are those of order 1, 3 or 6. <br /><br />Note that the index of \(H\) in \(G / Z\) is 4. Let \(G / Z\) act by left multiplication on the set of left cosets of \(H\). By Theorem <a href="Ch3_Preliminaries.html#symhomoker">3.15</a>, this action induces a homomorphism \(\phi : G / Z \longrightarrow S_4\) with kernel, </p>
-<div class="displaymath" id="a0000000434">
+<div class="displaymath" id="a0000000438">
   \begin{align*}  ker(\phi ) = \bigcap \limits _{x \in G / Z} x H x^{-1} \subset H. \end{align*}
 </div>
 <p>Recall the elementary result that the kernel of a homomorphism is a normal subgroup of it’s domain. Thus the kernel of \(\phi \) is normal in \(G / Z\) and consequently in \(H\) as well, that is \(ker(\phi ) \in \{  I , A_2 / Z, H \} \). <br /><br />If \(ker(\phi ) = A_2 / Z\), then \(A_2 / Z \vartriangleleft G / Z\) and by Lemma <a href="Ch7_DicksonsClassificationTheorem.html#QuotientGroup.comapMk'OrderIso">7.6</a> \(A_2 \vartriangleleft G\). This is a contradiction since the normaliser in \(G\) of \(A_2\) is a proper subgroup of \(G\), thus \(ker(\phi ) \neq A_2 / Z\). <br /><br />If \(ker(\phi ) = H\), then \(H \vartriangleleft G / Z\). Take an arbitrary \(x \in G / Z\). Since \(A_2 / Z\) is a subgroup of \(H\) we get, </p>
-<div class="displaymath" id="a0000000435">
+<div class="displaymath" id="a0000000439">
   \begin{align*}  x (A_2 / Z) x^{-1} \subset H. \end{align*}
 </div>
 <p> Furthermore, since \(A_2 / Z\) has order 3, any subgroup conjugate to it has order 3. Since the only subgroup of \(H\) of order 3 is \(A_2 / Z\), and since \(x\) was chosen arbitrarily, \(A_2 / Z \vartriangleleft G / Z\). We have already shown that this leads to a contradiction, thus \(ker(\phi ) \neq H\). <br /><br />We conclude that \(ker(\phi ) = \{  I \} \) and so \(\phi \) is injective. Since \(G / Z\) has 24 elements, it’s image under \(\phi \) is the whole of \(S_4\), that is \(G / Z \cong S_4\). Thus \(G\) is a <i class="itshape">representation group</i> of \(S_4\), denoted by \(\widehat{S}_4\) (for a full defintion of this, see <span class="cite">
@@ -1977,7 +1977,7 @@
 </span>). Suzuki proves that \(S_4\) has 2 distinct representation groups up to isomorphism <span class="cite">
 	[
 </span>, which are distinguished by the property that the elements corresponding to transpositions have either order 2 or order 4. Since \(G\) has a unique element of order 2, it must be isomorphic to the representation group of \(S_4\) in which the transpositions correspond to the elements of order 4, as desired.<br /><br /> <b class="bfseries">Case VIc:</b> \(\pmb {g_1 = 2, g_2 = 3, g_3 = 5}\). In this case <a href="Ch7_DicksonsClassificationTheorem.html#case6b" class="eqref">32</a> becomes, </p>
-<div class="displaymath" id="a0000000436">
+<div class="displaymath" id="a0000000440">
   \begin{align*}  \frac{1}{4} + \frac{1}{6} + \frac{1}{10} & = \frac{1}{g} + \frac{1}{2}. \end{align*}
 </div>
 <p> Thus \(|g| = 60\) and \(|G| = 120\). Observe that a simple relabelling of the maximal abelian subgroups gives the same situation as described in <b class="bfseries">Case Vd:</b>. Thus \(G \cong \operatorname{SL}_2(5)\), however in this case \(p\) does not divide \(|G|\). </p>
@@ -2000,7 +2000,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#dicksons_classification_theorem_class_I">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000437"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000441"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2054,14 +2054,14 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    Let \(F\) be an arbitary algebraically closed field of characteristic \(p\). Any finite subgroup \(G\) of \(\operatorname{SL}_2(F)\) is isomorphic to one of the following groups.  <br />: When \(p=0\) or \(|G|\) is relatively prime to \(p\):  <br />(i) A cyclic group.  <br />(ii) The group defined by the presentation: </p>
-<div class="displaymath" id="a0000000438">
+<div class="displaymath" id="a0000000442">
   \begin{equation*}  \langle \,  x,y \,  | \,  x^n = y^2, \,  yxy^{-1} = x^{-1} \,  \rangle . \end{equation*}
 </div>
 <p> (iii) The Special Linear Group \(\operatorname{SL}_2(3)\).  <br />(iv) The Special Linear Group \(\operatorname{SL}_2(5)\).  <br />(v) \(\widehat{S}_4\), the representation group of \(S_4\) in which the transpositions correspond to the elements of order \(4\). <br /><br /></p>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000437">
+<div class="proof_wrapper" id="a0000000441">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2087,7 +2087,7 @@
 
     <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#dicksons_classification_theorem_class_II">#</a>
     
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000439"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000443"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2145,7 +2145,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000439">
+<div class="proof_wrapper" id="a0000000443">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2157,7 +2157,7 @@
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="a0000000440">
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000444">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
@@ -2168,7 +2168,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000440">#</a>
+    <a class="icon proof" href="Ch7_DicksonsClassificationTheorem.html#a0000000444">#</a>
     
     
     
