@@ -42,15 +42,15 @@ it is possible for any $r,s \in R$ to find a unique linear combination which is 
 
 In \texttt{mathlib}, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
 
-\begin{verbatim}
-def xgcdAux (r s t r' s' t' : R) : R × R × R :=
-if _hr : r = 0 then (r', s', t')
-else
-  let q := r' / r
-  have _ := mod_lt r' _hr
-  xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
-termination_by r
-\end{verbatim}
+% \begin{verbatim}
+% def xgcdAux (r s t r' s' t' : R) : R × R × R :=
+% if _hr : r = 0 then (r', s', t')
+% else
+%   let q := r' / r
+%   have _ := mod_lt r' _hr
+%   xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
+% termination_by r
+% \end{verbatim}
 
 It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless, and it is known as the \textbf{Curry-Howard correspondence} where formulas correspond to \textit{types}, which correspond to the notion of a specification, 
 proofs for formulas correspond to constructing a term of the corresponding type and so forth. In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. 
@@ -108,11 +108,11 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
 
     where in Lean that naturals numbers include zero.
 
-    \begin{verbatim}
-        def sum_of_n_odd : ℕ → ℕ
-            | 0 => 0
-            | n + 1 => sum_of_n_odd n + (2*n + 1)
-    \end{verbatim}
+    % \begin{verbatim}
+    %     def sum_of_n_odd : ℕ → ℕ
+    %         | 0 => 0
+    %         | n + 1 => sum_of_n_odd n + (2*n + 1)
+    % \end{verbatim}
 
     This definition is equivalent up to reindexing to the definition above.
 
@@ -124,23 +124,23 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
     followed by the name we would like to give the theorem, then followed by a list of arguments
     which will either be the objects 
 
-    \begin{verbatim}
-        theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : (sum_of_first_n_odd_nat n) = n * n := by
-            induction n
-            -- Prove the base case.
-            case zero =>
-                rw [mul_zero, sum_of_first_n_odd_nat]
-            -- Prove the induction step.
-            case succ m hm =>
-                rw [sum_of_first_n_odd_nat]
-                -- Apply the induction hypothesis
-                rw [hm]
-                -- Multiply out the square of sum
-                rw [add_mul_self_eq]
-                -- We finish it off by hand
-                rw [mul_one, mul_one, add_assoc]
-            done
-    \end{verbatim}
+    % \begin{verbatim}
+    %     theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : (sum_of_first_n_odd_nat n) = n * n := by
+    %         induction n
+    %         -- Prove the base case.
+    %         case zero =>
+    %             rw [mul_zero, sum_of_first_n_odd_nat]
+    %         -- Prove the induction step.
+    %         case succ m hm =>
+    %             rw [sum_of_first_n_odd_nat]
+    %             -- Apply the induction hypothesis
+    %             rw [hm]
+    %             -- Multiply out the square of sum
+    %             rw [add_mul_self_eq]
+    %             -- We finish it off by hand
+    %             rw [mul_one, mul_one, add_assoc]
+    %         done
+    % \end{verbatim}
 \end{example}
 
 
