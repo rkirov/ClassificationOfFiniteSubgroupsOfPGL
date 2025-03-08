@@ -19,10 +19,11 @@ It has been designed for both use in cutting-edge mathematics and the verificati
 TODO:
 
 
-- Brief explanation of type theory and curry-howard isomorphism.
+TODO - Brief explanation of type theory and curry-howard isomorphism + proofs as programs - easy
+
 
 % Proof that the sum of odd numbers are the squares.
-- Example of formal proof and comparison with informal proof.
+TODO - Example of formal proof and comparison with informal proof + tactics - easy
 
 
 \begin{verbatim}
@@ -81,18 +82,20 @@ This copy and many of Pierre de Fermat's belongings were searched in the hope of
 
 
 It took Euler to provide a (flawed) proof for the nonexistence of nontrivial solutions to Fermat's equation for the exponent $n = 3$, so far so good, Fermat's conjecture held true for $n = 3$.
-The case where $n = 4$ was also proved by Euler. %Fermat's conjecture was shown to be true for particular values of $n > 2$.  
+The case where $n = 4$ was also proved by Euler; soon enough particular cases where $n$ was some fixed natural number where being shown, which indeed seemed to suggest Fermat's conjecture was true.
+However, no approach seemed to generalise to prove the general case...
 
-TODO
+% Kummer, Lame, Wiles
 
-\subsubsection{History of Fermat's Equation}
+%Fermat's conjecture was shown to be true for particular values of $n > 2$.  
+TODO - link paragraphs and clean up
 
-The proof of Fermat's Last Theorem is the culmination of countless contributions which span many generations.
+The proof of Fermat's Last Theorem is the culmination of the effort of mathematicians spanning generations.
 
 From Diophantus, the first known person to systematically study what we now call \textit{Diophantine equations}, to Fermat developing the elementary theory of number theory and then due to the invaluable work of countless mathematicians 
 around the world which built upon each other's work a list of such mathematicians contains the names of: Gauss, Galois, Euler, Abel, Dedekind, Noether, Euler, Kummer, Mazur, Kronecker, etc.
 
-TODO
+
 
 \section{Formalizing Fermat's Last Theorem}
 
@@ -104,7 +107,7 @@ At the time of writing, since October of 2024, a digital blueprint has been set 
 
 Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task.
 
-\subsubsection{Goal of the formalisation of Fermat's Last Theorem}
+\subsubsection{The first target of the formalisation of Fermat's Last Theorem}
 
 The goal of the ongoing efforts of the formalisation is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \text{Mazur's Theorem}.
 
@@ -122,28 +125,17 @@ After all, the ultimate goal is to formalise all of mathematics and so far the l
 to be even able to state the propositions and let alone formalise their corresponding proofs.
 
 Morally, the goal of the formalisation of Fermat's Last Theorem is to formalise much of Algebraic Number Theory, Algebraic Geometry, Arithmetic Geometry and so forth so that one day
-the mathematics library of Lean contains all mathematics known to human kind.
+the mathematics library of Lean \texttt{mathlib}, contains all mathematics known to human kind.
 
 
 
-\subsubsection{Classification of finite subgroups of $\PGL_2(\Fbar_p)$}
+\section{Classification of finite subgroups of the $\PGL_2(\Fbar_p)$ within Fermat's Last Theorem}
 
-
-
-
-
-\section{Classification of finite subgroups of the $\PGL_2(\Fbar_p)$}
-
-TODO:
-
--Why are the finite subgroups of  $\PGL_2(\bar{\F}_p)$ relevant to number theory: i.e: Automorphic forms, Galois representations, etc.
-
-
-The primary concern of this project is to formalise Theorem 2.47 of [DTT] which states:
+The primary concern of this project is to formalise Theorem 2.47 of \cite{dtt} which states:
 
 \begin{enumerate}
     \item If $H$ is finite subgroup of $\PGL_2(\C)$ then $H$ is isomorphic to one of the following groups: the cyclic group $C_n$ of order $n$ ($n \in \Z_{>0}$), the dihedral group $D_{2n}$ of order $2n$ ($n \in \Z_{>1}$), $A_4$, $S_4$ or $A_5$.
-\item If $H$ is a finite subgroup of $\PGL_2(\Fbar_p)$ then one of the following holds:
+\item If $H$ is a finite subgroup of $\PGL_2(\Fbar_\ell)$ then one of the following holds:
 \begin{enumerate}
     \item $H$ is conjugate to a subgroup of the upper triangular matrices;
     \item $H$ is conjugate to $\PGL_2(\F_{\ell^r})$ and $\PSL_2(\F_{\ell^{r}})$ for some $r \in \Z_{>0}$;
@@ -153,21 +145,109 @@ The primary concern of this project is to formalise Theorem 2.47 of [DTT] which 
     Where $\ell$ is assumed to be an odd prime.
 \end{enumerate}
 
+Recall that the Projective General Linear Group is defined to be:
 
-The Projective General Linear Group is:
-
-\begin{equation}
+\begin{definition}[Projective general linear group]
+    The projective general linear group is the quotient group
+    \[    
     \PGL_n(F) = \GL_n(F) / (Z(\GL_n(F))) = \GL_n(F) / (F^\times I) 
-\end{equation}
+    \]
+\end{definition}
 
-Similarly, the Projective Special Linear Group is:
+Similarly, the Projective Special Linear Group is defined to be:
 
-\begin{equation}
+\begin{lemma}[Projective special linear group]
+    \[
     \PSL_n(F) = \SL_n(F) / (Z(\SL_n(F))) = \SL_n(F) / (\langle -I\rangle)
-\end{equation}
+    \]
+\end{lemma}
 
-Given we are working over an algebraically closed field $F$, it turns out that for any $n \in \N$, $\PGL_n(F)$ is isomorphic to $\PSL_n(F)$.
+At first glance, neither the statement or the definitions seem to indicate how the classification of finite subgroups of $\PGL_2(\Fbar_p)$ play a role in the proof of Fermat's Last Theorem, after all, Fermat's Last Theorem is a statement
+regarding natural numbers. 
 
-This isomorphism will be crucial as it will allow us to focus on classifying finite subgroups of $SL_2(F)$ to classify the finite subgroups of $\PGL_2(F)$.
+Upon inspection of the proof it turns out that Theorem 2.47 of \cite{dtt} is required is for Theorem 2.49, Remark 2.47 and Lemma 4.11. Where in particular, Theorem 2.49 is a key component in Theorem 3.42 which states that:
 
-The goal of the next chapter is to prove and formalize this result.
+\begin{theorem}[Theorem 3.42]
+    For all finite sets $\Sigma \subset \Sigma_{\bar{\rho}}$, the map $\phi_\Sigma : R_\Sigma \rightarrow \mathbb{T}_\Sigma$ is an isomorphism and these rings are complete intersections,
+\end{theorem}
+
+There is of course a lot of notation to hidden within these statement, yet unpacking and understanding in detail the following two theorems is not at all the concern for this project. 
+Naturally, the reference \cite{dtt} would be the indicated source to truly understand what these statements claim and how they fit together in the big picture of proving Fermat's Last Theorem; but for completeness,
+very loosely the key idea is that the two key players:
+
+\begin{enumerate}
+    \item The local ring $R_\Sigma$ which is called the universal deformation ring for representations of type $\Sigma$.
+    where $\Sigma_{\bar{\rho}}$ is the set of primes $p$ satisfying
+    \begin{itemize}
+        \item $p = \ell$ and $\bar{\rho}|_G_{\ell}$ is good and ordinary; or
+        \item $p \ne \ell$ and $\bar{\rho}$ is unramified at $p$.
+    \end{itemize}
+    \item The ring $\mathbb{T}_\Sigma$ is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms.
+\end{enumerate}
+
+TODO - explain why this isomorphism is crucial.
+
+
+Moreover, the statement of Theorem 2.49 is the following:
+
+\begin{theorem}[Theorem 2.49]
+    Suppose $L = \Q(\sqrt{(-1)^{\ell -1}/2} \ell)$ then $\bar{\rho}$ is absolutely irreducible. Then
+    there exists a non-negative integer $r$ such that for any $n \in \Z_{>0}$ we can find a
+    finite set of primes $Q_n$ with the following properties.
+    \begin{enumerate}
+        \item If $q \in Q_n$ then $q \equiv 1 \mod n$.
+        \item If $q \in Q_n$ then $\bar{\rho}$ is unramified at $q$ and $\rho(\textrm{Frob}q)$ has distinct eigenvalues.
+        \item $\# Q_n = r$.
+    \end{enumerate}
+\end{theorem}
+
+The place where the theorem 2.47 is of interest, the theorem that this project aims to be a blueprint for, is because proving proving the claim above requires showing that the 
+cohomology group  $H^1(\Gal(F_n / F_0. \textrm{ad}^0\bar{\rho}(1)))^G_\Q$ is trivial, which in turn reduces to showing that $\ell$, an odd prime, does not divide the Galois group $\Gal(F_0 /\Q)$ which is isomorphic to a finite subgroup $\PGL_2(\Fbar_\ell)$
+and has $\Gal(\Q(\zeta_\ell/\Q))$ as a quotient.
+
+Provided the classification of finite subgroups of $\PGL_2(\Fbar_\ell)$, it suffices to prove that the cohomology group is trivial for the case where $\ell = 3$.
+
+This explains in a very vauge fashion why the classification of finite subgroups of $\PGL_2(\Fbar)$ is relevant to proving Fermat's Last Theorem.
+
+% Since we have that for an odd prime $\ell > 3$ we have that $\ell$ does not divide the orders of the finite subgroups of $\PGL_2(\Fbar_\ell)$ as the finite subgroups can only have the order of the finit subgroups they are isomorphic to which
+% are: $|A_4| = 4! / 2$, $|S_5| = 5 !$, $|A_5| = 5! / 2 $,  $|\PSL_2(k)| = \ell^k(\ell^{2k} - 1)$ or $|\PGL_2(k)| = (\ell^2 -1)(q^2 - q)$.
+
+
+
+%     where furthermore, $\bar{\rho} : G_\Q \rightarrow \GL_2(k)$ is a continuous representation with the following properties
+%     \begin{enumerate}
+%         \item $\bar{\rho}$ is irreducible,
+%         \item $\bar{\rho}$ is modular,
+%         \item $\det \bar{\rho} = \epsilon$,
+%         \item $\bar{\rho}\_G_{\ell}$ is semi-stable,
+%         \item and if $p \ne \ell$ then $\#\bar{\rho}(I_p) | \ell$.
+%     \end{enumerate} 
+
+%     Additionally, $\mathbb{T}_\Sigma$ is the 
+
+
+% However, the projective general linear group can be viewed under a different light when it is considered alongside projective space $\mathbb{P}^n = \mathbb{A}^n / \sim$ where
+% these objects.
+
+% \begin{definition}[Projective space]
+
+% \end{definition}
+
+% \begin{definition}[Affine space]
+
+% \end{definition}
+
+
+\section{Overview and reduction to the classification problem}
+
+Returning to the domain of the problem of interest, classifying finite subgroups of $\PGL_2(\Fbar_p)$.
+
+Observing that $\Fbar_p$ is by construction an algebraically closed field, since it is the algebraic closure of $\F_p$; it turns out that for any $n \in \N$, we can show that $\PGL_n(F)$ is isomorphic to $\PSL_n(F)$
+and thus we only need consider finite subgroups of $\PSL_2(\Fbar)$.
+
+Furthermore, on the back of the isomorphism defined between $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$, and determining that the center $Z(\SL_2(\Fbar_p)) = \langle -I\rangle$, we can in fact focus on the much more tractable problem of 
+classifying the finite subgroups of $SL_2(\Fbar_p)$ to eventually classify the finite subgroups of $\PGL_2(\Fbar_p)$. Moreover, since the more general problem of classifying the finite subgroups of $\SL_2(F)$ where $F$ is an arbitrary algebraically closed field
+yields a statement very close to the desired statement and Christopher Butler has a in-depth exposition of this result, the formalisation of slightly more general result was chosen.
+
+Considering proving the existence of such an isomorphism $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$ is no more difficult in the general case, the goal of the next chapter will be to formalise the definition of a suitable homomorphism between $\PGL_n(F)$ and $\PSL_n(F)$, where $F$ is an algebraically closed field, 
+and formally prove in the Lean proof assistant that this homomorphism actually defines an isomorphism.

@@ -82,7 +82,7 @@
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
-  <a href="Ch2_Introduction.html#a0000000015"><span class="toc_ref">2.1</span> <span class="toc_entry">What is the formalization of mathematics?</span></a>
+  <a href="Ch2_Introduction.html#a0000000015"><span class="toc_ref">2.1</span> <span class="toc_entry">What is the formalisation of mathematics?</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
@@ -109,7 +109,7 @@
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="Ch2_Introduction.html#a0000000021"><span class="toc_ref"></span> <span class="toc_entry">Goal of the formalization of Fermat’s Last Theorem</span></a>
+  <a href="Ch2_Introduction.html#a0000000021"><span class="toc_ref"></span> <span class="toc_entry">Goal of the formalisation of Fermat’s Last Theorem</span></a>
  </li>
 <li class="">
   <a href="Ch2_Introduction.html#a0000000022"><span class="toc_ref"></span> <span class="toc_entry">Classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\)</span></a>
@@ -118,7 +118,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch2_Introduction.html#a0000000023"><span class="toc_ref">2.4</span> <span class="toc_entry">Classification of finite subgroups of the \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\)</span></a>
+  <a href="Ch2_Introduction.html#a0000000023"><span class="toc_ref">2.4</span> <span class="toc_entry">Classification of finite subgroups of the \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) </span></a>
  </li>
 
   </ul>
@@ -195,11 +195,11 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000039"><span class="toc_ref">5.5</span> <span class="toc_entry">Centralisers &amp; Normalisers</span></a>
+  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000039"><span class="toc_ref">5.5</span> <span class="toc_entry">Centralizers &amp; Normalizers</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
-  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000040"><span class="toc_ref"></span> <span class="toc_entry">Normalisers</span></a>
+  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000040"><span class="toc_ref"></span> <span class="toc_entry">Normalizers</span></a>
  </li>
 <li class="">
   <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000041"><span class="toc_ref"></span> <span class="toc_entry">Centralisers</span></a>
@@ -286,23 +286,92 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p> The characteristic of a field, \(p \in \mathbb {N}\) is the smallest number such that </p>
+  <p> Let \(F\) be a field, the characteristic of a field, denoted by \(\textrm{char}(F) \in \mathbb {N}\), is the smallest natural number \(p \in \mathbb {N}_0\) such that </p>
 <div class="displaymath" id="a0000000115">
   \[  \underbrace{1 + \ldots + 1}_{p} = 0  \]
 </div>
+<p>where in the case there is no such number then \(p = 0\). </p>
 
   </div>
 </div>
-<p> of times which the multilplicative identity of the field, say 1, needs to be summed to reach the additive identity of the field, say 0. If there is no such number, then we regard \(p\) as being zero, otherwise it is always a prime. <br /><br />Unless otherwise stated, the letters \(\alpha , \beta , \gamma , \delta , \sigma \), and \(\sigma \) will denote elements of \(F\) and \(\delta \) and \(\rho \) elements of \(F^\times \), where \(F^\times \) are the non-zero elements of \(F\). </p>
+<div class="example_thmwrapper theorem-style-remark" id="a0000000116">
+  <div class="example_thmheading">
+    <span class="example_thmcaption">
+    Example
+    </span>
+    <span class="example_thmlabel">5.2</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000116">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="example_thmcontent">
+  <p>\(\mathbb {Z}/p\mathbb {Z}\) is a field of characteristic \(\textrm{char}(\mathbb {Z}/p\mathbb {Z}) = p\) as \(p \cdot 1 = 0\). </p>
+
+  </div>
+</div>
+<div class="example_thmwrapper theorem-style-remark" id="a0000000117">
+  <div class="example_thmheading">
+    <span class="example_thmcaption">
+    Example
+    </span>
+    <span class="example_thmlabel">5.3</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000117">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="example_thmcontent">
+  <p>The field \(\mathbb {Q}\) is a field with \(\textrm{char}(\mathbb {Q}) = 0\) as \(n \cdot 1 \ne 0\) for all \(n \in \mathbb {N}\subset \mathbb {Q}\). </p>
+
+  </div>
+</div>
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000118">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <span class="remark_thmlabel">5.4</span>
+    <span class="remark_thmtitle">The characteristic is either prime or zero</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000118">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  <p> The characteristic of a field is either a prime number or zero. </p>
+
+  </div>
+</div>
+<p><br />Unless otherwise stated, the letters \(\alpha , \beta , \gamma , \delta \), and \(\sigma \) will denote elements of \(F\); whereas \(\delta \) and \(\rho \) will denote elements of \(F^\times \), where \(F^\times \) are the invertible, or equivalently, non-zero elements of \(F\). </p>
 <h1 id="a0000000033">5.2 Subsets of \(\operatorname{SL}_2(F)\)</h1>
-<p>In this chapter we make some useful observations about specific elements and subgroups of \(L\). We define the following elements of \(\operatorname{SL}_2(F)\)as follows. </p>
+<p>In this chapter we make some useful observations about specific elements and subgroups of \(\operatorname{SL}_2(F)\). </p>
+<p>First, we define the following elements of \(\operatorname{SL}_2(F)\). </p>
 <h3 id="a0000000034">Special matrices of \(\operatorname{SL}_2(F)\)</h3>
 <div class="definition_thmwrapper theorem-style-definition" id="SpecialMatrices.d">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.2</span>
+    <span class="definition_thmlabel">5.5</span>
     <span class="definition_thmtitle">The diagonal matrix of \(SL_2(F)\)</span>
     <div class="thm_header_extras">
 
@@ -338,7 +407,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>   Given an element \(\delta \in F^\times \) we define the diagonal matrix: </p>
-<div class="displaymath" id="a0000000116">
+<div class="displaymath" id="a0000000119">
   \[  d_\delta = \begin{bmatrix}  \delta 
 
 &  0
@@ -357,7 +426,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.3</span>
+    <span class="definition_thmlabel">5.6</span>
     <span class="definition_thmtitle">The shear matrix of \(SL_2(F)\)</span>
     <div class="thm_header_extras">
 
@@ -393,7 +462,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>   Given an element \(\delta \in F\) we define the shear matrix: </p>
-<div class="displaymath" id="a0000000117">
+<div class="displaymath" id="a0000000120">
   \[  s_\sigma = \begin{bmatrix}  1 
 
 &  0
@@ -413,7 +482,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.4</span>
+    <span class="lemma_thmlabel">5.7</span>
     <span class="lemma_thmtitle">Order of nontrivial \(s_\sigma \) </span>
     <div class="thm_header_extras">
 
@@ -458,7 +527,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.5</span>
+    <span class="definition_thmlabel">5.8</span>
     <span class="definition_thmtitle">Rotation by \(\pi / 2\) radians matrix</span>
     <div class="thm_header_extras">
 
@@ -494,7 +563,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>   We denote the matrix which corresponds to a rotation by \(\pi / 2\) radians to be: </p>
-<div class="displaymath" id="a0000000118">
+<div class="displaymath" id="a0000000121">
   \[  w = \begin{bmatrix}  0 
 
 &  -1
@@ -514,7 +583,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.6</span>
+    <span class="lemma_thmlabel">5.9</span>
     <span class="lemma_thmtitle">Closure of \(D\) under multiplication</span>
     <div class="thm_header_extras">
 
@@ -523,7 +592,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d_mul_d_eq_d_mul">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000119"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000122"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -539,7 +608,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.2</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.5</a></li>
           
         </ul>
     
@@ -571,13 +640,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>    For any \(\delta , \rho \in F^\times \) we have that </p>
-<div class="displaymath" id="a0000000120">
+<div class="displaymath" id="a0000000123">
   \[  d_\delta d_\rho = d_{\delta \rho }  \]
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000119">
+<div class="proof_wrapper" id="a0000000122">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -586,7 +655,7 @@
   </div>
   <div class="proof_content">
   <p>We verify by matrix multiplication that indeed: </p>
-<div class="displaymath" id="a0000000121">
+<div class="displaymath" id="a0000000124">
   \begin{equation*}  d_\delta d_\rho = \begin{bmatrix}  \delta 
 
 &  0 
@@ -621,7 +690,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.7</span>
+    <span class="lemma_thmlabel">5.10</span>
     <span class="lemma_thmtitle">Closure of \(S\) under multiplication</span>
     <div class="thm_header_extras">
 
@@ -630,7 +699,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s_mul_s_eq_s_add">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000122"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000125"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -646,7 +715,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.3</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.6</a></li>
           
         </ul>
     
@@ -678,13 +747,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>    For any \(\sigma , \gamma \in F\) we have that </p>
-<div class="displaymath" id="a0000000123">
+<div class="displaymath" id="a0000000126">
   \[  s_\sigma s_\gamma = s_{\sigma + \gamma }.  \]
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000122">
+<div class="proof_wrapper" id="a0000000125">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -693,7 +762,7 @@
   </div>
   <div class="proof_content">
   <p>We verify by matrix multiplication that indeed: </p>
-<div class="displaymath" id="a0000000124">
+<div class="displaymath" id="a0000000127">
   \begin{equation*}  s_\sigma s_\gamma = \begin{bmatrix}  1 
 
 &  0 
@@ -728,7 +797,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.8</span>
+    <span class="lemma_thmlabel">5.11</span>
     <div class="thm_header_extras">
 
         </div>
@@ -736,7 +805,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d_mul_s_mul_d_inv_eq_s">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000125"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000128"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -752,9 +821,9 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.2</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.5</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.3</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.6</a></li>
           
         </ul>
     
@@ -786,13 +855,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   We have that for all \(\delta \in F^\times \) and \(\sigma \in F\) </p>
-<div class="displaymath" id="a0000000126">
+<div class="displaymath" id="a0000000129">
   \[  d_\delta s_\sigma d^{-1}_\delta = s_{\sigma \delta ^{-2}}.  \]
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000125">
+<div class="proof_wrapper" id="a0000000128">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -801,7 +870,7 @@
   </div>
   <div class="proof_content">
   <p>We verify by matrix multiplication that indeed: </p>
-<div class="displaymath" id="a0000000127">
+<div class="displaymath" id="a0000000130">
   \begin{equation*}  d_\delta s_\sigma d^{-1}_\delta = \!  \begin{bmatrix}  \delta 
 
 &  0 
@@ -860,7 +929,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.9</span>
+    <span class="lemma_thmlabel">5.12</span>
     <div class="thm_header_extras">
 
         </div>
@@ -868,7 +937,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.w_mul_d_eq_d_inv_w">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000128"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000131"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -884,9 +953,9 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.2</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.5</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.w">Definition 5.5</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.w">Definition 5.8</a></li>
           
         </ul>
     
@@ -918,13 +987,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   For any \(\delta \in F^\times \) we have: </p>
-<div class="displaymath" id="a0000000129">
+<div class="displaymath" id="a0000000132">
   \[  w d_\delta w^{-1} = d^{-1}_\delta .  \]
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000128">
+<div class="proof_wrapper" id="a0000000131">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -933,7 +1002,7 @@
   </div>
   <div class="proof_content">
   <p>We verify by matrix multiplication that indeed </p>
-<div class="displaymath" id="a0000000130">
+<div class="displaymath" id="a0000000133">
   \begin{equation*}  w d_\delta w^{-1} = \begin{bmatrix}  0 
 
 &  1 
@@ -994,7 +1063,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.10</span>
+    <span class="remark_thmlabel">5.13</span>
     <div class="thm_header_extras">
 
     
@@ -1035,7 +1104,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.11</span>
+    <span class="remark_thmlabel">5.14</span>
     <div class="thm_header_extras">
 
     
@@ -1058,7 +1127,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#det_eq_mul_diag_of_lower_triangular">Remark 5.10</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#det_eq_mul_diag_of_lower_triangular">Remark 5.13</a></li>
           
         </ul>
     
@@ -1096,7 +1165,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.12</span>
+    <span class="remark_thmlabel">5.15</span>
     <div class="thm_header_extras">
 
     
@@ -1119,9 +1188,9 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.3</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.6</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#det_eq_mul_diag_of_lower_triangular">Remark 5.10</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#det_eq_mul_diag_of_lower_triangular">Remark 5.13</a></li>
           
         </ul>
     
@@ -1167,7 +1236,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.13</span>
+    <span class="remark_thmlabel">5.16</span>
     <div class="thm_header_extras">
 
     
@@ -1218,7 +1287,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.14</span>
+    <span class="definition_thmlabel">5.17</span>
     <span class="definition_thmtitle">The subgroup of diagonal matrices</span>
     <div class="thm_header_extras">
 
@@ -1254,7 +1323,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>   The set of diagonal matrices with matrix multiplication is a subgroup of \(\operatorname{SL}_2(F)\): </p>
-<div class="displaymath" id="a0000000131">
+<div class="displaymath" id="a0000000134">
   \[  D = \{ d_\delta \;  | \;  \delta \in F^\times \}  = \left\{  \begin{bmatrix} \delta 
 
 &  0
@@ -1273,7 +1342,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.15</span>
+    <span class="definition_thmlabel">5.18</span>
     <span class="definition_thmtitle">The subgroup of shear matrices</span>
     <div class="thm_header_extras">
 
@@ -1309,7 +1378,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>   The set of shear matrices with matrix multiplication is a subgroup of \(\operatorname{SL}_2(F)\): </p>
-<div class="displaymath" id="a0000000132">
+<div class="displaymath" id="a0000000135">
   \[  S = \{ s_\sigma \;  | \sigma \in F\}  = \left\{ \begin{bmatrix} 1 
 
 &  0
@@ -1328,7 +1397,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.16</span>
+    <span class="definition_thmlabel">5.19</span>
     <span class="definition_thmtitle">The subgroup of lower triangular matrices</span>
     <div class="thm_header_extras">
 
@@ -1363,8 +1432,8 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   The set of lower triangular matrices (see <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#mem_L_iff_lower_triangular">5.17</a>) with matrix multiplication is a subgroup of \(\operatorname{SL}_2(F)\) </p>
-<div class="displaymath" id="a0000000133">
+  <p>   The set of lower triangular matrices (see <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#mem_L_iff_lower_triangular">5.20</a>) with matrix multiplication is a subgroup of \(\operatorname{SL}_2(F)\) </p>
+<div class="displaymath" id="a0000000136">
   \[  L = DS  \]
 </div>
 <p>where \(DS = \{ d_\delta s_\sigma \;  | \;  \delta \in F^\times \text{ and } \sigma \in F \} \) is the pointwise product of \(D\) and \(S\). </p>
@@ -1376,7 +1445,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.17</span>
+    <span class="remark_thmlabel">5.20</span>
     <div class="thm_header_extras">
 
         </div>
@@ -1384,7 +1453,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#mem_L_iff_lower_triangular">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000134"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000137"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1400,9 +1469,9 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.2</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.5</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.3</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.6</a></li>
           
         </ul>
     
@@ -1443,7 +1512,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000134">
+<div class="proof_wrapper" id="a0000000137">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1471,7 +1540,7 @@
 \end{bmatrix}\) </p>
 <p>Setting \(\delta = \alpha \in F^\times \) as \(\alpha \delta = 1\) and setting \(\sigma = \gamma \alpha \) </p>
 <p>indeed yields the equality </p>
-<div class="displaymath" id="a0000000135">
+<div class="displaymath" id="a0000000138">
   \[  d_\delta s_\sigma = \begin{bmatrix}  \alpha 
 
 &  0
@@ -1486,18 +1555,18 @@
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000136">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000139">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.18</span>
+    <span class="remark_thmlabel">5.21</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000136">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000139">#</a>
     
     
     
@@ -1520,18 +1589,18 @@
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000137">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000140">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.19</span>
+    <span class="remark_thmlabel">5.22</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000137">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000140">#</a>
     
     
     
@@ -1619,7 +1688,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.20</span>
+    <span class="lemma_thmlabel">5.23</span>
     <span class="lemma_thmtitle">\((D, \cdot ) \cong (F^\times , \cdot )\)</span>
     <div class="thm_header_extras">
 
@@ -1628,7 +1697,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D_iso_units">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000138"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000141"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1644,9 +1713,9 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D">Definition 5.14</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D">Definition 5.17</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d_mul_d_eq_d_mul">Lemma 5.6</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d_mul_d_eq_d_mul">Lemma 5.9</a></li>
           
         </ul>
     
@@ -1681,7 +1750,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000138">
+<div class="proof_wrapper" id="a0000000141">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1690,7 +1759,7 @@
   </div>
   <div class="proof_content">
   <p>The function \(\psi : F^\times \rightarrow D\) defined by \(\psi (\delta ) = d_\delta \) is a homomorphism between the group \(F^\times \) under normal multiplication and \(D\) under normal matrix multiplication: </p>
-<div class="displaymath" id="a0000000139">
+<div class="displaymath" id="a0000000142">
   \begin{align*}  \psi (\delta \rho ) = d_{\delta \rho } = d_\delta d_\rho = \psi (\delta ) \psi (\rho ). \tag {by Lemma \ref{6.1}} \end{align*}
 </div>
 <p> Observe that \(\psi \) is trivially injective and surjective and thus an isomorphism. So \(D\cong F^\times \) and \(D\) is a subgroup of \(L\).<br /></p>
@@ -1702,7 +1771,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.21</span>
+    <span class="lemma_thmlabel">5.24</span>
     <span class="lemma_thmtitle"> \((S, \cdot ) \cong (F, +)\) </span>
     <div class="thm_header_extras">
 
@@ -1711,7 +1780,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S_iso_F, SpecialMatrices.s_mul_s_eq_s_add">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000140"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000143"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1727,7 +1796,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.15</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.18</a></li>
           
         </ul>
     
@@ -1762,7 +1831,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000140">
+<div class="proof_wrapper" id="a0000000143">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1771,7 +1840,7 @@
   </div>
   <div class="proof_content">
   <p>The function \(\phi : F \rightarrow T\) defined by \(\phi (\sigma ) = s_\sigma \) is a homomorphism between the group \(F\) under addition and \(S\) under normal matrix multiplication: </p>
-<div class="displaymath" id="a0000000141">
+<div class="displaymath" id="a0000000144">
   \begin{align*}  \phi (\sigma + \gamma ) = s_{\sigma + \gamma } = s_\sigma s_\gamma = \phi (\sigma ) \phi (\gamma ). \tag {by Lemma \ref{6.1}} \end{align*}
 </div>
 <p> It is clear that \(\phi \) is injective and surjective and thus an isomorphism. So \( S \cong F\) and \(S\) is a subgroup of \(L\). <br /></p>
@@ -1783,7 +1852,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.22</span>
+    <span class="lemma_thmlabel">5.25</span>
     <div class="thm_header_extras">
 
         </div>
@@ -1791,7 +1860,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.normal_S_subgroupOf_L">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000142"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000145"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1822,7 +1891,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000142">
+<div class="proof_wrapper" id="a0000000145">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1831,26 +1900,26 @@
   </div>
   <div class="proof_content">
   <p>Let \(s_\gamma \) and \(d_\delta s_\sigma \) be arbitrary elements of \(T\) and \(H\) respectively. Conjugating \(s_\gamma \) by \(d_\delta s_\sigma \) gives, </p>
-<div class="displaymath" id="a0000000143">
+<div class="displaymath" id="a0000000146">
   \begin{align*}  (d_\delta s_\sigma ) s_\gamma (d_\delta s_\sigma )^{-1} & = (d_\delta s_\sigma ) s_\gamma (t^{-1}_\sigma d^{-1}_\delta ) \\[1.5ex]& = d_\delta (s_\sigma s_\gamma t_{-\sigma }) d^{-1}_\delta \qquad \tag {since $t^{-1}_\sigma =t_{-\sigma }$} \\[1.5ex]& = d_\delta s_\gamma d^{-1}_\delta \tag {by Lemma \ref{6.1}} \\[1.5ex]& = s_{\gamma \delta ^{-2}} \in S. \tag {by Lemma \ref{6.1}} \end{align*}
 </div>
 <p> Since \(s_\gamma \) was chosen arbitrarily from \(\operatorname{SL}_2(F)\)we have (\(d_\delta s_\sigma ) S (d_\delta s_\sigma )^{-1} = S\) and since \(d_\delta s_\sigma \) was chosen arbitrarily from \(L\), we have that \(S \vartriangleleft L\). <br /></p>
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000144">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000147">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.23</span>
+    <span class="remark_thmlabel">5.26</span>
     <span class="remark_thmtitle">Subgroups of subgroups in Lean</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000144">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000147">#</a>
     
     
     
@@ -1873,7 +1942,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.24</span>
+    <span class="lemma_thmlabel">5.27</span>
     <div class="thm_header_extras">
 
         </div>
@@ -1881,7 +1950,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D_join_S_quot_S_subgroupOf_D_join_S_mulEquiv_D_subgroupOf_D_join_S">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000145"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000148"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1897,11 +1966,11 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D">Definition 5.14</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D">Definition 5.17</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.15</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.18</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.normal_S_subgroupOf_L">Lemma 5.22</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.normal_S_subgroupOf_L">Lemma 5.25</a></li>
           
         </ul>
     
@@ -1936,7 +2005,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000145">
+<div class="proof_wrapper" id="a0000000148">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1945,32 +2014,32 @@
   </div>
   <div class="proof_content">
   <p>The function \(\pi : L \rightarrow D\) defined by \(\pi (d_\delta s_\sigma ) = d_\delta \) is a homomorphism between \(L\) under normal matrix multiplication and \(D\) under normal matrix multiplication: </p>
-<div class="displaymath" id="a0000000146">
+<div class="displaymath" id="a0000000149">
   \begin{align*}  \pi (d_\delta s_\sigma d_\rho s_\gamma ) & = \pi (d_\delta d_\rho s_\sigma s_\gamma ) \tag {where $\sigma = \sigma \rho ^{2}$ by Lemma \ref{6.1}} \\ & = d_\delta d_\rho \\ & = \pi (d_\delta s_\sigma )\pi (d_\rho s_\gamma ). \end{align*}
 </div>
 <p>We see that \(\pi \) is trivially surjective and has kernel </p>
-<div class="displaymath" id="a0000000147">
+<div class="displaymath" id="a0000000150">
   \begin{align*}  \ker (\pi ) & = \{  d_\delta s_\sigma \in L : \pi (d_\delta s_\sigma ) = I_{\operatorname{SL}_2(F)}\}  = S. \end{align*}
 </div>
 <p> Thus by the First Isomorphism Theorem, </p>
-<div class="displaymath" id="a0000000148">
+<div class="displaymath" id="a0000000151">
   \begin{align*}  L / \ker (\pi ) & \cong \text{Im}(\pi ), \\ L / & \cong D. \end{align*}
 </div>
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000149">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000152">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.25</span>
+    <span class="remark_thmlabel">5.28</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000149">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000152">#</a>
     
     
     
@@ -1994,19 +2063,19 @@
 </pre>
 <p>recall that within Lean, <span class="ttfamily">F</span> denotes the base field for \(\operatorname{SL}_2(F)\), \(D\) and \(S\). </p>
 <p>Written informally, it corresponds to </p>
-<div class="displaymath" id="a0000000150">
+<div class="displaymath" id="a0000000153">
   \[  D \cong \frac{D}{\bot } = \frac{D}{S \sqcap D} \cong \frac{D \sqcup S}{S} = \frac{L}{S}  \]
 </div>
 
   </div>
 </div>
 <h1 id="a0000000036">5.3 The Centre of \(\operatorname{SL}_2(F)\)</h1>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000151">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000154">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.26</span>
+    <span class="definition_thmlabel">5.29</span>
     <div class="thm_header_extras">
 
     
@@ -2014,7 +2083,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000151">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000154">#</a>
     
     
     
@@ -2041,7 +2110,7 @@
   </div>
   <div class="definition_thmcontent">
   <p> The <b class="bfseries">centre</b> \(Z(G)\) of a group \(G\) is the set of elements of \(G\) that commute with every element of \(G\). </p>
-<div class="displaymath" id="a0000000152">
+<div class="displaymath" id="a0000000155">
   \begin{equation*}  Z(G) = \{  z \in G : \forall g \in G, \hspace{6pt} gz=zg \} . \end{equation*}
 </div>
 <p> It is an immediate observation that \(Z(G)\) is a normal subgroup of \(G\), since for each \(z \in Z\), \(gzg^{-1} = gg^{-1}z = z\), \(\forall g \in G\). It’s also clear that a group is abelian if and only if \(Z(G)=G\). </p>
@@ -2053,7 +2122,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.27</span>
+    <span class="definition_thmlabel">5.30</span>
     <div class="thm_header_extras">
 
     
@@ -2091,18 +2160,18 @@
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000153">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000156">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.28</span>
+    <span class="remark_thmlabel">5.31</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000153">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000156">#</a>
     
     
     
@@ -2110,7 +2179,7 @@
   </div>
   <div class="remark_thmcontent">
   <p>Observer that the subgroup generated by an element \(g \in G\), \(\langle g \rangle \), can be thought of more generally within any lattice as the closure of a singleton set \({g}\). Therefore, the subgroup generated by \(-I\) is equal to </p>
-<div class="displaymath" id="a0000000154">
+<div class="displaymath" id="a0000000157">
   \[ \langle -I \rangle = \overline{\{ -1\} } = \inf \{  K \le G \;  | \;  \{ -1\}  \subseteq K \} . \]
 </div>
 <p>When taking the closure of a singleton, when the ambient lattice is the subgroup lattice; and the closure corresponds to taking the powers of the element in the singleton \(\{ g\} \), which is what is typically understood as the subgroup generated by \(g\). </p>
@@ -2126,7 +2195,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.29</span>
+    <span class="lemma_thmlabel">5.32</span>
     <div class="thm_header_extras">
 
     
@@ -2169,7 +2238,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.30</span>
+    <span class="lemma_thmlabel">5.33</span>
     <div class="thm_header_extras">
 
         </div>
@@ -2177,7 +2246,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.center_SL2_eq_Z">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000155"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000158"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2193,7 +2262,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.27</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.30</a></li>
           
         </ul>
     
@@ -2228,7 +2297,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000155">
+<div class="proof_wrapper" id="a0000000158">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2305,7 +2374,7 @@
 \end{bmatrix}. \end{align}
 </div>
 <p>Equating either the top left or bottom right entries, we see that \(z_2 \gamma = z_3 \beta \). Since \(\beta \) and \(\gamma \) can take any values in \(F\), for equality to always hold we must have \(z_2 = 0 = z_3\). Hence equation (<a href="Ch5_PropertiesOfSLOverAlgClosedField.html#myeq1">3</a>) simplifies to </p>
-<div class="displaymath" id="a0000000156">
+<div class="displaymath" id="a0000000159">
   \begin{equation*} \begin{bmatrix}  z_1 \alpha 
 
 &  z_1 \beta 
@@ -2325,7 +2394,7 @@
 \end{bmatrix}. \end{equation*}
 </div>
 <p>Thus </p>
-<div class="displaymath" id="a0000000157">
+<div class="displaymath" id="a0000000160">
   \begin{equation*}  z_1 = z_4 \qquad \text{and} \qquad z = \begin{bmatrix}  z_1 
 
 &  0 
@@ -2346,7 +2415,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.31</span>
+    <span class="lemma_thmlabel">5.34</span>
     <div class="thm_header_extras">
 
         </div>
@@ -2354,7 +2423,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.exists_unique_orderOf_eq_two">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000158"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000161"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2385,7 +2454,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000158">
+<div class="proof_wrapper" id="a0000000161">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2394,7 +2463,7 @@
   </div>
   <div class="proof_content">
   <p>Consider an arbitrary element \(x \in \operatorname{SL}_2(F)\)with order 2. That is \(x^2 = I_{\operatorname{SL}_2(F)}\), \(x \neq I_{\operatorname{SL}_2(F)}\)and thus \(x=x^{-1}\). </p>
-<div class="displaymath" id="a0000000159">
+<div class="displaymath" id="a0000000162">
   \begin{equation*}  x = \begin{bmatrix}  \alpha 
 
 &  \beta 
@@ -2422,7 +2491,7 @@
 \end{bmatrix}. \end{equation*}
 </div>
 <p> Thus \(\alpha = \delta \), \(\beta = - \beta \Rightarrow 2\beta = 0\) and \(\gamma = - \gamma \Rightarrow 2\gamma = 0\). In the case of \(p \neq 2\) this gives \(\beta = 0 = \gamma \). So </p>
-<div class="displaymath" id="a0000000160">
+<div class="displaymath" id="a0000000163">
   \begin{equation*}  x = \begin{bmatrix}  \alpha 
 
 &  0 
@@ -2442,7 +2511,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.32</span>
+    <span class="lemma_thmlabel">5.35</span>
     <div class="thm_header_extras">
 
         </div>
@@ -2450,7 +2519,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.card_Z_eq_two_of_two_ne_zero">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000161"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000164"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2481,7 +2550,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000161">
+<div class="proof_wrapper" id="a0000000164">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2498,7 +2567,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.33</span>
+    <span class="lemma_thmlabel">5.36</span>
     <div class="thm_header_extras">
 
         </div>
@@ -2506,7 +2575,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.card_Z_eq_one_of_two_eq_zero">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000162"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000165"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2537,7 +2606,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000162">
+<div class="proof_wrapper" id="a0000000165">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2554,7 +2623,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.34</span>
+    <span class="lemma_thmlabel">5.37</span>
     <span class="lemma_thmtitle">\(Z\) is cyclic</span>
     <div class="thm_header_extras">
 
@@ -2563,7 +2632,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.IsCyclic_Z">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000163"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000166"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2594,7 +2663,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000163">
+<div class="proof_wrapper" id="a0000000166">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2612,7 +2681,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.35</span>
+    <span class="definition_thmlabel">5.38</span>
     <div class="thm_header_extras">
 
     
@@ -2635,11 +2704,11 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.15</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.18</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.27</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.30</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s_mul_s_eq_s_add">Lemma 5.7</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s_mul_s_eq_s_add">Lemma 5.10</a></li>
           
         </ul>
     
@@ -2679,7 +2748,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.36</span>
+    <span class="remark_thmlabel">5.39</span>
     <div class="thm_header_extras">
 
     
@@ -2702,7 +2771,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.SZ">Definition 5.35</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.SZ">Definition 5.38</a></li>
           
         </ul>
     
@@ -2740,7 +2809,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.37</span>
+    <span class="lemma_thmlabel">5.40</span>
     <div class="thm_header_extras">
 
     
@@ -2763,13 +2832,13 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.27</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.30</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.15</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.18</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.closure_neg_one_eq">Lemma 5.29</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.closure_neg_one_eq">Lemma 5.32</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S_mul_Z_subset_SZ">Remark 5.36</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S_mul_Z_subset_SZ">Remark 5.39</a></li>
           
         </ul>
     
@@ -2811,7 +2880,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.38</span>
+    <span class="lemma_thmlabel">5.41</span>
     <span class="lemma_thmtitle">Upper triangularizability criteria</span>
     <div class="thm_header_extras">
 
@@ -2820,7 +2889,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#isConj_upper_triangular_iff">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000164"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000167"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2851,7 +2920,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000164">
+<div class="proof_wrapper" id="a0000000167">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2860,7 +2929,7 @@
   </div>
   <div class="proof_content">
   <p>Given a matrix \(U\) is in upper triangular form if and only if </p>
-<div class="displaymath" id="a0000000165">
+<div class="displaymath" id="a0000000168">
   \[  U = \begin{bmatrix}  a 
 
 &  b
@@ -2881,7 +2950,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.39</span>
+    <span class="lemma_thmlabel">5.42</span>
     <span class="lemma_thmtitle">(Upper) triangularizability of a \(2 \times 2\) matrix over an algebraically closed field</span>
     <div class="thm_header_extras">
 
@@ -2890,7 +2959,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#isTriangularizable_of_algClosed">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000166"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000169"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -2906,7 +2975,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#isConj_upper_triangular_iff">Lemma 5.38</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#isConj_upper_triangular_iff">Lemma 5.41</a></li>
           
         </ul>
     
@@ -2938,7 +3007,7 @@
   </div>
   <div class="lemma_thmcontent">
   <p>    When \(F\) is an algebraically closed field, for any \(M \in \textrm{Mat}_2(F)\) there exists an invertible matrix \(C \in \operatorname{SL}_2(F) \le \operatorname{GL}_2(F)\) such that \(C M C^{-1} = U\) where </p>
-<div class="displaymath" id="a0000000167">
+<div class="displaymath" id="a0000000170">
   \[  U = \begin{bmatrix}  a 
 
 &  b
@@ -2953,7 +3022,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000166">
+<div class="proof_wrapper" id="a0000000169">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -2963,7 +3032,7 @@
   <div class="proof_content">
   <p>We prove this by direct computation. </p>
 <p>Let </p>
-<div class="displaymath" id="a0000000168">
+<div class="displaymath" id="a0000000171">
   \[  M = \begin{bmatrix}  \alpha 
 
 &  \beta 
@@ -2974,7 +3043,7 @@
 
 \end{bmatrix} \in \textrm{Mat}_2(F)  \]
 </div>
-<p>By lemma <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#isConj_upper_triangular_iff">5.38</a>, we only need to show that we can find a matrix \(C \in \operatorname{SL}_2(F)\) such that when it acts on \(M\) by conjugation, the bottom left entry is annihilated. </p>
+<p>By lemma <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#isConj_upper_triangular_iff">5.41</a>, we only need to show that we can find a matrix \(C \in \operatorname{SL}_2(F)\) such that when it acts on \(M\) by conjugation, the bottom left entry is annihilated. </p>
 <ul class="itemize">
   <li><p>Suppose on the one hand that \(\beta \ne 0\) </p>
 <p>Observe that </p>
@@ -2995,14 +3064,14 @@
 </p>
 </div>
 <p>Given \(F\) is algebraically closed we can set \(\sigma \in F\) to be a root of the polynomial </p>
-<div class="displaymath" id="a0000000169">
+<div class="displaymath" id="a0000000172">
   \[  P(X) := -\beta X^{2} + \alpha X - \delta X + \gamma  \]
 </div>
 <p>setting \(C := s_\sigma \) yields the desired element which triangularizes \(M\). </p>
 </li>
   <li><p>Suppose on the other hand that \(\beta = 0\) </p>
 <p>Given the top right entry is zero we only need find a matrix in \(\operatorname{SL}_2(F)\) which flips the antidiagonal entries (modulo modifying the signs) it is thus sufficient to use </p>
-<div class="displaymath" id="a0000000170">
+<div class="displaymath" id="a0000000173">
   \[  w = \begin{bmatrix}  0 
 
 &  -1
@@ -3031,7 +3100,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.40</span>
+    <span class="remark_thmlabel">5.43</span>
     <span class="remark_thmtitle">Upper triangular matrices are conjugate to lower triangular matrices</span>
     <div class="thm_header_extras">
 
@@ -3055,7 +3124,7 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.w">Definition 5.5</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.w">Definition 5.8</a></li>
           
         </ul>
     
@@ -3093,7 +3162,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.41</span>
+    <span class="lemma_thmlabel">5.44</span>
     <div class="thm_header_extras">
 
         </div>
@@ -3101,7 +3170,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#upper_triangular_isConj_diagonal_of_nonzero_det">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000171"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000174"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3140,7 +3209,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000171">
+<div class="proof_wrapper" id="a0000000174">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3150,7 +3219,7 @@
   <div class="proof_content">
   <p>We show this by direct computation. </p>
 <p>Conjugation of \(M\) by the matrix </p>
-<div class="displaymath" id="a0000000172">
+<div class="displaymath" id="a0000000175">
   \[  C := \begin{bmatrix}  1 
 
 &  \frac{\beta }{\alpha - \delta }
@@ -3170,7 +3239,7 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">5.42</span>
+    <span class="proposition_thmlabel">5.45</span>
     <div class="thm_header_extras">
 
         </div>
@@ -3178,7 +3247,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000173"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000176"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3194,11 +3263,11 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#isTriangularizable_of_algClosed">Lemma 5.39</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#isTriangularizable_of_algClosed">Lemma 5.42</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#lower_triangular_isConj_upper_triangular">Remark 5.40</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#lower_triangular_isConj_upper_triangular">Remark 5.43</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#upper_triangular_isConj_diagonal_of_nonzero_det">Lemma 5.41</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#upper_triangular_isConj_diagonal_of_nonzero_det">Lemma 5.44</a></li>
           
         </ul>
     
@@ -3233,7 +3302,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000173">
+<div class="proof_wrapper" id="a0000000176">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3242,13 +3311,13 @@
   </div>
   <div class="proof_content">
   <p>Since \(F\) is algebraically closed, any element \(x \in \operatorname{SL}_2(F)\)can be regarded as a linear transformation in the 2 dimensional vector space over \(F\), with the eigenvalues \(\pi _1\) and \(\pi _2\). <br /><br /> If \(\pi _1\) and \(\pi _2\) are distinct, then \(x\) is thus diagonalisable. That is, there exists an invertible matrix \(a \in GL(2, F)\) such that \(y = axa^{-1}\) is a diagonal matrix. Furthermore, we can multiply \(a\) by a suitable scalar to find an element in \(\operatorname{SL}_2(F)\)which conjugates \(x\) and \(y\): </p>
-<div class="displaymath" id="a0000000174">
+<div class="displaymath" id="a0000000177">
   \begin{align*}  \text{Set} \;  b = \frac{a}{\sqrt{\text{det}(a)}}, \quad \text{thus } \;  bxb^{-1} =\frac{a}{\sqrt{\text{det}(a)}} \;  x \;  (\sqrt{\text{det}(a)} \;  )\, a^{-1} = axa^{-1} = y. \end{align*}
 </div>
 <p>Observe that det\((b)=1\), hence \(x\) and \(y\) are conjugate in \(L\). Furthermore, since \(y\) is a diagonal matrix it must belong to the set \(D\), showing that \(x\) is conjugate to \(d_\delta \) for some \(\delta \in F^\times \). <br /><br /> If \(\pi _1 = \pi _2\) then \(x\) has just one repeated eigenvalue. Suppose that \(x\) is diagonalisable. Then there exists an element \(c \in GL(2, F)\) and a diagonal matrix \(\pi _1 I_G\) such that \(x = c(\pi _1 I_G)c^{-1} = \pi _1 I_G\). Thus \(x = \pm I_G\), which trivially belongs to both \(D\) and \(\times Z\). <br /><br />Now assume that \(x\) is not diagonalisable. Chapter 7 of <span class="cite">
 	[
 </span> shows that there exists an element \(d \in GL(2, F)\), such that \(x= djd^{-1}\), where, </p>
-<div class="displaymath" id="a0000000175">
+<div class="displaymath" id="a0000000178">
   \[ j = \begin{bmatrix}  \pi _1 
 
 &  1 
@@ -3260,7 +3329,7 @@
 \end{bmatrix} \]
 </div>
 <p> is the Jordan Normal Form of \(x\). By the method described above, we can multiply \(d\) by a suitable scalar to show that \(x\) is conjugate to \(j\) in \(L\). Now we conjugate \(j\) by an element of \(\operatorname{SL}_2(F)\)whose top left entry is 0. </p>
-<div class="displaymath" id="a0000000176">
+<div class="displaymath" id="a0000000179">
   \begin{align*} \begin{bmatrix}  0 
 
 &  -\gamma ^{-1} 
@@ -3315,18 +3384,18 @@
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000177">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000180">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.43</span>
+    <span class="remark_thmlabel">5.46</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000177">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000180">#</a>
     
     
     
@@ -3334,7 +3403,7 @@
   </div>
   <div class="remark_thmcontent">
   <p>This was the first tedious proof to formalise in Lean. </p>
-<p>Given the (informal) proof presented of propostion <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed">5.42</a> extracted from Christopher Butler’s exposition uses the Jordan Normal Form theorem. </p>
+<p>Given the (informal) proof presented of propostion <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed">5.45</a> extracted from Christopher Butler’s exposition uses the Jordan Normal Form theorem. </p>
 <p>Furthermore, since at the time of writing, the Jordan Normal form theorem is still not yet in Mathlib this theorem turned out to be quite difficult to formalise. </p>
 <p>Ultimately, I initially set out to prove the Jordan Normal Form theorem for \(2 \times 2\) matrices by studying the eigenspace and generalized eigenspaces of the endomorphism associated to a \(2 \times 2\) matrix - It turned out to be much more effort and did not manage to complete it. Eventually I understood that I might have well formalised the general theorem and furthemore, understood why the theorem is not yet in mathlib; and more in general, it is clear to me why certain "standard" results are not in Mathlib. The crux always lies at finding the right abstraction, in this particular case, is it best to prove the theorem for matrices or for endomoprhism? what will be the easiest approach which is most general and useful (!). The reason why the Jordan Normal Form theorem is not yet in Mathlib is because it hinges on the following two results which have not been formalised yet: </p>
 <ol class="enumerate">
@@ -3343,21 +3412,21 @@
   <li><p>The classification of semisimple endomorphisms. </p>
 </li>
 </ol>
-<p>Such formalization would be an amazing project to undertake. Bear in mind, the theorem formalized is the more general Jordan-Chevallier theorem. </p>
+<p>Such formalisation would be an amazing project to undertake. Bear in mind, the theorem formalized is the more general Jordan-Chevallier theorem. </p>
 <p>To my understanding, the general theorem will be formalised by studying the eigenspace and general eigenspace. This approach turned out to be essentially equivalent in difficuly to the way I was initially formalising the special case of \(2 \times 2\) matrices over an algebraically closed field. </p>
 <p>Therefore, given my task has a fair amount of constraints, namely, my task being the Jordan Normal Form restricted to \(2 \times 2\) matrices over an algebraically closed field with determinant one. I eventually heeded Prof. Kevin Buzzard’s advice of making my life easy, and classify matrices up to conjugation by finding the suitable matrices by which to conjugate to put them in either the form of \(d_\delta \) or \(\pm s_\sigma \). </p>
 
   </div>
 </div>
-<h1 id="a0000000039">5.5 Centralisers &amp; Normalisers</h1>
-<p>Both the centraliser and normaliser of a subset \(H\) are subgroups of \(G\). Note also that the centraliser is a stronger condition than the normaliser and any element in the centraliser of \(H\) is also in its normaliser. If \(H\) is a singleton then it’s clear that its centraliser and normaliser are equal.<br /></p>
-<h3 id="a0000000040">Normalisers</h3>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000178">
+<h1 id="a0000000039">5.5 Centralizers &amp; Normalizers</h1>
+<p>Both the centraliser and normalizer of a subset \(H\) are subgroups of \(G\). Note also that the centraliser is a stronger condition than the normalizer and any element in the centraliser of \(H\) is also in its normaliser. If \(H\) is a singleton then it’s clear that its centraliser and normaliser are equal.<br /></p>
+<h3 id="a0000000040">Normalizers</h3>
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000181">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.44</span>
+    <span class="definition_thmlabel">5.47</span>
     <div class="thm_header_extras">
 
     
@@ -3365,7 +3434,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000178">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000181">#</a>
     
     
     
@@ -3391,8 +3460,8 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p> The <b class="bfseries">normaliser</b> \(N_G(H)\) of a subset \(H\) of a group \(G\) is the set of elements of \(G\) which stabilise \(H\) under conjugation. </p>
-<div class="displaymath" id="a0000000179">
+  <p> The <b class="bfseries">normalizer</b> \(N_G(H)\) of a subset \(H\) of a group \(G\) is the set of elements of \(G\) which stabilise \(H\) under conjugation. </p>
+<div class="displaymath" id="a0000000182">
   \begin{equation*}  N_G(H) = \{  g \in G : gHg^{-1}=H\} . \end{equation*}
 </div>
 
@@ -3403,7 +3472,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.45</span>
+    <span class="remark_thmlabel">5.48</span>
     <div class="thm_header_extras">
 
     
@@ -3444,7 +3513,7 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">5.46</span>
+    <span class="proposition_thmlabel">5.49</span>
     <span class="proposition_thmtitle">Normalizer of subgroups of \(S\) are contained in \(L\)</span>
     <div class="thm_header_extras">
 
@@ -3453,7 +3522,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#normalizer_subgroup_S_le_L">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000180"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000183"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3469,9 +3538,9 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#mem_L_iff_lower_triangular">Remark 5.17</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#mem_L_iff_lower_triangular">Remark 5.20</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#lower_triangular_iff_top_right_entry_eq_zero">Remark 5.45</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#lower_triangular_iff_top_right_entry_eq_zero">Remark 5.48</a></li>
           
         </ul>
     
@@ -3506,7 +3575,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000180">
+<div class="proof_wrapper" id="a0000000183">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3515,7 +3584,7 @@
   </div>
   <div class="proof_content">
   <p>Let \(s_\sigma \) be an arbitary element of \(S_0\) with \(\sigma \neq 0\). To determine the normaliser of \(S_0\) in \(\operatorname{SL}_2(F)\)we consider which \(x \in \operatorname{SL}_2(F)\) satisfy \(x s_\sigma x^{-1} \in S_0\). </p>
-<div class="displaymath" id="a0000000181">
+<div class="displaymath" id="a0000000184">
   \begin{align*}  x s_\sigma x^{-1} & = \begin{bmatrix}  \alpha 
 
 &  \beta 
@@ -3575,7 +3644,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.47</span>
+    <span class="lemma_thmlabel">5.50</span>
     <div class="thm_header_extras">
 
         </div>
@@ -3583,7 +3652,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#ex_of_card_D_gt_two">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000182"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000185"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3614,7 +3683,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000182">
+<div class="proof_wrapper" id="a0000000185">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3632,7 +3701,7 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">5.48</span>
+    <span class="proposition_thmlabel">5.51</span>
     <span class="proposition_thmtitle">Normalizers of subgroups of \(D\) are contained in \(L\)</span>
     <div class="thm_header_extras">
 
@@ -3641,7 +3710,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#normalizer_subgroup_D_eq_DW">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000183"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000186"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3657,11 +3726,11 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_diagonal_iff">Remark 5.11</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_diagonal_iff">Remark 5.14</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_antidiagonal_iff">Remark 5.13</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_antidiagonal_iff">Remark 5.16</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#ex_of_card_D_gt_two">Lemma 5.47</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#ex_of_card_D_gt_two">Lemma 5.50</a></li>
           
         </ul>
     
@@ -3696,7 +3765,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000183">
+<div class="proof_wrapper" id="a0000000186">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -3757,7 +3826,7 @@
 \end{bmatrix} \in D_0. \end{align}
 </div>
 <p>Since (<a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.3proof3">5</a>) is in \(D_0\), the top right and bottom left entries must be 0. Since \(\delta \neq \pm 1\), we have \(\delta \neq \delta ^{-1}\) and so \(\alpha \beta = 0 = \gamma \delta \). <br /><br /> If \(\alpha = 0\), then \(\beta \) and \(\gamma \) are non-zero since det\((x) = 1\), thus \(\delta = 0\). So det\((x) = - \gamma \beta = 1\) and \(- \gamma = \beta ^{-1}\). (<a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.3proof3">5</a>) becomes </p>
-<div class="displaymath" id="a0000000184">
+<div class="displaymath" id="a0000000187">
   \[ \begin{bmatrix}  \delta ^{-1} 
 
 &  0 
@@ -3769,7 +3838,7 @@
 \end{bmatrix} = d^{-1}_\delta . \]
 </div>
 <p>Since \(D_0\) is a group, it contains the inverse of each of it’s elements, so \(d^{-1}_\delta \in D_0\) as required. In this case we have \(x \in wD\). <br /><br /> If \(\alpha \neq 0\), then similarly \(\beta = 0\), \(\delta = \alpha ^{-1}\) and \(\gamma = 0\). (<a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.3proof3">5</a>) now becomes </p>
-<div class="displaymath" id="a0000000185">
+<div class="displaymath" id="a0000000188">
   \[ \begin{bmatrix}  \delta 
 
 &  0 
@@ -3781,11 +3850,11 @@
 \end{bmatrix} = d_\delta \in D_0. \]
 </div>
 <p>This time we have \(x \in D\). So \(x \in D \cup wD = \langle D , w \rangle \) and any element which normalises \(D_0\) is in \(\langle D , w \rangle \), thus \(N_{\operatorname{SL}_2(F)}(D_0) \subset \langle D , w \rangle \). <br /><br />Now take an arbitrary \(y \in \langle D , w \rangle = D \cup wD\). If \(y \in D\) then \(y = d_{\rho 1}\), for some \(\rho 1 \in F^\times \). </p>
-<div class="displaymath" id="a0000000186">
+<div class="displaymath" id="a0000000189">
   \begin{align*}  d_{\rho 1} d_\delta d^{-1}_{\rho 1} = d_\delta \in D_0. \tag {by Lemma \ref{6.1}} \end{align*}
 </div>
 <p>If \(y \in wD\) then \(y = w d_{\rho 2}\), for some \( d_{\rho 2} \in F^\times \). </p>
-<div class="displaymath" id="a0000000187">
+<div class="displaymath" id="a0000000190">
   \begin{align*}  (w d_{\rho 2}) d_\delta (w d_{\rho 2})^{-1} & = w d_{\rho 2} d_\delta d^{-1}_{\rho 2} w^{-1} \\ & = w d_\delta w^{-1} \\ & = d^{-1}_\delta \in D_0 \tag {by Lemma \ref{6.1}}. \end{align*}
 </div>
 <p>Thus \(y\) indeed who whole of \(\langle D , w \rangle \) is contained in \(N_{\operatorname{SL}_2(F)}(D_0)\). This inclusion gives the desired result, \(N_{\operatorname{SL}_2(F)}(D_0) = \langle D , w \rangle \). <br /></p>
@@ -3793,12 +3862,12 @@
   </div>
 </div>
 <h3 id="a0000000041">Centralisers</h3>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000188">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000191">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.49</span>
+    <span class="definition_thmlabel">5.52</span>
     <span class="definition_thmtitle">Centralizer</span>
     <div class="thm_header_extras">
 
@@ -3807,7 +3876,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000188">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000191">#</a>
     
     
     
@@ -3834,7 +3903,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  The <b class="bfseries">centraliser</b> \(C_G(H)\) of a subset \(H\) of a group \(G\) is the set of elements of \(G\) which commute with each element of \(H\). </p>
-<div class="displaymath" id="a0000000189">
+<div class="displaymath" id="a0000000192">
   \begin{equation*}  C_G(H) = \{  g \in G : gh=hg, \quad \forall h\in L \} . \end{equation*}
 </div>
 
@@ -3845,7 +3914,7 @@
     <span class="remark_thmcaption">
     Remark
     </span>
-    <span class="remark_thmlabel">5.50</span>
+    <span class="remark_thmlabel">5.53</span>
     <div class="thm_header_extras">
 
     
@@ -3886,7 +3955,7 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">5.51</span>
+    <span class="proposition_thmlabel">5.54</span>
     <span class="proposition_thmtitle">Centralizer of noncenter \(s_\sigma \)</span>
     <div class="thm_header_extras">
 
@@ -3895,7 +3964,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_s_eq_SZ">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000190"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000193"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -3911,15 +3980,15 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_shear_iff">Remark 5.12</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_shear_iff">Remark 5.15</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_neg_eq_centralizer">Remark 5.50</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_neg_eq_centralizer">Remark 5.53</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.15</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.S">Definition 5.18</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.27</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.Z">Definition 5.30</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.3</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.s">Definition 5.6</a></li>
           
         </ul>
     
@@ -3954,7 +4023,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000190">
+<div class="proof_wrapper" id="a0000000193">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -4016,7 +4085,7 @@
 </div>
 
 <p>Equating the top left entries of (<a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.3proof2">6</a>) gives \(\alpha + \beta \sigma = \alpha \) which means \(\beta = 0\) since \(\sigma \neq 0\) by assumption. Equating the bottom left entries gives that \(\alpha = \delta \). Finally, since det\((y) = 1\), we have \(\alpha \delta = 1\) so \(\alpha = \pm 1\). Thus a \(y \in C_{\operatorname{SL}_2(F)}(s_\sigma )\) is </p>
-<div class="displaymath" id="a0000000191">
+<div class="displaymath" id="a0000000194">
   \begin{align*}  y & = \begin{bmatrix}  \alpha 
 
 &  0 
@@ -4028,11 +4097,11 @@
 \end{bmatrix}. \tag {where $\alpha = \pm 1$} \end{align*}
 </div>
 <p>So \(y = \pm s_\sigma \) for some \(\sigma \in F\), and \(SZ = \{  \pm s_\sigma \}  \subset C_{\operatorname{SL}_2(F)}(s_\sigma )\). Now take an arbitrary \(s_\gamma z \in SZ\). </p>
-<div class="displaymath" id="a0000000192">
+<div class="displaymath" id="a0000000195">
   \begin{align*}  (s_\gamma z) s_\sigma & = s_\sigma (s_\gamma z), \\ s_\gamma s_\sigma z & = s_\sigma s_\gamma z, \tag {since $z \in Z$} \\ t_{\gamma + \sigma } & = t_{\gamma + \sigma }. \end{align*}
 </div>
 <p>Thus \(s_\gamma z\) and indeed the whole of \(SZ\) is contained in \( C_{\operatorname{SL}_2(F)}(s_\sigma )\), so \(C_{\operatorname{SL}_2(F)}(s_\sigma ) = SZ\). <br /><br />Since \(S\) commutes elementwise with \(Z\) and \(\cap Z = \{  I_G \} \), we can apply Corollary <a href="Ch3_Preliminaries.html#directproductZ">3.26</a> and assert that \(C_{\operatorname{SL}_2(F)}(s_\sigma ) = SZ \cong S \times Z\) as required. The centraliser of \(- s_\sigma \) is also \(\times Z\), since an element \(x\) commutes with \(- s_\sigma \) if and only if it commutes with \(s_\sigma \): </p>
-<div class="displaymath" id="a0000000193">
+<div class="displaymath" id="a0000000196">
   \begin{align*}  xs_\sigma = s_\sigma x \iff -(x s_\sigma ) = - (s_\sigma x) \iff x(- s_\sigma ) = (- s_\sigma )x. \end{align*}
 </div>
 <p>Note that in case of \(\sigma = 0\), \(\pm s_\sigma \in Z\) and thus it’s centraliser is the whole of \(L\). </p>
@@ -4044,7 +4113,7 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">5.52</span>
+    <span class="proposition_thmlabel">5.55</span>
     <span class="proposition_thmtitle">Centralizer of noncenter \(d_\delta \)</span>
     <div class="thm_header_extras">
 
@@ -4053,7 +4122,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_d_eq_D">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000194"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000197"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -4069,11 +4138,11 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.2</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialMatrices.d">Definition 5.5</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_diagonal_iff">Remark 5.11</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialLinearGroup.fin_two_diagonal_iff">Remark 5.14</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D">Definition 5.14</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SpecialSubgroups.D">Definition 5.17</a></li>
           
         </ul>
     
@@ -4109,7 +4178,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000194">
+<div class="proof_wrapper" id="a0000000197">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -4170,7 +4239,7 @@
 \end{bmatrix}. \end{align}
 </div>
 <p>Equating the top right and bottom left entries of (<a href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.3proof4">7</a>) gives that \(\beta = 0 = \gamma \) since Since \(\delta \neq \delta ^{-1}\). Thus \(\delta = \alpha ^{-1}\) and </p>
-<div class="displaymath" id="a0000000195">
+<div class="displaymath" id="a0000000198">
   \begin{align*}  x = \begin{bmatrix}  \alpha 
 
 &  0 
@@ -4182,7 +4251,7 @@
 \end{bmatrix} \in D. \end{align*}
 </div>
 <p>Thus \(x\) and indeed the whole of \(C_{\operatorname{SL}_2(F)}(d_\delta )\) is contained in \(D\). Now take an arbitrary \(d_\rho \in D\). </p>
-<div class="displaymath" id="a0000000196">
+<div class="displaymath" id="a0000000199">
   \begin{align*}  d_\rho d_\delta = d_{\rho \delta } = d_\delta d_\rho . \end{align*}
 </div>
 <p> So clearly \(D \subset C_{\operatorname{SL}_2(F)}(d_\delta )\) and thus \(C_{\operatorname{SL}_2(F)}(d_\delta ) = D\) as required. </p>
@@ -4194,7 +4263,7 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">5.53</span>
+    <span class="proposition_thmlabel">5.56</span>
     <span class="proposition_thmtitle">Centralizers of conjugate elements</span>
     <div class="thm_header_extras">
 
@@ -4203,7 +4272,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#conjugate_centralizers_of_IsConj">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000197"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000200"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -4234,7 +4303,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000197">
+<div class="proof_wrapper" id="a0000000200">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -4243,15 +4312,15 @@
   </div>
   <div class="proof_content">
   <p>This proposition essentially claims that conjugate elements have conjugate centralisers. Since \(a\) and \(b\) are conjugate there exists an \(x \!  \in \!  G\) such that \(b = xax^{-1}\). Let \(g\) be an arbitrary element of \(C_G(a)\). Then, </p>
-<div class="displaymath" id="a0000000198">
+<div class="displaymath" id="a0000000201">
   \begin{align*}  (xgx^{-1})(xax^{-1}) & = xgax^{-1}\\ & = xagx^{-1} \tag {since $g \in C_G(a)$}\\ & = (xax^{-1})(xgx^{-1}). \end{align*}
 </div>
 <p>Thus \(xgx^{-1} \in C_G(xax^{-1})\). Since \(g\) was chosen arbitrarily, </p>
-<div class="displaymath" id="a0000000199">
+<div class="displaymath" id="a0000000202">
   \[ xC_G(a)x^{-1} \subset C_G(xax^{-1}) = C_G(b). \]
 </div>
 <p>Conversely, let \(h\) be an arbitary element of \(C_G(xax^{-1})\). Then, </p>
-<div class="displaymath" id="a0000000200">
+<div class="displaymath" id="a0000000203">
   \begin{align*}  (x^{-1}hx)a & = x^{-1}h(xax^{-1})x \\ & = x^{-1}(xax^{-1})hx \tag {since $h \in C_G(xax^{-1})$} \\ & = a(x^{-1}hx). \end{align*}
 </div>
 <p>So \(x^{-1}hx \in C_G(a)\) and since \(h\) was arbitrarily chosen from \(C_G(xax^{-1})\), <br />\(x^{-1}C_G(xax^{-1})x \subset C_G(a)\). Multiplication on the left by \(x\) and on the right by \(x^{-1}\) gives \(C_G(b) = C_G(xax^{-1}) \subset xC_G(a)x^{-1}\). Since we have shown that each set contains the other, \(xC_G(a)x^{-1} = C_G(b)\) as required. <br /></p>
@@ -4263,7 +4332,7 @@
     <span class="corollary_thmcaption">
     Corollary
     </span>
-    <span class="corollary_thmlabel">5.54</span>
+    <span class="corollary_thmlabel">5.57</span>
     <span class="corollary_thmtitle"> Centralizer of non-central element is commutative</span>
     <div class="thm_header_extras">
 
@@ -4272,7 +4341,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#IsCommutative_centralizer_of_not_mem_center">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000201"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000204"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -4288,13 +4357,13 @@
         
         <ul class="uses">
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed">Proposition 5.42</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed">Proposition 5.45</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#conjugate_centralizers_of_IsConj">Proposition 5.53</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#conjugate_centralizers_of_IsConj">Proposition 5.56</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_s_eq_SZ">Proposition 5.51</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_s_eq_SZ">Proposition 5.54</a></li>
           
-          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_d_eq_D">Proposition 5.52</a></li>
+          <li><a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_d_eq_D">Proposition 5.55</a></li>
           
         </ul>
     
@@ -4329,7 +4398,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000201">
+<div class="proof_wrapper" id="a0000000204">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -4337,29 +4406,29 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>This is almost an immediate consequence of the preceding results. Propositions <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_s_eq_SZ">5.51</a> and <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_d_eq_D">5.52</a> show that an element of the form \(\pm s_\sigma \) which does not lie in the centre of \(\operatorname{SL}_2(F)\) has centraliser \(S \times Z\), whilst a non-central element of the form \(d_\delta \) has centraliser \(D\). Both \(S\) and \(D\) are abelian since they are isomoprhic to \(F\) and \(F^\times \) respectively. Let \(s_\sigma z_1\) and \(s_\gamma z_2\) be arbitrary elements of \(\times Z\). </p>
+  <p>This is almost an immediate consequence of the preceding results. Propositions <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_s_eq_SZ">5.54</a> and <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#centralizer_d_eq_D">5.55</a> show that an element of the form \(\pm s_\sigma \) which does not lie in the centre of \(\operatorname{SL}_2(F)\) has centraliser \(S \times Z\), whilst a non-central element of the form \(d_\delta \) has centraliser \(D\). Both \(S\) and \(D\) are abelian since they are isomoprhic to \(F\) and \(F^\times \) respectively. Let \(s_\sigma z_1\) and \(s_\gamma z_2\) be arbitrary elements of \(\times Z\). </p>
 
-<div class="displaymath" id="a0000000202">
+<div class="displaymath" id="a0000000205">
   \begin{align*}  (s_\sigma z_1)(s_\gamma z_2) & = s_\sigma s_\gamma z_2 z_1 \tag {since $z_1 \in Z$} \\ & = s_\gamma s_\sigma z_2 z_1 \tag {since $T$ is abelian} \\ & = (s_\gamma z_2)(s_\sigma z_1). \tag {since $z_2 \in Z$} \end{align*}
 </div>
-<p>Thus \(S \times Z\) is also abelian. Since every element of \(\operatorname{SL}_2(F)\) is conjugate to \(d_\delta \) or \(\pm s_\sigma \) by Proposition <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed">5.42</a> and conjugate elements have conjugate centralisers by Proposition <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#conjugate_centralizers_of_IsConj">5.53</a>, the centraliser of each \(x \in \operatorname{SL}_2(F)\setminus Z\) is conjugate to either \(\times Z\) or \(D\). Proposition ??(iii) shows that conjugate subgroups are isomorphic and therefore have the same structure, thus since both \(S \times Z\) and \(D\) are abelian, \(C_{\operatorname{SL}_2(F)}(x)\) is also abelian. Note that in general this does hold for \(x \in Z\), since its centraliser is the whole of \(\operatorname{SL}_2(F)\)which is not abelian unless \(\operatorname{SL}_2(F)= Z\). </p>
+<p>Thus \(S \times Z\) is also abelian. Since every element of \(\operatorname{SL}_2(F)\) is conjugate to \(d_\delta \) or \(\pm s_\sigma \) by Proposition <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed">5.45</a> and conjugate elements have conjugate centralisers by Proposition <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#conjugate_centralizers_of_IsConj">5.56</a>, the centraliser of each \(x \in \operatorname{SL}_2(F)\setminus Z\) is conjugate to either \(\times Z\) or \(D\). Proposition ??(iii) shows that conjugate subgroups are isomorphic and therefore have the same structure, thus since both \(S \times Z\) and \(D\) are abelian, \(C_{\operatorname{SL}_2(F)}(x)\) is also abelian. Note that in general this does hold for \(x \in Z\), since its centraliser is the whole of \(\operatorname{SL}_2(F)\)which is not abelian unless \(\operatorname{SL}_2(F)= Z\). </p>
 
   </div>
 </div>
 <h1 id="a0000000042">5.6 The Projective Line &amp; Triple Transitivity</h1>
 <p>It is convenient to sometimes take a geometric viewpoint and regard the elements of \(\operatorname{SL}_2(F)\)as pairs of vectors in the 2-dimensional vector space over \(F\), which we will denote \(V\). An element of \(\operatorname{SL}_2(F)\)is thus a linear transformation of \(V\). </p>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000203">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000206">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.55</span>
+    <span class="definition_thmlabel">5.58</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000203">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000206">#</a>
     
     
     
@@ -4371,7 +4440,7 @@
   </div>
 </div>
 <p>Any 1-dimensional subspace of \(V\) is a set of vectors of the form \(\eta u\), where \(u\) is a non-zero vector of \(V\) and \(\eta \in F^\times \). Thus the points of \(\mathscr {L}\) are equivalence classes with the following relation defined on the set of vectors of \(V\). </p>
-<div class="displaymath" id="a0000000204">
+<div class="displaymath" id="a0000000207">
   \begin{align*}  u = \begin{bmatrix}  u_1 
 
 \\ u_2 
@@ -4383,18 +4452,18 @@
 \end{bmatrix} = v \iff u = \eta v, \qquad (\text{for $\eta \in F^\times $}). \end{align*}
 </div>
 <p>Notice that \(u\) and \(v\) are equivalent if and only if \(u_1 v_2 = v_1 u_2\). Importantly each point \(P_i\) of \(\mathscr {L}\) can be represented by a corresponding equivalence class of vectors of \(V\), that is, \(P\) corresponds to \(u\) if \(P = u_1 / u_2\). In the case when \(u_2 = 0\), this corresponds to the point at infinity. </p>
-<div class="definition_thmwrapper theorem-style-definition" id="a0000000205">
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000208">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">5.56</span>
+    <span class="definition_thmlabel">5.59</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000205">#</a>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000208">#</a>
     
     
     
@@ -4402,7 +4471,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>Let \(S\) be a permutation group which acts on a set \(X\) and \(\{  x_1, x_2, x_3 \} \) and \(\{  x_1', x_2', x_3' \} \) be two subsets of distinct elements of \(X\). Then \(S\) is said be <b class="bfseries">triply transitive</b> on \(X\) if there is an element \(\pi \in S\) such that, </p>
-<div class="displaymath" id="a0000000206">
+<div class="displaymath" id="a0000000209">
   \begin{align*}  x^{\pi }_i = x’_i, \qquad (\text{$i$ = 1,2 or 3}). \end{align*}
 </div>
 
@@ -4413,7 +4482,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">5.57</span>
+    <span class="theorem_thmlabel">5.60</span>
     <div class="thm_header_extras">
 
         </div>
@@ -4421,7 +4490,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.6">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000207"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000210"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -4433,7 +4502,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000207">
+<div class="proof_wrapper" id="a0000000210">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -4442,23 +4511,23 @@
   </div>
   <div class="proof_content">
   <p>Let \(P_1\), \(P_2\) and \(P_3\) be distinct points of \(\mathscr {L}\) and \(p_i\) be a vector in \(V\) corresponding to \(P_i\). Since each \(P_i\) is distinct, \(p_1\), \(p_2\) and \(p_3\) are thus pairwise linearly independent. Thus \(p_1\) and \(p_2\) form a basis for \(V\) and it’s clear that there exist \(\alpha , \beta \in F^\times \) such that, </p>
-<div class="displaymath" id="a0000000208">
+<div class="displaymath" id="a0000000211">
   \begin{align*}  p_3 = \alpha p_1 + \beta p_2. \end{align*}
 </div>
 <p>Now, let \(Q_1\), \(Q_2\) and \(Q_3\) be three more distinct points of \(\mathscr {L}\) and \(q_i\) be a vector in \(V\) corresponding to \(Q_i\). Similarly, by the above argument, there exist \(\gamma , \delta \in F^\times \) such that, </p>
-<div class="displaymath" id="a0000000209">
+<div class="displaymath" id="a0000000212">
   \begin{align*}  q_3 = \gamma q_1 + \delta q_2. \end{align*}
 </div>
 <p>Let \(\pi \in GL(2,F)\) be the linear transformation which sends \(\alpha p_1\) to \(\gamma q_1\) and \(\beta p_2\) to \(\delta q_2\). Thus, </p>
-<div class="displaymath" id="a0000000210">
+<div class="displaymath" id="a0000000213">
   \begin{align*}  \pi (p_3) = \pi (\alpha p_1 + \beta p_2) = \pi (\alpha p_1) + \pi (\beta p_2) = \gamma q_1 + \delta q_2 = q_3 \end{align*}
 </div>
 <p>Hence we get \(P^\pi _1 = Q_1\), \(P^\pi _2 = Q_2\) and \(P^\pi _3 = Q_3\) and \(GL(2,F)\) is triply transitive. Now set, </p>
-<div class="displaymath" id="a0000000211">
+<div class="displaymath" id="a0000000214">
   \begin{align*}  \eta = \sqrt{\frac{1}{\text{det }\pi }}. \end{align*}
 </div>
 <p>Consider the mapping \(\theta \) which sends \(\alpha p_1\) to \(\eta \gamma q_1\) and \(\beta p_2\) to \(\eta \delta q_2\). Observe that, </p>
-<div class="displaymath" id="a0000000212">
+<div class="displaymath" id="a0000000215">
   \begin{align*}  \text{det }\theta = \eta ^2 \,  \text{det } \pi = 1 \end{align*}
 </div>
 <p>So \(\theta \in SL(2,F) = \operatorname{SL}_2(F)\)and since \(P^\theta _1 = Q_1\), \(P^\theta _2 = Q_2\) and \(P^\theta _3 = Q_3\), we have that \(\operatorname{SL}_2(F)\)is also triply transitive. </p>
@@ -4471,7 +4540,7 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">5.58</span>
+    <span class="proposition_thmlabel">5.61</span>
     <div class="thm_header_extras">
 
         </div>
@@ -4479,7 +4548,7 @@
 
     <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#6.7">#</a>
     
-    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000213"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000216"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -4491,7 +4560,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000213">
+<div class="proof_wrapper" id="a0000000216">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -4500,7 +4569,7 @@
   </div>
   <div class="proof_content">
   <p>(i) Let \(P\) be a fixed a point of an arbitrary \(d_\delta \in D\), with \(\delta \neq \pm 1\) and let \(u\) belong to the corresponding equivalence class of vectors of \(V\) to \(P\). <br /></p>
-<div class="displaymath" id="a0000000214">
+<div class="displaymath" id="a0000000217">
   \begin{align*}  d_\delta u = \begin{bmatrix}  \delta 
 
 &  0 
@@ -4532,7 +4601,7 @@
 \\ 0 
 
 \end{bmatrix}\) and these correspond to 2 distinct points of \(\mathscr {L}\) which are fixed by \(d_\delta \). <br /><br />(ii) Let \(P\) be a fixed a point of an arbitrary \(s_\sigma \), with \(\sigma \neq 0\), and let \(u\) be the corresponding element of \(V\) to \(P\). <br /></p>
-<div class="displaymath" id="a0000000215">
+<div class="displaymath" id="a0000000218">
   \begin{align*}  s_\sigma u = \begin{bmatrix}  1 
 
 &  0 
@@ -4560,7 +4629,7 @@
 \\ 1 
 
 \end{bmatrix}\) in \(V\). We show also that \(P\) is also the only fixed point of \(-s_\sigma \), with \(\sigma \neq 0\). </p>
-<div class="displaymath" id="a0000000216">
+<div class="displaymath" id="a0000000219">
   \begin{align*}  -s_\sigma u = \begin{bmatrix}  -1 
 
 &  0 
@@ -4584,7 +4653,7 @@
 \end{bmatrix}, \\[1.5ex] -u_1 u_2 & = {u_1}^2 \sigma - u_1 u_2. \end{align*}
 </div>
 <p>So again \(u_1 =0\) and \(-s_\sigma \) fixes \(P\) and no other point. We now calculate the stabiliser of \(P\) in \(L\), by considering which \(x \in \operatorname{SL}_2(F)\)fix \(P\). <br /></p>
-<div class="displaymath" id="a0000000217">
+<div class="displaymath" id="a0000000220">
   \begin{align*}  x u = \begin{bmatrix}  \alpha 
 
 &  \beta 
@@ -4608,7 +4677,7 @@
 \end{bmatrix}. \end{align*}
 </div>
 <p>Thus \(\beta = 0\) and \(x \in H\). Since \(x\) was chosen arbitrarily from Stab\((P)\), we have Stab\((P) \subset H\). Now let an arbitrarily chosen \(y \in H\) act on \(P\). <br /></p>
-<div class="displaymath" id="a0000000218">
+<div class="displaymath" id="a0000000221">
   \begin{align*}  y u = \begin{bmatrix}  \alpha 
 
 &  0 
@@ -4632,7 +4701,7 @@
 \end{bmatrix}. \end{align*}
 </div>
 <p>Thus \(y\) and indeed \(H\) is contained in Stab\((P)\), so Stab\((P) = H\) as desired. <br /><br />(iii) Let \(P_i\) \((i = 1,2,...)\) be the fixed points of \(x\in \operatorname{SL}_2(F)\)and let \(y\) be conjugate to \(x\) in \(L\). That is, there exists a \(g \in \operatorname{SL}_2(F)\)such that \(x = gyg^{-1}\). </p>
-<div class="displaymath" id="a0000000219">
+<div class="displaymath" id="a0000000222">
   \begin{align*}  x P_i & = P_i, \\ gyg^{-1} P_i & = P_i, \\ y(g^{-1} P_i) & = (g^{-1} P_i). \end{align*}
 </div>
 <p>This shows that \(P_i\) is a fixed point of \(x\) if and only if \(g^{-1} P_i\) is a fixed point of \(y\). Thus conjugate elements have the same number of fixed points. <br /><br />(iv) By Proposition ??(i), every element of \(\operatorname{SL}_2(F)\)is conjugate to either \(d_\delta \) or \(\pm s_\sigma \), so since conjugate elements have the same number of fixed points, every element of \(\operatorname{SL}_2(F)\!  \setminus \!  Z\) has either the same number of fixed points as \(d_\delta \) (with \(\delta \neq \pm 1\)), namely 2, or the same number as \(\pm s_\sigma \), (with \(\sigma \neq 0\)), namely 1. </p>
