@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2025.3.8)  8 MAR 2025 16:35
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2025.3.8)  8 MAR 2025 16:36
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -468,33 +468,63 @@ Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
 \c@FancyVerbLine=\count307
 \FV@StepNumber=\count308
 \FV@OutFile=\write4
+) (/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.sty (/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2024-01-22 L3 programming layer (loader) 
+ (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+File: l3backend-xetex.def 2024-01-04 L3 backend support: XeTeX
+\g__graphics_track_int=\count309
+\l__pdf_internal_box=\box66
+\g__pdf_backend_object_int=\count310
+\g__pdf_backend_annotation_int=\count311
+\g__pdf_backend_link_int=\count312
+))
+Package: xparse 2023-10-10 L3 Experimental document command parser
 )
-/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:28: Undefined control sequence.
-l.28 \setmainfont
-                 {DejaVu Serif}
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
+Package: fontspec 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTeX
+ (/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+Package: fontspec-xetex 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTeX
+\l__fontspec_script_int=\count313
+\l__fontspec_language_int=\count314
+\l__fontspec_strnum_int=\count315
+\l__fontspec_tmp_int=\count316
+\l__fontspec_tmpa_int=\count317
+\l__fontspec_tmpb_int=\count318
+\l__fontspec_tmpc_int=\count319
+\l__fontspec_em_int=\count320
+\l__fontspec_emdef_int=\count321
+\l__fontspec_strong_int=\count322
+\l__fontspec_strongdef_int=\count323
+\l__fontspec_tmpa_dim=\dimen266
+\l__fontspec_tmpb_dim=\dimen267
+\l__fontspec_tmpc_dim=\dimen268
+ (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+) (/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
 
+Package fontspec Info: Font family 'DejaVuSerif(0)' created for font 'DejaVu
+(fontspec)             Serif' with options [Ligatures=TeX].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"DejaVu
+(fontspec)             Serif/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"DejaVu
+(fontspec)             Serif/B/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'italic' (m/it) with NFSS spec.: <->"DejaVu
+(fontspec)             Serif/I/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.: <->"DejaVu
+(fontspec)             Serif/BI/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
 
-/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:28: LaTeX Error: Missing \begin{document}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.28 \setmainfont{D
-                   ejaVu Serif}
-You're in trouble here.  Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-(./preamble/common.tex) (./preamble/web.tex
-\c@theorem=\count309
+ (./preamble/common.tex) (./preamble/web.tex
+\c@theorem=\count324
 )
-/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:45: Undefined control sequence.
-l.45 \home
+/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:44: Undefined control sequence.
+l.44 \home
           {https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -503,19 +533,19 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:45: LaTeX Error: Missing \begin{document}.
+/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:44: LaTeX Error: Missing \begin{document}.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.45 \home{h
+l.44 \home{h
             ttps://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
-/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:46: Undefined control sequence.
-l.46 \github
+/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:45: Undefined control sequence.
+l.45 \github
             {https://github.com/AlexBrodbelt/ClassificationOfFiniteSubgroups...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -523,8 +553,8 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:47: Undefined control sequence.
-l.47 \dochome
+/home/alex-brodbelt/Desktop/Projects/Lean/Dissertation/ClassificationOfFiniteSubgroupsOfPGL/blueprint/src/web.tex:46: Undefined control sequence.
+l.46 \dochome
              {https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroups...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -533,18 +563,21 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Overfull \hbox (309.7489pt too wide) in paragraph at lines 45--48
-[]\TU/lmr/m/n/10 https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL https://github.com/AlexBrodbelt/ClassificationOfFiniteSubgroupsOfPGL
+Overfull \hbox (21.94824pt too wide) in paragraph at lines 44--47
+[]\TU/DejaVuSerif(0)/m/n/10 https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL
  []
 
-(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
-File: l3backend-xetex.def 2024-01-04 L3 backend support: XeTeX
-\g__graphics_track_int=\count310
-\l__pdf_internal_box=\box66
-\g__pdf_backend_object_int=\count311
-\g__pdf_backend_annotation_int=\count312
-\g__pdf_backend_link_int=\count313
-) (../print//web.aux
+
+Overfull \hbox (19.02344pt too wide) in paragraph at lines 44--47
+\TU/DejaVuSerif(0)/m/n/10 https://github.com/AlexBrodbelt/ClassificationOfFiniteSubgroupsOfPGL
+ []
+
+
+Overfull \hbox (33.47168pt too wide) in paragraph at lines 44--47
+\TU/DejaVuSerif(0)/m/n/10 https://AlexBrodbelt.github.io/ClassificationOfFiniteSubgroupsOfPGL/docs 
+ []
+
+(../print//web.aux
 
 LaTeX Warning: Label `subfield' multiply defined.
 
@@ -554,55 +587,126 @@ LaTeX Warning: Label `subfield@cref' multiply defined.
 )
 \openout1 = `web.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 52.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 52.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 51.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 51.
  (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-Package hyperref Info: Link coloring OFF on input line 52.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+Package hyperref Info: Link coloring OFF on input line 51.
  (../print//web.out) (../print//web.out)
 \@outlinefile=\write5
 \openout5 = `web.out'.
 
+
+Package fontspec Info: Adjusting the maths setup (use [no-math] to avoid
+(fontspec)             this).
+
+\symlegacymaths=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 51.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 51.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 51.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 51.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 51.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 51.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 51.
+LaTeX Font Info:    Redeclaring math accent \check on input line 51.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 51.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 51.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 51.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 51.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 51.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `normal' on input line 51.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> TU/DejaVuSerif(0)/m/n on input line 51.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `bold' on input line 51.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> TU/DejaVuSerif(0)/m/n on input line 51.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  TU/DejaVuSerif(0)/m/n --> TU/DejaVuSerif(0)/m/n on input line 51.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> TU/DejaVuSerif(0)/m/it on input line 51.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> TU/DejaVuSerif(0)/b/n on input line 51.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 51.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 51.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  TU/DejaVuSerif(0)/m/n --> TU/DejaVuSerif(0)/b/n on input line 51.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> TU/DejaVuSerif(0)/b/it on input line 51.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 51.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 51.
  [1
 
 ]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 54.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 53.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 54.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 53.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1] (./content.tex (./chapter/Ch1_AbstractAndAcknowledgements.tex
 Chapter 1.
 [1
 
-]
+] [2]
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
 (Font)              Font shape `TU/lmtt/b/n' tried instead on input line 64.
- [2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 135--142
 
+Overfull \hbox (8.45313pt too wide) in paragraph at lines 83--83
+[]\TU/DejaVuSerif(0)/b/n/12 Distinguishing my work from Christopher But-
+ []
+
+[3]
+Overfull \hbox (1.08688pt too wide) in paragraph at lines 111--112
+[]\TU/DejaVuSerif(0)/m/n/10 When formalizing the maximal abelian subgroup class equa-
+ []
+
+
+Overfull \hbox (17.03659pt too wide) in paragraph at lines 119--119
+[]\TU/DejaVuSerif(0)/b/n/14.4 Christopher Butler’s acknowledgements
+ []
+
+[4]
+Overfull \hbox (10.4082pt too wide) in paragraph at lines 133--133
+[]\TU/DejaVuSerif(0)/b/n/12 Christopher Butler’s popular science summary 
  []
 
 
@@ -615,27 +719,47 @@ Underfull \hbox (badness 10000) in paragraph at lines 135--142
 
  []
 
-[4]) (./chapter/Ch2_Introduction.tex [5]
+
+Underfull \hbox (badness 10000) in paragraph at lines 135--142
+
+ []
+
+[5]) (./chapter/Ch2_Introduction.tex [6]
 Chapter 2.
-[6
 
-] [7]
+Overfull \hbox (6.01865pt too wide) in paragraph at lines 3--3
+[]\TU/DejaVuSerif(0)/b/n/14.4 What is the formalisation of mathemat-
+ []
 
-LaTeX Warning: Citation `sangwin' on page 8 undefined on input line 79.
+[7
+
+]
+Overfull \hbox (10.57292pt too wide) in paragraph at lines 55--58
+\TU/DejaVuSerif(0)/b/n/10 Curry-Howard correspondence \TU/DejaVuSerif(0)/m/n/10 where formulas correspond to \TU/DejaVuSerif(0)/m/it/10 types\TU/DejaVuSerif(0)/m/n/10 ,
+ []
 
 [8]
-Overfull \hbox (96.38402pt too wide) in paragraph at lines 128--134
-\TU/lmr/m/n/10 by the name we would like to give the theorem, in this case it is, \TU/lmtt/m/n/10 closed_eq_sum_of_first_n_odd_nat\TU/lmr/m/n/10 ;
+
+LaTeX Warning: Citation `sangwin' on page 9 undefined on input line 79.
+
+[9]
+Overfull \hbox (28.82715pt too wide) in paragraph at lines 155--160
+[]\TU/DejaVuSerif(0)/m/n/10 after the \TU/lmtt/m/n/10 := \TU/DejaVuSerif(0)/m/n/10 Lean expects a proof term of the type \TU/lmtt/m/n/10 sum_of_first_n_odd_nat
+ []
+
+[10] [11]
+Overfull \hbox (5.9834pt too wide) in paragraph at lines 222--226
+[]\TU/DejaVuSerif(0)/m/n/10 Among these mathematicians was Pierre de Fermat, who suspected
  []
 
 
-Overfull \hbox (3.53502pt too wide) in paragraph at lines 170--171
-[]\TU/lmr/m/n/10 The induction step: \TU/lmtt/m/n/10 sum_of_first_n_odd_nat (m + 1) = (m + 1) * (m
+Overfull \hbox (7.74902pt too wide) in paragraph at lines 232--233
+[]\TU/DejaVuSerif(0)/m/n/10 This copy and many of Pierre de Fermat’s belongings were searched
  []
 
-[9] [10] [11]
-Overfull \hbox (22.01288pt too wide) in paragraph at lines 283--283
-[]\TU/lmr/bx/n/14.4 Classification of finite subgroups of the $[][]\OT1/cmr/m/n/14.4 ([])$
+[12] [13]
+Overfull \hbox (4.52803pt too wide) in paragraph at lines 283--283
+[]\TU/DejaVuSerif(0)/b/n/14.4 Classification of finite subgroups of the
  []
 
 
@@ -716,19 +840,33 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 283.
 
 
-LaTeX Warning: Citation `dtt' on page 12 undefined on input line 285.
-
-[12]
-
-LaTeX Warning: Citation `dtt' on page 13 undefined on input line 319.
+LaTeX Warning: Citation `dtt' on page 14 undefined on input line 285.
 
 
-LaTeX Warning: Citation `dtt' on page 13 undefined on input line 326.
+LaTeX Warning: Citation `dtt' on page 14 undefined on input line 319.
 
-[13]) (./chapter/Ch3_Preliminaries.tex [14]
+
+LaTeX Warning: Citation `dtt' on page 14 undefined on input line 326.
+
+[14]
+Overfull \hbox (2.69838pt too wide) in paragraph at lines 356--359
+\TU/DejaVuSerif(0)/m/n/10 which is isomorphic to a finite subgroup $[][]\OT1/cmr/m/n/10 ([])$ \TU/DejaVuSerif(0)/m/n/10 and has $[]\OT1/cmr/m/n/10 (\U/msb/m/n/10 Q\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^P[]\OT1/cmr/m/n/10 )/\U/msb/m/n/10 Q\OT1/cmr/m/n/10 )$
+ []
+
+[15]) (./chapter/Ch3_Preliminaries.tex
+Overfull \hbox (6.96712pt too wide) in paragraph at lines 404--1
+[]\TU/DejaVuSerif(0)/m/n/10 Considering proving the existence of such an isomorphism $[][]\OT1/cmr/m/n/10 ([])$
+ []
+
+[16]
 Chapter 3.
 
-LaTeX Warning: Citation `hungerford' on page 15 undefined on input line 8.
+Overfull \hbox (4.2041pt too wide) in paragraph at lines 3--5
+\TU/DejaVuSerif(0)/m/n/10 This section briefly outlines some standard group theory results which
+ []
+
+
+LaTeX Warning: Citation `hungerford' on page 17 undefined on input line 8.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 11--12
@@ -755,23 +893,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 33--34
 
  []
 
+[17
 
-LaTeX Warning: Citation `bhattacharya' on page 15 undefined on input line 38.
+]
+
+LaTeX Warning: Citation `bhattacharya' on page 18 undefined on input line 38.
 
 
-LaTeX Warning: Reference `5thsylow' on page 15 undefined on input line 38.
+LaTeX Warning: Reference `5thsylow' on page 18 undefined on input line 38.
 
 
-LaTeX Warning: Citation `alperin' on page 15 undefined on input line 38.
+LaTeX Warning: Citation `alperin' on page 18 undefined on input line 38.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 38--39
 
  []
 
-[15
 
-]
 Underfull \hbox (badness 10000) in paragraph at lines 42--43
 
  []
@@ -806,7 +945,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 88--89
 
  []
 
-[16]
+[18]
 Underfull \hbox (badness 10000) in paragraph at lines 110--111
 
  []
@@ -817,22 +956,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 113--114
  []
 
 
-LaTeX Warning: Citation `bhattacharya' on page 17 undefined on input line 123.
+LaTeX Warning: Citation `bhattacharya' on page 19 undefined on input line 123.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 129--130
 
  []
 
-[17] [18]
+[19] [20]
 
-LaTeX Warning: Citation `bhattacharya' on page 19 undefined on input line 230.
+LaTeX Warning: Citation `bhattacharya' on page 21 undefined on input line 230.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 228--231
 
  []
 
+[21]
 ./chapter/Ch3_Preliminaries.tex:243: Undefined control sequence.
 l.243 \lean
            {SpecialSubgroups.prod_mulEquiv_join_of_disjoint_of_normal}
@@ -877,8 +1017,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (135.75607pt too wide) in paragraph at lines 243--246
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 3.25\TU/lmr/m/it/10 . []SpecialSubgroups.prod$[]\OML/cmm/m/it/10 ulEquiv[]oin[]f[]isjoint[]f[]ormalLet$\TU/lmr/m/it/10 A$\OML/cmm/m/it/10 and$\TU/lmr/m/it/10 B$\OML/cmm/m/it/10 benormalsubgroupsof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 with$\TU/lmr/m/it/10 A
+Overfull \hbox (170.1978pt too wide) in paragraph at lines 243--246
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 3.25\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.prod$[]\OML/cmm/m/it/10 ulEquiv[]oin[]f[]isjoint[]f[]ormalLet$\TU/DejaVuSerif(0)/m/it/10 A$\OML/cmm/m/it/10 and$\TU/DejaVuSerif(0)/m/it/10 B$\OML/cmm/m/it/10 benormalsubgroupsof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 with$\TU/DejaVuSerif(0)/m/it/10 A
  []
 
 ./chapter/Ch3_Preliminaries.tex:246: Missing } inserted.
@@ -903,12 +1043,12 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[19]
+
 Underfull \hbox (badness 10000) in paragraph at lines 255--258
 
  []
 
-[20]) (./chapter/Ch4_ReductionOfProblem.tex [21]
+[22]) (./chapter/Ch4_ReductionOfProblem.tex [23]
 Chapter 4.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -1063,6 +1203,11 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 1.
+
+
+Overfull \hbox (16.5381pt too wide) in paragraph at lines 3--3
+[]\TU/DejaVuSerif(0)/b/n/14.4 Over an algebraically closed field $[][]\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 F\OT1/cmr/m/n/14.4 )$
+ []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -1308,8 +1453,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (96.8767pt too wide) in paragraph at lines 24--27
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 4.2\TU/lmr/m/it/10 . []GeneralLinearGroup.mem$[]\OML/cmm/m/it/10 enter[]eneral[]inear[]roup[]ffLet$\TU/lmr/m/it/10 R$\OML/cmm/m/it/10 beacommutativering; then$\TU/lmr/m/it/10 G
+Overfull \hbox (125.29103pt too wide) in paragraph at lines 24--27
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 4.2\TU/DejaVuSerif(0)/m/it/10 . []GeneralLinearGroup.mem$[]\OML/cmm/m/it/10 enter[]eneral[]inear[]roup[]ffLet$\TU/DejaVuSerif(0)/m/it/10 R$\OML/cmm/m/it/10 beacommutativering; then$\TU/DejaVuSerif(0)/m/it/10 G
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:27: Missing } inserted.
@@ -1334,7 +1479,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[22
+[24
 
 ]
 ./chapter/Ch4_ReductionOfProblem.tex:55: Undefined control sequence.
@@ -1390,8 +1535,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (109.25018pt too wide) in paragraph at lines 55--59
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 4.3\TU/lmr/m/it/10 . []SL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Let$\TU/lmr/m/it/10 R$\OML/cmm/m/it/10 beanon \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 trivialcommutativering; then$\TU/lmr/m/it/10 Z($[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 R\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^R
+Overfull \hbox (121.88577pt too wide) in paragraph at lines 55--59
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 4.3\TU/DejaVuSerif(0)/m/it/10 . []SL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Let$\TU/DejaVuSerif(0)/m/it/10 R$\OML/cmm/m/it/10 beanon \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 trivialcommutativering; then$\TU/DejaVuSerif(0)/m/it/10 Z($[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 R\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^R
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:59: Missing } inserted.
@@ -1451,8 +1596,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (14.82501pt too wide) in paragraph at lines 62--65
-[]\TU/lmr/m/n/10 GeneralLinearGroup.mem$[]\OML/cmm/m/it/10 enter[]eneral[]inear[]roup[]ffIf$\TU/lmr/m/n/10 S $\OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 Z\OT1/cmr/m/n/10 ([][](\OML/cmm/m/it/10 R\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^T
+Overfull \hbox (40.56056pt too wide) in paragraph at lines 62--65
+[]\TU/DejaVuSerif(0)/m/n/10 GeneralLinearGroup.mem$[]\OML/cmm/m/it/10 enter[]eneral[]inear[]roup[]ffIf$\TU/DejaVuSerif(0)/m/n/10 S $\OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 Z\OT1/cmr/m/n/10 ([][](\OML/cmm/m/it/10 R\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^T
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:69: Missing } inserted.
@@ -1519,8 +1664,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (15.06161pt too wide) in paragraph at lines 75--80
-[]\TU/lmr/m/it/10 Definition \TU/lmr/m/n/10 4.4\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 SL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Given$\TU/lmr/m/n/10 Z($[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^T [] \OML/cmm/m/it/10 '$
+Overfull \hbox (3.99728pt too wide) in paragraph at lines 75--80
+[]\TU/DejaVuSerif(0)/m/it/10 Definition \TU/DejaVuSerif(0)/m/n/10 4.4\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Given$\TU/DejaVuSerif(0)/m/n/10 Z($[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^T
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:80: Missing } inserted.
@@ -1649,8 +1794,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (78.56297pt too wide) in paragraph at lines 86--91
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 4.5\TU/lmr/m/it/10 . []Injective$[]\OML/cmm/m/it/10 SL[]onoidHom[]GL[]Thehomomorphism$$isinjective:$ 
+Overfull \hbox (94.00676pt too wide) in paragraph at lines 86--91
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 4.5\TU/DejaVuSerif(0)/m/it/10 . []Injective$[]\OML/cmm/m/it/10 SL[]onoidHom[]GL[]Thehomomorphism$$isinjective:$ 
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:93: Undefined control sequence.
@@ -1709,7 +1854,7 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-[23]
+[25]
 ./chapter/Ch4_ReductionOfProblem.tex:115: Undefined control sequence.
 l.115 \lean
            {exists_SL_eq_scaled_GL_of_IsAlgClosed}
@@ -1754,8 +1899,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (69.75053pt too wide) in paragraph at lines 115--118
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 4.6\TU/lmr/m/it/10 . []exists$[]\OML/cmm/m/it/10 L[]q[]caled[]L[]f[]sAlgClosedIf$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 isanalgebraicallyclosedfieldthenforevery$\TU/lmr/m/it/10 G
+Overfull \hbox (84.11522pt too wide) in paragraph at lines 115--118
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 4.6\TU/DejaVuSerif(0)/m/it/10 . []exists$[]\OML/cmm/m/it/10 L[]q[]caled[]L[]f[]sAlgClosedIf$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 isanalgebraicallyclosedfieldthenforevery$\TU/DejaVuSerif(0)/m/it/10 G
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:121: Missing } inserted.
@@ -1895,8 +2040,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (41.38788pt too wide) in paragraph at lines 145--150
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 4.7\TU/lmr/m/it/10 . []PSL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Themap$$issurjective:$ 
+Overfull \hbox (51.41745pt too wide) in paragraph at lines 145--150
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 4.7\TU/DejaVuSerif(0)/m/it/10 . []PSL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Themap$$issurjective:$ 
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:152: Undefined control sequence.
@@ -1944,6 +2089,7 @@ l.154     Let $G \; (F^
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
+[26]
 ./chapter/Ch4_ReductionOfProblem.tex:170: Missing } inserted.
 <inserted text> 
                 }
@@ -2070,8 +2216,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (25.45511pt too wide) in paragraph at lines 174--179
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 4.8\TU/lmr/m/it/10 . []PSL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Themap$$isbijective$ 
+Overfull \hbox (35.48468pt too wide) in paragraph at lines 174--179
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 4.8\TU/DejaVuSerif(0)/m/it/10 . []PSL$[]\OML/cmm/m/it/10 onoidHom[]GL[]Themap$$isbijective$ 
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:181: Undefined control sequence.
@@ -2156,8 +2302,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (478.77562pt too wide) in paragraph at lines 181--185
-[]\TU/lmr/m/n/10 Injective$[]\OML/cmm/m/it/10 SL[]onoidHom[]GL; Surjective[]SL[]onoidHom[]GLWehaveshownthat$$isinjectivein[]\OT1/cmr/m/n/10 4\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5[]\OML/cmm/m/it/10 andhaveshownthat$$issurjectivein[]\OT1/cmr/m/n/10 4\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 7[]\OML/cmm/m/it/10 :Therefore;$$definesabijectionfrom$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (490.69138pt too wide) in paragraph at lines 181--185
+[]\TU/DejaVuSerif(0)/m/n/10 Injective$[]\OML/cmm/m/it/10 SL[]onoidHom[]GL; Surjective[]SL[]onoidHom[]GLWehaveshownthat$$isinjectivein[]\OT1/cmr/m/n/10 4\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5[]\OML/cmm/m/it/10 andhaveshownthat$$issurjectivein[]\OT1/cmr/m/n/10 4\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 7[]\OML/cmm/m/it/10 :Therefore;$$definesabijectionfrom$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:185: Missing } inserted.
@@ -2236,8 +2382,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (206.13184pt too wide) in paragraph at lines 189--193
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 4.9\TU/lmr/m/it/10 . []Bijective$[]\OML/cmm/m/it/10 SL[]onoidHom[]GL; PSL[]onoidHom[]GL[]If$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 isanalgebraicallyclosedfield; thenthemap$
+Overfull \hbox (223.02448pt too wide) in paragraph at lines 189--193
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 4.9\TU/DejaVuSerif(0)/m/it/10 . []Bijective$[]\OML/cmm/m/it/10 SL[]onoidHom[]GL; PSL[]onoidHom[]GL[]If$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 isanalgebraicallyclosedfield; thenthemap$
  []
 
 ./chapter/Ch4_ReductionOfProblem.tex:193: Missing } inserted.
@@ -2252,7 +2398,7 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 Missing character: There is no º ("BA) in font cmmi10!
-[24]) (./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex [25]
+) (./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex [27]
 Chapter 5.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -2328,6 +2474,11 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 1.
 
 
+Overfull \hbox (0.61438pt too wide) in paragraph at lines 6--8
+\TU/DejaVuSerif(0)/m/n/10 Throughout this paper, $\OML/cmm/m/it/10 F$ \TU/DejaVuSerif(0)/m/n/10 will denote an arbitrary algebraically closed
+ []
+
+
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 34.
 
@@ -2400,6 +2551,9 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 34.
 
+[28
+
+]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:44: Undefined control sequence.
 l.44 \lean
           {SpecialMatrices.d}
@@ -2418,9 +2572,11 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[26
 
-]
+Overfull \hbox (10.40489pt too wide) in paragraph at lines 44--47
+[]\TU/DejaVuSerif(0)/m/it/10 Definition \TU/DejaVuSerif(0)/m/n/10 5.5 (The diagonal matrix of $\OML/cmm/m/it/10 SL[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialMatrices.d Given
+ []
+
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:57: Undefined control sequence.
 l.57 \lean
           {SpecialMatrices.s}
@@ -2578,11 +2734,6 @@ l.102 For any $\delta
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-
-Overfull \hbox (124.82893pt too wide) in paragraph at lines 99--103
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.9 (Closure of $\OML/cmm/m/it/10 D$ \TU/lmr/m/n/10 under multiplication)\TU/lmr/m/it/10 . []SpecialMatrices.d SpecialMatrices.d$[]\OML/cmm/m/it/10 ul[][]q[][]ulForany$$^^N; ^^Z \OMS/cmsy/m/n/10 2
- []
-
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:106: Missing } inserted.
 <inserted text> 
                 }
@@ -2655,11 +2806,6 @@ l.120     For any $\sigma
                          , \gamma \in F$ we have that
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
-
-
-Overfull \hbox (125.722pt too wide) in paragraph at lines 117--121
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.10 (Closure of $\OML/cmm/m/it/10 S$ \TU/lmr/m/n/10 under multiplication)\TU/lmr/m/it/10 . []SpecialMatrices.s SpecialMatrices.s$[]\OML/cmm/m/it/10 ul[][]q[][]ddForany$$^^[; ^^M \OMS/cmsy/m/n/10 2
- []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:124: Missing } inserted.
 <inserted text> 
@@ -2735,8 +2881,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (112.11856pt too wide) in paragraph at lines 134--138
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.11\TU/lmr/m/it/10 . []SpecialMatrices.d, SpecialMatrices.s SpecialMatrices.d$[]\OML/cmm/m/it/10 ul[][]ul[][]nv[]q[]Wehavethatforall$$^^N \OMS/cmsy/m/n/10 2
+Overfull \hbox (170.0309pt too wide) in paragraph at lines 134--138
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.11\TU/DejaVuSerif(0)/m/it/10 . []SpecialMatrices.d, SpecialMatrices.s SpecialMatrices.d$[]\OML/cmm/m/it/10 ul[][]ul[][]nv[]q[]Wehavethatforall$$^^N \OMS/cmsy/m/n/10 2
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:141: Missing } inserted.
@@ -2750,12 +2896,11 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-
+[29]
 Overfull \hbox (16.01285pt too wide) detected at line 148
 \OML/cmm/m/it/10 d[]s[]d[] \OT1/cmr/m/n/10 =  [] [] [] = []  []  =  []  = \OML/cmm/m/it/10 s[]:
  []
 
-[27]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:155: Undefined control sequence.
 l.155 \uses
            {SpecialMatrices.d, SpecialMatrices.w}
@@ -2819,8 +2964,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (54.56265pt too wide) in paragraph at lines 155--159
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.12\TU/lmr/m/it/10 . []SpecialMatrices.d, SpecialMatrices.w SpecialMatrices.w$[]\OML/cmm/m/it/10 ul[][]q[][]nv[]Forany$$^^N \OMS/cmsy/m/n/10 2
+Overfull \hbox (113.98093pt too wide) in paragraph at lines 155--159
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.12\TU/DejaVuSerif(0)/m/it/10 . []SpecialMatrices.d, SpecialMatrices.w SpecialMatrices.w$[]\OML/cmm/m/it/10 ul[][]q[][]nv[]Forany$$^^N \OMS/cmsy/m/n/10 2
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:162: Missing } inserted.
@@ -2881,6 +3026,11 @@ l.178     The determinant of a $2 \times
                                          2$ lower triangular matrix, $M$, is...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (8.52312pt too wide) in paragraph at lines 176--179
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.13\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 det$[]\OML/cmm/m/it/10 q[]ul[]iag[]f[]ower[]riangularThedeterminantofa$\TU/DejaVuSerif(0)/m/n/10 2 $\OMS/cmsy/m/n/10 ^^B\OT1/cmr/m/n/10 2$ \TU/DejaVuSerif(0)/m/n/10 lower
+ []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:179: Missing } inserted.
 <inserted text> 
@@ -2946,8 +3096,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (45.55505pt too wide) in paragraph at lines 184--188
-[]\TU/lmr/m/it/10 Remark \TU/lmr/m/n/10 5.14\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 det$[]\OML/cmm/m/it/10 q[]ul[]iag[]f[]ower[]riangular[]A$\TU/lmr/m/n/10 2
+Overfull \hbox (59.51349pt too wide) in paragraph at lines 184--188
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.14\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 det$[]\OML/cmm/m/it/10 q[]ul[]iag[]f[]ower[]riangular[]A$\TU/DejaVuSerif(0)/m/n/10 2
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:188: Missing } inserted.
@@ -3014,8 +3164,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (184.88045pt too wide) in paragraph at lines 192--199
-[]\TU/lmr/m/it/10 Remark \TU/lmr/m/n/10 5.15\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 SpecialMatrices.s, det$[]\OML/cmm/m/it/10 q[]ul[]iag[]f[]ower[]riangular[]Amatrixof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/lmr/m/n/10 ,
+Overfull \hbox (214.99677pt too wide) in paragraph at lines 192--199
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.15\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialMatrices.s, det$[]\OML/cmm/m/it/10 q[]ul[]iag[]f[]ower[]riangular[]Amatrixof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/DejaVuSerif(0)/m/n/10 ,
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:199: Missing } inserted.
@@ -3072,6 +3222,11 @@ l.205     A matrix $A \in
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
+
+Overfull \hbox (22.91887pt too wide) in paragraph at lines 203--209
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.16\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialLinearGroup.fin$[]\OML/cmm/m/it/10 wo[]ntidiagonal[]ffAmatrix$\TU/DejaVuSerif(0)/m/n/10 A $\OMS/cmsy/m/n/10 2 [][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+ []
+
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:210: Missing } inserted.
 <inserted text> 
                 }
@@ -3110,6 +3265,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+[30]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:229: Undefined control sequence.
 l.229 \leanok
              
@@ -3118,6 +3274,11 @@ of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (6.00195pt too wide) in paragraph at lines 228--231
+[]\TU/DejaVuSerif(0)/m/it/10 Definition \TU/DejaVuSerif(0)/m/n/10 5.18 (The subgroup of shear matrices)\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialSubgroups.S
+ []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:238: Undefined control sequence.
 l.238 \lean
@@ -3137,12 +3298,6 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-
-Overfull \hbox (1.18338pt too wide) in paragraph at lines 238--241
-[]\TU/lmr/m/it/10 Definition \TU/lmr/m/n/10 5.19 (The subgroup of lower triangular matrices)\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 SpecialSubgroups.L
- []
-
-[28]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:250: Undefined control sequence.
 l.250     \uses
                {SpecialMatrices.d, SpecialMatrices.s}
@@ -3201,8 +3356,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (52.5626pt too wide) in paragraph at lines 250--257
-[]\TU/lmr/m/it/10 Remark \TU/lmr/m/n/10 5.20\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 SpecialMatrices.d, SpecialMatrices.s mem$[][]\OML/cmm/m/it/10 ff[]ower[]riangularThesubgroup$\TU/lmr/m/n/10 L
+Overfull \hbox (97.01688pt too wide) in paragraph at lines 250--257
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.20\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialMatrices.d, SpecialMatrices.s mem$[][]\OML/cmm/m/it/10 ff[]ower[]riangularThesubgroup$\TU/DejaVuSerif(0)/m/n/10 L
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:257: Missing } inserted.
@@ -3217,11 +3372,11 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (6.34377pt too wide) in paragraph at lines 294--295
-[]\TU/lmr/m/n/10 Show that the group is closed under the inversion operator $\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/10 )[]$\TU/lmr/m/n/10 , \TU/lmtt/m/n/10 inv_mem'\TU/lmr/m/n/10 . 
+Overfull \hbox (3.03003pt too wide) in paragraph at lines 294--295
+[]\TU/DejaVuSerif(0)/m/n/10 Show that the group is closed under the inversion operator $\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/10 )[]$\TU/DejaVuSerif(0)/m/n/10 ,
  []
 
-[29]
+[31]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:325: Undefined control sequence.
 l.325 \uses
            {SpecialSubgroups.D, SpecialMatrices.d_mul_d_eq_d_mul}
@@ -3285,8 +3440,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (181.4584pt too wide) in paragraph at lines 325--329
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.23 ($\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 D; \OMS/cmsy/m/n/10 ^^A\OT1/cmr/m/n/10 ) [] (\OML/cmm/m/it/10 F[]; \OMS/cmsy/m/n/10 ^^A\OT1/cmr/m/n/10 )$\TU/lmr/m/n/10 )\TU/lmr/m/it/10 . []SpecialSubgroups.D, SpecialMatrices.d$[]\OML/cmm/m/it/10 ul[][]q[][]ul[]Themap$$  \OT1/cmr/m/n/10 :
+Overfull \hbox (226.65146pt too wide) in paragraph at lines 325--329
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.23 ($\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 D; \OMS/cmsy/m/n/10 ^^A\OT1/cmr/m/n/10 ) [] (\OML/cmm/m/it/10 F[]; \OMS/cmsy/m/n/10 ^^A\OT1/cmr/m/n/10 )$\TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.D, SpecialMatrices.d$[]\OML/cmm/m/it/10 ul[][]q[][]ul[]Themap$$  \OT1/cmr/m/n/10 :
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:329: Missing } inserted.
@@ -3301,10 +3456,10 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 334.
+LaTeX Warning: Reference `6.1' on page 32 undefined on input line 334.
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 334.
+LaTeX Warning: Reference `6.1' on page 32 undefined on input line 334.
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:342: Undefined control sequence.
 l.342 \uses
@@ -3359,8 +3514,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (22.98674pt too wide) in paragraph at lines 342--346
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.24 ( $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S; \OMS/cmsy/m/n/10 ^^A\OT1/cmr/m/n/10 ) [] (\OML/cmm/m/it/10 F; \OT1/cmr/m/n/10 +)$ \TU/lmr/m/n/10 )\TU/lmr/m/it/10 . []SpecialSubgroups.S SpecialSubgroups.S$[]\OML/cmm/m/it/10 so[]Themap$$^^^ \OT1/cmr/m/n/10 :
+Overfull \hbox (73.3477pt too wide) in paragraph at lines 342--346
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.24 ( $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S; \OMS/cmsy/m/n/10 ^^A\OT1/cmr/m/n/10 ) [] (\OML/cmm/m/it/10 F; \OT1/cmr/m/n/10 +)$ \TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.S SpecialSubgroups.S$[]\OML/cmm/m/it/10 so[]Themap$$^^^ \OT1/cmr/m/n/10 :
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:346: Missing } inserted.
@@ -3375,11 +3530,12 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 351.
+LaTeX Warning: Reference `6.1' on page 32 undefined on input line 351.
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 351.
+LaTeX Warning: Reference `6.1' on page 32 undefined on input line 351.
 
+[32]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:359: Undefined control sequence.
 l.359 \lean
            {SpecialSubgroups.normal_S_subgroupOf_L}
@@ -3479,18 +3635,22 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 372.
+Overfull \hbox (30.33986pt too wide) in paragraph at lines 359--363
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.25\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.normal$[][]\OML/cmm/m/it/10 ubgroupOf[]$\TU/DejaVuSerif(0)/m/it/10 S$\OML/cmm/m/it/10 isanormalsubgroupof$\TU/DejaVuSerif(0)/m/it/10 L$$ 
+ []
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 372.
+LaTeX Warning: Reference `6.1' on page 33 undefined on input line 372.
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 372.
+LaTeX Warning: Reference `6.1' on page 33 undefined on input line 372.
 
 
-LaTeX Warning: Reference `6.1' on page 30 undefined on input line 372.
+LaTeX Warning: Reference `6.1' on page 33 undefined on input line 372.
 
-[30]
+
+LaTeX Warning: Reference `6.1' on page 33 undefined on input line 372.
+
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:399: Undefined control sequence.
 l.399 \uses
            {SpecialSubgroups.D, SpecialSubgroups.S, SpecialSubgroups.normal_...
@@ -3579,8 +3739,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (425.32979pt too wide) in paragraph at lines 399--403
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.27\TU/lmr/m/it/10 . []SpecialSubgroups.D, SpecialSubgroups.S, SpecialSubgroups.normal$[][]\OML/cmm/m/it/10 ubgroupOf[][]$\TU/lmr/m/it/10 L
+Overfull \hbox (499.45131pt too wide) in paragraph at lines 399--403
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.27\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.D, SpecialSubgroups.S, SpecialSubgroups.normal$[][]\OML/cmm/m/it/10 ubgroupOf[][]$\TU/DejaVuSerif(0)/m/it/10 L
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:403: Missing } inserted.
@@ -3595,11 +3755,12 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `6.1' on page 31 undefined on input line 410.
+LaTeX Warning: Reference `6.1' on page 33 undefined on input line 410.
 
 
-LaTeX Warning: Reference `6.1' on page 31 undefined on input line 410.
+LaTeX Warning: Reference `6.1' on page 33 undefined on input line 410.
 
+[33]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:426: Missing \endcsname inserted.
 <to be read again> 
                    \protect 
@@ -3609,7 +3770,7 @@ The control sequence marked <to be read again> should
 not appear between \csname and \endcsname.
 
 
-LaTeX Warning: Reference `\qopname \mathcode `\'39\mathcode `\*42\mathcode `\."613A\Umathcharnumdef \std@minus \Umathcodenum `\-\relax \mathcode `\-45\mathcode `\/47\mathcode `\:"603A\relax o{SL}' on page 31 undefined on input line 426.
+LaTeX Warning: Reference `\qopname \mathcode `\'39\mathcode `\*42\mathcode `\."613A\Umathcharnumdef \std@minus \Umathcodenum `\-\relax \mathcode `\-45\mathcode `\/47\mathcode `\:"603A\relax o{SL}' on page 34 undefined on input line 426.
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:426: Missing $ inserted.
 <inserted text> 
@@ -3674,9 +3835,9 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-[31]
-Overfull \hbox (138.02pt too wide) in paragraph at lines 429--430
-[]\TU/lmr/m/n/10 This eventually entails to using the theorem called \TU/lmtt/m/n/10 QuotientGroup.quotientInfEquivProdNormalQuotient
+
+Overfull \hbox (173.53809pt too wide) in paragraph at lines 429--430
+[]\TU/DejaVuSerif(0)/m/n/10 This eventually entails to using the theorem called \TU/lmtt/m/n/10 QuotientGroup.quotientInfEquivProdNormalQuotient
  []
 
 
@@ -3772,6 +3933,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+[34]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:475: Undefined control sequence.
 l.475 \lean
            {SpecialSubgroups.Z}
@@ -3832,6 +3994,11 @@ l.498 The subgroup closure of $\overline{\{-I\}}
                                                  = \{I, -I\}$
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (29.82816pt too wide) in paragraph at lines 496--499
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.32\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.closure$[]\OML/cmm/m/it/10 eg[]ne[]qThesubgroupclosureof$$[] \OT1/cmr/m/n/10 =
+ []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:499: Missing } inserted.
 <inserted text> 
@@ -3897,8 +4064,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (47.16249pt too wide) in paragraph at lines 503--507
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.33\TU/lmr/m/it/10 . []SpecialSubgroups.ZSpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]$\TU/lmr/m/it/10 Z($[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )) = \OMS/cmsy/m/n/10 h^^@\OML/cmm/m/it/10 I[]\OMS/cmsy/m/n/10 i \OT1/cmr/m/n/10 =
+Overfull \hbox (45.68883pt too wide) in paragraph at lines 503--507
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.33\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.ZSpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]$\TU/DejaVuSerif(0)/m/it/10 Z($[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )) =
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:507: Missing } inserted.
@@ -3912,7 +4079,7 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-[32]
+[35]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:531: Undefined control sequence.
 l.531 \lean
            {SpecialSubgroups.exists_unique_orderOf_eq_two}
@@ -3955,6 +4122,11 @@ l.533     If $p\neq
                     2$, then $\SL_2(F)$ contains a unique element of order 2...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (0.82188pt too wide) in paragraph at lines 531--534
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.34\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.exists$[]\OML/cmm/m/it/10 nique[]rderOf[]q[]woIf$\TU/DejaVuSerif(0)/m/it/10 p$\OMS/cmsy/m/n/10 6\OT1/cmr/m/n/10 = 2$\TU/DejaVuSerif(0)/m/it/10 , then
+ []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 531--534
@@ -4021,8 +4193,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (14.43246pt too wide) in paragraph at lines 551--554
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.35\TU/lmr/m/it/10 . []SpecialSubgroups.card$[][]\OML/cmm/m/it/10 q[]wo[]f[]wo[]e[]eroIfthecharacteristic$\TU/lmr/m/it/10 char(F)
+Overfull \hbox (52.15895pt too wide) in paragraph at lines 551--554
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.35\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.card$[][]\OML/cmm/m/it/10 q[]wo[]f[]wo[]e[]eroIfthecharacteristic$\TU/DejaVuSerif(0)/m/it/10 char(F)
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:554: Missing } inserted.
@@ -4036,7 +4208,6 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-[33]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:561: Undefined control sequence.
 l.561     \lean
                {SpecialSubgroups.card_Z_eq_one_of_two_eq_zero}
@@ -4136,8 +4307,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (12.40062pt too wide) in paragraph at lines 561--566
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.36\TU/lmr/m/it/10 . []SpecialSubgroups.card$[][]\OML/cmm/m/it/10 q[]ne[]f[]wo[]q[]eroIfthecharacteristic$\TU/lmr/m/it/10 char(F)
+Overfull \hbox (50.1271pt too wide) in paragraph at lines 561--566
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.36\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.card$[][]\OML/cmm/m/it/10 q[]ne[]f[]wo[]q[]eroIfthecharacteristic$\TU/DejaVuSerif(0)/m/it/10 char(F)
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:571: Undefined control sequence.
@@ -4296,8 +4467,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (412.07677pt too wide) in paragraph at lines 583--587
-[]\TU/lmr/m/it/10 Definition \TU/lmr/m/n/10 5.38\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 SpecialSubgroups.S, SpecialSubgroups.Z, SpecialMatrices.s$[]\OML/cmm/m/it/10 ul[][]q[][]dd[]Wedefinethesubgroup$\TU/lmr/m/n/10 SZ$\OML/cmm/m/it/10 tobethesubgroupwiththeunderlyingset$\TU/lmr/m/n/10 S
+Overfull \hbox (475.0568pt too wide) in paragraph at lines 583--587
+[]\TU/DejaVuSerif(0)/m/it/10 Definition \TU/DejaVuSerif(0)/m/n/10 5.38\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialSubgroups.S, SpecialSubgroups.Z, SpecialMatrices.s$[]\OML/cmm/m/it/10 ul[][]q[][]dd[]Wedefinethesubgroup$\TU/DejaVuSerif(0)/m/n/10 SZ$\OML/cmm/m/it/10 tobethesubgroupwiththeunderlyingset$\TU/DejaVuSerif(0)/m/n/10 S
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:587: Missing } inserted.
@@ -4320,6 +4491,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+[36]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:592: Undefined control sequence.
 l.592 \lean
            {SpecialSubgroups.S_mul_Z_subset_SZ}
@@ -4367,6 +4539,11 @@ of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (16.53638pt too wide) in paragraph at lines 591--595
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.39\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialSubgroups.SZ SpecialSubgroups.S$[]\OML/cmm/m/it/10 ul[][]ubset[]Z$\TU/DejaVuSerif(0)/m/n/10 SZ
+ []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:595: Missing } inserted.
 <inserted text> 
@@ -4442,8 +4619,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (423.1229pt too wide) in paragraph at lines 599--603
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.40\TU/lmr/m/it/10 . []SpecialSubgroups.Z, SpecialSubgroups.S, SpecialSubgroups.closure$[]\OML/cmm/m/it/10 eg[]ne[]q; SpecialSubgroups:S[]ul[][]ubset[]Z[]Thejoinofsubgroups$\TU/lmr/m/it/10 S
+Overfull \hbox (500.60176pt too wide) in paragraph at lines 599--603
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.40\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.Z, SpecialSubgroups.S, SpecialSubgroups.closure$[]\OML/cmm/m/it/10 eg[]ne[]q; SpecialSubgroups:S[]ul[][]ubset[]Z[]Thejoinofsubgroups$\TU/DejaVuSerif(0)/m/it/10 S
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:603: Missing } inserted.
@@ -4574,8 +4751,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (28.48714pt too wide) in paragraph at lines 612--616
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.41 (Upper triangularizability criteria)\TU/lmr/m/it/10 . []isConj$[]\OML/cmm/m/it/10 pper[]riagnular[]ffAmatrix$\TU/lmr/m/it/10 M
+Overfull \hbox (66.38419pt too wide) in paragraph at lines 612--616
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.41 (Upper triangularizability criteria)\TU/DejaVuSerif(0)/m/it/10 . []isConj$[]\OML/cmm/m/it/10 pper[]riagnular[]ffAmatrix$\TU/DejaVuSerif(0)/m/it/10 M
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:616: Missing } inserted.
@@ -4642,11 +4819,10 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (169.0556pt too wide) in paragraph at lines 634--639
-\TU/lmr/m/n/10 closed field)\TU/lmr/m/it/10 . []isConj$[]\OML/cmm/m/it/10 pper[]riangular[]ff[]When$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 isanalgebraicallyclosedfield; forany$\TU/lmr/m/it/10 M
+Overfull \hbox (230.20287pt too wide) in paragraph at lines 634--639
+\TU/DejaVuSerif(0)/m/n/10 braically closed field)\TU/DejaVuSerif(0)/m/it/10 . []isConj$[]\OML/cmm/m/it/10 pper[]riangular[]ff[]When$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 isanalgebraicallyclosedfield; forany$\TU/DejaVuSerif(0)/m/it/10 M
  []
 
-[34]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:645: Missing } inserted.
 <inserted text> 
                 }
@@ -4657,6 +4833,11 @@ I've inserted something that you may have forgotten.
 With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
+
+[37]
+Overfull \hbox (5.61137pt too wide) detected at line 694
+\OML/cmm/m/it/10 w \OT1/cmr/m/n/10 = []  [] \OML/cmm/m/it/10 wMw[] \OT1/cmr/m/n/10 = [] []
+ []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:701: Undefined control sequence.
 l.701     \uses
@@ -4711,8 +4892,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (30.88469pt too wide) in paragraph at lines 701--705
-\TU/lmr/m/n/10 ces)\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 SpecialMatrices.w lower$[]\OML/cmm/m/it/10 riangular[]sConj[]pper[]riangularForevery$\TU/lmr/m/n/10 U $\OMS/cmsy/m/n/10 2 [][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (75.57283pt too wide) in paragraph at lines 701--705
+\TU/DejaVuSerif(0)/m/n/10 angular matrices)\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 SpecialMatrices.w lower$[]\OML/cmm/m/it/10 riangular[]sConj[]pper[]riangularForevery$\TU/DejaVuSerif(0)/m/n/10 U
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:705: Missing } inserted.
@@ -4789,8 +4970,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (36.45396pt too wide) in paragraph at lines 709--715
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 5.44\TU/lmr/m/it/10 . []upper$[]\OML/cmm/m/it/10 riangular[]sConj[]iagonal[]f[]onzero[]etAnuppertriangularmatrix$\TU/lmr/m/it/10 U
+Overfull \hbox (53.33527pt too wide) in paragraph at lines 709--715
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 5.44\TU/DejaVuSerif(0)/m/it/10 . []upper$[]\OML/cmm/m/it/10 riangular[]sConj[]iagonal[]f[]onzero[]etAnuppertriangularmatrix$\TU/DejaVuSerif(0)/m/it/10 U
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:715: Missing } inserted.
@@ -4804,7 +4985,6 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-[35]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:735: Undefined control sequence.
 l.735 \uses
            {isTriangularizable_of_algClosed, lower_triangular_isConj_upper_t...
@@ -4873,8 +5053,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (560.03201pt too wide) in paragraph at lines 735--739
-[]\TU/lmr/m/it/10 Proposition \TU/lmr/m/n/10 5.45\TU/lmr/m/it/10 . []isTriangularizable$[]\OML/cmm/m/it/10 f[]lgClosed; lower[]riangular[]sConj[]pper[]riangular; upper[]riangular[]sConj[]iagonal[]f[]onzero[]et[]Eachelementof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (588.82278pt too wide) in paragraph at lines 735--739
+[]\TU/DejaVuSerif(0)/m/it/10 Proposition \TU/DejaVuSerif(0)/m/n/10 5.45\TU/DejaVuSerif(0)/m/it/10 . []isTriangularizable$[]\OML/cmm/m/it/10 f[]lgClosed; lower[]riangular[]sConj[]pper[]riangular; upper[]riangular[]sConj[]iagonal[]f[]onzero[]et[]Eachelementof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:739: Missing } inserted.
@@ -4893,8 +5073,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 741--744
 
  []
 
+[38]
 
-LaTeX Warning: Citation `matrix' on page 36 undefined on input line 753.
+LaTeX Warning: Citation `matrix' on page 39 undefined on input line 753.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 749--753
@@ -4911,7 +5092,12 @@ Overfull \hbox (8.11455pt too wide) detected at line 757
 []
  []
 
-[36]
+[39]
+Overfull \hbox (11.16537pt too wide) in paragraph at lines 784--785
+\TU/DejaVuSerif(0)/m/n/10 studying the eigenspace and general eigenspace. This approach turned
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 792--793
 
  []
@@ -4936,7 +5122,6 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[37]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:806: Undefined control sequence.
 l.806     \lean
                {lower_triangular_iff_top_right_entry_eq_zero}
@@ -4946,6 +5131,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+[40]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:806: Missing $ inserted.
 <inserted text> 
                 $
@@ -4979,6 +5165,11 @@ l.808     A matrix $M \in
                           \textrm{Mat}(2; F)$ is lower triangular if and onl...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (9.06604pt too wide) in paragraph at lines 806--809
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.48\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 lower$[]\OML/cmm/m/it/10 riangular[]ff[]op[]ight[]ntry[]q[]eroAmatrix$\TU/DejaVuSerif(0)/m/n/10 M $\OMS/cmsy/m/n/10 2 []\OT1/cmr/m/n/10 (2; \OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+ []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:809: Missing } inserted.
 <inserted text> 
@@ -5054,8 +5245,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (439.65063pt too wide) in paragraph at lines 813--817
-[]\TU/lmr/m/it/10 Proposition \TU/lmr/m/n/10 5.49 (Normalizer of subgroups of $\OML/cmm/m/it/10 S$ \TU/lmr/m/n/10 are contained in $\OML/cmm/m/it/10 L$\TU/lmr/m/n/10 )\TU/lmr/m/it/10 . []mem$[][]\OML/cmm/m/it/10 ff[]ower[]riangular; lower[]riangular[]ff[]op[]ight[]ntry[]q[]ero[]Foranysubgroup$\TU/lmr/m/it/10 S$[] \OMS/cmsy/m/n/10 ^^T
+Overfull \hbox (154.37679pt too wide) in paragraph at lines 813--817
+[]\TU/DejaVuSerif(0)/m/it/10 mem$[][]\OML/cmm/m/it/10 ff[]ower[]riangular; lower[]riangular[]ff[]op[]ight[]ntry[]q[]ero[]Foranysubgroup$\TU/DejaVuSerif(0)/m/it/10 S$[] \OMS/cmsy/m/n/10 ^^T
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:817: Missing } inserted.
@@ -5191,8 +5382,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (583.8794pt too wide) in paragraph at lines 843--847
-[]\TU/lmr/m/it/10 Proposition \TU/lmr/m/n/10 5.51 (Normalizers of subgroups of $\OML/cmm/m/it/10 D$ \TU/lmr/m/n/10 are contained in $\OML/cmm/m/it/10 L$\TU/lmr/m/n/10 )\TU/lmr/m/it/10 . []SpecialLinearGroup.fin$[]\OML/cmm/m/it/10 wo[]iagonal[]ff; SpecialLinearGroup:fin[]wo[]ntidiagonal[]ff; ex[]f[]ard[][]t[]wo[]$\TU/lmr/m/it/10 N$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 D[]\OT1/cmr/m/n/10 ) =
+Overfull \hbox (307.6745pt too wide) in paragraph at lines 843--847
+[]\TU/DejaVuSerif(0)/m/it/10 SpecialLinearGroup.fin$[]\OML/cmm/m/it/10 wo[]iagonal[]ff; SpecialLinearGroup:fin[]wo[]ntidiagonal[]ff; ex[]f[]ard[][]t[]wo[]$\TU/DejaVuSerif(0)/m/it/10 N$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 D[]\OT1/cmr/m/n/10 ) =
  []
 
 
@@ -5211,7 +5402,7 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-[38]
+[41]
 Underfull \hbox (badness 10000) in paragraph at lines 855--857
 
  []
@@ -5227,16 +5418,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 859--862
  []
 
 
-LaTeX Warning: Reference `6.1' on page 39 undefined on input line 863.
+LaTeX Warning: Reference `6.1' on page 42 undefined on input line 863.
 
 
-LaTeX Warning: Reference `6.1' on page 39 undefined on input line 863.
+LaTeX Warning: Reference `6.1' on page 42 undefined on input line 863.
 
 
-LaTeX Warning: Reference `6.1' on page 39 undefined on input line 869.
+LaTeX Warning: Reference `6.1' on page 42 undefined on input line 869.
 
 
-LaTeX Warning: Reference `6.1' on page 39 undefined on input line 869.
+LaTeX Warning: Reference `6.1' on page 42 undefined on input line 869.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 871--872
@@ -5261,7 +5452,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[39]
+[42]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:889: Undefined control sequence.
 l.889     \lean
                {centralizer_neg_eq_centralizer}
@@ -5306,8 +5497,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (11.80377pt too wide) in paragraph at lines 889--892
-[]\TU/lmr/m/it/10 Remark \TU/lmr/m/n/10 5.53\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 centralizer$[]\OML/cmm/m/it/10 eg[]q[]entralizerLet$\TU/lmr/m/n/10 G$\OML/cmm/m/it/10 beagroupwiththenegationoperator$\TU/lmr/m/n/10 -
+Overfull \hbox (31.8922pt too wide) in paragraph at lines 889--892
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 5.53\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 centralizer$[]\OML/cmm/m/it/10 eg[]q[]entralizerLet$\TU/DejaVuSerif(0)/m/n/10 G$\OML/cmm/m/it/10 beagroupwiththenegationoperator$\TU/DejaVuSerif(0)/m/n/10 -
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:892: Missing } inserted.
@@ -5379,8 +5570,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (624.47563pt too wide) in paragraph at lines 899--903
-[]\TU/lmr/m/it/10 Proposition \TU/lmr/m/n/10 5.54 (Centralizer of noncenter $\OML/cmm/m/it/10 s[]$\TU/lmr/m/n/10 )\TU/lmr/m/it/10 . []SpecialLinearGroup.fin$[]\OML/cmm/m/it/10 wo[]hear[]ff; centralizer[]eg[]q[]entralizer; SpecialSubgroups:S; SpecialSubgroups:Z; SpecialMatrices:s[]Thecentralizer$\TU/lmr/m/it/10 C$[]\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 ^^F\OML/cmm/m/it/10 s[]\OT1/cmr/m/n/10 ) =
+Overfull \hbox (675.299pt too wide) in paragraph at lines 899--903
+[]\TU/DejaVuSerif(0)/m/it/10 Proposition \TU/DejaVuSerif(0)/m/n/10 5.54 (Centralizer of noncenter $\OML/cmm/m/it/10 s[]$\TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/m/it/10 . []SpecialLinearGroup.fin$[]\OML/cmm/m/it/10 wo[]hear[]ff; centralizer[]eg[]q[]entralizer; SpecialSubgroups:S; SpecialSubgroups:Z; SpecialMatrices:s[]Thecentralizer$\TU/DejaVuSerif(0)/m/it/10 C$[]\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 ^^F\OML/cmm/m/it/10 s[]\OT1/cmr/m/n/10 ) =
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:903: Missing } inserted.
@@ -5395,21 +5586,11 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (10.07286pt too wide) in paragraph at lines 906--908
-[]\TU/lmr/m/n/10 To determine the centraliser of $\OML/cmm/m/it/10 s[]$ \TU/lmr/m/n/10 in $\OML/cmm/m/it/10 L$\TU/lmr/m/n/10 , we consider which $\OML/cmm/m/it/10 y \OMS/cmsy/m/n/10 2 [][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/lmr/m/n/10 satisfy
- []
-
-
-Overfull \hbox (23.25552pt too wide) in paragraph at lines 925--928
-[]\TU/lmr/m/n/10 Thus $\OML/cmm/m/it/10 s[]z$ \TU/lmr/m/n/10 and indeed the whole of $\OML/cmm/m/it/10 SZ$ \TU/lmr/m/n/10 is contained in $\OML/cmm/m/it/10 C[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s[]\OT1/cmr/m/n/10 )$\TU/lmr/m/n/10 , so $\OML/cmm/m/it/10 C[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s[]\OT1/cmr/m/n/10 ) =
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 925--928
 
  []
 
-[40]
+[43]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:940: Undefined control sequence.
 l.940         \uses
                    {SpecialMatrices.d, SpecialLinearGroup.fin_two_diagonal_i...
@@ -5479,8 +5660,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (271.29666pt too wide) in paragraph at lines 940--943
-[]\TU/lmr/m/it/10 Proposition \TU/lmr/m/n/10 5.55 (Centralizer of noncenter $\OML/cmm/m/it/10 d[]$\TU/lmr/m/n/10 )\TU/lmr/m/it/10 . []SpecialMatrices.d, SpecialLinearGroup.fin$[]\OML/cmm/m/it/10 wo[]iagonal[]ff; SpecialSubgroups:D[][]$ 
+Overfull \hbox (6.72281pt too wide) in paragraph at lines 940--943
+\TU/DejaVuSerif(0)/m/it/10 SpecialLinearGroup.fin$[]\OML/cmm/m/it/10 wo[]iagonal[]ff; SpecialSubgroups:D[][]$ 
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:970: Undefined control sequence.
@@ -5527,8 +5708,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (257.20773pt too wide) in paragraph at lines 970--973
-[]\TU/lmr/m/it/10 Proposition \TU/lmr/m/n/10 5.56 (Centralizers of conjugate elements)\TU/lmr/m/it/10 . []conjugate$[]\OML/cmm/m/it/10 entralizers[]f[]sConjLet$\TU/lmr/m/it/10 a$\OML/cmm/m/it/10 and$\TU/lmr/m/it/10 b$\OML/cmm/m/it/10 beconjugateelementsinagroup$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 :Then$$\OMS/cmsy/m/n/10 9 \OML/cmm/m/it/10 x \OMS/cmsy/m/n/10 2
+Overfull \hbox (309.34506pt too wide) in paragraph at lines 970--973
+[]\TU/DejaVuSerif(0)/m/it/10 Proposition \TU/DejaVuSerif(0)/m/n/10 5.56 (Centralizers of conjugate elements)\TU/DejaVuSerif(0)/m/it/10 . []conjugate$[]\OML/cmm/m/it/10 entralizers[]f[]sConjLet$\TU/DejaVuSerif(0)/m/it/10 a$\OML/cmm/m/it/10 and$\TU/DejaVuSerif(0)/m/it/10 b$\OML/cmm/m/it/10 beconjugateelementsinagroup$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 :Then$$\OMS/cmsy/m/n/10 9 \OML/cmm/m/it/10 x \OMS/cmsy/m/n/10 2
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:973: Missing } inserted.
@@ -5542,7 +5723,11 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-[41]
+[44]
+Overfull \hbox (3.28543pt too wide) in paragraph at lines 990--991
+[]\TU/DejaVuSerif(0)/m/n/10 So $\OML/cmm/m/it/10 x[]hx \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 C[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 a\OT1/cmr/m/n/10 )$ \TU/DejaVuSerif(0)/m/n/10 and since $\OML/cmm/m/it/10 h$ \TU/DejaVuSerif(0)/m/n/10 was arbitrarily chosen from $\OML/cmm/m/it/10 C[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 xax[]\OT1/cmr/m/n/10 )$\TU/DejaVuSerif(0)/m/n/10 ,
+ []
+
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:997: Undefined control sequence.
 l.997     \uses
                {SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed, conju...
@@ -5621,8 +5806,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (825.8806pt too wide) in paragraph at lines 997--1001
-[]\TU/lmr/m/it/10 Corollary \TU/lmr/m/n/10 5.57 ( Centralizer of non-central element is commutative)\TU/lmr/m/it/10 . []SL2$[]\OML/cmm/m/it/10 sConj[][]r[]sConj[][]r[]sConj[]eg[][]f[]lgClosed; conjugate[]entralizers[]f[]sConj; centralizer[][]q[]Z; centralizer[][]q[][]Thecentraliserofanelement$\TU/lmr/m/it/10 x$\OML/cmm/m/it/10 in$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (537.15602pt too wide) in paragraph at lines 997--1001
+[]\TU/DejaVuSerif(0)/m/it/10 SL2$[]\OML/cmm/m/it/10 sConj[][]r[]sConj[][]r[]sConj[]eg[][]f[]lgClosed; conjugate[]entralizers[]f[]sConj; centralizer[][]q[]Z; centralizer[][]q[][]Thecentraliserofanelement$\TU/DejaVuSerif(0)/m/it/10 x$\OML/cmm/m/it/10 in$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:1001: Missing } inserted.
@@ -5637,8 +5822,9 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `conjugateprop' on page 42 undefined on input line 1014.
+LaTeX Warning: Reference `conjugateprop' on page 45 undefined on input line 1014.
 
+[45]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:1025: Undefined control sequence.
 <recently read> \mathscr 
                          
@@ -5738,7 +5924,6 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[42]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:1028: Undefined control sequence.
 <recently read> \mathscr 
                          
@@ -5805,7 +5990,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[43]
+[46]
 ./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex:1067: Undefined control sequence.
 <recently read> \mathscr 
                          
@@ -5887,7 +6072,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1081--1084
 
  []
 
-[44]
+[47]
 Underfull \hbox (badness 10000) in paragraph at lines 1093--1094
 
  []
@@ -5903,14 +6088,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 1101--1104
  []
 
 
-LaTeX Warning: Reference `6.3' on page 45 undefined on input line 1111.
+LaTeX Warning: Reference `6.3' on page 48 undefined on input line 1111.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 1109--1112
 
  []
 
-) (./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex [45]
+[48]) (./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex [49]
 Chapter 6.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -5986,10 +6171,10 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 4.
 
 
-LaTeX Warning: Reference `6.2' on page 46 undefined on input line 8.
+LaTeX Warning: Reference `6.2' on page 50 undefined on input line 8.
 
 
-LaTeX Warning: Reference `6.2b' on page 46 undefined on input line 8.
+LaTeX Warning: Reference `6.2b' on page 50 undefined on input line 8.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 6--13
@@ -6024,7 +6209,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[46
+[50
 
 ]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:48: Undefined control sequence.
@@ -6085,6 +6270,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 78--81
 
  []
 
+[51]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:84: Undefined control sequence.
 l.84   \lean
             {IsElementaryAbelian.dvd_card}
@@ -6140,9 +6326,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Citation `bhattacharya' on page 47 undefined on input line 90.
+LaTeX Warning: Citation `bhattacharya' on page 52 undefined on input line 90.
 
-[47]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:104: Undefined control sequence.
 l.104   \lean
              {coprime_card_fin_subgroup_of_inj_hom_group_iso_units}
@@ -6237,12 +6422,12 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (193.99849pt too wide) in paragraph at lines 104--109
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.8\TU/lmr/m/it/10 . []coprime$[]\OML/cmm/m/it/10 ard[]in[]ubgroup[]f[]nj[]om[]roup[]so[]nitsEveryfinitesubgroupofamultiplicativegroupofafieldiscyclic:$ 
+Overfull \hbox (209.4997pt too wide) in paragraph at lines 104--109
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.8\TU/DejaVuSerif(0)/m/it/10 . []coprime$[]\OML/cmm/m/it/10 ard[]in[]ubgroup[]f[]nj[]om[]roup[]so[]nitsEveryfinitesubgroupofamultiplicativegroupofafieldiscyclic:$ 
  []
 
 
-LaTeX Warning: Citation `suzuki' on page 48 undefined on input line 111.
+LaTeX Warning: Citation `suzuki' on page 52 undefined on input line 111.
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:116: Undefined control sequence.
 l.116   \uses
@@ -6302,8 +6487,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (626.34213pt too wide) in paragraph at lines 116--121
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 6.9\TU/lmr/m/it/10 . []IsCommutative$[]\OML/cmm/m/it/10 entralizer[]f[]ot[]em[]enter; MaximalAbelianSubgroupsOf[]Let$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beanarbitraryfinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (649.22383pt too wide) in paragraph at lines 116--121
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 6.9\TU/DejaVuSerif(0)/m/it/10 . []IsCommutative$[]\OML/cmm/m/it/10 entralizer[]f[]ot[]em[]enter; MaximalAbelianSubgroupsOf[]Let$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beanarbitraryfinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 
@@ -6323,7 +6508,7 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `6.5' on page 48 undefined on input line 123.
+LaTeX Warning: Reference `6.5' on page 52 undefined on input line 123.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 123--126
@@ -6374,10 +6559,11 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (99.082pt too wide) in paragraph at lines 133--136
-[]\TU/lmr/m/it/10 Remark \TU/lmr/m/n/10 6.10\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 IsCommutative$[]\OML/cmm/m/it/10 f[]sCommutative[]ubgroupOfLet$\TU/lmr/m/n/10 H, K$\OML/cmm/m/it/10 betwosubgroupsofagroup$\TU/lmr/m/n/10 G$\OML/cmm/m/it/10 then$\TU/lmr/m/n/10 H
+Overfull \hbox (122.0123pt too wide) in paragraph at lines 133--136
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 6.10\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 IsCommutative$[]\OML/cmm/m/it/10 f[]sCommutative[]ubgroupOfLet$\TU/DejaVuSerif(0)/m/n/10 H, K$\OML/cmm/m/it/10 betwosubgroupsofagroup$\TU/DejaVuSerif(0)/m/n/10 G$\OML/cmm/m/it/10 then$\TU/DejaVuSerif(0)/m/n/10 H
  []
 
+[52]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:136: Missing } inserted.
 <inserted text> 
                 }
@@ -6483,11 +6669,10 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (40.92096pt too wide) in paragraph at lines 145--150
-[]\TU/lmr/m/it/10 Definition \TU/lmr/m/n/10 6.12\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 center$[]\OML/cmm/m/it/10 ulLet$\TU/lmr/m/n/10 H$\OML/cmm/m/it/10 beasubgroupofagroup$\TU/lmr/m/n/10 G$\OML/cmm/m/it/10 thenthepointwisesetproduct$\TU/lmr/m/n/10 Z(G)
+Overfull \hbox (59.97363pt too wide) in paragraph at lines 145--150
+[]\TU/DejaVuSerif(0)/m/it/10 Definition \TU/DejaVuSerif(0)/m/n/10 6.12\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 center$[]\OML/cmm/m/it/10 ulLet$\TU/DejaVuSerif(0)/m/n/10 H$\OML/cmm/m/it/10 beasubgroupofagroup$\TU/DejaVuSerif(0)/m/n/10 G$\OML/cmm/m/it/10 thenthepointwisesetproduct$\TU/DejaVuSerif(0)/m/n/10 Z(G)
  []
 
-[48]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:160: Undefined control sequence.
 l.160   \uses
              {center_mul}
@@ -6654,8 +6839,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (20.10974pt too wide) in paragraph at lines 167--170
-\TU/lmr/m/n/10 commutative)\TU/lmr/m/it/10 . []center$[]\OML/cmm/m/it/10 ul[]ubset[]enter[]ul; center[]ul[][]$ 
+Overfull \hbox (86.55997pt too wide) in paragraph at lines 167--170
+\TU/DejaVuSerif(0)/m/n/10 a group is commutative)\TU/DejaVuSerif(0)/m/it/10 . []center$[]\OML/cmm/m/it/10 ul[]ubset[]enter[]ul; center[]ul[][]$ 
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:188: Undefined control sequence.
@@ -6711,8 +6896,8 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Overfull \hbox (376.08827pt too wide) in paragraph at lines 188--192
-\TU/lmr/m/n/10 group containing $\OML/cmm/m/it/10 Z$\TU/lmr/m/n/10 )\TU/lmr/m/it/10 . []IsCommutative$[]\OML/cmm/m/it/10 f[]sCommutative[]ubgroupOf; IsComm[]f[]enter[]oin[]sComm[]Let$\TU/lmr/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 ; if$\TU/lmr/m/it/10 Z(G)
+Overfull \hbox (428.67801pt too wide) in paragraph at lines 188--192
+\TU/DejaVuSerif(0)/m/n/10 a subgroup containing $\OML/cmm/m/it/10 Z$\TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/m/it/10 . []IsCommutative$[]\OML/cmm/m/it/10 f[]sCommutative[]ubgroupOf; IsComm[]f[]enter[]oin[]sComm[]Let$\TU/DejaVuSerif(0)/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 ; if$\TU/DejaVuSerif(0)/m/it/10 Z(G)
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:192: Missing } inserted.
@@ -6770,8 +6955,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (225.95094pt too wide) in paragraph at lines 199--202
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.16\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.le$[]\OML/cmm/m/it/10 entralizer[]f[]emLet$\TU/lmr/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 andlet$\TU/lmr/m/it/10 A$\OML/cmm/m/it/10 beamaximalabeliansubgroupof$\TU/lmr/m/it/10 H$\OML/cmm/m/it/10 ; andlet$\TU/lmr/m/it/10 x
+Overfull \hbox (264.64685pt too wide) in paragraph at lines 199--202
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.16\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.le$[]\OML/cmm/m/it/10 entralizer[]f[]emLet$\TU/DejaVuSerif(0)/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 andlet$\TU/DejaVuSerif(0)/m/it/10 A$\OML/cmm/m/it/10 beamaximalabeliansubgroupof$\TU/DejaVuSerif(0)/m/it/10 H$\OML/cmm/m/it/10 ; andlet$\TU/DejaVuSerif(0)/m/it/10 x
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:202: Missing } inserted.
@@ -6829,10 +7014,11 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (28.78378pt too wide) in paragraph at lines 206--209
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.17\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.not$[]\OML/cmm/m/it/10 e[]f[]eLet$\TU/lmr/m/it/10 H$\OML/cmm/m/it/10 beasubgroupofagroup$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 andlet$\TU/lmr/m/it/10 A
+Overfull \hbox (65.66261pt too wide) in paragraph at lines 206--209
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.17\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.not$[]\OML/cmm/m/it/10 e[]f[]eLet$\TU/DejaVuSerif(0)/m/it/10 H$\OML/cmm/m/it/10 beasubgroupofagroup$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 andlet$\TU/DejaVuSerif(0)/m/it/10 A
  []
 
+[53]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:209: Missing } inserted.
 <inserted text> 
                 }
@@ -6897,8 +7083,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (370.39682pt too wide) in paragraph at lines 217--221
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.18\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.not$[]\OML/cmm/m/it/10 e[]f[]e; MaximalAbelianSubgroup:le[]entralizer[]f[]em[]Let$\TU/lmr/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 ; let$\TU/lmr/m/it/10 A
+Overfull \hbox (407.27565pt too wide) in paragraph at lines 217--221
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.18\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.not$[]\OML/cmm/m/it/10 e[]f[]e; MaximalAbelianSubgroup:le[]entralizer[]f[]em[]Let$\TU/DejaVuSerif(0)/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 ; let$\TU/DejaVuSerif(0)/m/it/10 A
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:221: Missing } inserted.
@@ -7035,11 +7221,10 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (1181.2853pt too wide) in paragraph at lines 225--230
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 6.19\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 eet[][]n[]aximalAbelianSubgroups[]f[]oncentral; MaximalAbelianSubgroup:center[]e; MaximalAbelianSubgroup:lt[]en[]eet[]; MaximalAbelianSubgroup:le[]entralizer[]f[]em[]Foranytwodistinctsubgroups$\TU/lmr/m/it/10 A$\OML/cmm/m/it/10 and$\TU/lmr/m/it/10 B$\OML/cmm/m/it/10 of$\TU/lmr/m/it/10 M$\OML/cmm/m/it/10 ; wehave$ 
+Overfull \hbox (1227.38069pt too wide) in paragraph at lines 225--230
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 6.19\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 eet[][]n[]aximalAbelianSubgroups[]f[]oncentral; MaximalAbelianSubgroup:center[]e; MaximalAbelianSubgroup:lt[]en[]eet[]; MaximalAbelianSubgroup:le[]entralizer[]f[]em[]Foranytwodistinctsubgroups$\TU/DejaVuSerif(0)/m/it/10 A$\OML/cmm/m/it/10 and$\TU/DejaVuSerif(0)/m/it/10 B$\OML/cmm/m/it/10 of$\TU/DejaVuSerif(0)/m/it/10 M$\OML/cmm/m/it/10 ; wehave$ 
  []
 
-[49]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:240: Undefined control sequence.
 l.240 \uses
            {MaximalAbelianSubgroup.center_le, MaximalAbelianSubgroupsOf, IsM...
@@ -7155,12 +7340,17 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (449.84712pt too wide) in paragraph at lines 240--246
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.20\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.center$[]\OML/cmm/m/it/10 e; MaximalAbelianSubgroupsOf; IsMaximalAbelian[]Let$\TU/lmr/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 andsuppose$\TU/lmr/m/it/10 H
+Overfull \hbox (492.02127pt too wide) in paragraph at lines 240--246
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.20\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.center$[]\OML/cmm/m/it/10 e; MaximalAbelianSubgroupsOf; IsMaximalAbelian[]Let$\TU/DejaVuSerif(0)/m/it/10 H$\OML/cmm/m/it/10 beasubgroupof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 andsuppose$\TU/DejaVuSerif(0)/m/it/10 H
  []
 
 
-LaTeX Warning: Reference `MaximalAbelianSubgroup.center_eq_meet_of_ne_MaximalAbelianSubgroup.center_le' on page 50 undefined on input line 248.
+LaTeX Warning: Reference `MaximalAbelianSubgroup.center_eq_meet_of_ne_MaximalAbelianSubgroup.center_le' on page 54 undefined on input line 248.
+
+
+Overfull \hbox (0.96988pt too wide) in paragraph at lines 248--249
+[]\TU/DejaVuSerif(0)/m/n/10 Suppose $\OML/cmm/m/it/10 A$ \TU/DejaVuSerif(0)/m/n/10 is a maximal abelian subgroup of $\OML/cmm/m/it/10 H$\TU/DejaVuSerif(0)/m/n/10 , then by [] $\OML/cmm/m/it/10 Z\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 G\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^T
+ []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:258: Undefined control sequence.
 l.258   \uses
@@ -7287,13 +7477,13 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (744.2119pt too wide) in paragraph at lines 258--264
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.21\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.singleton$[]\OML/cmm/m/it/10 f[]en[]q[]; SpecialSubgroups:card[][]q[]wo[]f[]wo[]e[]ero; SpecialSubgroups:IsCyclic[]; SpecialSubgroups:card[][]q[]ne[]f[]wo[]q[]ero[]If$\TU/lmr/m/it/10 G
+Overfull \hbox (785.75642pt too wide) in paragraph at lines 258--264
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.21\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.singleton$[]\OML/cmm/m/it/10 f[]en[]q[]; SpecialSubgroups:card[][]q[]wo[]f[]wo[]e[]ero; SpecialSubgroups:IsCyclic[]; SpecialSubgroups:card[][]q[]ne[]f[]wo[]q[]ero[]If$\TU/DejaVuSerif(0)/m/it/10 G
  []
 
 
-Overfull \hbox (140.83821pt too wide) in paragraph at lines 258--264
-\TU/lmr/m/it/10 = Z(G)$\OML/cmm/m/it/10 thenanelement$\TU/lmr/m/it/10 A$\OML/cmm/m/it/10 of$\TU/lmr/m/it/10 M$\OML/cmm/m/it/10 ; themaximalabeliansubgrupsof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 isacyclicgroupwhoseorderisrelativelyprimeto$\TU/lmr/m/it/10 p$\OML/cmm/m/it/10 :$ 
+Overfull \hbox (144.56943pt too wide) in paragraph at lines 258--264
+\TU/DejaVuSerif(0)/m/it/10 = Z(G)$\OML/cmm/m/it/10 thenanelement$\TU/DejaVuSerif(0)/m/it/10 A$\OML/cmm/m/it/10 of$\TU/DejaVuSerif(0)/m/it/10 M$\OML/cmm/m/it/10 ; themaximalabeliansubgrupsof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 isacyclicgroupwhoseorderisrelativelyprimeto$\TU/DejaVuSerif(0)/m/it/10 p$\OML/cmm/m/it/10 :$ 
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:269: Undefined control sequence.
@@ -7305,6 +7495,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+[54]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:269: Missing $ inserted.
 <inserted text> 
                 $
@@ -7340,8 +7531,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (0.10654pt too wide) in paragraph at lines 269--272
-[]\TU/lmr/m/it/10 Remark \TU/lmr/m/n/10 6.22\TU/lmr/m/it/10 . []\TU/lmr/m/n/10 mem$[]\OML/cmm/m/it/10 entralizer[]elfLet$\TU/lmr/m/n/10 G$\OML/cmm/m/it/10 beagroupthencentralizerofanelement$\TU/lmr/m/n/10 x
+Overfull \hbox (14.5355pt too wide) in paragraph at lines 269--272
+[]\TU/DejaVuSerif(0)/m/it/10 Remark \TU/DejaVuSerif(0)/m/n/10 6.22\TU/DejaVuSerif(0)/m/it/10 . []\TU/DejaVuSerif(0)/m/n/10 mem$[]\OML/cmm/m/it/10 entralizer[]elfLet$\TU/DejaVuSerif(0)/m/n/10 G$\OML/cmm/m/it/10 beagroupthencentralizerofanelement$\TU/DejaVuSerif(0)/m/n/10 x
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:272: Missing } inserted.
@@ -7413,8 +7604,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (646.00136pt too wide) in paragraph at lines 276--280
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.23\TU/lmr/m/it/10 . []mem$[]\OML/cmm/m/it/10 entralizer[]elf; MaximalAbelianSubgroup:centralizer[]eet[][]n[]aximalAbelianSubgroups[]f[]oncentral[]Let$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfield; let$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (662.10869pt too wide) in paragraph at lines 276--280
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.23\TU/DejaVuSerif(0)/m/it/10 . []mem$[]\OML/cmm/m/it/10 entralizer[]elf; MaximalAbelianSubgroup:centralizer[]eet[][]n[]aximalAbelianSubgroups[]f[]oncentral[]Let$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfield; let$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:280: Missing } inserted.
@@ -7492,8 +7683,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (113.82364pt too wide) in paragraph at lines 285--288
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.24\TU/lmr/m/it/10 . []IsCommutative$[]\OML/cmm/m/it/10 f[]sCommutative[]ubgroupOf[][]$ 
+Overfull \hbox (134.61961pt too wide) in paragraph at lines 285--288
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.24\TU/DejaVuSerif(0)/m/it/10 . []IsCommutative$[]\OML/cmm/m/it/10 f[]sCommutative[]ubgroupOf[][]$ 
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:296: Undefined control sequence.
@@ -7554,8 +7745,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (826.66516pt too wide) in paragraph at lines 296--301
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.25\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 eet[][]n[]aximalAbelianSubgroups[]f[]oncentral; MaximalAbelianSubgroup:le[]entralizer[]eet[]Let$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfield; let$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 and$\TU/lmr/m/it/10 A$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (872.01091pt too wide) in paragraph at lines 296--301
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.25\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 eet[][]n[]aximalAbelianSubgroups[]f[]oncentral; MaximalAbelianSubgroup:le[]entralizer[]eet[]Let$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfield; let$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 and$\TU/DejaVuSerif(0)/m/it/10 A$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:301: Missing } inserted.
@@ -7627,11 +7818,15 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (1200.12216pt too wide) in paragraph at lines 306--312
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 6.26\TU/lmr/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; conjugate[]entralizers[]f[]sConj; centralizer[][]q[]; SpecialMatrices:d; SpecialSubgroups:D[]so[]nits; coprime[]ard[]in[]ubgroup[]f[]nj[]om[]roup[]so[]nits[]Let$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfieldofcharacteristic$\TU/lmr/m/it/10 p$\OML/cmm/m/it/10 andlet$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (1240.72374pt too wide) in paragraph at lines 306--312
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 6.26\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; conjugate[]entralizers[]f[]sConj; centralizer[][]q[]; SpecialMatrices:d; SpecialSubgroups:D[]so[]nits; coprime[]ard[]in[]ubgroup[]f[]nj[]om[]roup[]so[]nits[]Let$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfieldofcharacteristic$\TU/DejaVuSerif(0)/m/it/10 p$\OML/cmm/m/it/10 andlet$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
-[50]
+
+Overfull \hbox (1.96785pt too wide) in paragraph at lines 306--312
+\TU/DejaVuSerif(0)/m/it/10 containing $\OML/cmm/m/it/10 Z$\TU/DejaVuSerif(0)/m/it/10 , let $\OML/cmm/m/it/10 A$ \TU/DejaVuSerif(0)/m/it/10 be a subgroup of $[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$ \TU/DejaVuSerif(0)/m/it/10 which is a maximal abelian
+ []
+
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:312: Missing } inserted.
 <inserted text> 
                 }
@@ -7742,8 +7937,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (17.20724pt too wide) in paragraph at lines 319--322
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.27\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 q[]onj[]Z[]f[]sConj[][]r[]sConj[]eg[]$ 
+Overfull \hbox (60.41893pt too wide) in paragraph at lines 319--322
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.27\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 q[]onj[]Z[]f[]sConj[][]r[]sConj[]eg[]$ 
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:329: Undefined control sequence.
@@ -7835,8 +8030,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (322.4667pt too wide) in paragraph at lines 329--332
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.28\TU/lmr/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; SpecialSubgroups:S; SpecialSubgroups:Z[][]$ 
+Overfull \hbox (357.92041pt too wide) in paragraph at lines 329--332
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.28\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; SpecialSubgroups:S; SpecialSubgroups:Z[][]$ 
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:340: Undefined control sequence.
@@ -7892,8 +8087,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (52.41754pt too wide) in paragraph at lines 340--344
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.29\TU/lmr/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[][]Let$\TU/lmr/m/it/10 c
+Overfull \hbox (88.87183pt too wide) in paragraph at lines 340--344
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.29\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[][]Let$\TU/DejaVuSerif(0)/m/it/10 c
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:347: Missing } inserted.
@@ -7988,10 +8183,11 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (803.78134pt too wide) in paragraph at lines 360--365
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.31\TU/lmr/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; SpecialSubgroups:card[][]q[]ne[]f[]wo[]q[]ero; SpecialSubgroups:card[][]q[]wo[]f[]wo[]e[]ero; SpecialSubgroups:Z[]Let$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/lmr/m/it/10 ,
+Overfull \hbox (841.27765pt too wide) in paragraph at lines 360--365
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.31\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; SpecialSubgroups:card[][]q[]ne[]f[]wo[]q[]ero; SpecialSubgroups:card[][]q[]wo[]f[]wo[]e[]ero; SpecialSubgroups:Z[]Let$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/DejaVuSerif(0)/m/it/10 ,
  []
 
+[55]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:365: Missing } inserted.
 <inserted text> 
                 }
@@ -8056,8 +8252,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (202.36542pt too wide) in paragraph at lines 372--377
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.32\TU/lmr/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[][]Let$\TU/lmr/m/it/10 S$\OML/cmm/m/it/10 and$\TU/lmr/m/it/10 Q$\OML/cmm/m/it/10 besubgroupsofagroup$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (241.26358pt too wide) in paragraph at lines 372--377
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.32\TU/DejaVuSerif(0)/m/it/10 . []SpecialSubgroups.center$[]\OML/cmm/m/it/10 L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[][]Let$\TU/DejaVuSerif(0)/m/it/10 S$\OML/cmm/m/it/10 and$\TU/DejaVuSerif(0)/m/it/10 Q$\OML/cmm/m/it/10 besubgroupsofagroup$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:377: Missing } inserted.
@@ -8179,8 +8375,13 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (3041.97557pt too wide) in paragraph at lines 382--390
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 6.33\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 q[]onj[]Z[]f[]sConj[][]r[]sConj[]eg[]; SpecialSubgroups:S[]oin[][]q[]Z; MaximalAbelianSubgroup:conj[][]oin[][]eet[][]q[]onj[][]eet[][]oin[]; MaximalAbelianSubgroup:conj[]nv[]onj[]q; SpecialSubgroups:center[]L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; SpecialMatrices:order[][]q[]har; orderOf[]njective; MaximalAbelianSubgroup:center[]e; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]f[]sConj[]; IsElementaryAbelian:subgroupOf; MaximalAbelianSubgroup:exists[]oncenter[]f[]ard[]enter[]t[]ard[]enter[]ylow; MaximalAbelianSubgroup:mul[]enter[]nj[]Let$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfieldofcharacteristic$\TU/lmr/m/it/10 p$\OML/cmm/m/it/10 andlet$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (3090.33513pt too wide) in paragraph at lines 382--390
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 6.33\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.centralizer$[]\OML/cmm/m/it/10 q[]onj[]Z[]f[]sConj[][]r[]sConj[]eg[]; SpecialSubgroups:S[]oin[][]q[]Z; MaximalAbelianSubgroup:conj[][]oin[][]eet[][]q[]onj[][]eet[][]oin[]; MaximalAbelianSubgroup:conj[]nv[]onj[]q; SpecialSubgroups:center[]L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[]; SpecialMatrices:order[][]q[]har; orderOf[]njective; MaximalAbelianSubgroup:center[]e; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]f[]sConj[]; IsElementaryAbelian:subgroupOf; MaximalAbelianSubgroup:exists[]oncenter[]f[]ard[]enter[]t[]ard[]enter[]ylow; MaximalAbelianSubgroup:mul[]enter[]nj[]Let$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 beanalgebraicallyclosedfieldofcharacteristic$\TU/DejaVuSerif(0)/m/it/10 p$\OML/cmm/m/it/10 andlet$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+ []
+
+
+Overfull \hbox (1.96785pt too wide) in paragraph at lines 382--390
+\TU/DejaVuSerif(0)/m/it/10 containing $\OML/cmm/m/it/10 Z$\TU/DejaVuSerif(0)/m/it/10 , let $\OML/cmm/m/it/10 A$ \TU/DejaVuSerif(0)/m/it/10 be a subgroup of $[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$ \TU/DejaVuSerif(0)/m/it/10 which is a maximal abelian
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:390: Missing } inserted.
@@ -8287,8 +8488,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (979.52086pt too wide) in paragraph at lines 396--400
-[]\TU/lmr/m/it/10 Lemma \TU/lmr/m/n/10 6.34\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.center$[]\OML/cmm/m/it/10 ot[]em; MaximalAbelianSubgroup:eq[]entralizer[]eet[]f[]enter[]t; SL\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 sConj[][]r[]sConj[][]r[]sConj[]eg[][]f[]lgClosed; MaximalAbelianSubgroup:A[]q[][]oin[][]f[]sConj[][]r[]eg[][]If$\TU/lmr/m/it/10 G
+Overfull \hbox (1019.11359pt too wide) in paragraph at lines 396--400
+[]\TU/DejaVuSerif(0)/m/it/10 Lemma \TU/DejaVuSerif(0)/m/n/10 6.34\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.center$[]\OML/cmm/m/it/10 ot[]em; MaximalAbelianSubgroup:eq[]entralizer[]eet[]f[]enter[]t; SL\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 sConj[][]r[]sConj[][]r[]sConj[]eg[][]f[]lgClosed; MaximalAbelianSubgroup:A[]q[][]oin[][]f[]sConj[][]r[]eg[][]If$\TU/DejaVuSerif(0)/m/it/10 G
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:400: Missing } inserted.
@@ -8303,19 +8504,18 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `6.3' on page 51 undefined on input line 402.
+LaTeX Warning: Reference `6.3' on page 56 undefined on input line 402.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 402--405
 
  []
 
-[51]
 
-LaTeX Warning: Reference `finsubcyc' on page 52 undefined on input line 413.
+LaTeX Warning: Reference `finsubcyc' on page 56 undefined on input line 413.
 
 
-LaTeX Warning: Reference `conjcent' on page 52 undefined on input line 415.
+LaTeX Warning: Reference `conjcent' on page 56 undefined on input line 415.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 413--416
@@ -8323,30 +8523,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 413--416
  []
 
 
-LaTeX Warning: Reference `6.4i' on page 52 undefined on input line 419.
+LaTeX Warning: Reference `6.4i' on page 56 undefined on input line 419.
 
 
-LaTeX Warning: Reference `6.1b' on page 52 undefined on input line 419.
+LaTeX Warning: Reference `6.1b' on page 56 undefined on input line 419.
 
 
-LaTeX Warning: Reference `6.4i' on page 52 undefined on input line 419.
+LaTeX Warning: Reference `6.4i' on page 56 undefined on input line 419.
 
 
-LaTeX Warning: Reference `6.1b' on page 52 undefined on input line 419.
+LaTeX Warning: Reference `6.1b' on page 56 undefined on input line 419.
+
+[56]
+
+LaTeX Warning: Reference `6.3' on page 57 undefined on input line 427.
 
 
-LaTeX Warning: Reference `6.3' on page 52 undefined on input line 427.
+LaTeX Warning: Reference `6.2' on page 57 undefined on input line 431.
 
 
-LaTeX Warning: Reference `6.2' on page 52 undefined on input line 431.
-
-
-LaTeX Warning: Reference `6.2' on page 52 undefined on input line 432.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 426--435
-
- []
+LaTeX Warning: Reference `6.2' on page 57 undefined on input line 432.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 426--435
@@ -8358,7 +8554,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 426--435
 
  []
 
-[52]
+
+Underfull \hbox (badness 10000) in paragraph at lines 426--435
+
+ []
+
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:453: Undefined control sequence.
 l.453 \uses
            {MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_j...
@@ -8439,10 +8639,11 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (1067.46852pt too wide) in paragraph at lines 453--457
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 6.35\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[][]f[]enter[]e; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]f[]enter[]q[]Anelement$\TU/lmr/m/it/10 A$\OML/cmm/m/it/10 of$\TU/lmr/m/it/10 M$\OML/cmm/m/it/10 iseitheracyclicgroupwhoseorderisrelativelyprimeto$\TU/lmr/m/it/10 p$\OML/cmm/m/it/10 ; oroftheform$\TU/lmr/m/it/10 Q
+Overfull \hbox (1110.16234pt too wide) in paragraph at lines 453--457
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 6.35\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[][]f[]enter[]e; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]f[]enter[]q[]Anelement$\TU/DejaVuSerif(0)/m/it/10 A$\OML/cmm/m/it/10 of$\TU/DejaVuSerif(0)/m/it/10 M$\OML/cmm/m/it/10 iseitheracyclicgroupwhoseorderisrelativelyprimeto$\TU/DejaVuSerif(0)/m/it/10 p$\OML/cmm/m/it/10 ; oroftheform$\TU/DejaVuSerif(0)/m/it/10 Q
  []
 
+[57]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:457: Missing } inserted.
 <inserted text> 
                 }
@@ -8517,8 +8718,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (384.33545pt too wide) in paragraph at lines 468--472
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 6.36\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[]; normalizer[]ubgroup[][]q[]W[]If$\TU/lmr/m/it/10 A
+Overfull \hbox (423.9404pt too wide) in paragraph at lines 468--472
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 6.36\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[]; normalizer[]ubgroup[][]q[]W[]If$\TU/DejaVuSerif(0)/m/it/10 A
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:473: Missing } inserted.
@@ -8537,7 +8738,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 475--478
 
  []
 
-[53] [54]
+
+Overfull \hbox (20.35284pt too wide) in paragraph at lines 493--494
+[]\TU/DejaVuSerif(0)/m/n/10 So $\OML/cmm/m/it/10 zgz[] \OT1/cmr/m/n/10 = \OML/cmm/m/it/10 i[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 g\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 N[]\OT1/cmr/m/n/10 ([])$ \TU/DejaVuSerif(0)/m/n/10 and since it was chosen arbitrarily, $\OML/cmm/m/it/10 i[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^Z
+ []
+
+[58]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:533: Undefined control sequence.
 l.533   \uses
              {MaximalAbelianSubgroup.index_normalizer_le_two}
@@ -8582,8 +8788,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (178.37646pt too wide) in paragraph at lines 533--537
-[]\TU/lmr/m/it/10 Theorem \TU/lmr/m/n/10 6.37\TU/lmr/m/it/10 . []MaximalAbelianSubgroup.index$[]\OML/cmm/m/it/10 ormalizer[]e[]wo[]If$\TU/lmr/m/it/10 A
+Overfull \hbox (217.35861pt too wide) in paragraph at lines 533--537
+[]\TU/DejaVuSerif(0)/m/it/10 Theorem \TU/DejaVuSerif(0)/m/n/10 6.37\TU/DejaVuSerif(0)/m/it/10 . []MaximalAbelianSubgroup.index$[]\OML/cmm/m/it/10 ormalizer[]e[]wo[]If$\TU/DejaVuSerif(0)/m/it/10 A
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:538: Missing } inserted.
@@ -8610,16 +8816,12 @@ Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
+[59]
 
-Overfull \hbox (13.99431pt too wide) in paragraph at lines 542--543
-[]\TU/lmr/m/n/10 If $\OT1/cmr/m/n/10 [\OML/cmm/m/it/10 N[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 ) : \OML/cmm/m/it/10 A\OT1/cmr/m/n/10 ] = 2$\TU/lmr/m/n/10 , then the above argument at []6.36[] shows that $\OML/cmm/m/it/10 N[]\OT1/cmr/m/n/10 ([])\OML/cmm/m/it/10 =[]  []
- []
-
-
-LaTeX Warning: Reference `6.1' on page 55 undefined on input line 548.
+LaTeX Warning: Reference `6.1' on page 60 undefined on input line 548.
 
 
-LaTeX Warning: Reference `6.1' on page 55 undefined on input line 548.
+LaTeX Warning: Reference `6.1' on page 60 undefined on input line 548.
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:554: Undefined control sequence.
 l.554   \uses
@@ -8685,8 +8887,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (593.87541pt too wide) in paragraph at lines 554--557
-[]\TU/lmr/bx/n/10 Theorem 6.38. []\TU/lmr/m/it/10 normalizer$[]\OML/cmm/m/it/10 ubgroup[][]e[]; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]r[]q[][]oin[][]Let$\TU/lmr/m/it/10 Q$\OML/cmm/m/it/10 beaSylow$\TU/lmr/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 subgroupof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 :If$\TU/lmr/m/it/10 Q
+Overfull \hbox (613.67096pt too wide) in paragraph at lines 554--557
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 6.38. []\TU/DejaVuSerif(0)/m/it/10 normalizer$[]\OML/cmm/m/it/10 ubgroup[][]e[]; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]r[]q[][]oin[][]Let$\TU/DejaVuSerif(0)/m/it/10 Q$\OML/cmm/m/it/10 beaSylow$\TU/DejaVuSerif(0)/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 subgroupof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 :If$\TU/DejaVuSerif(0)/m/it/10 Q
  []
 
 
@@ -8706,33 +8908,32 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-LaTeX Warning: Reference `6.1' on page 55 undefined on input line 568.
+LaTeX Warning: Reference `6.1' on page 60 undefined on input line 568.
 
 
-LaTeX Warning: Reference `6.1' on page 55 undefined on input line 568.
+LaTeX Warning: Reference `6.1' on page 60 undefined on input line 568.
 
 
-LaTeX Warning: Reference `6.1' on page 55 undefined on input line 568.
+LaTeX Warning: Reference `6.1' on page 60 undefined on input line 568.
 
 
-LaTeX Warning: Reference `6.1' on page 55 undefined on input line 568.
+LaTeX Warning: Reference `6.1' on page 60 undefined on input line 568.
 
-[55]
+[60]
 
-LaTeX Warning: Reference `6.1' on page 56 undefined on input line 589.
-
-
-LaTeX Warning: Reference `6.1' on page 56 undefined on input line 589.
+LaTeX Warning: Reference `6.1' on page 61 undefined on input line 589.
 
 
-LaTeX Warning: Reference `6.1b' on page 56 undefined on input line 595.
+LaTeX Warning: Reference `6.1' on page 61 undefined on input line 589.
+
+
+LaTeX Warning: Reference `6.1b' on page 61 undefined on input line 595.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 595--598
 
  []
 
-[56]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:616: Undefined control sequence.
 l.616   \uses
              {MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q...
@@ -8782,8 +8983,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (527.6433pt too wide) in paragraph at lines 616--619
-[]\TU/lmr/bx/n/10 Theorem 6.39. []\TU/lmr/m/it/10 MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[][]Let$\TU/lmr/m/it/10 Q$\OML/cmm/m/it/10 beaSylow$\TU/lmr/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 subgroupof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 :If$\TU/lmr/m/it/10 Q
+Overfull \hbox (567.627pt too wide) in paragraph at lines 616--619
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 6.39. []\TU/DejaVuSerif(0)/m/it/10 MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[][]Let$\TU/DejaVuSerif(0)/m/it/10 Q$\OML/cmm/m/it/10 beaSylow$\TU/DejaVuSerif(0)/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 subgroupof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 :If$\TU/DejaVuSerif(0)/m/it/10 Q
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:619: Missing } inserted.
@@ -8813,12 +9014,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 621--624
 
  []
 
-
+[61]
 Underfull \hbox (badness 10000) in paragraph at lines 644--646
 
  []
 
-[57]
+
+Overfull \hbox (24.71942pt too wide) in paragraph at lines 651--651
+[]\TU/DejaVuSerif(0)/b/n/14.4 Conjugacy of Maximal Abelian Subgroups 
+ []
+
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:655: Undefined control sequence.
 l.655   \uses
              {MaximalAbelianSubgroupsOf}
@@ -8864,6 +9069,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+[62]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:675: Undefined control sequence.
 l.675   \uses
              {MaximalAbelianSubgroupsOf, Subgroup.noncenter}
@@ -8917,8 +9123,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (45.41536pt too wide) in paragraph at lines 675--679
-\TU/lmr/m/n/10 SubgroupsOf, Subgroup.noncenter noncenter$[]\OML/cmm/m/it/10 onjClassOfSetLet$\TU/lmr/m/n/10 G$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (122.18648pt too wide) in paragraph at lines 675--679
+\TU/DejaVuSerif(0)/m/n/10 AbelianSubgroupsOf, Subgroup.noncenter noncenter$[]\OML/cmm/m/it/10 onjClassOfSetLet$\TU/DejaVuSerif(0)/m/n/10 G$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:682: Missing } inserted.
@@ -8997,8 +9203,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (165.36745pt too wide) in paragraph at lines 686--690
-[]\TU/lmr/bx/n/10 Definition 6.43. []\TU/lmr/m/n/10 MaximalAbelianSubgroupsOf, Subgroup.noncenter noncenter$[]\OML/cmm/m/it/10 aximalAbelianSubgroupsOfLet$\TU/lmr/m/n/10 M$[]$
+Overfull \hbox (3.32487pt too wide) in paragraph at lines 686--690
+[]\TU/DejaVuSerif(0)/b/n/10 Definition 6.43. []\TU/DejaVuSerif(0)/m/n/10 MaximalAbelianSubgroupsOf, Subgroup.noncenter
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:690: Missing } inserted.
@@ -9163,7 +9369,6 @@ l.735   Let $A^
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-[58]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:737: Missing } inserted.
 <inserted text> 
                 }
@@ -9224,8 +9429,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (528.97615pt too wide) in paragraph at lines 742--745
-[]\TU/lmr/bx/n/10 Lemma 6.48. []\TU/lmr/m/it/10 noncenter$[]\OML/cmm/m/it/10 aximalAbelianSubgroupsOf; noncenter[]; card[]oncenter[]onjClassOfSet[]Forall$\TU/lmr/m/it/10 A$[] \OMS/cmsy/m/n/10 2
+Overfull \hbox (545.61467pt too wide) in paragraph at lines 742--745
+[]\TU/DejaVuSerif(0)/b/n/10 Lemma 6.48. []\TU/DejaVuSerif(0)/m/it/10 noncenter$[]\OML/cmm/m/it/10 aximalAbelianSubgroupsOf; noncenter[]; card[]oncenter[]onjClassOfSet[]Forall$\TU/DejaVuSerif(0)/m/it/10 A$[] \OMS/cmsy/m/n/10 2
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:748: Missing } inserted.
@@ -9239,6 +9444,7 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
+[63]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:756: Undefined control sequence.
 l.756 \uses
            {MaximalAbelianSubgroupsOf}
@@ -9292,8 +9498,13 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (317.75798pt too wide) in paragraph at lines 756--760
-[]\TU/lmr/bx/n/10 Lemma 6.49 \TU/lmr/m/n/10 (Equivalence relation on $\U/euf/m/n/10 M[]$\TU/lmr/m/n/10 )\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 MaximalAbelianSubgroupsOf lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOfLet$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/lmr/m/it/10 ,
+Overfull \hbox (10.92686pt too wide) in paragraph at lines 756--760
+[]\TU/DejaVuSerif(0)/b/n/10 Lemma 6.49 \TU/DejaVuSerif(0)/m/n/10 (Equivalence relation on $\U/euf/m/n/10 M[]$\TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 MaximalAbelianSubgroup-
+ []
+
+
+Overfull \hbox (20.29128pt too wide) in paragraph at lines 756--760
+\TU/DejaVuSerif(0)/m/it/10 sOf lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOfLet$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$\TU/DejaVuSerif(0)/m/it/10 ,
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:764: Missing } inserted.
@@ -9317,7 +9528,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 788--790
 
  []
 
-[59]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:804: Undefined control sequence.
 l.804   \lean
              {card_noncenter_eq_of_related}
@@ -9361,6 +9571,11 @@ l.806   Let $A^
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
+
+Overfull \hbox (2.1167pt too wide) in paragraph at lines 804--807
+[]\TU/DejaVuSerif(0)/b/n/10 Lemma 6.51. []\TU/DejaVuSerif(0)/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]q[]f[]elatedLet$\TU/DejaVuSerif(0)/m/it/10 A$[]\OML/cmm/m/it/10 ; B[] \OMS/cmsy/m/n/10 2 \U/euf/m/n/10 M$ \TU/DejaVuSerif(0)/m/it/10 and suppose $\OML/cmm/m/it/10 A[] \OMS/cmsy/m/n/10 ^^X
+ []
+
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:807: Missing } inserted.
 <inserted text> 
                 }
@@ -9372,6 +9587,7 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
+[64]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:821: Undefined control sequence.
 l.821   \lean
              {lift_card_noncenter}
@@ -9484,8 +9700,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (209.32683pt too wide) in paragraph at lines 831--836
-\TU/lmr/m/n/10 their conjugacy class)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 noncenter$[]\OML/cmm/m/it/10 ; noncenter[]aximalAbelianSubgroupsOf[]Let$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (279.20467pt too wide) in paragraph at lines 831--836
+\TU/DejaVuSerif(0)/m/n/10 union of their conjugacy class)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 noncenter$[]\OML/cmm/m/it/10 ; noncenter[]aximalAbelianSubgroupsOf[]Let$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beasubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:839: Missing } inserted.
@@ -9557,8 +9773,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (174.16536pt too wide) in paragraph at lines 844--849
-\TU/lmr/m/n/10 group)\TU/lmr/bx/n/10 . []\TU/lmr/m/n/10 noncenter$[]\OML/cmm/m/it/10 ; noncenter[][]q[]f[]elated; noncenter[]aximalAbelianSubgroupsOf[]Givenforall$\TU/lmr/m/n/10 A$[] \OMS/cmsy/m/n/10 ^^X
+Overfull \hbox (226.13644pt too wide) in paragraph at lines 844--849
+\TU/DejaVuSerif(0)/m/n/10 of a subgroup)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/n/10 noncenter$[]\OML/cmm/m/it/10 ; noncenter[][]q[]f[]elated; noncenter[]aximalAbelianSubgroupsOf[]Givenforall$\TU/DejaVuSerif(0)/m/n/10 A$[] \OMS/cmsy/m/n/10 ^^X
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:849: Missing } inserted.
@@ -9626,8 +9842,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (348.72614pt too wide) in paragraph at lines 853--856
-\U/euf/m/n/10 M[]\OML/cmm/m/it/10 = \OMS/cmsy/m/n/10 ^^X$ \TU/lmr/m/n/10 cover $\OML/cmm/m/it/10 G \OMS/cmsy/m/n/10 n \OML/cmm/m/it/10 Z\OT1/cmr/m/n/10 ([][](\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 ))$\TU/lmr/m/n/10 )\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOf; lift[]oncenter[][]Let$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (397.86768pt too wide) in paragraph at lines 853--856
+\TU/DejaVuSerif(0)/m/n/10 tives of $\U/euf/m/n/10 M[]\OT1/cmr/m/n/10 / \OMS/cmsy/m/n/10 ^^X$ \TU/DejaVuSerif(0)/m/n/10 cover $\OML/cmm/m/it/10 G \OMS/cmsy/m/n/10 n \OML/cmm/m/it/10 Z\OT1/cmr/m/n/10 ([][](\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 ))$\TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOf; lift[]oncenter[][]Let$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:859: Missing } inserted.
@@ -9685,11 +9901,10 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (289.7052pt too wide) in paragraph at lines 864--867
-\TU/lmr/m/n/10 through $[]$)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOf; lift[]oncenter[][]Let$\TU/lmr/m/it/10 [A$[]\OT1/cmr/m/n/10 ]\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 [\OML/cmm/m/it/10 B[]\OT1/cmr/m/n/10 ] \OMS/cmsy/m/n/10 2
+Overfull \hbox (320.99773pt too wide) in paragraph at lines 864--867
+\TU/DejaVuSerif(0)/m/n/10 sets through $[]$)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOf; lift[]oncenter[][]Let$\TU/DejaVuSerif(0)/m/it/10 [A$[]\OT1/cmr/m/n/10 ]\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 [\OML/cmm/m/it/10 B[]\OT1/cmr/m/n/10 ] \OMS/cmsy/m/n/10 2
  []
 
-[60]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:874: Missing } inserted.
 <inserted text> 
                 }
@@ -9710,6 +9925,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
+[65]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:879: Missing $ inserted.
 <inserted text> 
                 $
@@ -9745,8 +9961,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (645.06528pt too wide) in paragraph at lines 879--882
-[]\TU/lmr/bx/n/10 Theorem 6.57. []\TU/lmr/m/it/10 MaximalAbelianSubgroupsOf, noncenter$[]\OML/cmm/m/it/10 aximalAbelianSubgroupsOf; noncenter[]onjClassOfSet; ConjClassOfSet[]Forallmaximalabeliansubgroups$\TU/lmr/m/it/10 A
+Overfull \hbox (687.39172pt too wide) in paragraph at lines 879--882
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 6.57. []\TU/DejaVuSerif(0)/m/it/10 MaximalAbelianSubgroupsOf, noncenter$[]\OML/cmm/m/it/10 aximalAbelianSubgroupsOf; noncenter[]onjClassOfSet; ConjClassOfSet[]Forallmaximalabeliansubgroups$\TU/DejaVuSerif(0)/m/it/10 A
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:885: Missing } inserted.
@@ -9815,8 +10031,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (108.75275pt too wide) in paragraph at lines 891--893
-[]\TU/lmr/bx/n/10 Theorem 6.58. []\TU/lmr/m/it/10 MaximalAbelianSubgroupsOf, ConjClassOfSet card$[]\OML/cmm/m/it/10 onjClassOfSet[]q[]ndex[]ormalizer[]$ 
+Overfull \hbox (157.69157pt too wide) in paragraph at lines 891--893
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 6.58. []\TU/DejaVuSerif(0)/m/it/10 MaximalAbelianSubgroupsOf, ConjClassOfSet card$[]\OML/cmm/m/it/10 onjClassOfSet[]q[]ndex[]ormalizer[]$ 
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:901: Undefined control sequence.
@@ -9874,13 +10090,8 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (478.01234pt too wide) in paragraph at lines 901--903
-[]\TU/lmr/bx/n/10 Theorem 6.59 \TU/lmr/m/n/10 (The maximal subgroup class equation)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOf; lift[]ard[]oncenter[][]$ 
- []
-
-
-Overfull \hbox (3.80835pt too wide) in paragraph at lines 912--915
-\TU/lmr/m/n/10 The equivalence class of $\OML/cmm/m/it/10 A[]$ \TU/lmr/m/n/10 in $\U/euf/m/n/10 M[]$ \TU/lmr/m/n/10 therefore coincides with the set $\OMS/cmsy/m/n/10 C[] \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 f\OML/cmm/m/it/10 xA[]x[] \OT1/cmr/m/n/10 :
+Overfull \hbox (515.39056pt too wide) in paragraph at lines 901--903
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 6.59 \TU/DejaVuSerif(0)/m/n/10 (The maximal subgroup class equation)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 lift$[]\OML/cmm/m/it/10 oncenter[]aximalAbelianSubgroupsOf; lift[]ard[]oncenter[][]$ 
  []
 
 
@@ -9888,7 +10099,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 925--929
 
  []
 
-[61]
+[66]
 Underfull \hbox (badness 10000) in paragraph at lines 941--944
 
  []
@@ -9943,7 +10154,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 963--966
 
  []
 
-[62]
+[67]
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:975: Undefined control sequence.
 l.975 \uses
            {MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_j...
@@ -9993,8 +10204,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (484.81697pt too wide) in paragraph at lines 975--978
-[]\TU/lmr/bx/n/10 Lemma 6.61. []\TU/lmr/m/it/10 MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[]; MaximalAbelianSubgroup:index[]ormalizer[]e[]wo[]$\TU/lmr/m/it/10 N$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Q \OMS/cmsy/m/n/10 ^^B
+Overfull \hbox (522.66365pt too wide) in paragraph at lines 975--978
+[]\TU/DejaVuSerif(0)/b/n/10 Lemma 6.61. []\TU/DejaVuSerif(0)/m/it/10 MaximalAbelianSubgroup.IsCyclic$[]\OML/cmm/m/it/10 nd[]ard[]oprime[]harP[]r[]q[][]oin[]; MaximalAbelianSubgroup:index[]ormalizer[]e[]wo[]$\TU/DejaVuSerif(0)/m/it/10 N$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Q \OMS/cmsy/m/n/10 ^^B
  []
 
 ./chapter/Ch6_MaximalAbelianSubgroupClassEquation.tex:978: Missing } inserted.
@@ -10018,7 +10229,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1002--1005
 
  []
 
-[63]
+[68]
 Underfull \hbox (badness 10000) in paragraph at lines 1093--1098
 
  []
@@ -10028,14 +10239,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 1093--1098
 
  []
 
-[64]
+[69]
 
-LaTeX Warning: Reference `unsure' on page 65 undefined on input line 1116.
+LaTeX Warning: Reference `unsure' on page 70 undefined on input line 1116.
 
 
-LaTeX Warning: Reference `unsure' on page 65 undefined on input line 1116.
+LaTeX Warning: Reference `unsure' on page 70 undefined on input line 1116.
 
-[65]) (./chapter/Ch7_DicksonsClassificationTheorem.tex [66]
+[70]) (./chapter/Ch7_DicksonsClassificationTheorem.tex [71]
 Chapter 7.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -10145,8 +10356,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (35.51747pt too wide) in paragraph at lines 9--11
-[]\TU/lmr/bx/n/10 Lemma 7.1. []\TU/lmr/m/it/10 IsPGroup.not$[]\OML/cmm/m/it/10 e[]ormalizerLet$\TU/lmr/m/it/10 H$\OML/cmm/m/it/10 beapropersubgroupofa$\TU/lmr/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 group$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 :Then$\TU/lmr/m/it/10 H
+Overfull \hbox (54.70982pt too wide) in paragraph at lines 9--11
+[]\TU/DejaVuSerif(0)/b/n/10 Lemma 7.1. []\TU/DejaVuSerif(0)/m/it/10 IsPGroup.not$[]\OML/cmm/m/it/10 e[]ormalizerLet$\TU/DejaVuSerif(0)/m/it/10 H$\OML/cmm/m/it/10 beapropersubgroupofa$\TU/DejaVuSerif(0)/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 group$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 :Then$\TU/DejaVuSerif(0)/m/it/10 H
  []
 
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:11: Missing } inserted.
@@ -10160,15 +10371,15 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-
-Package amsthm Warning: The \qedhere command may not work correctly here on input line 36.
-
-
-Package amsthm Warning: The \qedhere command may not work correctly here on input line 36.
-
-[67
+[72
 
 ]
+
+Package amsthm Warning: The \qedhere command may not work correctly here on input line 36.
+
+
+Package amsthm Warning: The \qedhere command may not work correctly here on input line 36.
+
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:42: Undefined control sequence.
 l.42     \lean
               {Sylow.not_normal_subgroup_of_G}
@@ -10204,8 +10415,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (203.8484pt too wide) in paragraph at lines 42--44
-[]\TU/lmr/bx/n/10 Lemma 7.2. []\TU/lmr/m/it/10 Sylow.not$[]\OML/cmm/m/it/10 ormal[]ubgroup[]f[]Let$\TU/lmr/m/it/10 Q$\OML/cmm/m/it/10 beaSylow$\TU/lmr/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 subgroupand$\TU/lmr/m/it/10 K$\OML/cmm/m/it/10 amaximalabeliansubgroupof$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 suchthat$\TU/lmr/m/it/10 N$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Q\OT1/cmr/m/n/10 ) =
+Overfull \hbox (220.71867pt too wide) in paragraph at lines 42--44
+[]\TU/DejaVuSerif(0)/b/n/10 Lemma 7.2. []\TU/DejaVuSerif(0)/m/it/10 Sylow.not$[]\OML/cmm/m/it/10 ormal[]ubgroup[]f[]Let$\TU/DejaVuSerif(0)/m/it/10 Q$\OML/cmm/m/it/10 beaSylow$\TU/DejaVuSerif(0)/m/it/10 p$\OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 subgroupand$\TU/DejaVuSerif(0)/m/it/10 K$\OML/cmm/m/it/10 amaximalabeliansubgroupof$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 suchthat$\TU/DejaVuSerif(0)/m/it/10 N$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Q\OT1/cmr/m/n/10 ) =
  []
 
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:44: Missing } inserted.
@@ -10229,7 +10440,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 72--75
 
  []
 
-[68]
+[73]
 Underfull \hbox (badness 10000) in paragraph at lines 95--102
 
  []
@@ -10240,7 +10451,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 95--102
  []
 
 
-LaTeX Warning: Citation `stewart' on page 69 undefined on input line 113.
+LaTeX Warning: Citation `stewart' on page 74 undefined on input line 113.
 
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:120: Undefined control sequence.
 l.120     \lean
@@ -10297,7 +10508,12 @@ l.122     Let $\mathbb{F}_
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-[69]
+
+Overfull \hbox (5.9206pt too wide) in paragraph at lines 120--123
+[]\TU/DejaVuSerif(0)/b/n/10 Lemma 7.4. []\TU/DejaVuSerif(0)/m/it/10 Matrix.card$[]\OML/cmm/m/it/10 L[]ieldLet$\TU/DejaVuSerif(0)/m/it/10 F$[]$ be the field of $\OML/cmm/m/it/10 q$ \TU/DejaVuSerif(0)/m/it/10 elements, where
+ []
+
+[74]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:123: Missing } inserted.
 <inserted text> 
                 }
@@ -10373,11 +10589,6 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-
-Overfull \hbox (2.46434pt too wide) in paragraph at lines 154--155
-[]\TU/lmr/m/n/10 Clearly $\OML/cmm/m/it/10 ^^^$ \TU/lmr/m/n/10 is surjective, since $\OML/cmm/m/it/10 ^^K \OMS/cmsy/m/n/10 2 \U/msb/m/n/10 F[]$ \TU/lmr/m/n/10 is the determinant of $[] \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 GL\OT1/cmr/m/n/10 (2\OML/cmm/m/it/10 ; \U/msb/m/n/10 F[]\OT1/cmr/m/n/10 )$\TU/lmr/m/n/10 .
- []
-
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:165: Undefined control sequence.
 l.165     \lean
                {QuotientGroup.comapMk'OrderIso}
@@ -10387,7 +10598,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[70]
+[75]
 Underfull \hbox (badness 10000) in paragraph at lines 180--182
 
  []
@@ -10491,12 +10702,12 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (465.58897pt too wide) in paragraph at lines 184--190
-[]\TU/lmr/bx/n/10 Theorem 7.7 \TU/lmr/m/n/10 (Case I)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:K[]em[]aximalAbelianSubgroups[]f[]enter[]t[]ard[][]Claim \OT1/cmr/m/n/10 :
+Overfull \hbox (482.12846pt too wide) in paragraph at lines 184--190
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.7 \TU/DejaVuSerif(0)/m/n/10 (Case I)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:K[]em[]aximalAbelianSubgroups[]f[]enter[]t[]ard[][]Claim \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (469.49454pt too wide) in paragraph at lines 184--190
+Overfull \hbox (589.52455pt too wide) in paragraph at lines 184--190
 [][] 
  []
 
@@ -10510,7 +10721,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 194--198
 
  []
 
-[71]
+[76]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:213: Undefined control sequence.
 l.213 \uses
            {card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_norm...
@@ -10617,12 +10828,12 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (361.90672pt too wide) in paragraph at lines 213--220
-[]\TU/lmr/bx/n/10 Theorem 7.8 \TU/lmr/m/n/10 (Case II)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:of[]ndex[]ormalizer[]q[]wo[]Claim \OT1/cmr/m/n/10 :
+Overfull \hbox (378.50641pt too wide) in paragraph at lines 213--220
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.8 \TU/DejaVuSerif(0)/m/n/10 (Case II)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:of[]ndex[]ormalizer[]q[]wo[]Claim \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (254.12628pt too wide) in paragraph at lines 213--220
+Overfull \hbox (333.99892pt too wide) in paragraph at lines 213--220
 []$ 
  []
 
@@ -10631,12 +10842,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 244--247
 
  []
 
-[72]
+[77]
 
-LaTeX Warning: Reference `5thsylow' on page 73 undefined on input line 256.
+LaTeX Warning: Reference `5thsylow' on page 78 undefined on input line 256.
 
 
-LaTeX Warning: Reference `case2q' on page 73 undefined on input line 256.
+LaTeX Warning: Reference `case2q' on page 78 undefined on input line 256.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 253--261
@@ -10658,14 +10869,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 264--267
 
  []
 
-
+[78]
 Underfull \hbox (badness 10000) in paragraph at lines 278--281
 
  []
 
-[73]
 
-LaTeX Warning: Reference `4thsylow' on page 74 undefined on input line 352.
+LaTeX Warning: Reference `4thsylow' on page 79 undefined on input line 352.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 351--355
@@ -10677,10 +10887,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 356--360
 
  []
 
-[74]
+[79]
 
-LaTeX Warning: Reference `ordersl2q' on page 75 undefined on input line 412.
+LaTeX Warning: Reference `ordersl2q' on page 80 undefined on input line 412.
 
+[80]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:429: Undefined control sequence.
 l.429 \uses
            {card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_norm...
@@ -10775,11 +10986,10 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (483.73006pt too wide) in paragraph at lines 429--434
-[]\TU/lmr/bx/n/10 Theorem 7.9 \TU/lmr/m/n/10 (Case III)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:K[]em[]aximalAbelianSubgroups[]f[]enter[]t[]ard[][]Claim \OT1/cmr/m/n/10 :
+Overfull \hbox (500.38994pt too wide) in paragraph at lines 429--434
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.9 \TU/DejaVuSerif(0)/m/n/10 (Case III)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:K[]em[]aximalAbelianSubgroups[]f[]enter[]t[]ard[][]Claim \OT1/cmr/m/n/10 :
  []
 
-[75]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:453: Undefined control sequence.
 l.453 \lean
            {card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_norm...
@@ -10874,26 +11084,26 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (139.14775pt too wide) in paragraph at lines 453--457
-[]\TU/lmr/bx/n/10 Theorem 7.10 \TU/lmr/m/n/10 (Case IV)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer[]Claim \OT1/cmr/m/n/10 :
+Overfull \hbox (156.61693pt too wide) in paragraph at lines 453--457
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.10 \TU/DejaVuSerif(0)/m/n/10 (Case IV)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer[]Claim \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (137.41148pt too wide) in paragraph at lines 453--457
+Overfull \hbox (191.47673pt too wide) in paragraph at lines 453--457
 []$ 
  []
 
-
+[81]
 Underfull \hbox (badness 10000) in paragraph at lines 475--478
 
  []
 
-[76]
+
 Underfull \hbox (badness 10000) in paragraph at lines 483--487
 
  []
 
-[77]
+[82]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:615: Undefined control sequence.
 l.615 \uses
            {card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_norm...
@@ -10993,25 +11203,25 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (791.63902pt too wide) in paragraph at lines 615--625
-[]\TU/lmr/bx/n/10 Theorem 7.11 \TU/lmr/m/n/10 (Case V)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:K[]em[]aximalAbelianSubgroups[]f[]enter[]t[]ard[]; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]r[]q[][]oin[][]Claim \OT1/cmr/m/n/10 :
+Overfull \hbox (808.768pt too wide) in paragraph at lines 615--625
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.11 \TU/DejaVuSerif(0)/m/n/10 (Case V)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:K[]em[]aximalAbelianSubgroups[]f[]enter[]t[]ard[]; MaximalAbelianSubgroup:IsCyclic[]nd[]ard[]oprime[]harP[]r[]q[][]oin[][]Claim \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (353.27652pt too wide) in paragraph at lines 615--625
+Overfull \hbox (400.24673pt too wide) in paragraph at lines 615--625
 []$ 
  []
 
-[78]
+[83] [84]
 
-LaTeX Warning: Reference `caseVlemma' on page 79 undefined on input line 678.
+LaTeX Warning: Reference `caseVlemma' on page 85 undefined on input line 678.
 
-[79]
+
 Underfull \hbox (badness 10000) in paragraph at lines 698--701
 
  []
 
-[80]
+[85]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:732: Undefined control sequence.
 <recently read> \mathscr 
                          
@@ -11032,7 +11242,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[81]
+[86]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:753: Undefined control sequence.
 <recently read> \mathscr 
                          
@@ -11044,20 +11254,21 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[82]
+[87]
 
-LaTeX Warning: Reference `6.4i' on page 83 undefined on input line 784.
+LaTeX Warning: Reference `6.4i' on page 88 undefined on input line 784.
 
+[88]
 
-LaTeX Warning: Reference `6.4i' on page 83 undefined on input line 801.
+LaTeX Warning: Reference `6.4i' on page 89 undefined on input line 801.
 
-[83]
+[89]
 Underfull \hbox (badness 10000) in paragraph at lines 823--826
 
  []
 
 
-LaTeX Warning: Reference `ordersl2q' on page 84 undefined on input line 834.
+LaTeX Warning: Reference `ordersl2q' on page 90 undefined on input line 834.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 831--837
@@ -11069,39 +11280,34 @@ Underfull \hbox (badness 10000) in paragraph at lines 831--837
 
  []
 
-[84]
+
 Underfull \hbox (badness 10000) in paragraph at lines 839--841
 
  []
 
-
+[90]
 Underfull \hbox (badness 10000) in paragraph at lines 850--854
 
  []
 
-[85]
+
 Underfull \hbox (badness 10000) in paragraph at lines 862--866
 
  []
 
 
-LaTeX Warning: Reference `ordersl2q' on page 86 undefined on input line 869.
+LaTeX Warning: Reference `ordersl2q' on page 91 undefined on input line 869.
 
-
+[91]
 Underfull \hbox (badness 10000) in paragraph at lines 875--878
 
  []
 
 
-LaTeX Warning: Citation `dummit' on page 86 undefined on input line 892.
+LaTeX Warning: Citation `dummit' on page 92 undefined on input line 892.
 
 
-LaTeX Warning: Citation `schur' on page 86 undefined on input line 892.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 881--893
-
- []
+LaTeX Warning: Citation `schur' on page 92 undefined on input line 892.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 881--893
@@ -11118,7 +11324,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 881--893
 
  []
 
-[86]
+
+Underfull \hbox (badness 10000) in paragraph at lines 881--893
+
+ []
+
+[92]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:898: Undefined control sequence.
 l.898 \uses
            {card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_norm...
@@ -11213,12 +11424,12 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (373.62299pt too wide) in paragraph at lines 898--911
-[]\TU/lmr/bx/n/10 Theorem 7.12 \TU/lmr/m/n/10 (Case VI)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:of[]ndex[]ormalizer[]q[]wo[]Claim \OT1/cmr/m/n/10 :
+Overfull \hbox (391.09216pt too wide) in paragraph at lines 898--911
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.12 \TU/DejaVuSerif(0)/m/n/10 (Case VI)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 card$[]\OML/cmm/m/it/10 oncenter[]in[]ubgroup[]q[]um[]ard[]oncenter[]ul[]ndex[]ormalizer; MaximalAbelianSubgroup:of[]ndex[]ormalizer[]q[]wo[]Claim \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (924.85591pt too wide) in paragraph at lines 898--911
+Overfull \hbox (1080.46484pt too wide) in paragraph at lines 898--911
 [][] 
  []
 
@@ -11227,11 +11438,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 898--911
 
  []
 
-[87] [88]
+[93] [94]
 
-LaTeX Warning: Reference `6.8' on page 89 undefined on input line 951.
+LaTeX Warning: Reference `6.8' on page 95 undefined on input line 951.
 
-[89]
+[95]
 Underfull \hbox (badness 10000) in paragraph at lines 967--973
 
  []
@@ -11251,11 +11462,17 @@ Underfull \hbox (badness 10000) in paragraph at lines 976--981
 
  []
 
+[96]
 
-LaTeX Warning: Citation `suzuki' on page 90 undefined on input line 985.
+LaTeX Warning: Citation `suzuki' on page 97 undefined on input line 985.
 
 
-LaTeX Warning: Citation `suzuki' on page 90 undefined on input line 985.
+LaTeX Warning: Citation `suzuki' on page 97 undefined on input line 985.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 982--988
+
+ []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 982--988
@@ -11263,11 +11480,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 982--988
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 982--988
-
- []
-
-[90]
 Underfull \hbox (badness 10000) in paragraph at lines 996--997
 
  []
@@ -11316,11 +11528,11 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (464.5105pt too wide) in paragraph at lines 1000--1005
-[]\TU/lmr/bx/n/10 Theorem 7.13 \TU/lmr/m/n/10 (Class I)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 case$[]\OML/cmm/m/it/10 ; case[]I; case[]II; case[]I[]Let$\TU/lmr/m/it/10 F$\OML/cmm/m/it/10 beanarbitaryalgebraicallyclosedfieldofcharacteristic$\TU/lmr/m/it/10 p$\OML/cmm/m/it/10 :Anyfinitesubgroup$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 of$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
+Overfull \hbox (486.02202pt too wide) in paragraph at lines 1000--1005
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.13 \TU/DejaVuSerif(0)/m/n/10 (Class I)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 case$[]\OML/cmm/m/it/10 ; case[]I; case[]II; case[]I[]Let$\TU/DejaVuSerif(0)/m/it/10 F$\OML/cmm/m/it/10 beanarbitaryalgebraicallyclosedfieldofcharacteristic$\TU/DejaVuSerif(0)/m/it/10 p$\OML/cmm/m/it/10 :Anyfinitesubgroup$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 of$$[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n/10 )$
  []
 
-
+[97]
 Underfull \hbox (badness 10000) in paragraph at lines 1006--1011
 
  []
@@ -11330,7 +11542,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 1006--1011
 
  []
 
-[91]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:1011: Missing } inserted.
 <inserted text> 
                 }
@@ -11391,8 +11602,8 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (172.07574pt too wide) in paragraph at lines 1026--1034
-[]\TU/lmr/bx/n/10 Theorem 7.14 \TU/lmr/m/n/10 (Class II)\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 case$[]\OML/cmm/m/it/10 ; case[]II; case[]V; case[][]When$\TU/lmr/m/it/10 |G|$\OML/cmm/m/it/10 isdivisibleby$\TU/lmr/m/it/10 p$\OT1/cmr/m/n/10 :
+Overfull \hbox (192.73164pt too wide) in paragraph at lines 1026--1034
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.14 \TU/DejaVuSerif(0)/m/n/10 (Class II)\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 case$[]\OML/cmm/m/it/10 ; case[]II; case[]V; case[][]When$\TU/DejaVuSerif(0)/m/it/10 |G|$\OML/cmm/m/it/10 isdivisibleby$\TU/DejaVuSerif(0)/m/it/10 p$\OT1/cmr/m/n/10 :
  []
 
 
@@ -11411,9 +11622,14 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-
+[98]
 Underfull \hbox (badness 10000) in paragraph at lines 1053--1054
 
+ []
+
+
+Overfull \hbox (39.7977pt too wide) in paragraph at lines 1056--1056
+[]\TU/DejaVuSerif(0)/b/n/14.4 Classification of finite subgroups of $[][]\OT1/cmr/m/n/14.4 ([])$ 
  []
 
 
@@ -11537,11 +11753,10 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (904.18802pt too wide) in paragraph at lines 1060--1063
-[]\TU/lmr/bx/n/10 Theorem 7.16 \TU/lmr/m/n/10 (Classification of finite subgroup of $[][]\OT1/cmr/m/n/10 ([])$\TU/lmr/m/n/10 )\TU/lmr/bx/n/10 . []\TU/lmr/m/it/10 dicksons$[]\OML/cmm/m/it/10 lassification[]heorem[]lass[]I; dicksons[]lassification[]heorem[]lass[]; PGL[]so[]SL; SpecialSubgroups:center[]L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[][]Let$\TU/lmr/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 ([])$
+Overfull \hbox (946.80617pt too wide) in paragraph at lines 1060--1063
+[]\TU/DejaVuSerif(0)/b/n/10 Theorem 7.16 \TU/DejaVuSerif(0)/m/n/10 (Classification of finite subgroup of $[][]\OT1/cmr/m/n/10 ([])$\TU/DejaVuSerif(0)/m/n/10 )\TU/DejaVuSerif(0)/b/n/10 . []\TU/DejaVuSerif(0)/m/it/10 dicksons$[]\OML/cmm/m/it/10 lassification[]heorem[]lass[]I; dicksons[]lassification[]heorem[]lass[]; PGL[]so[]SL; SpecialSubgroups:center[]L\OT1/cmr/m/n/10 2[]\OML/cmm/m/it/10 q[][]Let$\TU/DejaVuSerif(0)/m/it/10 G$\OML/cmm/m/it/10 beafinitesubgroupof$$[][]\OT1/cmr/m/n/10 ([])$
  []
 
-[92]
 ./chapter/Ch7_DicksonsClassificationTheorem.tex:1063: Missing } inserted.
 <inserted text> 
                 }
@@ -11555,7 +11770,7 @@ my insertion and my current dilemma will both disappear.
 
 ) (./chapter/bibliography.tex
 No file web.bbl.
-)) [93] (../print/web.aux)
+)) [99] (../print/web.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -11571,12 +11786,12 @@ Package rerunfilecheck Info: File `web.out' has not changed.
 (rerunfilecheck)             Checksum: 45D9EB946E20F03DB9E357EA4FC6212B;11680.
  ) 
 Here is how much of TeX's memory you used:
- 23495 strings out of 476878
- 460119 string characters out of 5805250
- 1938627 words of memory out of 5000000
- 44996 multiletter control sequences out of 15000+600000
- 572744 words of font info for 111 fonts, out of 8000000 for 9000
+ 25895 strings out of 476878
+ 547735 string characters out of 5805250
+ 1939627 words of memory out of 5000000
+ 47362 multiletter control sequences out of 15000+600000
+ 573662 words of font info for 126 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 84i,14n,97p,1413b,639s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,14n,97p,1413b,637s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on ../print/web.pdf (95 pages).
+Output written on ../print/web.pdf (101 pages).
