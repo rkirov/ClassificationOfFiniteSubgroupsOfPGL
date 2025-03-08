@@ -151,7 +151,6 @@ Let $H, K$ be two subgroups of a group $G$ then $H \sqcap K = H \cap K$ is commu
   \item \texttt{one\textunderscore mem'}: Both $Z(G)$ and $H$ are subgroups of $G$ so they contain the identity element, thus $1 \cdot 1 \in Z(G) H$.
   \item \texttt{mul\textunderscore mem'}: Let $z_1 h_1, z_2 h_2 \in Z(G) H$ then $z_1h_1z_2h_2 = z_1z_2 h_1h_2 \in Z(G) H$ as $z_i$ is in the center.
   \item \texttt{inv\textunderscore mem'}: Let $zh \in Z(G) H$ then $z^{-1} h^{-1} \in Z(G) H$ and $z h z^{-1} h^{-1} = zz^{-1}h h^{-1} = 1$.
-
 \end{enumerate}
 \end{proof}
 
@@ -382,9 +381,9 @@ To show the Sylowness of the subgroup we shall construct we need the following l
 \label{MaximalAbelianSubgroup.A_eq_Q_join_Z_of_IsConj_s_or_neg_s}
 \uses{MaximalAbelianSubgroup.centralizer_eq_conj_SZ_of_IsConj_s_or_IsConj_neg_s, SpecialSubgroups.S_join_Z_eq_SZ, MaximalAbelianSubgroup.conj_T_join_Z_meet_G_eq_conj_T_meet_G_join_Z, MaximalAbelianSubgroup.conj_inv_conj_eq, SpecialSubgroups.center_SL2_eq_Z,
   SpecialMatrices.order_s_eq_char, orderOf_injective, MaximalAbelianSubgroup.center_le, 
-  MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_of_IsConj_d, IsElementaryAbelian.subgroupOf, IsPGroup.exists_le_sylow,
+  MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_of_IsConj_d, IsElementaryAbelian.subgroupOf,
   MaximalAbelianSubgroup.exists_noncenter_of_card_center_lt_card_center_Sylow, MaximalAbelianSubgroup.mul_center_inj}
-\lean{MaximalAbelianSubgroup.A_eq_Q_join_Z_of_IsConj_s_or_neg_s}
+\lean{MaximalAbelianSubgroup.A_eq_Q_join_Z_of_IsConj_s_or_neg_s, SpecialSubgroups.prod_mulEquiv_join_of_disjoint_of_normal}
 \leanok
 Let $F$ be an algebraically closed field of characteristic $p$ and let $G$ be a finite subgroup of $\SL_2(F)$ containing $Z$, let $A$ be a subgroup of $\SL_2(F)$ which is a maximal abelian subgroup of $G$ and furthermore suppose $Z < A$ and $A = C_{\SL_2(F)}(x) \sqcap G$ where $x \in G \setminus Z \subseteq \SL_2(F)$ and $x$ is conjugate to $s_\sigma$ for some $\sigma \in F$
 then there exists a finite nontrivial elementary abelian Sylow $p$-subgroup of $G$ such that $A = Q \sqcup Z$.

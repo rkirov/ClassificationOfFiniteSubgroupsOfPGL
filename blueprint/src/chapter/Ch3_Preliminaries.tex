@@ -7,25 +7,30 @@ advanced reader may choose to skip this first chapter, using it only for referen
 
 The following theorems are all well-known fundamental results in group theory. If the reader is interested in the proofs, they can be found in Hungerford \cite{hungerford}.
 
-\begin{theorem}\label{lagrange} \textit{Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$.} \\
+\begin{theorem}[Lagrange's theorem]
+    \label{lagrange} Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$. \\
 \end{theorem} 
 
-\begin{theorem}\label{1stiso} \textit{Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/\ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/\ker \; \phi \cong G'.$$} \\
-\end{theorem} 
-
-\vspace{-10mm}
-
-\begin{theorem}\label{2ndiso} \textit{Let $H$ and $N$ be subgroups of $G$, and $N \vartriangleleft G$. Then, $$H/H \cap N \cong HN/N.$$} \\
+\begin{theorem}[First isomorphism theorem]
+    \label{1stiso} Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/\ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/\ker \; \phi \cong G'.$$ \\
 \end{theorem} 
 
 \vspace{-10mm}
 
-\begin{theorem}\label{3rdiso} \textit{Let $H$ and $K$ be normal subgroups of $G$ and $K \subset H$. Then $H/K$ is a normal subgroup of $G/K$ and, $$(G/K)/(H/K) \cong G/H.$$} \\
+\begin{theorem}[Second isomorphism theorem]
+    \label{2ndiso} Let $H$ and $N$ be subgroups of $G$, and $N \vartriangleleft G$. Then, $H/H \cap N \cong HN/N.$ \\
 \end{theorem} 
 
 \vspace{-10mm}
 
-\begin{theorem}\label{cauchy} \textit{If the order of a finite group $G$ is divisible by a prime number $p$, then $G$ has an element of order $p$.} \\
+\begin{theorem}[Third isomorphism theorem]
+    \label{3rdiso} Let $H$ and $K$ be normal subgroups of $G$ and $K \subset H$. Then $H/K$ is a normal subgroup of $G/K$ and, $$(G/K)/(H/K) \cong G/H.$$ \\
+\end{theorem} 
+
+\vspace{-10mm}
+
+\begin{theorem}[Cauchy's theorem]
+    \label{cauchy} If the order of a finite group $G$ is divisible by a prime number $p$, then $G$ has an element of order $p$. \\
 \end{theorem} 
 
 \section{Sylow Theory}
@@ -33,47 +38,53 @@ The following theorems are all well-known fundamental results in group theory. I
 In 1872, Norweigian mathematician Peter Ludwig Sylow published his theorems regarding the number of subgroups of a fixed order that a given finite group contains. Today these are collectively known as the Sylow Theorems and play a vital role in determining the structure of finite groups. I will use the results of these theorems several times throughout this paper and I state them here without proof. If the reader would like to read further, the proofs can be found in most introductory texts on group theory, such as Bhattacharya \cite{bhattacharya}, except Corollary \ref{5thsylow} which can be found in Alperin and Bell \cite[p.64]{alperin} . \\
 
 
-\begin{definition}
-\lean{Sylow}
-\leanok 
+\begin{definition}[Sylow $p$-subgroup]
 Let $G$ be a finite group and $p$ a prime, a \textbf{Sylow $\pmb{p}$-subgroup} of $G$ is a subgroup of order $p^r$, where $p^{r+1}$ does not divide the order of $G$. \\
 
 Let $p$ be a prime. A group $G$ is called a \textbf{$\pmb{p}$-group} if the order of each of it's elements is a power of $p$. Similarly, a subgroup $H$ of $G$ is called a \textbf{$\pmb{p}$-subgroup} if the order of each of it's elements is a power of $p$.
 \end{definition}
 
+\begin{remark}[Sylow $p$-subgroup in Lean]
+    TODO
+
+\end{remark}
+
 In each of the following results, $G$ is a finite group of order $p^r m$, where $p$ is a prime which does not divide $m$. \\
 
 
 \begin{theorem}[Sylow's first theorem]
-\lean{Sylow.exists_subgroup_card_pow_prime}
-\leanok
+    \label{Sylow.exists_subgroup_card_pow_prime}
+% \lean{Sylow.exists_subgroup_card_pow_prime}
+% \leanok
 \textit{If $p^k$ divides $|G|$, then $G$ has a subgroup of order $p^k$.} \\
 
 \end{theorem}
 
 \begin{theorem}[Sylow's second theorem]
-\lean{Sylow.equiv.proof_1}
-\leanok
+\label{Sylow.equiv.proof_1}
+% \lean{Sylow.equiv.proof_1}
+% \leanok
 \textit{All Sylow $p$-subgroups of G are conjugate.} \\
 \end{theorem}
 
 \begin{theorem}[Sylow's third theorem]
-\lean{card_sylow_modEq_one}
-\leanok
-\textit{The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 ($mod $p)$.} \\
+    \label{card_sylow_modEq_one}
+% \lean{card_sylow_modEq_one}
+% \leanok
+The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 ($mod $p)$. \\
 \end{theorem}
 
 \begin{corollary}[Sylow's fourth theorem]
 \label{Sylow.unique_of_normal}
-\lean{Sylow.unique_of_normal}
-\leanok    
+% \lean{Sylow.unique_of_normal}
+% \leanok    
  \textit{A Sylow $p$-subgroup of $G$ is unique if and only if it is normal.} \\
 \end{corollary}
 
 \begin{corollary}[Sylow's fifth theorem]
 \label{IsPGroup.exists_le_sylow}
-\lean{IsPGroup.exists_le_sylow}
-\leanok
+% \lean{IsPGroup.exists_le_sylow}
+% \leanok
 \textit{Any $p$-subgroup of $G$ is contained in a Sylow $p$-subgroup.} \\
 \end{corollary}
 
@@ -115,8 +126,6 @@ The following standard theorem will all play a vital roll later on.
 \section{Conjugation}
 
 \begin{definition}[Conjugate elements]
-\label{IsConj}
-\lean{IsConj}
 Let $G$ be a group and $a$ an element of $G$. An element $b \in G$ is said to be \textbf{conjugate} to $a$ if $b=xax^{-1}$ for some $x \in G$. \\
 \end{definition}
 
@@ -166,13 +175,14 @@ Conjugation plays an important roll thoughout the paper, particularly, the follo
 
 \begin{proposition}
     \label{orderOf_injective}
-    \lean{orderOf_injective}
-    \leanok
+    % \lean{orderOf_injective}
+    % \leanok
 Let $a$, $b$ be conjugate elements of a group $G$ and $A$, $B$ be conjugate subgroups of $G$.
 If either $a$ or $b$ has finite order, then both $a$ and $b$ have the same order.
 \end{proposition}
 
 \begin{proof}
+    % \leanok
     Since $a$ and $b$ are conjugate elements in $G$, $b = xax^{-1}$ for some $x \in G$. Suppose that $b$ has finite order and $b^k = I_G$ for some $k \in \mathbb{Z}^+$,
     \begin{equation*} 
         I_G = b^k = (xax^{-1})^k = xa^{k}x^{-1} \Rightarrow a^k = I_G.
@@ -229,14 +239,14 @@ where $a_i, b_i \in G_i$. It is easy to verify that $G_1 \times G_2 \times...\ti
 \end{definition}
 
 \begin{lemma} 
-\label{SpecialSubgroups.prod_mulEquiv_join_of_disjoin_of_normal} 
-\lean{SpecialSubgroups.prod_mulEquiv_join_of_disjoin_of_normal}
+\label{SpecialSubgroups.prod_mulEquiv_join_of_disjoint_of_normal} 
+\lean{SpecialSubgroups.prod_mulEquiv_join_of_disjoint_of_normal}
 \leanok
 Let $A$ and $B$ be normal subgroups of $G$ with $A \cap B = \{ I_G \}$. Then $AB \cong A \times B$.
 \end{lemma}
 
 \begin{proof}
-
+\leanok
 First note that the elements of $A$ commute with the elements of $B$, since $\forall \; a \in A$ and $b \in B$,
 \begin{align*} aba^{-1}b^{-1} &=  a(ba^{-1}b^{-1}) \in A, \tag{since $A \vartriangleleft G$}
 \\ aba^{-1}b^{-1} &=  (aba^{-1})b^{-1} \in B. \tag{since $B \vartriangleleft G$}
@@ -301,7 +311,7 @@ Let $A$ and $B$ be subgroups of $G$. If $A \cap B = \{ I_G \}$ and $ab = ba$ $\f
 \end{lemma}
 
 \begin{proof} 
-    Since $A$ and $B$ commute, the argument outlined in Lemma \ref{SpecialSubgroups.prod_mulEquiv_join_of_disjoin_of_normal} also holds here.
+    Since $A$ and $B$ commute, the argument outlined in Lemma \ref{SpecialSubgroups.prod_mulEquiv_join_of_disjoint_of_normal} also holds here.
 \end{proof}
 
 % \newpage

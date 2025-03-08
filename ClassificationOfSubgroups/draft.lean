@@ -21,7 +21,11 @@ theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : (sum_of_first_n_odd_nat n) 
     rewrite [mul_one, mul_one, add_assoc]
     rfl
 
+#check add_mul_self_eq
 
+
+
+#leansearch ""
 -- import Mathlib
 
 -- def sum_of_odd : ℕ → ℕ

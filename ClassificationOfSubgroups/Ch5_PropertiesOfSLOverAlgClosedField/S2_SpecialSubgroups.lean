@@ -258,7 +258,7 @@ lemma Bijective_prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH
     use ⟨⟨h, h_in_H⟩, ⟨k, k_in_K⟩⟩
     simp [prod_monoidHom_join, hh]
 
-noncomputable def prod_mulEquiv_join_of_disjoin_of_normal {G : Type*} [Group G] (H K : Subgroup G)
+noncomputable def prod_mulEquiv_join_of_disjoint_of_normal {G : Type*} [Group G] (H K : Subgroup G)
   (hHK : Disjoint H K) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) :=
   MulEquiv.ofBijective (prod_monoidHom_join H K hHK) (Bijective_prod_monoidHom_join H K hHK)
 

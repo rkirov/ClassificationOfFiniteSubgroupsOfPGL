@@ -399,7 +399,7 @@
 </ol>
 <p>the <span class="ttfamily">case</span> tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label <i class="itshape">zero</i> to prove the base case; then we focus in on the induction step by typing <span class="ttfamily">case succ m hm</span> which also introduces two new objects into the proof context, the natural number \(m\) and the assumption on <span class="ttfamily">m</span> which says that \(m\) satisfies the induction hypothesis, <span class="ttfamily">sum_of_first_n_odd_nat m = m * m</span>. We then proceed to use the rewrite tactic, <span class="ttfamily">rewrite</span>, which allows to replace equal or logically equivalent terms, so if you have the theorem <span class="ttfamily">h : a = b</span>, then <span class="ttfamily">rw [h]</span> will replace every ocurrence of <span class="ttfamily">a</span> in the goal for a <span class="ttfamily">b</span>, in the new modified goal. </p>
 <p>Finally, <span class="ttfamily">rfl</span> proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation. </p>
-<p>Theorems and lemmas in Lean are given an identifier by which to access through, for example: </p>
+<p>Theorems and lemmas in Lean are given an identifier by which to access through, for example, the theorem <span class="ttfamily">add_mul_self_eq</span> states that for all \(a, b \in S\) where \(S\) is a semiring we have that <span class="ttfamily">(a + b) * (a + b) = a * a + 2 * a * b + b * b</span>. </p>
 
   </div>
 </div>
