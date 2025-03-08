@@ -71,7 +71,8 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
     To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs 
     for why the sum of the first $n$ odd integers equals the $n$\textsuperscript{th} square. That is, we will prove and formalise:
 
-    \begin{equation}\label{ih}
+    \begin{equation}
+        \label{ih}
         \sum_{k = 1}^{n} 2k - 1 = n^2
     \end{equation}
 
@@ -152,7 +153,7 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
     % \end{verbatim}
 
     after the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}, it is possible to
-    define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \texit{tactic mode}.
+    define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \textit{tactic mode}.
     As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics
     in Lean; to enter tactic mode one must begin the proof with the \texttt{by} tactic. Furthermore, using tactic mode allows access to an extremely useful
     interactive \textit{infoview} which displays the objects at play in the proof, the assumptions on the objects, the state of the proof

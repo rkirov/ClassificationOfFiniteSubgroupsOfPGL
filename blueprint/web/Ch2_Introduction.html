@@ -349,7 +349,7 @@
 <div class="equation" id="ih">
 <p>
   <div class="equation_content">
-    \begin{equation} \label{ih} \sum _{k = 1}^{n} 2k - 1 = n^2 \end{equation}
+    \begin{equation}  \label{ih} \sum _{k = 1}^{n} 2k - 1 = n^2 \end{equation}
   </div>
   <span class="equation_label">6</span>
 </p>
@@ -388,10 +388,18 @@
 <p>This definition of summing the odd numbers is equivalent up to reindexing to the definition above. The reason we do not use subtraction is because the natural numbers are a commutative semiring, in particular, it does not always make sense to subtract one from a natural number, the predecessor of zero is not defined. We only need understand that a natural number is either zero or a successor of a natural number. In essence, when defining a function from the natural, we only need to think about where to send zero and where to send the successor of a natural number, such functions are defined inductively/recursively. This pattern of thought is continually used throughout Lean. </p>
 <p>Given the code definition above is a program one can indeed compute using the function, this might be how one would first conjecture that such a theorem about the sums of the first odd natural numbers is true in the first place! </p>
 <p>To state the theorem in Lean, we use the keyword <span class="ttfamily">thorem</span> or <span class="ttfamily">lemma</span>; followed by the name we would like to give the theorem, in this case it is, <span class="ttfamily">closed_eq_sum_of_first_n_odd_nat</span>; then followed by a list of arguments which will either be the objects and assumptions on the objects, in this case we only specify that <span class="ttfamily">n</span> is a natural number; then after a colon <span class="ttfamily">:</span>, we specify the mathematical statement, in this case that <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>. We will walk through the formal proof after providing the Lean code </p>
-<p>after the <span class="ttfamily">:=</span> Lean expects a proof term of the type <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>, it is possible to define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as tactic mode. As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics in Lean; to enter tactic mode one must begin the proof with the <span class="ttfamily">by</span> tactic. Furthermore, using tactic mode allows access to an extremely useful interactive <i class="itshape">infoview</i> which displays the objects at play in the proof, the assumptions on the objects, the state of the proof </p>
-<p>Once in tactic mode, we have access to other tactics accessible throught the keywords <span class="ttfamily">induction</span>, <span class="ttfamily">case</span>, <span class="ttfamily">rw</span>, <span class="ttfamily">ring</span>, <span class="ttfamily">simp</span> and so on. Given the natural number are defined inductively in Lean, Lean understands that to prove that a property \(P\) holds true for all natural numbers it is sufficient to provide a proof term for \(P(0)\) and supposing \(P(n)\) holds we can show that then \(P(n+1)\) holds, in Lean terminology, the natural numbers have their own induction principle. In fact this will be automatically true for any inductive datatype, but we will not go into this. </p>
-<p>To access this fact we must invoke the <span class="ttfamily">induction</span> tactic which </p>
-<p>TODO - writing this as we speak but this is how it will go </p>
+<p>after the <span class="ttfamily">:=</span> Lean expects a proof term of the type <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>, it is possible to define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as <i class="itshape">tactic mode</i>. As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics in Lean; to enter tactic mode one must begin the proof with the <span class="ttfamily">by</span> tactic. Furthermore, using tactic mode allows access to an extremely useful interactive <i class="itshape">infoview</i> which displays the objects at play in the proof, the assumptions on the objects, the state of the proof </p>
+<p>Once in tactic mode, we have access to other tactics accessible throught the keywords <span class="ttfamily">induction</span>, <span class="ttfamily">case</span>, <span class="ttfamily">rw</span>, <span class="ttfamily">rw</span>, <span class="ttfamily">ring</span>, <span class="ttfamily">simp</span> and so on. Given the natural number are defined inductively in Lean, Lean understands that to prove that a property \(P\) holds true for all natural numbers it is sufficient to provide a proof term for \(P(0)\) and supposing \(P(n)\) holds we can show that then \(P(n+1)\) holds, in Lean terminology, the natural numbers have their own induction principle. In fact this will be automatically true for any inductive datatype, but we will not go into this. </p>
+<p>To access this fact, we must invoke the <span class="ttfamily">induction</span> tactic which splits the original goal of <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span> into two smaller goals </p>
+<ol class="enumerate">
+  <li><p>The base case: <span class="ttfamily">sum_of_first_n_odd_nat 0 = 0 * 0</span>. </p>
+</li>
+  <li><p>The induction step: <span class="ttfamily">sum_of_first_n_odd_nat (m + 1) = (m + 1) * (m + 1)</span> </p>
+</li>
+</ol>
+<p>the <span class="ttfamily">case</span> tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label <i class="itshape">zero</i> to prove the base case; then we focus in on the induction step by typing <span class="ttfamily">case succ m hm</span> which also introduces two new objects into the proof context, the natural number \(m\) and the assumption on <span class="ttfamily">m</span> which says that \(m\) satisfies the induction hypothesis, <span class="ttfamily">sum_of_first_n_odd_nat m = m * m</span>. We then proceed to use the rewrite tactic, <span class="ttfamily">rewrite</span>, which allows to replace equal or logically equivalent terms, so if you have the theorem <span class="ttfamily">h : a = b</span>, then <span class="ttfamily">rw [h]</span> will replace every ocurrence of <span class="ttfamily">a</span> in the goal for a <span class="ttfamily">b</span>, in the new modified goal. </p>
+<p>Finally, <span class="ttfamily">rfl</span> proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation. </p>
+<p>Theorems and lemmas in Lean are given an identifier by which to access through, for example: </p>
 
   </div>
 </div>
@@ -524,13 +532,13 @@
   </div>
 </div>
 <p>Similarly, the Projective Special Linear Group is defined to be: </p>
-<div class="lemma_thmwrapper theorem-style-plain" id="a0000000065">
-  <div class="lemma_thmheading">
-    <span class="lemma_thmcaption">
-    Lemma
+<div class="definition_thmwrapper theorem-style-definition" id="a0000000065">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
     </span>
-    <span class="lemma_thmlabel">2.6</span>
-    <span class="lemma_thmtitle">Projective special linear group</span>
+    <span class="definition_thmlabel">2.6</span>
+    <span class="definition_thmtitle">Projective special linear group</span>
     <div class="thm_header_extras">
 
         </div>
@@ -542,7 +550,7 @@
     
         </div>
   </div>
-  <div class="lemma_thmcontent">
+  <div class="definition_thmcontent">
   <div class="displaymath" id="a0000000066">
   \[  \operatorname{PSL}_n(F) = \operatorname{SL}_n(F) / (Z(\operatorname{SL}_n(F))) = \operatorname{SL}_n(F) / (\langle -I\rangle )  \]
 </div>
