@@ -14,12 +14,41 @@ For this project I have opted to use Lean due to its rapid growing mathematics l
 
 \subsubsection{What is Lean?}
 
-Lean is both a functional programming language and an interactive theorem prover that is being developed at Microsoft research and AWS by Leonardo de Moura and his team.
-It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems where correctness is of extreme
-TODO:
+Lean is both a functional programming language and an interactive theorem prover (also known as a proof assistant) that is being developed at Microsoft research and AWS by Leonardo de Moura and his team.
+It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems such as medical or aviation software, where any error can have
+catastrophic consequences on people's lives or infrastructure.
+
+Theorem provers like Lean harness the tight bond between proofs and programs. Often an algorithm, say like the euclidean algorithm, is used for the proof for why it is possible within a euclidean domain
+$R$, that is to say, a ring $R$ with a euclidean function $\nu : R \setminus \{0\} \rightarrow \Z_{\geq 0}$ which satisfies that for all $x, y \in R$ with $y \ne 0$, there exist $q, r \in \R$ such that $a  = qb + r$ where either $r = 0$ or $\nu(r) < \nu(b)$;
+it is possible for any $r,s \in R$ to find a unique linear combination which is the greatest common divisor of $r$ and $s$, that is, there exist unique coefficients $a, b \in R$ such that $ar + bs = \gcd(r, s)$.
+
+It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless, and it is known as the \textbf{Curry-Howard correspondence} where formulas correspond to \textit{types}, which correspond to the notion of a specification, 
+proofs for formulas correspond to constructing a term of the corresponding type and so forth. In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. 
+For our purposes, we will not provide a deep overview of this fundamental correspondence, but rather we will illustrate the core principle with a suitable example.
+
+\begin{example}[Proving and formalising the sum of the first $n$ odd integers]
+    To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs 
+    for why the sum of the first $n$ odd integers equals the $n$\textsuperscript{th} square. That is, we will prove and formalise:
+
+    \begin{equation*}
+        \sum_{k = 1}^{n} 2k + 1 = n^2
+    \end{equation*}
+
+    There are many ways to prove this statement, other proofs can be found at \cite{sangwin}. The proof that is best suited to be formalise is the
+    proof by induction which goes as the following:
+
+    \begin{proof}
+        
+    \end{proof}
 
 
-TODO - Brief explanation of type theory and curry-howard isomorphism + proofs as programs - easy
+
+    
+
+\end{example}
+
+
+
 
 
 
@@ -180,7 +209,7 @@ very loosely the key idea is that the two key players:
     \item The local ring $R_\Sigma$ which is called the universal deformation ring for representations of type $\Sigma$.
     where $\Sigma_{\bar{\rho}}$ is the set of primes $p$ satisfying
     \begin{itemize}
-        \item $p = \ell$ and $\bar{\rho}|_G_{\ell}$ is good and ordinary; or
+        \item $p = \ell$ and $\bar{\rho}|_{G_{\ell}}$ is good and ordinary; or
         \item $p \ne \ell$ and $\bar{\rho}$ is unramified at $p$.
     \end{itemize}
     \item The ring $\mathbb{T}_\Sigma$ is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms.
