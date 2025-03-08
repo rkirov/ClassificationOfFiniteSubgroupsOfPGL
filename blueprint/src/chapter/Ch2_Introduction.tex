@@ -18,28 +18,111 @@ Lean is both a functional programming language and an interactive theorem prover
 It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems such as medical or aviation software, where any error can have
 catastrophic consequences on people's lives or infrastructure.
 
-Theorem provers like Lean harness the tight bond between proofs and programs. Often an algorithm, say like the euclidean algorithm, is used for the proof for why it is possible within a euclidean domain
-$R$, that is to say, a ring $R$ with a euclidean function $\nu : R \setminus \{0\} \rightarrow \Z_{\geq 0}$ which satisfies that for all $x, y \in R$ with $y \ne 0$, there exist $q, r \in \R$ such that $a  = qb + r$ where either $r = 0$ or $\nu(r) < \nu(b)$;
-it is possible for any $r,s \in R$ to find a unique linear combination which is the greatest common divisor of $r$ and $s$, that is, there exist unique coefficients $a, b \in R$ such that $ar + bs = \gcd(r, s)$.
+Theorem provers like Lean harness the tight bond between proofs and programs. Often an algorithm, in fact serves as a proof for a mathematical statement
+
+For example, such is the case for the following theorem:
+
+\begin{example}[Algorithm corresponds to a proof - Bézout's lemma]
+\begin{theorem}
+    Let $R$ be a ring with a euclidean function $\nu : R \setminus \{0\} \rightarrow \Z_{\geq 0}$ which satisfies that for all $x, y \in R$ with $y \ne 0$, there exist $q, r \in \R$ such that $a  = qb + r$ where either $r = 0$ or $\nu(r) < \nu(b)$;
+it is possible for any $r,s \in R$ to find a unique linear combination which is the greatest common divisor of $r$ and $s$, that is, there exist coefficients $a, b \in R$ such that $ar + bs = \gcd(r, s)$.
+\end{theorem }    
+\begin{proof}
+        We construct $a$ and $b$ by the extended euclidean algorithm, we sequentially divide in the following fashion:
+          \begin{align}
+              r &= q_0 s + r_1\\
+              b &= q_1 r_1 + r_2\\
+              r_1 &= q_2 r_2 + r_3\\
+              &\vdots\\
+              r_{i-1} = q_i r_i + r_{i + 1}&
+          \end{align}
+      
+          by the definition of a euclidean domain, we have a strictly decreasing sequence $\nu(r_1) > \nu(r_2) > \ldots > \nu(r_k)$ that must eventually terminate in at most $\nu(r_1) + 1$ steps,
+          and must have that $\nu(r_k) = 0$ for some $k \in \N$. It will then be that $r_{k -1} = \gcd(r, s)$, and by back substitution we can recover the values for the coefficients $a$ and $b$.
+      \end{proof}
+
+In \texttt{mathlib}, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
+
+\begin{verbatim}
+    def xgcdAux (r s t r' s' t' : R) : R × R × R :=
+    if _hr : r = 0 then (r', s', t')
+    else
+      let q := r' / r
+      have _ := mod_lt r' _hr
+      xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
+  termination_by r
+\end{verbatim}
+\end{example}
 
 It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless, and it is known as the \textbf{Curry-Howard correspondence} where formulas correspond to \textit{types}, which correspond to the notion of a specification, 
 proofs for formulas correspond to constructing a term of the corresponding type and so forth. In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. 
 For our purposes, we will not provide a deep overview of this fundamental correspondence, but rather we will illustrate the core principle with a suitable example.
 
+Furthermore, within the block of Lean code there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. the following example hopes to
+illustrate a simpler example and give an overview of how to:
+
+\begin{itemize}
+    \item Define the assumptions for a mathematical statement.
+    \item Define the mathematical statement.
+    \item Formalise the mathematical statement using Lean tactics.
+\end{itemize}
+
+Loosely speaking, a \texttt{tactic} in Lean is a me
+
 \begin{example}[Proving and formalising the sum of the first $n$ odd integers]
     To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs 
     for why the sum of the first $n$ odd integers equals the $n$\textsuperscript{th} square. That is, we will prove and formalise:
 
-    \begin{equation*}
-        \sum_{k = 1}^{n} 2k + 1 = n^2
-    \end{equation*}
+    \begin{equation}\label{ih}
+        \sum_{k = 1}^{n} 2k - 1 = n^2
+    \end{equation}
 
     There are many ways to prove this statement, other proofs can be found at \cite{sangwin}. The proof that is best suited to be formalise is the
     proof by induction which goes as the following:
 
     \begin{proof}
-        
+        We prove the claim holds for all $n \in \N$ by the principle of mathematical induction. Indeed,
+
+        \begin{itemize}
+            \item The claim holds true for $n = 1$ since the LHS is $\sum_{k = 1}^{1} 2k -1 = 1$ and the RHS is $1^2 = 1$ and indeed $\textrm{LHS} = \textrm{RHS}$. This proves the base case.
+            
+            \item Let $m \in \N$ be a natural number and suppose the statement \eqref{ih} holds for $n = m$ then we will show that it then follows that it must hold for $n = m + 1$. Indeed,
+            
+            Consider the sum $\sum_{k = 1}^{m + 1} 2k - 1$, then we have that
+            \begin{align}
+                \sum_{k = 1}^{m + 1} 2k - 1 &= \left(\sum_{k = 1}^{m} 2k - 1\right) + 2(m + 1) - 1 \tag{by definition of the summation}\\
+                    &=  n^2 + 2n + 1 \tag{by the induction hypothesis}\\
+                    &= (n + 1)^2
+            \end{align}
+
+            This proves the induction step, and therefore by the principle of mathematical induction. The claim holds true for all $n \in \N$.
+        \end{itemize}
     \end{proof}
+
+    To define this statement in Lean we first must define what we mean by $\sum_{k = 1}^{n} 2k - 1$, to define this sum in Lean we use the recursive definition
+    for the summation where 
+
+    \begin{align*}
+        \sum_{k = 1}^{n + 1} f(k) &= \sum_{k = 1}^{n} f(k) + f(n + 1) \tag{for $n \geq 0$}\\
+            &\text{and}\\
+        \sum_{k = 1}^{0} f(k) &= 0
+    \end{align*}
+
+    where in Lean that naturals numbers include zero.
+
+    \begin{verbatim}
+        def sum_of_n_odd : ℕ → ℕ
+            | 0 => 0
+            | n + 1 => sum_of_n_odd n + (2*n + 1)
+    \end{verbatim}
+
+    This definition is equivalent up to reindexing to the definition above.
+
+
+
+    
+
+    
 
 
 
@@ -87,7 +170,7 @@ In fact, much is known about the case when $n = 2$; it is known that all Pythago
     All pythagorean triples are of the form:
 
     \[
-    a = r \cdot (s^2 - t^2), \qquad b = r \cdot (2st) = r \cdot (s^2 + t^2)
+    a = r \cdot (s^2 - t^2), \qquad b = r \cdot (2st), \qquad c = r \cdot (s^2 + t^2)
     \]
 \end{theorem}
 
@@ -217,7 +300,6 @@ very loosely the key idea is that the two key players:
 
 TODO - explain why this isomorphism is crucial.
 
-
 Moreover, the statement of Theorem 2.49 is the following:
 
 \begin{theorem}[Theorem 2.49]
@@ -232,7 +314,7 @@ Moreover, the statement of Theorem 2.49 is the following:
 \end{theorem}
 
 The place where the theorem 2.47 is of interest, the theorem that this project aims to be a blueprint for, is because proving proving the claim above requires showing that the 
-cohomology group  $H^1(\Gal(F_n / F_0. \textrm{ad}^0\bar{\rho}(1)))^G_\Q$ is trivial, which in turn reduces to showing that $\ell$, an odd prime, does not divide the Galois group $\Gal(F_0 /\Q)$ which is isomorphic to a finite subgroup $\PGL_2(\Fbar_\ell)$
+cohomology group  $H^1(\textrm{Gal}(F_n / F_0), \textrm{ad}^0\bar{\rho}(1))^G_{\mathbb{Q}}$ is trivial, which in turn reduces to showing that $\ell$, an odd prime, does not divide the Galois group $\Gal(F_0 /\Q)$ which is isomorphic to a finite subgroup $\PGL_2(\Fbar_\ell)$
 and has $\Gal(\Q(\zeta_\ell/\Q))$ as a quotient.
 
 Provided the classification of finite subgroups of $\PGL_2(\Fbar_\ell)$, it suffices to prove that the cohomology group is trivial for the case where $\ell = 3$.
