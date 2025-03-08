@@ -49,7 +49,6 @@ lemma card_SL_field {𝔽 : Type u_1} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
   Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by sorry
 
 /- Lemma 3.5. Correspondence theorem -/
--- #leansearch "group theory correspondence theorem?"
 #check QuotientGroup.comapMk'OrderIso
 
 def Isomorphic (G H : Type*) [Group G] [Group H] :=
@@ -249,9 +248,7 @@ theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClo
     ∃ φ : G ≃* SL(2, GaloisField p k), True
   := by sorry
 
-#leansearch "alternating group."
 
-#leansearch "algebraic closure of finite field."
 
 #check ZMod
 

@@ -262,7 +262,6 @@ noncomputable def prod_mulEquiv_join_of_disjoin_of_normal {G : Type*} [Group G] 
   (hHK : Disjoint H K) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) :=
   MulEquiv.ofBijective (prod_monoidHom_join H K hHK) (Bijective_prod_monoidHom_join H K hHK)
 
-#leansearch "Normal of IsCommutative."
 
 lemma D_mul_S_le_L (F : Type*) [Field F] : ((D F) : Set SL(2,F)) * (S F) ⊆ (L F) := by
   rintro x ⟨d, ⟨δ, rfl⟩, s, ⟨σ, rfl⟩, rfl⟩
@@ -287,7 +286,6 @@ lemma D_join_S_eq_L (F : Type*) [Field F]: D F ⊔ S F = L F := by
     · use σ
     rfl
 
-#leansearch "H × K ⧸ K ≃ H."
 
 -- def foo {G : Type*} [Group G] (H K : Subgroup G) : (H ⊔ K :) ⧸ K ≃* H := by sorry
 
@@ -422,7 +420,6 @@ def D_join_S_monoidHom_D : (D F × S F :) →* D F where
 
 #check  QuotientGroup.quotientKerEquivRange
 
-#leansearch "first gorup isomorphism theorem."
 
 def DW (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ | δ : Fˣ} ∪ { d δ * w | δ : Fˣ}

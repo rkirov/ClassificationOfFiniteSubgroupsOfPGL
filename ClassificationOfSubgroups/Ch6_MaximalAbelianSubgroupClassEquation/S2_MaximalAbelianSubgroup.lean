@@ -302,7 +302,6 @@ lemma singleton_of_cen_eq_G {G : Type*} [Group G] (H : Subgroup G) (hH : H = cen
 open scoped MatrixGroups
 
 
--- #leansearch "A = B of B ⊆ A Nat.card A ≤ Nat.card B?"
 
 lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
   (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
