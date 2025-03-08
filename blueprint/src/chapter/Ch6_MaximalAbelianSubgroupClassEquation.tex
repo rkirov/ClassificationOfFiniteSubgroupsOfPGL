@@ -27,15 +27,15 @@ A subgroup $H$ is said to be a maximal abelian subgroup of $G$ if for every $J$ 
 
 In Lean this statement looks like the following:
 
-\begin{verbatim}
-  def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal (IsCommutative) G
-\end{verbatim}
+% \begin{verbatim}
+%   def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal (IsCommutative) G
+% \end{verbatim}
 
   where the definition of \texttt{Maximal} in mathlib implicitly recognises the existence of a $\le$ operator (a more primitive notion of a partial order) and is:
 
-  \begin{verbatim}
-    def Maximal (P : α → Prop) (x : α) : Prop := P x ∧ ∀ ⦃y⦄, P y → x ≤ y → y ≤ x
-  \end{verbatim}
+  % \begin{verbatim}
+  %   def Maximal (P : α → Prop) (x : α) : Prop := P x ∧ ∀ ⦃y⦄, P y → x ≤ y → y ≤ x
+  % \end{verbatim}
 
   Which informally means that an object $M$ that satisfies a property is maximal if any other object $K$ that also satisfies the property and is related to $M$ by $M \le K$ then in fact we must have the symmetric relation $K \le M$.
 
@@ -53,10 +53,10 @@ A group $G$ is said to be \textbf{elementary abelian} if it is abelian and every
 \begin{remark}
   In Lean we define the notion of a subgroup of $H$ of $G$ being elementary abelian the following way:
   
-  \begin{verbatim}
-  def IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G) : Prop :=
-  IsCommutative H ∧ ∀ h : H, h ≠ 1 → orderOf h = p
-  \end{verbatim}
+  % \begin{verbatim}
+  % def IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G) : Prop :=
+  % IsCommutative H ∧ ∀ h : H, h ≠ 1 → orderOf h = p
+  % \end{verbatim}
 \end{remark}
 
 \begin{definition}

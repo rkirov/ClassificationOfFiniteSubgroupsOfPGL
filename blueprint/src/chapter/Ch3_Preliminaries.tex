@@ -126,9 +126,9 @@ In Lean, to state that two elements $g, h \in G$ where $G$ is a group, we use th
 
 That is to say, given $g, h \in G$ where $G$ is a group (or more generally monoid) and impose that $g$ and $h$ are conjugate, instead of writing the equality which has type \texttt{Prop}:
 
-\begin{verbatim}
-∃ c : α, c * a * c⁻¹ = b
-\end{verbatim}
+% \begin{verbatim}
+% ∃ c : α, c * a * c⁻¹ = b
+% \end{verbatim}
 
 We use the following statement of type \texttt{Prop} that has been defined in Mathlib under the name of \texttt{IsConj}.
 
@@ -138,10 +138,10 @@ Saying two elements are conjugate is writing something like the following:
 
 Assuming the terms \texttt{g : G} and \texttt{h : G} of the type \texttt{G} (which has the \texttt{Group} typeclass instance) are in scope.
 
-\begin{verbatim}
-IsConj g h
-\end{verbatim}
-\end{remark}
+% \begin{verbatim}
+% IsConj g h
+% \end{verbatim}
+% \end{remark}
 
 
 \begin{definition}[Conjugate subgroups]
@@ -151,9 +151,9 @@ Let $H_1$ be a proper subgroup of $G$ and fix $x \in G \setminus H_1$. The set $
 \begin{remark}
 In Lean, to state that two subgroups $H, K$ of a group $G$ are conjugate subgroups similar to how is done in \ref{conj_elem} we can open the \texttt{MulAut} namespace to make use of the custom syntax:
 
-\begin{verbatim}
-conj c • H = K 
-\end{verbatim}
+% \begin{verbatim}
+% conj c • H = K 
+% \end{verbatim}
 
 This notation and API is useful because conjugation by a particular element is defined to be an element in the automorphism group of $G$, $\Aut(G)$. 
 
@@ -277,17 +277,17 @@ Since $A \cap B = \{ I_G \}$, we have $b_1 b_2^{-1} = I_G = a_1^{-1} a_2$ and so
 
     This notion corresponds to taking the supremum or join of two subgroups \texttt{H : Subgroup G} and \texttt{K : Subgroup G} which denoted by 
 
-    \begin{verbatim}
-        H ⊔ K : Subgroup G
-    \end{verbatim}
+    % \begin{verbatim}
+    %     H ⊔ K : Subgroup G
+    % \end{verbatim}
 
     Naturally, as expected $H \le H \sqcup K$ and $K \le H \sqcup K$. Furthermore, if we now supply the appropriate assumptions, when peeking at the different facets of the supremum we will be able to recover the properties we desire.
 
     For instance, the theorem \texttt{Subgroup.mul\textunderscore normal}.
     
-    \begin{verbatim}
-        ∀ {G : Type u_2} [inst : Group G] (H N : Subgroup G) [hN : N.Normal], ↑(H ⊔ N) = ↑H * ↑N
-    \end{verbatim}
+    % \begin{verbatim}
+    %     ∀ {G : Type u_2} [inst : Group G] (H N : Subgroup G) [hN : N.Normal], ↑(H ⊔ N) = ↑H * ↑N
+    % \end{verbatim}
     
     only requires one of the subgroups to be normal for us to conclude that the underlying set of the supremum is the pointwise product of sets!
     
