@@ -4,7 +4,7 @@
 
 I would to thank my supervisor Prof. David Jordan for his invaluable support and guidance throughout the project;
 Christopher Butler for providing the TeX code so I could easily set up the blueprint, and hopefully, improve and add to his amazing exposition of
-\textbf{Dickson's Classification Theorem}.
+\textbf{Dickson's Classification Theorem} \cite{butler}.
 
 I would also like to thank Prof. Kevin Buzzard for his support, patience and guidance throughout the project. His advice and comments on how I should go about formalising mathematics have been of utmost value. 
 
@@ -38,6 +38,15 @@ A pleasant outcome of presenting both the informal and formal mathematics alongs
 
 \section{How to read this blueprint}
 
+The general layout of the blueprint is:
+
+\begin{enumerate}
+    \item Statement of Definition/Theorem/Lemma/Corollary
+    \item Proof where relevant.
+    \item Formalisation of the statement of the Definition/Theorem/Lemma/Corollary
+    and proof.
+    \item Further remarks on the formalisation where relevant.
+\end{enumerate}
 \subsection{Navigating the blueprint}
 
 The main distinctions are due to the interactive side of this blueprint:
@@ -59,7 +68,7 @@ There are three states for toggling how much text, ordered from least to most te
 
 \begin{enumerate}
     \item Displays only definitions and statements of theorems.
-    \item Displays definitions, statements, accompanying text and allows to toggle proofs being displayed or being hidden always
+    \item Displays definitions, statements, accompanying text and allows to toggle proofs being displayed or being hidden always.
     \item Displays defintions, statements, accompanying text and proofs.
 \end{enumerate}
 
@@ -82,6 +91,16 @@ to prove the overarching claim. But, in addition to the index of chapters and bi
 
 This will display a directed acyclic graph which demonstrates how all relevant definitions and statements feed into each to produce the final claim.
 
+\textbf{Note} the dependency graph and icons to the bottom right are only visible if the html page is launched on a local server since
+having otherwise would be a security hazard.
+
+If the reader wishes to see the dependency graph and the icons (the icons are still functional despite not being visible), the reader should run
+\texttt{python3 -m http.server} within the folder which contains the HTML for these pages (assumes a python installation).
+
+\begin{figure}
+    \includegraphics[width=0.8\textwidth]{dependencygraph.png}
+\end{figure}
+
 \subsection{Distinguishing my work from Christopher Butler's work}
 
 
@@ -89,43 +108,57 @@ Naturally, the largest bulk of my original work in this project consists of the 
 the classification of finite subgroups of $\SL_2(F)$. Bear in mind, the goal of the formalisation is this classification of finite subgroups of $\PGL_2(\Fbar)$, it turns out the classifications problems are tightly
 related and this is why a lot of Christopher Butler's work is reused here.
 
-Nonetheless, it may be surprising to understand that so far I having formalised around two thirds of the exposition alognside additional results relevant to concrete goal for formalising Fermat's Last Theorem.
+Nonetheless, it may be surprising to understand that so far, around two thirds of the exposition alongside additional results relevant to concrete goal for formalising Fermat's Last Theorem have been formalised.
+
 It turns out, that so far there is a rough correspondence for two lines of code/formal mathematics per one line of informal/pen-and-paper mathematics. That is to say, if 50 lines of code were displayed per page, all
-the code I have written would constitute a total of around 86 pages, since there are 4344 lines of Lean.
+the code written would constitute a total of around 86 pages, since there are 4344 lines of Lean.
 
 Moreover, on the basis of academic integrity I provide a rough overview of what constitutes my work and what constitutes Christopher Butler's work.
 
 \begin{itemize}
     \item My work:
     
-    Chapter 2, Chapter 4, Chapter 6
+    All the \texttt{verbatim} environments which contain Lean code is my original contribution.
+    
+    Chapter 2 and Chapter 4 constitute my work completely; a lot of the structure and set up for Chapter 6 is my work
+    since the original argument turned out to be not easily formalisable; Chapter 5 includes many intermediate lemmas relevant
+    to the classification of elements of $\SL_2(F)$ up to conjugation.
+
 
     \item Christopher Butler's work:
+    
+    Aside from the Lean code displayed in Chapter 3 and Chapter 7, these chapters are primarily Christopher Butler's work. Aside from
+    when the embedding of $\mathbb{F}_{p^n}$ into $\mathbb{F}_{p^{2n}}$ and the group presentation for the dihedral group were defined 
+    in Chapter 7.
     
     Aside from particular points where I have completely modified the approach to prove a particular statement, most proofs belong to Christopher Butler's exposition.
     
     Part of the intention of this is to highlight how the formal proof differs from the 
-    original informal proof;I have tried at every stage to follow the argument within Christopher Butler's exposition. 
-    Therefore, it is my hope that comparing the informal and formal mathematics side by side should be interesting to the reader.
+    original informal proof; I have tried at every stage to follow the argument within Christopher Butler's exposition. 
+    
+    Therefore, it is the hope that comparing the informal and formal mathematics side by side should be interesting to the reader.
 
-    There are parts where I have had to stray from the original path:
+    There are parts where the arguments have had to stray from the original path:
     
     \begin{itemize}
         \item When classifying elements of $\SL_2(F)$ up to conjugacy.
         \item When formalising arguments using group homomorphisms and isomorphisms.
         \item When formalising arguments which hinge on the complete lattice structure of subgroups.
-        \item When formalizing the maximal abelian subgroup class equation.
+        \item When formalizing the maximal abelian subgroup class equation which hinge on defining
+        a suitable quotient and the corresponding lifts rather than working with indexing sets.
     \end{itemize}
     
-    Often, I have broken up theorems into smaller lemmas to allow mapping Lean lemmas one-to-one with the corresponding lemma. 
-    This has often meant I have to define and prove intermediate definitions and theorems or prove particular statements more explicitly, and other terms, more generally.
+    Often, large theorems have been broken up into smaller lemmas to allow mapping Lean lemmas one-to-one with the corresponding lemmas. 
+    This has often meant that intermediate definitions and theorems have been defined and proven more explicitly; and in some cases, 
+    in more general terms.
 \end{itemize}
 
 
 \section{Christopher Butler's acknowledgements and popular science summary}
 
-Considering this project hinges very heavily on the work of Christopher Butler, I feel obligated to include his own acknowledgements, abstract and popular science summary on \textbf{Dickson's Classification Theorem} for $\SL_2(F)$ over an algebraically closed field. I am very thankful for his work, it has been
-extremely useful for the process of formalisation.
+Considering this project hinges very heavily on the work of Christopher Butler, I feel obligated to include his own acknowledgements,
+ abstract and popular science summary on \textbf{Dickson's Classification Theorem} for $\SL_2(F)$ over an algebraically closed field.
+I am very thankful for his work, it has been extremely useful for the process of formalisation.
 
 \subsection{Christopher Butler's Abstract }
 

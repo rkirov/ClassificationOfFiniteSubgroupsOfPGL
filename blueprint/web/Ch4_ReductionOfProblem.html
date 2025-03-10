@@ -263,7 +263,7 @@
 <h1 id="Ch4_ReductionOfProblem">4 Reduction of classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) to classification of finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\)</h1>
 
 <h1 id="a0000000029">4.1 Over an algebraically closed field \(\operatorname{PSL}_n(F)\) is isomorphic to the projective \(\operatorname{PGL}_n(F)\)</h1>
-<p>When \(F\) is algebraically closed and \(\textrm{char}(F) \neq 2\) we can construct an isomorphism between the projective special linear group and the projective general linear group. </p>
+<p>When \(F\) is algebraically closed and \(\textrm{char}(F) \neq 2\) it one can construct an isomorphism between the projective special linear group and the projective general linear group. </p>
 <div class="definition_thmwrapper theorem-style-definition" id="SL_monoidHom_PGL">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -304,7 +304,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  Let \(\varphi : \operatorname{SL}_n(R) \rightarrow \operatorname{PGL}_n(R)\) be the injection of \(\operatorname{PSL}_n(R)\) into \(\operatorname{PGL}_n(R)\) defined by </p>
-<div class="displaymath" id="a0000000104">
+<div class="displaymath" id="a0000000112">
   \[  S \mapsto i(S) \;  (R^\times I)  \]
 </div>
 <p>where \(i : \operatorname{SL}_n(F) \hookrightarrow \operatorname{GL}_n(F)\) is the natural injection of the special linear group into the general linear group. </p>
@@ -312,10 +312,10 @@
   </div>
 </div>
 <p> <small class="footnotesize"> <pre class="verbatim">
-def SL_monoidHom_GL  (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRing R] :
-    SL n R →* GL n R := SpecialLinearGroup.toGL
+  def SL_monoidHom_PGL (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRing R] :
+  SL n R →*  PGL n R := (GL_monoidHom_PGL n R).comp (SL_monoidHom_GL n R)
 </pre> </small> </p>
-<p>We prove a useful fact about elements that belong to the center of \(\operatorname{GL}_n(R)\): </p>
+<p>We now prove a useful fact about elements that belong to the center of \(\operatorname{GL}_n(R)\). </p>
 <div class="lemma_thmwrapper theorem-style-plain" id="GeneralLinearGroup.mem_center_general_linear_group_iff">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -331,7 +331,7 @@ def SL_monoidHom_GL  (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRi
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#GeneralLinearGroup.mem_center_general_linear_group_iff">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000105"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000113"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -362,7 +362,7 @@ def SL_monoidHom_GL  (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRi
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000105">
+<div class="proof_wrapper" id="a0000000113">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -372,12 +372,12 @@ def SL_monoidHom_GL  (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRi
   <div class="proof_content">
   
 <ul class="itemize">
-  <li><p>Suppose \(G \in GL_n(F)\) belongs to \(Z(\operatorname{GL}_n(F))\) then for all \(H \in \operatorname{GL}_n(F)\) we have that \(G H = H G\). We will find it sufficient to only consider the case where \(H\) is a transvection matrices. Let \(1 \leq i {\lt} j \leq n\), then the transvection matrices are of the form \(T_{ij} = I + E_{ij}\) where \(E_{ij}\) is the standard basis matrix given by </p>
-<div class="displaymath" id="a0000000106">
+  <li><p>Suppose \(G \in \operatorname{GL}_n(F)\) belongs to \(Z(\operatorname{GL}_n(F))\) then for all \(H \in \operatorname{GL}_n(F)\) we have that \(G H = H G\). We will find it sufficient to only consider the case where \(H\) is a transvection matrices. Let \(1 \leq i {\lt} j \leq n\), then the transvection matrices are of the form \(T_{ij} = I + E_{ij}\) where \(E_{ij}\) is the standard basis matrix given by </p>
+<div class="displaymath" id="a0000000114">
   \[  E_{{ij}_{kl}} = \begin{cases}  1 &  \text{if $i = k$ and $l = j$}\\ 0 &  \text{otherwise} \end{cases}  \]
 </div>
 <p>Given \(T_{ij} G = (I + E_{ij}) G = G T_{ij} (I + E_{ij})\), and addition is commutative we can use the cancellation law to yield that </p>
-<div class="displaymath" id="a0000000107">
+<div class="displaymath" id="a0000000115">
   \[  E_{ij} G = G E_{ij}  \]
 </div>
 <p>But \(G\) only commutes with \(E_{ij}\) for all \(i \neq j\) if \(G = r \cdot I\) for some \(r \in R^\times \). </p>
@@ -430,7 +430,7 @@ theorem mem_center_general_linear_group_iff {n : Type u} [DecidableEq n]
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#center_SL_le_ker">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000108"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000116"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -479,11 +479,11 @@ theorem mem_center_general_linear_group_iff {n : Type u} [DecidableEq n]
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   Let \(R\) be a non-trivial commutative ring, then \(Z(\operatorname{SL}_n(R)) \subseteq \ker (\varphi )\). </p>
+  <p>   Let \(R\) be a non-trivial commutative ring, then \(Z(\operatorname{SL}_n(R)) \le \ker (\varphi )\). </p>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000108">
+<div class="proof_wrapper" id="a0000000116">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -573,7 +573,8 @@ lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   Given \(Z(\operatorname{SL}_n(F)) \leq \ker \varphi \) as shown in <a href="Ch4_ReductionOfProblem.html#center_SL_le_ker">4.3</a>, by the universal property there exists a unique homomorphism \(\bar{\varphi } : \operatorname{PSL}_n(F) \rightarrow \operatorname{PGL}_n(F)\) which is the lift of \(\varphi \). Where \(\varphi = \bar{\varphi } \circ \pi _{Z(\operatorname{SL}_n(F))}\) and \(\pi _{Z(\operatorname{SL}_n(F))} : \operatorname{SL}_n(F) \rightarrow \operatorname{PSL}_n(F)\) is the canonical homomorphism from the group into its quotient. </p>
+  <p>   Given \(Z(\operatorname{SL}_n(F)) \leq \ker \varphi \) as shown in <a href="Ch4_ReductionOfProblem.html#center_SL_le_ker">4.3</a>, by the universal property there exists a unique homomorphism \(\bar{\varphi } : \operatorname{PSL}_n(F) \rightarrow \operatorname{PGL}_n(F)\) which is the lift of \(\varphi \). </p>
+<p>Where \(\varphi = \bar{\varphi } \circ \pi _{Z(\operatorname{SL}_n(F))}\) and \(\pi _{Z(\operatorname{SL}_n(F))} : \operatorname{SL}_n(F) \rightarrow \operatorname{PSL}_n(F)\) is the canonical homomorphism from the group into its quotient. </p>
 
   </div>
 </div>
@@ -599,7 +600,7 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#Injective_PSL_monoidHom_PGL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000109"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000117"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -652,7 +653,7 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000109">
+<div class="proof_wrapper" id="a0000000117">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -662,10 +663,9 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   <div class="proof_content">
   
 <p>To show \(\bar{\varphi }\) is injective we must show that \(\ker \bar{\varphi } \leq \bot _{\operatorname{PSL}_n(F)}\) where \(\bot _{\operatorname{PSL}_n(F)}\) is the trivial subgroup of \(\operatorname{PSL}_n(F)\). </p>
-<p>Let \([S] \in \operatorname{PSL}_n(F)\) and suppose \([S] \in \ker \bar{\varphi }\). If \([S] \in \ker \bar{\varphi }\) then \(\bar{\varphi } ([S]) = [1]_{\operatorname{PGL}_n(F)}\). But on the other hand, \(\bar{\varphi } ([S]) = \varphi (s)\) and so \(\varphi (S) = 1_{\operatorname{PGL}_n(F)}\) </p>
-<p>and thus \(S \in Z(\operatorname{GL}_n(F))\), from <a href="Ch4_ReductionOfProblem.html#GeneralLinearGroup.mem_center_general_linear_group_iff">4.2</a> it follows that \(s = r \cdot I\) for some \(r \in R^\times \). But given the restriction of \(S \in \operatorname{SL}_n(F)\) we know that </p>
-<div class="displaymath" id="a0000000110">
-  \begin{equation*}  \det (S) = \det (r \cdot I) = r^n = 1 \implies \text{$r$ is a $n$th root of unity} \end{equation*}
+<p>Let \([S] \in \operatorname{PSL}_n(F)\) and suppose \([S] \in \ker \bar{\varphi }\). If \([S] \in \ker \bar{\varphi }\) then \(\bar{\varphi } ([S]) = [1]_{\operatorname{PGL}_n(F)}\). But on the other hand, \(\bar{\varphi } ([S]) = \varphi (s)\) and so \(\varphi (S) = 1_{\operatorname{PGL}_n(F)}\), and thus \(S \in Z(\operatorname{GL}_n(F))\), from <a href="Ch4_ReductionOfProblem.html#GeneralLinearGroup.mem_center_general_linear_group_iff">4.2</a> it follows that \(s = r \cdot I\) for some \(r \in R^\times \). But given \(S \in \operatorname{SL}_n(F)\) we know that </p>
+<div class="displaymath" id="a0000000118">
+  \begin{equation*}  \det (S) = \det (r \cdot I) = r^n \cdot 1 = 1 \implies \text{$r$ is a $n$th root of unity} \end{equation*}
 </div>
 <p>Therefore, given elements of \(Z(\operatorname{SL}_n(F))\) are those matrices of the form \(\omega \cdot I\) where \(\omega \) is a \(n\)th root of unity, we can conclude that \([S] = [1]_{\operatorname{PSL}_n(F)}\) and thus \(\ker \bar{\varphi } \leq \bot _{\operatorname{PSL}_n(F)}\) as required. </p>
 <p>Which shows that the homomorphism \(\bar{\varphi }\) is injective. </p>
@@ -695,7 +695,7 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
         case ω_is_root_of_unity =&gt; exact (eq_one_iff_eq_one_of_mul_eq_one ω_eq_root_of_unity).mpr rfl
         case S_is_scalar_matrix =&gt; rw [S_eq_omega_smul_one]; exact scalar_eq_smul_one n F ↑ω
     </pre> </small> </p>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000111">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000119">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
@@ -707,7 +707,7 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000111">#</a>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000119">#</a>
     
     
     
@@ -715,32 +715,39 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   </div>
   <div class="remark_thmcontent">
   <p> When formalising results on quotient groups or for that matter any quotient type, it is valuable to appreciate which model Lean uses for quotients. </p>
-<p>Typically when one thinks of the elements of the quotient group say \(\mathbb {Z}/2\mathbb {Z}\) there are two elements: \([0]\) which represents the coset \(\{ \ldots , -2, 0, 2, \ldots \} \), and \([1]\) which represents the coset \(\{ \ldots , -3, -1, 1, 1, \ldots \} \) since under the equivalence relation \(a \sim b\) if and only if \(a - b \in 2\mathbb {Z}\) all the elements belonging to the same coset, or equivalence class, are indistinguishable. </p>
+<p>Typically, when one thinks of the elements of the quotient group say \(\mathbb {Z}/2\mathbb {Z}\) there are two elements: \([0]\) which represents the coset \(\{ \ldots , -2, 0, 2, \ldots \} \), and \([1]\) which represents the coset \(\{ \ldots , -3, -1, 1, 3, \ldots \} \) since under the equivalence relation, \(a \sim b\) if and only if \(a - b \in 2\mathbb {Z}\). In this new setting all the elements belonging to the same coset, or equivalence class, are now considered to be indistinguishable. </p>
 <p>Similarly, when defining a group homomorphism from \(\theta : (\mathbb {Z}/2\mathbb {Z}, \dot{+}) \rightarrow G\), under this model one has to make sure that all the elements in \([0]\) are sent to the same element \(g \in G\) in the target; and likewise, all the elements of \([1]\) are sent to the same element \(h \in H\). </p>
-<p>Otherwise, should \(\theta ([0]) \ne \theta ([2])\) then this would mean that \(\theta \) is somehow telling us that \(0\) is <b class="bfseries">not</b> indistinguishable from \(2\). This is the idea of <i class="itshape">well-definedness</i>. </p>
-<p>In general, the idea of quotients (not only group quotients) is to somehow eliminate the redundant information, because if one only cares about say if the lights are on or off, it turns out we only need to care about the parity of the number of times we have pressed the light switch, that is, the act of pressing the light switch \(12\) times is indistinguishable from pressing the button \(1400\) times. This is the notion of well-defined. </p>
-<p>In this particular example, we defined a map \(f : \mathbb {N}\rightarrow \{ \text{On}, \;  \text{Off}\} \) where we realised that both \(12\) and \(1400\) and all even natural numbers seem to behave equivalently under this map if and only if their difference is an even integer, that is, \(a \sim b\) if and only if \(a - b \in 2\mathbb {Z}\) where \(a\) and \(b\) are promoted to being elements of \(\mathbb {N}\subset \mathbb {Z}\). </p>
-<p>This allows to define a map which now takes in the only relevant information which determines if the lights are on or not, the parity of the number of times the light switch has been pressed. </p>
-<div class="displaymath" id="a0000000112">
-  \[  \psi : \mathbb {N}/ \sim \rightarrow \{ \text{On}, \;  \text{Off}\}   \]
+<p>Otherwise, should \(\theta ([0]) \ne \theta ([2])\) then this would mean that \(\theta \) would be treating what we thought were the indistinguishable elements \(0\) and \(2\), as different, This is the idea of showing the <i class="itshape">well-definedness</i> of a map on a quotient. </p>
+<p>In general, one of the idea of quotients (not only group quotients) is to somehow eliminate redundant information. </p>
+<p>Let us run with the following amusing example in every day life: </p>
+<p>Suppose the lights are on in a room and suppose Bob asks Alice what would happen should he press the light switch \(n \in \mathbb {N}\) times. It then occurs to Alice that in this setting pressing the light switch on \(12\) times or \(1400\) times, or for that matter, any even number of times yields to indistinguishable outcomes, the lights will be on; so in a sense the elements belonging to the set of even numbers are indistinguishable from each other, what is more is that we are not interested in so much the number but the parity of the number. </p>
+<p>In this particular example, we defined a map \(\psi : \mathbb {N}\rightarrow \{ \text{On}, \;  \text{Off}\} \) where we realised that both \(12\) and \(1400\) and all even natural numbers seem to behave equivalently under this map if and only if their difference is an even integer, that is, \(a \sim b\) if and only if \(a - b \in 2\mathbb {Z}\) where \(a\) and \(b\) are promoted to being elements of \(\mathbb {N}\subset \mathbb {Z}\). </p>
+<p>Given this map \(\psi \) behaves the same on all elements which are indistinguishable, it seems natural to define a map which now takes in the only relevant information which determines if the lights are on or not, the parity of the number of times the light switch has been pressed. </p>
+<div class="displaymath" id="a0000000120">
+  \[  \bar{\psi } : \mathbb {N}/ \sim \rightarrow \{ \text{On}, \;  \text{Off}\}   \]
 </div>
-<p>The quotient on \(\mathbb {N}\) now allows us to say that \([12] = [1400]\) and our new map \(\bar{f}\) now recognises that these numbers are the same under this new light. </p>
-<p>The upshot of all of this is that when we define a quotient and a map from the quotient, we ultimately want such a function to respect the equivalence relation. Whether the elements of a quotient are modelled as a coset, a set of equivalent elements, or as an abstract object which satisfies our needs should not be a problem. This is what the definition of quotients in Lean recognises, it would turn out to be rather strange to think of a term of a quotient type as a set, it would be rather clunky to work with; instead one simply modifies the definition of equality, and in particular, when wanting to define in Lean the lift of an existing homomorphism \(\gamma : G \rightarrow H\) to \(\bar{\gamma } : G/N \rightarrow H\), the most natural way to verify such a lift is sensible in Lean is to prove that equivalent elements map to the same output under \(\gamma \). </p>
-<p>In fact, this is exactly what <span class="ttfamily">Quot.lift</span> does: </p>
+<p>The quotient on \(\mathbb {N}\) now allows us to say treat \([12] = [1400]\) and our new map \(\bar{\psi }\) now recognises that these numbers are the same under this new light. </p>
+<p>However, we could have also phrased this observation as saying that \(\psi \) respects the equivalence relation on \(\sim \) and thus have defined a \(\bar{\psi }\) to be the map which given the parity, an element of \(\mathbb {N}/ \sim = \{ [0], [1]\} \) outputs whether the light is on or off. </p>
+<p>The upshot of all of this is that when we define a quotient and a map from a quotient, we ultimately want such a function to respect the equivalence relation. Whether the elements of a quotient are modelled as a coset, a set of equivalent elements, or as an abstract object which satisfies our needs should not be the main concern. </p>
+<p>This is what the definition of quotients in Lean recognises, but it also recognises that it would be rather strange to think of a term of a quotient type as a set, since it would be rather clunky to work with; instead one simply modifies the definition of equality, and in particular, when wanting to define in Lean the lift of an existing homomorphism \(\gamma : G \rightarrow H\) to \(\bar{\gamma } : G/N \rightarrow H\), the most natural way to define/verify such a lift is sensible in Lean is to prove that equivalent elements map to the same output under \(\gamma \). </p>
+<p>In fact, this is exactly what the general <span class="ttfamily">Quot.lift</span> does: </p>
 <p><small class="footnotesize"> <pre class="verbatim">
-        Quot.lift.{u, v} {α : Sort u} {r : α → α → Prop} {β : Sort v} 
+        Quot.lift.{u, v} 
+          {α : Sort u} {r : α → α → Prop} {β : Sort v} 
         (f : α → β) (a : ∀ (a b : α), r a b → f a = f b) : Quot r → β
     </pre> </small> </p>
-<p>Similarly, <span class="ttfamily">QuotientGroup.lift</span>, i.e the universal property for factor groups, corresponds to: </p>
+<p>Similarly, <span class="ttfamily">QuotientGroup.lift</span>, the universal property for factor groups, corresponds to: </p>
 <p><small class="footnotesize"> <pre class="verbatim">
-        QuotientGroup.lift.{u, x} {G : Type u} [Group G] (N : Subgroup G) [nN : N.Normal] {M : Type x} [Monoid M] (φ : G →* M)
-        (HN : N ≤ φ.ker) : G ⧸ N →* M
+        QuotientGroup.lift.{u, x} {G : Type u} [Group G] (N : Subgroup G) 
+          [nN : N.Normal] {M : Type x} [Monoid M] (φ : G →* M)
+          (HN : N ≤ φ.ker) : G ⧸ N →* M
     </pre> </small> </p>
-<p>From these definitions one can see that there is no trace whatsoever to cosets. That being said it is still possible to formalise a such a definition in a way that is akin to the notion of well-definedness, since one can for example invoke <span class="ttfamily">Quotient.exists_rep</span> which states: </p>
+<p>From this last definition one can see that there is no trace whatsoever to cosets. It is still possible to formalise a such a definition in a way that is akin to the notion of well-definedness, which is closer to the model of quotients as sets of subsets, since one can for example invoke <span class="ttfamily">Quotient.exists_rep</span> which states: </p>
 <p><small class="footnotesize"> <pre class="verbatim">
-        Quotient.exists_rep.{u} {α : Sort u} {s : Setoid α} (q : Quotient s) : ∃ a, ⟦a⟧ = q
+        Quotient.exists_rep.{u} 
+          {α : Sort u} {s : Setoid α} (q : Quotient s) : ∃ a, ⟦a⟧ = q
     </pre> </small> </p>
-<p>In fact, some of the theorems and definitions below heavily rely on this notion. Yet it becomes useful later on to come to terms with this model of quotients and their maps, objects that satisfy the universal property. </p>
+<p>In fact, some of the theorems and definitions below heavily rely on this notion. Yet it becomes extremely useful later on to come to terms with this model of quotients and their maps which hinges on the universal property. </p>
 
   </div>
 </div>
@@ -760,7 +767,7 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#exists_SL_eq_scaled_GL_of_IsAlgClosed">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000113"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000121"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -788,13 +795,13 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   </div>
   <div class="lemma_thmcontent">
   <p>  If \(F\) is an algebraically closed field then for every \(G \in \operatorname{GL}_n(F)\) there exists a nonzero constant \(\alpha \in F^\times \) and an element \(S \in \operatorname{SL}_n(F)\) such that </p>
-<div class="displaymath" id="a0000000114">
+<div class="displaymath" id="a0000000122">
   \begin{equation*}  G = \alpha \cdot S \end{equation*}
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000113">
+<div class="proof_wrapper" id="a0000000121">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -803,16 +810,16 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   </div>
   <div class="proof_content">
   <p>Let \(G \in \operatorname{GL}_n(R)\) then define </p>
-<div class="displaymath" id="a0000000115">
+<div class="displaymath" id="a0000000123">
   \begin{equation*}  P(X) := X^n - \det (G) \end{equation*}
 </div>
 <p>By assumption \(F\) is algebraically closed and \(\det (G) \in F^\times \) thus there exists a root \(\alpha \in F^\times \) such that </p>
-<div class="displaymath" id="a0000000116">
+<div class="displaymath" id="a0000000124">
   \begin{equation*}  \alpha ^n - \det (G) = 0 \iff \alpha = \sqrt[n]{\det (G)} \end{equation*}
 </div>
 <p>Let \(S = \frac{1}{\alpha } \cdot G\), by construction \(S \in \operatorname{SL}_n(F)\) as </p>
-<div class="displaymath" id="a0000000117">
-  \begin{equation*}  \det (S) = \left(\frac{1}{\alpha }\right) \cdot \det (G) = \frac{1}{\det (G)} \det (G) = 1 \end{equation*}
+<div class="displaymath" id="a0000000125">
+  \begin{equation*}  \det (S) = \left(\frac{1}{\alpha ^n}\right) \cdot \det (G) = \frac{1}{\det (G)} \det (G) = 1 \end{equation*}
 </div>
 
   </div>
@@ -863,7 +870,7 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#Surjective_PSL_monoidHom_PGL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000118"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000126"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -916,7 +923,7 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000118">
+<div class="proof_wrapper" id="a0000000126">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -925,15 +932,15 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
   </div>
   <div class="proof_content">
   <p> Let \(G \;  (F^\times I) = [G] \in \operatorname{PGL}_n(F)\), then \(G \in \operatorname{GL}_n(F)\) we can find a representative of \([G']\), that lies within the special linear group. Given elements of the special linear group are matrices with determinant equal to one, we must scale \(G\) to a suitable factor to yield a representative which lies within \(\operatorname{SL}_n(F)\). Suppose \(\det (G) \ne 1\) and let </p>
-<div class="displaymath" id="a0000000119">
+<div class="displaymath" id="a0000000127">
   \[  P(X) := X^n - \det (G) \in F[X]  \]
 </div>
 <p> By assumption, \(F\) is algebraically closed so there exists a root \(\alpha \ne 0\in F\) such that </p>
-<div class="displaymath" id="a0000000120">
+<div class="displaymath" id="a0000000128">
   \[  \alpha ^n - \det (G) = 0 \iff \alpha ^n = \det (G)  \]
 </div>
 <p> We can define </p>
-<div class="displaymath" id="a0000000121">
+<div class="displaymath" id="a0000000129">
   \[  G' := \frac{1}{\alpha } \cdot G \quad \text{where} \quad \det (G') = \frac{1}{\alpha ^n} \det (G) = 1.  \]
 </div>
 <p> Thus \(G' \in \operatorname{SL}_n(F) \leq \operatorname{GL}_n(F)\) and given \(G' = \frac{1}{\alpha } G\) we have that \(G' \;  (F^\times I) = G \;  (F^\times I)\). </p>
@@ -978,7 +985,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#Bijective_PSL_monoidHom_PGL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000122"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000130"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1033,7 +1040,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000122">
+<div class="proof_wrapper" id="a0000000130">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1041,7 +1048,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p> We have shown that \(\bar{\varphi }\) is injective in <a href="Ch4_ReductionOfProblem.html#Injective_PSL_monoidHom_PGL">4.5</a> and have shown that \(\bar{\varphi }\) is surjective in <a href="Ch4_ReductionOfProblem.html#Surjective_PSL_monoidHom_PGL">4.8</a>. Therefore,\(\bar{\varphi }\) defines a bijection from \(\operatorname{PSL}_n(F)\) to \(\operatorname{PGL}_n(F)\). </p>
+  <p> We have shown that \(\bar{\varphi }\) is injective in <a href="Ch4_ReductionOfProblem.html#Injective_PSL_monoidHom_PGL">4.5</a> and have shown that \(\bar{\varphi }\) is surjective in <a href="Ch4_ReductionOfProblem.html#Surjective_PSL_monoidHom_PGL">4.8</a>. Therefore, \(\bar{\varphi }\) defines a bijection from \(\operatorname{PSL}_n(F)\) to \(\operatorname{PGL}_n(F)\). </p>
 
   </div>
 </div>
@@ -1067,7 +1074,7 @@ theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidable
 
     <a class="icon proof" href="Ch4_ReductionOfProblem.html#PGL_iso_PSL">#</a>
     
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000123"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000131"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -1120,7 +1127,7 @@ theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidable
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000123">
+<div class="proof_wrapper" id="a0000000131">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1137,7 +1144,7 @@ noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Field F
     [IsAlgClosed F] : PSL n F ≃* PGL n F :=
       MulEquiv.ofBijective (PSL_monoidHom_PGL n F) (Bijective_PSL_monoidHom_PGL n F)
 </pre> </small> </p>
-<div class="remark_thmwrapper theorem-style-remark" id="a0000000124">
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000132">
   <div class="remark_thmheading">
     <span class="remark_thmcaption">
     Remark
@@ -1149,7 +1156,7 @@ noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Field F
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000124">#</a>
+    <a class="icon proof" href="Ch4_ReductionOfProblem.html#a0000000132">#</a>
     
     
     
@@ -1160,11 +1167,11 @@ noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Field F
 
   </div>
 </div>
-<p>This isomorphism will be essential to the classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\), as we only need understand a the classification of subgroups of \(\operatorname{PSL}_2(F)\) structure to reach our desired result. </p>
+<p>This isomorphism will be essential to the classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\), as we only need understand a the classification of subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\) to reach the desired result. </p>
 <h1 id="a0000000030">4.2 Christopher Butler’s exposition</h1>
 <p>Following from the isomorphism defined in the previous section, we can now proceed to classify the finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) by classifying the finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\). In turn, one can begin classifying the finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\) by classifying the finite subgroups of \(\operatorname{SL}_2(\bar{\mathbb {F}}_p)\) and then considering what happens after quotienting by the center, \(Z(\operatorname{SL}_2(F)) = \langle -I\rangle \). </p>
 <p>We now turn our attention to the more general setting when \(F\) is an arbitrary field that is algebraically closed, as this will turn out to be sufficient for our purposes. </p>
-<p>Given \(|\langle -I \rangle | = 2\) when \(\textrm{char} F \ne 2\) and \(\langle -I\rangle = \bot \) when \(\textrm{char} F = 2\). When a finite subgroup of \(\operatorname{SL}_2(F)\) is sent through the canonical mapping \(\pi _{Z(\operatorname{SL}_2(F))} : \operatorname{SL}_2(F) \rightarrow \operatorname{PSL}_2(F)\) the resulting subgroup will at most shrink by a factor of two or remain intact should the center not be contained within the subgroup. </p>
+<p>Given \(|\langle -I \rangle | = 2\) when \(\textrm{char} F \ne 2\); and \(\langle -I\rangle = \bot \) when \(\textrm{char} F = 2\). When a finite subgroup of \(\operatorname{SL}_2(F)\) is sent through the canonical mapping \(\pi _{Z(\operatorname{SL}_2(F))} : \operatorname{SL}_2(F) \rightarrow \operatorname{PSL}_2(F)\) the resulting subgroup will either shrink by a factor of two or it will remain intact should the center not be contained within the subgroup. </p>
 <p>We now proceed to classify all finite subgroups of \(\operatorname{SL}_2(F)\) when \(F\) is algebraically closed field. From now on, we follow Christopher Butler’s exposition of Dickson’s classification of finite subgroups of \(\operatorname{SL}_2(F)\) over an algebraically closed field \(F\). </p>
 <p>Christopher has been kind enough to provide the TeX code so I could prepare this blueprint which crucially hinges on the result which his exposition covers. </p>
 

@@ -156,6 +156,8 @@ lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
     simp only [coe, ← h, scalar_eq_smul_one]
     rfl
 
+#check isCyclic_of_subgroup_isDomain
+
 instance center_is_normal (n R : Type*) [Fintype n] [DecidableEq n]
   [CommRing R] : Subgroup.Normal (center (SpecialLinearGroup n R)) :=
   normal_of_characteristic (center (SL n R))

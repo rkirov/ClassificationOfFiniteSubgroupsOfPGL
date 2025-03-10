@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2025.3.8)  10 MAR 2025 00:52
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2025.3.8)  10 MAR 2025 22:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -856,150 +856,189 @@ LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
 [1
 
 ]
+Overfull \hbox (3.19144pt too wide) in paragraph at lines 46--48
+[]\TU/lmr/m/n/10 Formalisation of the statement of the Definition/Theorem/Lemma/Corollary and proof. 
+ []
+
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 66.
-Package hyperref Info: bookmark level for unknown remark defaults to 0 on input line 70.
- [2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 141--148
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 75.
+Package hyperref Info: bookmark level for unknown remark defaults to 0 on input line 79.
+[2] [3]
+Underfull \hbox (badness 10000) in paragraph at lines 171--178
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 141--148
+Underfull \hbox (badness 10000) in paragraph at lines 171--178
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 141--148
+Underfull \hbox (badness 10000) in paragraph at lines 171--178
 
  []
 
 [4]) (./chapter/Ch2_Introduction.tex [5]
 Chapter 2.
-Package hyperref Info: bookmark level for unknown example defaults to 0 on input line 25.
+Package hyperref Info: bookmark level for unknown example defaults to 0 on input line 28.
 [6
 
 ] [7]
 
-LaTeX Warning: Citation `sangwin' on page 8 undefined on input line 88.
+LaTeX Warning: Citation `sangwin' on page 8 undefined on input line 94.
 
 Missing character: There is no ℕ (U+2115) in font [lmmono8-regular]:!
 Missing character: There is no ℕ (U+2115) in font [lmmono8-regular]:!
 [8]
 Missing character: There is no ℕ (U+2115) in font [lmmono8-regular]:!
 
-Overfull \hbox (11.70949pt too wide) in paragraph at lines 165--165
+Overfull \hbox (11.70949pt too wide) in paragraph at lines 177--177
 []        \TU/lmtt/m/n/8 theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : sum_of_first_n_odd_nat n = n * n := by[] 
  []
 
 [9]
-Package hyperref Info: bookmark level for unknown definition defaults to 0 on input line 207.
-Package hyperref Info: bookmark level for unknown theorem defaults to 0 on input line 222.
- [10] [11]
+./chapter/Ch2_Introduction.tex:206: Missing $ inserted.
+<inserted text> 
+                $
+l.206 ...lves using the rewrites \texttt{mul_zero}
+                                                   which states that \texttt...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+./chapter/Ch2_Introduction.tex:206: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.206 ...lves using the rewrites \texttt{mul_zero}
+                                                   which states that \texttt...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+./chapter/Ch2_Introduction.tex:208: Missing $ inserted.
+<inserted text> 
+                $
+l.208 
+      
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+./chapter/Ch2_Introduction.tex:208: Missing } inserted.
+<inserted text> 
+                }
+l.208 
+      
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+Overfull \hbox (283.76118pt too wide) in paragraph at lines 205--208
+\TU/lmtt/m/it/10 mul$[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]$ 
+ []
+
+Package hyperref Info: bookmark level for unknown definition defaults to 0 on input line 223.
+Package hyperref Info: bookmark level for unknown theorem defaults to 0 on input line 238.
+[10] [11]
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 14.40152pt on input line 298.
+(Font)              scaled to size 14.40152pt on input line 311.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 14.39845pt on input line 298.
+(Font)              scaled to size 14.39845pt on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 298.
+(hyperref)                removing `math shift' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathop' on input line 298.
+(hyperref)                removing `\mathop' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathcode' on input line 298.
+(hyperref)                removing `\mathcode' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathcode' on input line 298.
+(hyperref)                removing `\mathcode' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathcode' on input line 298.
+(hyperref)                removing `\mathcode' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\Umathcharnumdef' on input line 298.
+(hyperref)                removing `\Umathcharnumdef' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\std@minus' on input line 298.
+(hyperref)                removing `\std@minus' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\Umathcodenum' on input line 298.
+(hyperref)                removing `\Umathcodenum' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathcode' on input line 298.
+(hyperref)                removing `\mathcode' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathcode' on input line 298.
+(hyperref)                removing `\mathcode' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathcode' on input line 298.
+(hyperref)                removing `\mathcode' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\leavevmode@ifvmode' on input line 298.
+(hyperref)                removing `\leavevmode@ifvmode' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                \kern 2.22198pt
-(hyperref)                removed on input line 298.
+(hyperref)                removed on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\operator@font' on input line 298.
+(hyperref)                removing `\operator@font' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 298.
+(hyperref)                removing `\@ifnextchar' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 298.
+(hyperref)                removing `subscript' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\bar' on input line 298.
+(hyperref)                removing `\bar' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\symbb' on input line 298.
+(hyperref)                removing `\symbb' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 298.
+(hyperref)                removing `subscript' on input line 311.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 298.
+(hyperref)                removing `math shift' on input line 311.
 
 
-LaTeX Warning: Citation `dtt' on page 12 undefined on input line 300.
+LaTeX Warning: Citation `dtt' on page 12 undefined on input line 313.
 
 
-LaTeX Warning: Citation `dtt' on page 12 undefined on input line 334.
+LaTeX Warning: Citation `dtt' on page 12 undefined on input line 351.
 
-
-LaTeX Warning: Citation `dtt' on page 12 undefined on input line 341.
-
-[12]) (./chapter/Ch3_Preliminaries.tex [13] [14]
+[12]) (./chapter/Ch3_Preliminaries.tex [13]
 Chapter 3.
 
-LaTeX Warning: Citation `hungerford' on page 15 undefined on input line 8.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 11--12
-
- []
+LaTeX Warning: Citation `hungerford' on page 14 undefined on input line 11.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 15--16
@@ -1007,7 +1046,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 15--16
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 21--22
+Underfull \hbox (badness 10000) in paragraph at lines 20--21
 
  []
 
@@ -1017,99 +1056,248 @@ Underfull \hbox (badness 10000) in paragraph at lines 27--28
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 33--34
+Underfull \hbox (badness 10000) in paragraph at lines 34--35
 
  []
 
 
-LaTeX Warning: Citation `bhattacharya' on page 15 undefined on input line 38.
-
-
-LaTeX Warning: Reference `5thsylow' on page 15 undefined on input line 38.
-
-
-LaTeX Warning: Citation `alperin' on page 15 undefined on input line 38.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 38--39
+Underfull \hbox (badness 10000) in paragraph at lines 41--42
 
  []
 
-[15
+
+LaTeX Warning: Citation `bhattacharya' on page 14 undefined on input line 50.
+
+
+LaTeX Warning: Reference `5thsylow' on page 14 undefined on input line 50.
+
+
+LaTeX Warning: Citation `alperin' on page 14 undefined on input line 50.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 46--51
+
+ []
+
+[14
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 42--43
+Underfull \hbox (badness 10000) in paragraph at lines 54--55
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 51--52
+Underfull \hbox (badness 10000) in paragraph at lines 63--64
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 58--59
+Underfull \hbox (badness 10000) in paragraph at lines 70--71
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 66--67
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 73--74
+Underfull \hbox (badness 10000) in paragraph at lines 85--86
 
  []
 
-Package hyperref Info: bookmark level for unknown corollary defaults to 0 on input line 76.
+Package hyperref Info: bookmark level for unknown corollary defaults to 0 on input line 88.
 
-Underfull \hbox (badness 10000) in paragraph at lines 80--81
+Underfull \hbox (badness 10000) in paragraph at lines 92--93
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 99--100
+
+ []
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 125--127
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 87--88
+Underfull \hbox (badness 10000) in paragraph at lines 129--130
 
  []
 
+
+LaTeX Warning: Citation `bhattacharya' on page 16 undefined on input line 142.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--149
+
+ []
+
+Missing character: There is no ∃ (U+2203) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
 [16]
-Underfull \hbox (badness 10000) in paragraph at lines 109--110
+Package hyperref Info: bookmark level for unknown proposition defaults to 0 on input line 198.
+ [17]
+
+LaTeX Warning: Citation `bhattacharya' on page 18 undefined on input line 258.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 253--259
 
  []
 
+Package hyperref Info: bookmark level for unknown lemma defaults to 0 on input line 272.
 
-Underfull \hbox (badness 10000) in paragraph at lines 112--113
-
- []
-
-
-LaTeX Warning: Citation `bhattacharya' on page 17 undefined on input line 122.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 128--129
-
- []
-
-[17]
-Package hyperref Info: bookmark level for unknown proposition defaults to 0 on input line 176.
-
-
-LaTeX Warning: Citation `bhattacharya' on page 18 undefined on input line 229.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 227--230
+Underfull \hbox (badness 10000) in paragraph at lines 284--287
 
  []
 
 [18]
-Package hyperref Info: bookmark level for unknown lemma defaults to 0 on input line 241.
-
-Underfull \hbox (badness 10000) in paragraph at lines 254--257
-
+Overfull \hbox (9.46951pt too wide) in paragraph at lines 360--360
+[]\TU/lmtt/m/n/8 def prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H] [hK : Normal K][] 
  []
 
-[19]) (./chapter/Ch4_ReductionOfProblem.tex [20]
+Missing character: There is no ⊔ (U+2294) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+
+Overfull \hbox (5.68547pt too wide) in paragraph at lines 360--360
+[]        \TU/lmtt/m/n/8 (Commute.eq (commute_of_normal_of_disjoint K H hK hH (Disjoint.symm hHK) k₁ h₂ hk₁ hh₂))][] 
+ []
+
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ∈ (U+2208) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ▸ (U+25B8) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ∈ (U+2208) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
+Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+
+Overfull \hbox (22.21347pt too wide) in paragraph at lines 360--360
+[]\TU/lmtt/m/n/8 noncomputable def prod_mulEquiv_join_of_disjoint_of_normal {G : Type*} [Group G] (H K : Subgroup G)[] 
+ []
+
+Missing character: There is no ≃ (U+2243) in font [lmmono8-regular]:!
+Missing character: There is no ⊔ (U+2294) in font [lmmono8-regular]:!
+
+Overfull \hbox (0.97346pt too wide) in paragraph at lines 360--360
+[]    \TU/lmtt/m/n/8 MulEquiv.ofBijective (prod_monoidHom_join H K hHK) (Bijective_prod_monoidHom_join H K hHK)[] 
+ []
+
+[19]
+Missing character: There is no ⊔ (U+2294) in font [lmmono10-regular]:!
+Missing character: There is no ∀ (U+2200) in font [lmmono10-regular]:!
+Missing character: There is no ⊔ (U+2294) in font [lmmono10-regular]:!
+
+Overfull \hbox (100.76143pt too wide) in paragraph at lines 392--392
+[]        \TU/lmtt/m/n/10 ∀ {G : Type u_2} [inst : Group G] (H N : Subgroup G) [hN : N.Normal], ↑(H ⊔ N) = ↑H * ↑N[] 
+ []
+
+) (./chapter/Ch4_ReductionOfProblem.tex [20]
 Chapter 4.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -1496,26 +1684,22 @@ Missing character: There is no ∀ (U+2200) in font [lmmono8-regular]:!
 Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
 Missing character: There is no β (U+03B2) in font [lmmono8-regular]:!
 Missing character: There is no φ (U+03C6) in font [lmmono8-regular]:!
-
-Overfull \hbox (134.90154pt too wide) in paragraph at lines 251--251
-[]        \TU/lmtt/m/n/8 QuotientGroup.lift.{u, x} {G : Type u} [Group G] (N : Subgroup G) [nN : N.Normal] {M : Type x} [Monoid M] (φ : G →* M)[] 
- []
-
 Missing character: There is no ≤ (U+2264) in font [lmmono8-regular]:!
 Missing character: There is no φ (U+03C6) in font [lmmono8-regular]:!
 Missing character: There is no ⧸ (U+29F8) in font [lmmono8-regular]:!
-./chapter/Ch4_ReductionOfProblem.tex:255: Missing $ inserted.
+[24]
+./chapter/Ch4_ReductionOfProblem.tex:268: Missing $ inserted.
 <inserted text> 
                 $
-l.255 ...ample invoke \texttt{Quotient.exists_rep}
+l.268 ...ample invoke \texttt{Quotient.exists_rep}
                                                    which states:
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-./chapter/Ch4_ReductionOfProblem.tex:255: Extra }, or forgotten $.
+./chapter/Ch4_ReductionOfProblem.tex:268: Extra }, or forgotten $.
 <recently read> \egroup 
                         
-l.255 ...ample invoke \texttt{Quotient.exists_rep}
+l.268 ...ample invoke \texttt{Quotient.exists_rep}
                                                    which states:
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1523,18 +1707,18 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-./chapter/Ch4_ReductionOfProblem.tex:256: Missing $ inserted.
+./chapter/Ch4_ReductionOfProblem.tex:269: Missing $ inserted.
 <inserted text> 
                 $
-l.256 
+l.269 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-./chapter/Ch4_ReductionOfProblem.tex:256: Missing } inserted.
+./chapter/Ch4_ReductionOfProblem.tex:269: Missing } inserted.
 <inserted text> 
                 }
-l.256 
+l.269 
       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1545,7 +1729,6 @@ my insertion and my current dilemma will both disappear.
 Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
 Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
 Missing character: There is no ∃ (U+2203) in font [lmmono8-regular]:!
-[24]
 Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
 Missing character: There is no ∃ (U+2203) in font [lmmono8-regular]:!
 Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
@@ -1572,20 +1755,20 @@ Missing character: There is no ∃ (U+2203) in font [lmmono8-regular]:!
 Missing character: There is no ˣ (U+02E3) in font [lmmono8-regular]:!
 Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
 Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
-Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
-Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
-Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
-Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
-Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
-Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
 [25]
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
+Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
 Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
 Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
 Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
@@ -1596,9 +1779,10 @@ Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
 Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
 Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
 Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+[26]
 Missing character: There is no º ("BA) in font cmmi10!
 Missing character: There is no ≃ (U+2243) in font [lmmono8-regular]:!
-[26]) (./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex [27]
+) (./chapter/Ch5_PropertiesOfSLOverAlgClosedField.tex [27]
 Chapter 5.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -1773,7 +1957,7 @@ Missing character: There is no ℕ (U+2115) in font [lmmono8-regular]:!
 Missing character: There is no σ (U+03C3) in font [lmmono8-regular]:!
 Missing character: There is no σ (U+03C3) in font [lmmono8-regular]:!
 
-Overfull \hbox (17.96547pt too wide) in paragraph at lines 195--195
+Overfull \hbox (17.96547pt too wide) in paragraph at lines 193--193
 []      \TU/lmtt/m/n/8 simp only [pow_add, hk, nsmul_eq_mul, pow_one, s_mul_s_eq_s_add, Nat.cast_add, Nat.cast_one][] 
  []
 
@@ -1925,7 +2109,7 @@ Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
 
-Overfull \hbox (26.46149pt too wide) in paragraph at lines 400--400
+Overfull \hbox (26.46149pt too wide) in paragraph at lines 399--399
 []      \TU/lmtt/m/n/8 have det_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by rw [SpecialLinearGroup.det_coe][] 
  []
 
@@ -1933,7 +2117,7 @@ Missing character: There is no α (U+03B1) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no β (U+03B2) in font [lmmono8-regular]:!
 
-Overfull \hbox (15.95749pt too wide) in paragraph at lines 400--400
+Overfull \hbox (15.95749pt too wide) in paragraph at lines 399--399
 []      \TU/lmtt/m/n/8 have β_is_unit : IsUnit (x 0 1) := by exact isUnit_of_mul_eq_one (x 0 1) (-x 1 0) det_eq_one[] 
  []
 
@@ -2103,30 +2287,31 @@ Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
 Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
 Missing character: There is no ⁻ (U+207B) in font [lmmono8-regular]:!
 
-Overfull \hbox (30.70946pt too wide) in paragraph at lines 601--601
+Overfull \hbox (30.70946pt too wide) in paragraph at lines 600--600
 []          \TU/lmtt/m/n/8 ext <;> field_simp [a_inv_eq_d, had, ← hx]; exact (eq_one_div_of_mul_eq_one_right had).symm[] 
  []
 
+Missing character: There is no ∀ (U+2200) in font [lmmono8-regular]:!
+Missing character: There is no ⊔ (U+2294) in font [lmmono8-regular]:!
 
-LaTeX Warning: Reference `6.1' on page 35 undefined on input line 648.
-
-
-LaTeX Warning: Reference `6.1' on page 35 undefined on input line 648.
+Overfull \hbox (22.44553pt too wide) in paragraph at lines 627--627
+[]        \TU/lmtt/m/n/8 ∀ {G : Type u_2} [inst : Group G] (N H : Subgroup G) [inst_1 : N.Normal], ↑(N ⊔ H) = ↑N * ↑H[] 
+ []
 
 Missing character: There is no ≃ (U+2243) in font [lmmono8-regular]:!
 Missing character: There is no ˣ (U+02E3) in font [lmmono8-regular]:!
 Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
-Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
-Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
-Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
-Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
-Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 [35]
 Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
+Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
+Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
+Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
+Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
+Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no ⟩ (U+27E9) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
@@ -2155,12 +2340,6 @@ Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
-
-LaTeX Warning: Reference `6.1' on page 36 undefined on input line 692.
-
-
-LaTeX Warning: Reference `6.1' on page 36 undefined on input line 692.
-
 Missing character: There is no ≃ (U+2243) in font [lmmono8-regular]:!
 Missing character: There is no σ (U+03C3) in font [lmmono8-regular]:!
 Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
@@ -2190,18 +2369,6 @@ Missing character: There is no σ (U+03C3) in font [lmmono8-regular]:!
 Missing character: There is no ₁ (U+2081) in font [lmmono8-regular]:!
 Missing character: There is no σ (U+03C3) in font [lmmono8-regular]:!
 Missing character: There is no ₂ (U+2082) in font [lmmono8-regular]:!
-
-LaTeX Warning: Reference `6.1' on page 36 undefined on input line 737.
-
-
-LaTeX Warning: Reference `6.1' on page 36 undefined on input line 737.
-
-
-LaTeX Warning: Reference `6.1' on page 36 undefined on input line 737.
-
-
-LaTeX Warning: Reference `6.1' on page 36 undefined on input line 737.
-
 [36]
 Missing character: There is no ⟨ (U+27E8) in font [lmmono8-regular]:!
 Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
@@ -2240,7 +2407,7 @@ Missing character: There is no δ (U+03B4) in font [lmmono8-regular]:!
 Missing character: There is no σ (U+03C3) in font [lmmono8-regular]:!
 Missing character: There is no σ (U+03C3) in font [lmmono8-regular]:!
 
-Overfull \hbox (22.21346pt too wide) in paragraph at lines 773--773
+Overfull \hbox (22.21346pt too wide) in paragraph at lines 775--775
 []           \TU/lmtt/m/n/8 ← inv_d_eq_d_inv, d_mul_s_mul_d_inv_eq_s, add_neg_cancel_comm, Units.val_inv_eq_inv_val][] 
  []
 

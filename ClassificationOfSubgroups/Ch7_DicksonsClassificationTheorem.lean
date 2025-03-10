@@ -92,9 +92,10 @@ open Polynomial
 /- Embed GF(p^k) into GF(p^m) where k ∣ m -/
 variable {p : ℕ} [hp : Fact (Nat.Prime p)] {n m : ℕ+}
 
-variable (p n) in
-protected noncomputable
-abbrev GaloisField.polynomial : (ZMod p)[X] := X ^ p ^ n.val - X
+
+noncomputable
+abbrev GaloisField.polynomial (p : ℕ) [hp : Fact (Nat.Prime p)] (n : ℕ+) :
+  (ZMod p)[X] := X ^ p ^ n.val - X
 
 
 lemma GaloisField.polynomial_ne_zero : GaloisField.polynomial p n ≠ 0 := by
@@ -112,8 +113,8 @@ lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
     rw [tsub_add_cancel_of_le]
     exact Nat.pow_pos (Nat.Prime.pos Fact.out)
   obtain ⟨k, rfl⟩ := hn
-  have hd : (p ^ n.val - 1) ∣ (p ^ (n.val * k) - 1) := by
-    exact nat_pow_one_sub_dvd_pow_mul_sub_one p ↑n ↑k
+  have hd : (p ^ n.val - 1) ∣ (p ^ (n.val * k) - 1) :=
+    nat_pow_one_sub_dvd_pow_mul_sub_one p ↑n ↑k
   have hdx : (X : (ZMod p)[X]) ^ (p ^ n.val - 1) - 1 ∣ X ^ (p ^ (n.val * k) - 1) - 1 := by
     let  Y : (ZMod p)[X] := X ^ (p ^ n.val - 1)
     obtain ⟨m, hm⟩ := hd
@@ -123,9 +124,9 @@ lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
       exact this
     exact sub_one_dvd_pow_sub_one Y m
   have hs' : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (X ^ (p ^ n.val - 1) - 1) := by
+    -- if g | f and f splits then g splits
     refine splits_of_splits_of_dvd _ ?_ hsk' hdx
-    refine Monic.ne_zero_of_ne ?_ ?_
-    exact zero_ne_one' (ZMod p)
+    refine Monic.ne_zero_of_ne (zero_ne_one' (ZMod p)) ?_
     refine monic_X_pow_sub ?_
     simp [hp.out.one_lt]
   have hs : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (GaloisField.polynomial p n) := by
@@ -136,11 +137,11 @@ lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
       nth_rewrite 2 [← pow_one X]
       rw [← pow_add, Nat.one_add, Nat.sub_one, Nat.succ_pred]
       exact Ne.symm (NeZero.ne' (p ^ n.val))
+    -- product of X * (X^(p^n - 1) - 1) splits if each term in the product splits
     rw [splits_mul_iff]
     exact ⟨splits_X _, hs'⟩
     exact X_ne_zero
-    refine Monic.ne_zero_of_ne ?_ ?_
-    exact zero_ne_one' (ZMod p)
+    refine Monic.ne_zero_of_ne (zero_ne_one' (ZMod p)) ?_
     refine monic_X_pow_sub ?_
     simp [hp.out.one_lt]
   exact hs
@@ -158,7 +159,8 @@ noncomputable def GaloisField_ringHom (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) 
 
 noncomputable def SL2_monoidHom_SL2  {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
   SL(2, GaloisField p k.val) →* SL(2, GaloisField p (2* k.val)) :=
-    Matrix.SpecialLinearGroup.map (GaloisField_ringHom p k)
+    Matrix.SpecialLinearGroup.map
+      (@GaloisField.algHom_of_dvd p _ k (2*k) (dvd_mul_left k 2)).toRingHom
 
 open SpecialMatrices
 
@@ -189,16 +191,12 @@ def Relations (n : ℕ) : Set (FreeGroup (Symbols)) :=
   {.of x ^ n * (.of y)⁻¹ * (.of y)⁻¹ } ∪
   {.of y * .of x * (.of y)⁻¹ * .of x }
 
--- this may be the dihedral group
-abbrev myGroup (n : ℕ) :=
+abbrev D (n : ℕ) :=
   PresentedGroup <| Relations n
-
-#synth Group (myGroup _)
-
 
 lemma case_VI {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
   (G : Subgroup SL(2,F)) [Finite G] :
-  ∃ n, Even n ∧ Isomorphic G (myGroup n)
+  ∃ n, Even n ∧ Isomorphic G (D n)
   ∨
   Isomorphic G (GL (Fin 2) (ZMod 5))
   ∨
@@ -281,13 +279,5 @@ theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ} 
   ∨
   Isomorphic G (PGL (Fin 2) (𝕂)) := by
     sorry
-  -- let CharFpbar : CharP (AlgebraicClosure (ZMod p)) p := by infer_instance
-  -- refine Or.elim (em' (p ∣ Nat.card G)) ?caseI ?caseII
-  -- case caseII =>
-  --   intro p_dvd_card_G
-  --   -- rcases dickson_classification_theorem_class_II (AlgebraicClosure (ZMod p)) _ _ p _ _ p_dvd_card_G
-  --   sorry
-  -- case caseI =>
-  --   sorry
 
 #min_imports

@@ -118,6 +118,10 @@ case_II
 case_III
 card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer
 case_IV
+GaloisField.polynomial
+GaloisField.splits_of_dvd
+GaloisField.algHom_of_dvd
+SL2_monoidHom_SL2
 case_V
 case_VI
 dicksons_classification_theorem_class_I

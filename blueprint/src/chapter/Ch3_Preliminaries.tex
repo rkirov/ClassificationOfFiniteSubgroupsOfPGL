@@ -1,58 +1,70 @@
 \chapter{Preliminaries}\label{Ch3_Preliminaries}
 
-This section briefly outlines some standard group theory results which perhaps may not have been covered in a first course in Group Theory. Since they are not the main focus of this paper, most of the proofs have been omitted. A more
-advanced reader may choose to skip this first chapter, using it only for reference purposes as and when the results are subsequently cited. 
+This section briefly outlines some standard group theory results which perhaps may not have been covered in a first course in Group Theory. 
+Since they are not the main focus of this paper, most of the proofs have been omitted. A more
+advanced reader may choose to skip this first chapter.
+%  using it only for reference purposes as and when the results are subsequently cited. 
 
 \section{Some Elementary Theorems}
 
-The following theorems are all well-known fundamental results in group theory. If the reader is interested in the proofs, they can be found in Hungerford \cite{hungerford}.
+The following theorems are all well-known fundamental results in group theory. 
+If the reader is interested in the proofs, they can be found in Hungerford \cite{hungerford}.
 
 \begin{theorem}[Lagrange's theorem]
-    \label{lagrange} Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$. \\
+    % \label{lagrange}
+     Let $G$ be a finite group. Then the order of any subgroup of $G$ divides the order of $G$. \\
 \end{theorem} 
 
 \begin{theorem}[First isomorphism theorem]
-    \label{1stiso} Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/\ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/\ker \; \phi \cong G'.$$ \\
+    % \label{1stiso}
+     Let $\phi  :G \rightarrow G'$ be a homomorphism of groups. Then, $$G/\ker \; \phi \cong Im \; \phi.$$ Hence, in particular, if $\phi$ is surjective then, $$G/\ker \; \phi \cong G'.$$ \\
 \end{theorem} 
 
 \vspace{-10mm}
 
 \begin{theorem}[Second isomorphism theorem]
-    \label{2ndiso} Let $H$ and $N$ be subgroups of $G$, and $N \vartriangleleft G$. Then, $H/H \cap N \cong HN/N.$ \\
+    % \label{2ndiso} 
+    Let $H$ and $N$ be subgroups of $G$, and $N \vartriangleleft G$. Then, $H/H \cap N \cong HN/N.$ \\
 \end{theorem} 
 
 \vspace{-10mm}
 
 \begin{theorem}[Third isomorphism theorem]
-    \label{3rdiso} Let $H$ and $K$ be normal subgroups of $G$ and $K \subset H$. Then $H/K$ is a normal subgroup of $G/K$ and, $$(G/K)/(H/K) \cong G/H.$$ \\
+    % \label{3rdiso} 
+    Let $H$ and $K$ be normal subgroups of $G$ and $K \subset H$. Then $H/K$ is a normal subgroup of $G/K$ and, $$(G/K)/(H/K) \cong G/H.$$ \\
 \end{theorem} 
 
 \vspace{-10mm}
 
 \begin{theorem}[Cauchy's theorem]
-    \label{cauchy} If the order of a finite group $G$ is divisible by a prime number $p$, then $G$ has an element of order $p$. \\
+    % \label{cauchy}
+     If the order of a finite group $G$ is divisible by a prime number $p$, then $G$ has an element of order $p$. \\
 \end{theorem} 
 
 \section{Sylow Theory}
 
-In 1872, Norweigian mathematician Peter Ludwig Sylow published his theorems regarding the number of subgroups of a fixed order that a given finite group contains. Today these are collectively known as the Sylow Theorems and play a vital role in determining the structure of finite groups. I will use the results of these theorems several times throughout this paper and I state them here without proof. If the reader would like to read further, the proofs can be found in most introductory texts on group theory, such as Bhattacharya \cite{bhattacharya}, except Corollary \ref{5thsylow} which can be found in Alperin and Bell \cite[p.64]{alperin} . \\
+In 1872, Norwegian mathematician Peter Ludwig Sylow published his theorems regarding the number of subgroups of a fixed order that a given finite group contains. 
+Today these are collectively known as the Sylow Theorems and play a vital role in determining the structure of finite groups. 
+I will use the results of these theorems several times throughout this paper and I state them here without proof. 
+If the reader would like to read further, the proofs can be found in most introductory texts on group theory, 
+such as Bhattacharya \cite{bhattacharya}, except Corollary \ref{5thsylow} which can be found in Alperin and Bell \cite[p.64]{alperin} . \\
 
 
 \begin{definition}[Sylow $p$-subgroup]
 Let $G$ be a finite group and $p$ a prime, a \textbf{Sylow $\pmb{p}$-subgroup} of $G$ is a subgroup of order $p^r$, where $p^{r+1}$ does not divide the order of $G$. \\
 
-Let $p$ be a prime. A group $G$ is called a \textbf{$\pmb{p}$-group} if the order of each of it's elements is a power of $p$. Similarly, a subgroup $H$ of $G$ is called a \textbf{$\pmb{p}$-subgroup} if the order of each of it's elements is a power of $p$.
+Let $p$ be a prime. A group $G$ is called a \textbf{$\pmb{p}$-group} if the order of each of it's elements is a power of $p$. 
+Similarly, a subgroup $H$ of $G$ is called a \textbf{$\pmb{p}$-subgroup} if the order of each of it's elements is a power of $p$.
 \end{definition}
 
-\begin{remark}[Sylow $p$-subgroup in Lean]
-    TODO
-\end{remark}
-
+% \begin{remark}[Sylow $p$-subgroup in Lean]
+%     TODO
+% \end{remark}
 In each of the following results, $G$ is a finite group of order $p^r m$, where $p$ is a prime which does not divide $m$. \\
 
 
 \begin{theorem}[Sylow's first theorem]
-    \label{Sylow.exists_subgroup_card_pow_prime}
+    % \label{Sylow.exists_subgroup_card_pow_prime}
 % \lean{Sylow.exists_subgroup_card_pow_prime}
 % \leanok
 \textit{If $p^k$ divides $|G|$, then $G$ has a subgroup of order $p^k$.} \\
@@ -60,28 +72,28 @@ In each of the following results, $G$ is a finite group of order $p^r m$, where 
 \end{theorem}
 
 \begin{theorem}[Sylow's second theorem]
-\label{Sylow.equiv.proof_1}
+% \label{Sylow.equiv.proof_1}
 % \lean{Sylow.equiv.proof_1}
 % \leanok
 \textit{All Sylow $p$-subgroups of G are conjugate.} \\
 \end{theorem}
 
 \begin{theorem}[Sylow's third theorem]
-    \label{card_sylow_modEq_one}
+    % \label{card_sylow_modEq_one}
 % \lean{card_sylow_modEq_one}
 % \leanok
 The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 ($mod $p)$. \\
 \end{theorem}
 
 \begin{corollary}[Sylow's fourth theorem]
-\label{Sylow.unique_of_normal}
+% \label{Sylow.unique_of_normal}
 % \lean{Sylow.unique_of_normal}
 % \leanok    
  \textit{A Sylow $p$-subgroup of $G$ is unique if and only if it is normal.} \\
 \end{corollary}
 
 \begin{corollary}[Sylow's fifth theorem]
-\label{IsPGroup.exists_le_sylow}
+% \label{IsPGroup.exists_le_sylow}
 % \lean{IsPGroup.exists_le_sylow}
 % \leanok
 \textit{Any $p$-subgroup of $G$ is contained in a Sylow $p$-subgroup.} \\
@@ -89,37 +101,45 @@ The number of Sylow $p$-subgroups $n_p$ divides $m$ and satisfies $n_p \equiv 1 
 
 \section{Group Action}
 
-\begin{definition} Let $G$ be a group and $X$ be a set. Then $G$ is said to \textbf{act} on $X$ if there is a map $\phi : G \times X \rightarrow X$, with $\phi(a,x)$ denoted by $a^*x$, such that for $a,b \in G$ and $x \in X$, the following 2 properties hold:
+\begin{definition} 
+    Let $G$ be a group and $X$ be a set. 
+    Then $G$ is said to \textbf{act} on $X$ if there is a map $\phi : G \times X \rightarrow X$, with $\phi(a,x)$ denoted by $a^*x$, 
+    such that for $a,b \in G$ and $x \in X$, the following 2 properties hold:
 \begin{align*} &(i) \quad a\,^*(b\,^*x) = (ab)^*x,
 \\  &(ii) \quad I_G\,^*x = x.
 \end{align*}
-
 The map $\phi$ is called the \textbf{group action} of $G$ on $X$.
 \end{definition}
 
-\begin{definition} Let $G$ be a group acting on a set $X$ and let $x \in X$. Then the set,
-\begin{align*} Stab(x) = \{ g \in G  :  gx = x \},
+\begin{definition} 
+    Let $G$ be a group acting on a set $X$ and let $x \in X$. Then the set,
+\begin{align*} \textrm{Stab}(x) = \{ g \in G  :  gx = x \},
 \end{align*}
-is called the \textbf{stabiliser} of $x$ in $G$. Each $g$ in $S_G(x)$ is said to \textbf{fix} $x$, whilst $x$ is said to be a \textbf{fixed point} of each $g$ in $S_G(x)$. Also, the set,
-\begin{align*} \text{Orb}(x) = \{ gx : g \in G \},
+is called the \textbf{stabiliser} of $x$ in $G$. Each $g$ in $S_G(x)$ is said to \textbf{fix} $x$, whilst $x$ is said to be a 
+\textbf{fixed point} of each $g$ in $S_G(x)$. Also, the set,
+\begin{align*} \textrm{Orb}(x) = \{ gx : g \in G \},
 \end{align*}
 is called the \textbf{orbit} of $x$ in $G$.  
 \end{definition} 
 
-The orbit and the stabiliser of an element are closely related. The following theorem is a consequence of this relationship and it will be useful throughout this paper. \\
+The orbit and the stabiliser of an element are closely related. 
+The following theorem is a consequence of this relationship and it will be useful throughout this paper. \\
 
-\begin{theorem} [Orbit-Stabilizer theorem]
-    \textit{Let $G$ be a finite group acting on a set $X$. Then for each $x \in X$}, $$|G| = |\text{Orb}(x)| |\text{Stab}(x)|.$$ \\
+\begin{theorem}[Orbit-Stabilizer theorem]
+    Let $G$ be a finite group acting on a set $X$. Then for each $x \in X$, $$|G| = |\textrm{Orb}(x)| |\textrm{Stab}(x)|.$$ \\
 \end{theorem}
 
 The following standard theorem will all play a vital roll later on.
 
-\begin{theorem}\label{symhomoker} Let $G$ be a group and $H$ a subgroup of $G$ of finite index $n$. Then there is a homomorphism $\phi : G \longrightarrow S_n$ such that,
+\begin{theorem}
+    \label{symhomoker}
+     Let $G$ be a group and $H$ a subgroup of $G$ of finite index $n$. Then there is a homomorphism $\phi : G \longrightarrow S_n$ such that,
 \begin{align*} \ker(\phi) = \bigcap\limits_{x \in G} x H x^{-1}.
 \end{align*}
 \end{theorem}
 
-\begin{proof} See \cite[p.110]{bhattacharya} for proof.
+\begin{proof} 
+    See \cite[p.110]{bhattacharya} for proof.
 \end{proof}
 
 \section{Conjugation}
@@ -128,28 +148,28 @@ The following standard theorem will all play a vital roll later on.
 Let $G$ be a group and $a$ an element of $G$. An element $b \in G$ is said to be \textbf{conjugate} to $a$ if $b=xax^{-1}$ for some $x \in G$. \\
 \end{definition}
 
-\begin{remark}
+\begin{remark}[Conjugate elements in Lean]
 \label{conj_elem}
-In Lean, to state that two elements $g, h \in G$ where $G$ is a group, we use the slightly more general definition of conjugacy over monoids.
+In Lean, to state that two elements $g, h \in G$ where $G$ is a group are conjugate, 
+Lean uses the slightly more general definition of conjugacy over monoids which is accessible through
+the keyword \texttt{IsConj}:
 
-That is to say, given $g, h \in G$ where $G$ is a group (or more generally monoid) and impose that $g$ and $h$ are conjugate, instead of writing the equality which has type \texttt{Prop}:
+\begin{verbatim}
+    IsConj g h
+\end{verbatim}
 
-% \begin{verbatim}
-% ∃ c : α, c * a * c⁻¹ = b
-% \end{verbatim}
+It is possible to define the notion of conjugacy as a it is done typically, that is, as the statement:
 
-We use the following statement of type \texttt{Prop} that has been defined in Mathlib under the name of \texttt{IsConj}.
+\begin{footnotesize}
+    \begin{verbatim}
+    ∃ c : α, c * a * c⁻¹ = b
+    \end{verbatim}  
+    \end{footnotesize}
 
-The reason we would choose this over the naive statement is because Mathlib will contain a lot of very useful lemmas attached to this definition.
+However, it is often convenient to define abstractions to make the process of formalisation more amenable and furthermore,
+set up what is known as an \textit{API} which contains all the relevant theorems to conjugate elements.
 
-Saying two elements are conjugate is writing something like the following:
-
-Assuming the terms \texttt{g : G} and \texttt{h : G} of the type \texttt{G} (which has the \texttt{Group} typeclass instance) are in scope.
-
-% \begin{verbatim}
-% IsConj g h
-% \end{verbatim}
-% \end{remark}
+\end{remark}
 
 
 \begin{definition}[Conjugate subgroups]
@@ -157,20 +177,22 @@ Let $H_1$ be a proper subgroup of $G$ and fix $x \in G \setminus H_1$. The set $
 \end{definition}
 
 \begin{remark}
-In Lean, to state that two subgroups $H, K$ of a group $G$ are conjugate subgroups similar to how is done in \ref{conj_elem} we can open the \texttt{MulAut} namespace to make use of the custom syntax:
+In Lean, to state that two subgroups $H, K$ of a group $G$ are conjugate subgroups similar to how is done 
+in \ref{conj_elem}. Once the \texttt{MulAut} namespace is opened onecan make use of the convenient syntax:
 
-% \begin{verbatim}
-% conj c • H = K 
-% \end{verbatim}
+\begin{verbatim}
+conj c • H = K 
+\end{verbatim}
 
 This notation and API is useful because conjugation by a particular element is defined to be an element in the automorphism group of $G$, $\Aut(G)$. 
 
 This becomes particularly crucial when formalizing the interactions of subgroups with the complete lattice structure on the set of subgroups of a group. 
 
-These interactions and more discussion about this lattice structure will happen later on.
+Further discussion on the complete lattice structure on the set of subgroups of a group will happen later on.
 \end{remark}
 
-Conjugation plays an important roll thoughout the paper, particularly, the following properties about conjugate elements and subgroups.
+Conjugation plays an important roll throughout the paper, 
+particularly, the following properties about conjugate elements and subgroups.
 
 \begin{proposition}
     \label{orderOf_injective}
@@ -216,22 +238,31 @@ Now consider an arbitrary $k \in \ker(\phi)$.
 k \in \ker(\phi) \iff \phi(k) = I_G \iff  xkx^{-1} = I_G \iff k = I_G.
 \end{equation*}
 \\
-So $\ker(\phi) = \{ I_G \}$ which means $\phi$ is injective. Now let $b_1 \in B = xAx^{-1}$. Thus $b_1 = xa_1x^{-1}$ for some $a_1 \in A$. Since $a_1 \in A$, $\phi(a_1) = xa_1x^{-1} = b_1$ and so $\phi$ is surjective. Thus $\phi$ is an isomorphism and $A$ and $B$ are isomorphic.
+So $\ker(\phi) = \{ I_G \}$ which means $\phi$ is injective. Now let $b_1 \in B = xAx^{-1}$.
+Thus $b_1 = xa_1x^{-1}$ for some $a_1 \in A$. Since $a_1 \in A$, $\phi(a_1) = xa_1x^{-1} = b_1$ and so $\phi$ is surjective. 
+Thus $\phi$ is an isomorphism and $A$ and $B$ are isomorphic.
 
 \end{proof}
 
-The final part of this proposition is an important result which shows that since conjugate subgroups are isomorphic, conjugation preserves group structure and properties. In particular, conjugate subgroups have the same cardinality and if one is abelian or cyclic, then so is the other.
+The final part of this proposition is an important result which shows that since conjugate subgroups are isomorphic, 
+conjugation preserves group structure and properties. 
+In particular, conjugate subgroups have the same cardinality and if one is abelian or cyclic, then so is the other.
 
 \section{Automorphism}
 
-\begin{definition} An \textbf{automorphism} of a group $G$ is a isomorphism from $G$ onto itself. The set of all automorphisms of $G$ forms a group under composition and is denoted by $Aut(G)$.\\
+\begin{definition} An \textbf{automorphism} of a group $G$ is a isomorphism from $G$ onto itself. 
+    The set of all automorphisms of $G$ forms a group under composition and is denoted by $\textrm{Aut}(G)$.\\
 \\
-An \textbf{inner automorphism} is an automorphism whereby $G$ acts on itself by conjugation. That is, each $g \in G$ induces a map, $i_g : G \rightarrow G$, where $i_g(x) = g x g^{-1}$ for each $x \in G$. The set of all inner automorphisms is denoted by $Inn(G)$ and is a normal subgroup of $Aut(G)$ (For proof of this see \cite[p.104]{bhattacharya}.
+An \textbf{inner automorphism} is an automorphism whereby $G$ acts on itself by conjugation. 
+That is, each $g \in G$ induces a map, $i_g : G \rightarrow G$, where $i_g(x) = g x g^{-1}$ for each $x \in G$. The set of all inner automorphisms is denoted by 
+$\textrm{Inn}(G)$ and is a normal subgroup of $\textrm{Aut}(G)$ (For proof of this see \cite[p.104]{bhattacharya}).
 \end{definition}
 
 \section{Direct Product}
 
-\begin{definition} If $G_1, G_2,...,G_n$ are groups, we define a coordinate operation on the Cartesian product $G_1 \times G_2 \times...\times G_n$ as follows:
+\begin{definition} 
+    
+If $G_1, G_2,..., G_n$ are groups, we define a coordinate operation on the Cartesian product $G_1 \times G_2 \times...\times G_n$ as follows:
 \begin{align*} (a_1, a_2, ..., a_n) (b_1, b_2, ..., b_n) = (a_1 b_1, a_2 b_2, ..., a_n b_n),
 \end{align*}
 where $a_i, b_i \in G_i$. It is easy to verify that $G_1 \times G_2 \times...\times G_n$ is a group under this operation. This group is called the \textbf{direct product} of $G_1, G_2,...,G_n$.
@@ -243,7 +274,6 @@ where $a_i, b_i \in G_i$. It is easy to verify that $G_1 \times G_2 \times...\ti
 \leanok
 Let $A$ and $B$ be normal subgroups of $G$ with $A \cap B = \{ I_G \}$. Then $AB \cong A \times B$.
 \end{lemma}
-
 \begin{proof}
 \leanok
 First note that the elements of $A$ commute with the elements of $B$, since $\forall \; a \in A$ and $b \in B$,
@@ -277,42 +307,105 @@ b_1 b_2^{-1} &= a_1^{-1} a_2 \in A \cap B.
 Since $A \cap B = \{ I_G \}$, we have $b_1 b_2^{-1} = I_G = a_1^{-1} a_2$ and so $b_1 = b_2$, $a_1 = a_2$ and $\phi$ is injective. So $\phi$ is an isomorphism and $AB \cong A \times B$.
 \\
 \end{proof}
+\begin{footnotesize}
+\begin{verbatim}
+def prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H] [hK : Normal K]
+    (hHK : Disjoint H K) : H × K →* (H ⊔ K :) where
+    toFun h_k := ⟨h_k.1 * h_k.2, mul_mem_sup h_k.1.property h_k.2.property⟩
+    map_one' := by simp
+    map_mul' := by
+      rintro ⟨⟨h₁, hh₁⟩, ⟨k₁, hk₁⟩⟩ ⟨⟨h₂, hh₂⟩, ⟨k₂, hk₂⟩⟩
+      simp
+      rw [mul_assoc, mul_assoc, ← mul_assoc k₁,
+        (Commute.eq (commute_of_normal_of_disjoint K H hK hH (Disjoint.symm hHK) k₁ h₂ hk₁ hh₂))]
+      group
+    
+lemma Bijective_prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H]
+    [hK : Normal K] (hHK : Disjoint H K) : Bijective (prod_monoidHom_join H K hHK) :=  by
+    refine ⟨?injective, ?surjective⟩
+    case injective =>
+      rintro ⟨⟨h₁, h₁_in_H⟩, k₁, k₁_in_K⟩ ⟨⟨h₂, h₂_in_H⟩, k₂, k₂_in_K⟩ h
+      simp [prod_monoidHom_join] at h
+      have : h₁⁻¹ * h₂ * k₂ * k₁⁻¹ = 1 := by
+        rw [mul_assoc, mul_assoc, ← mul_assoc h₂, ← h]
+        group
+      -- show h₁ * h₂⁻¹  = 1 and k₁ * k₂⁻¹ = 1
+      have H₁ : k₂ * k₁⁻¹ = (k₁ * k₂⁻¹)⁻¹ := by
+        group
+      have key₁ : h₁⁻¹ * h₂ = k₁ * k₂⁻¹ := by
+        rw [mul_assoc] at this
+        rw [H₁, mul_inv_eq_one] at this
+        exact this
+      have mul_in_H : k₁ * k₂⁻¹ ∈ H := key₁.symm ▸ mul_mem (inv_mem h₁_in_H) h₂_in_H
+      have mul_in_K : k₁ * k₂⁻¹ ∈ K := mul_mem k₁_in_K (inv_mem k₂_in_K)
+      rw [disjoint_iff_inf_le] at hHK
+      have key₂ : k₁ * k₂⁻¹ = 1 := by
+        rw [← mem_bot]
+        apply hHK
+        refine mem_inf.mpr ⟨mul_in_H, mul_in_K⟩
+      rw [key₂] at key₁
+      rw [inv_mul_eq_one] at key₁
+      rw [mul_inv_eq_one] at key₂
+      ext <;> simp [key₁, key₂]
+    case surjective =>
+      rintro ⟨x, hx⟩
+      rw [← SetLike.mem_coe, mul_normal] at hx
+      obtain ⟨h, h_in_H, k, k_in_K, hh⟩ := hx
+      use ⟨⟨h, h_in_H⟩, ⟨k, k_in_K⟩⟩
+      simp [prod_monoidHom_join, hh]
+  
+noncomputable def prod_mulEquiv_join_of_disjoint_of_normal {G : Type*} [Group G] (H K : Subgroup G)
+    (hHK : Disjoint H K) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) :=
+    MulEquiv.ofBijective (prod_monoidHom_join H K hHK) (Bijective_prod_monoidHom_join H K hHK)
+\end{verbatim}
+\end{footnotesize}
 
-\begin{remark}[Internal direct product of subgroups]
-    Given the product of subgroups is not necessarily a subgroup. It does not make sense to define the product of two subgroups as having the type of a subgroup.
+\begin{remark}[Internal direct product and complete lattice structure of subgroups]
+    Given the pointwise product of subgroups is not necessarily a subgroup. 
 
-    To be clear, it is be possible to define this type provided the appropriate assumptions such as for example disjointness and normality of the subgroups, but what turns out to be much more sensible in the bigger picture is to again harness the complete lattice structure on subgroups.
-    It is often the case subgroups do not statisfy the appropriate conditions for the pointwise product of sets to be a subgroup, but still one wants to define the smallest subgroup which contains both subgroups, whether it turns out to be the pointwise product of the subgrops or something larger.
+    For example, the pointwise product subgroups of $S_3$, $\langle e, (1\;2) \rangle$ and $\langle e, (1\;3) \rangle$ produce the set 
+    $\langle e, (1\;2) \rangle \langle e, (1\;3) \rangle =\{e, (1\;2), (1\;3), (3\;2\;1)\}$ which has cardinality four which does not divide six,
+    thus cannot be a subgroup by Lagrange's theorem.
+
+    Thus, it does not make sense to define the product of two subgroups as having the type of a subgroup.
+
+    Nonetheless, provided appropriate assumptions the two subgroups, such as for example disjointness and normality, the pointwise product turns out to indeed be a subgroup.
+    
+    What turns out to be much more sensible in the bigger picture is to harness the complete lattice structure on subgroups. It is often the case that
+    subgroups do not satisfy the appropriate conditions for the pointwise product of sets to be a subgroup, but still one would like to define the smallest subgroup which contains both subgroups,
+    whether it turns out to be the pointwise product of the subgroups or something whose underlying set is larger.
 
     This notion corresponds to taking the supremum or join of two subgroups \texttt{H : Subgroup G} and \texttt{K : Subgroup G} which denoted by 
 
-    % \begin{verbatim}
-    %     H ⊔ K : Subgroup G
-    % \end{verbatim}
+    \begin{verbatim}
+        H ⊔ K : Subgroup G
+    \end{verbatim}
 
-    Naturally, as expected $H \le H \sqcup K$ and $K \le H \sqcup K$. Furthermore, if we now supply the appropriate assumptions, when peeking at the different facets of the supremum we will be able to recover the properties we desire.
-
-    For instance, the theorem \texttt{Subgroup.mul\textunderscore normal}.
+    As one would hope, we indeed have that $H \le H \sqcup K$ and $K \le H \sqcup K$.
+    Yet what is more is that, if we now supply the appropriate assumptions, it is
+    possible to recover the desired properties regarding the supremum of the two subgroups. Following from the previous example,
+    it is possible to recover information about the underlying set of the supremum of two subgroups where one of them is normal 
+    through the theorem \texttt{Subgroup.mul\textunderscore normal}, which states:
     
-    % \begin{verbatim}
-    %     ∀ {G : Type u_2} [inst : Group G] (H N : Subgroup G) [hN : N.Normal], ↑(H ⊔ N) = ↑H * ↑N
-    % \end{verbatim}
+    \begin{verbatim}
+        ∀ {G : Type u_2} [inst : Group G] (H N : Subgroup G) [hN : N.Normal], ↑(H ⊔ N) = ↑H * ↑N
+    \end{verbatim}
     
-    only requires one of the subgroups to be normal for us to conclude that the underlying set of the supremum is the pointwise product of sets!
+    Thus, instead of defining the product of subgroups to be a subgroup, we can define their supremum and then
+    assuming that one (!) of subgroups is normal, we would be allowed to conclude that indeed the supremum
+    is the pointwise product of sets as was hoped.
     
-    Bringing the lattice of subgroups to the forefront turns out to be extremely useful for formalising arguments,
+    Bringing the complete lattice structure on the set of subgroups to the forefront turns out to be extremely useful for formalising arguments,
     and more generally, makes the arguments much more transparent.
 \end{remark}
 
 \begin{lemma}
     \label{directproductZ}
+    \leanok
 Let $A$ and $B$ be subgroups of $G$. If $A \cap B = \{ I_G \}$ and $ab = ba$ $\forall a \in A$, $b \in B$. Then $AB \cong A \times B$.
 \end{lemma}
-
-\begin{proof} 
+\begin{proof}
+    \leanok
     Since $A$ and $B$ commute, the argument outlined in Lemma \ref{SpecialSubgroups.prod_mulEquiv_join_of_disjoint_of_normal} also holds here.
 \end{proof}
-
-% \newpage
-
 

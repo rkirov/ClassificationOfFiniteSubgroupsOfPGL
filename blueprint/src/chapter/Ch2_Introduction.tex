@@ -4,27 +4,31 @@
 
 Formalisation of mathematics is the art of teaching a computer what a piece of mathematics means.
 
-That is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. 
+That is, it is the process of carefully writing down a mathematical statement, typically in first order logic or higher order logic, 
+and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. 
 
-Typically one formalizes mathematics with the help of a proof assistant or interactive theorem prover, a piece of software which enables a human to write down mathematics and have the software verify the claims.
+Typically, one formalizes mathematics with the help of a proof assistant or what is also know as an interactive theorem prover, 
+a piece of software which enables a human to write down mathematics and have the software verify the claims.
 
-There exist many proof assistants, such examples are Lean, Isabelle, Coq, Metamath, etc.
+There exist many proof assistants, such examples are Lean, Isabelle, Coq, Metamath, and so forth.
 
-For this project I have opted to use Lean due to its rapid growing mathematics library and its dependent type theory. I shall explain in more detail these last two reasons, but first I will comment on what Lean is.
+For this project I have opted to use Lean due to its rapid growing mathematics library and its dependent type theory. I shall attempt to explain in more detail these last two reasons indirectly through
+examples, but first I will comment on what Lean is.
 
 \subsubsection{What is Lean?}
 
 Lean is both a functional programming language and an interactive theorem prover (also known as a proof assistant) that is being developed at Microsoft research and AWS by Leonardo de Moura and his team.
-It has been designed for both use in cutting-edge mathematics and the verification of software which is often essential to safety critical systems such as medical or aviation software, where any error can have
-catastrophic consequences on people's lives or infrastructure.
+It has been designed for both use in cutting-edge mathematics and the verification of software, which is often essential to safety critical systems such as medical or aviation software; where any error can have
+catastrophic consequences on people's lives or expensive infrastructure.
 
-Theorem provers like Lean harness the tight bond between proofs and programs. Often an algorithm, in fact serves as a proof for a mathematical statement
+Theorem provers like Lean harness the tight bond between proofs and programs. Often an algorithm, in fact serves as a proof for a mathematical statement.
 
 For example, such is the case for the following theorem:
 
 \begin{example}[Algorithm corresponds to a proof - Bézout's lemma]
-    Let $R$ be a ring with a euclidean function $\nu : R \setminus \{0\} \rightarrow \Z_{\geq 0}$ which satisfies that for all $x, y \in R$ with $y \ne 0$, there exist $q, r \in \R$ such that $a  = qb + r$ where either $r = 0$ or $\nu(r) < \nu(b)$;
-it is possible for any $r,s \in R$ to find a unique linear combination which is the greatest common divisor of $r$ and $s$, that is, there exist coefficients $a, b \in R$ such that $ar + bs = \gcd(r, s)$.
+    Let $R$ be a ring with a euclidean function $\nu : R \setminus \{0\} \rightarrow \Z_{\geq 0}$ which satisfies that for all $x, y \in R$ with $y \ne 0$, there exist $q, r \in \R$ such that $a  = qb + r$ where either $r = 0$ or $\nu(r) < \nu(b)$.
+
+    For any $r,s \in R$ to find a unique linear combination which is the greatest common divisor of $r$ and $s$, that is, there exist coefficients $a, b \in R$ such that $ar + bs = \gcd(r, s)$.
 \end{example}
 \begin{proof}
     We construct $a$ and $b$ by the extended euclidean algorithm, we sequentially divide in the following fashion:
@@ -40,6 +44,7 @@ it is possible for any $r,s \in R$ to find a unique linear combination which is 
       and must have that $\nu(r_k) = 0$ for some $k \in \N$. It will then be that $r_{k -1} = \gcd(r, s)$, and by back substitution we can recover the values for the coefficients $a$ and $b$.
   \end{proof}
 
+The proof for this theorem uses the extended euclidean algorithm and proves that when the algorithm terminates it produces the desired witnesses.
 In \texttt{mathlib}, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
 
 \begin{footnotesize}
@@ -56,15 +61,16 @@ termination_by r
 
 It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless.
 
-The correspondence is known as the \textbf{Curry-Howard correspondence} where formulas correspond to \textit{types}, which correspond to the notion of a specification, 
+The correspondence is known as the \textbf{Curry-Howard correspondence}, where formulas correspond to \textit{types}, which correspond to the notion of a specification;
 proofs for formulas correspond to constructing a term of the corresponding type and so forth. 
 
-In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a corresponding type system which express the valid rules for programs. 
+In fact, it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. 
 
 For our purposes, we will not provide a deep overview of this fundamental correspondence, but rather we will illustrate the core principle with a suitable example.
 
-Furthermore, within the block of Lean code above there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. the following example hopes to
-illustrate a simpler example and give an overview of how to:
+Before we delve in to another example, observe that within the block of Lean code above there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. 
+
+The following example hopes to illustrate a simpler example and give a very brief overview of how to:
 
 \begin{itemize}
     \item Define the assumptions for a mathematical statement.
@@ -72,9 +78,9 @@ illustrate a simpler example and give an overview of how to:
     \item Formalise the mathematical statement using Lean tactics.
 \end{itemize}
 
-Note that in the list Lean tactics are mentioned. Loosely speaking, a \texttt{tactic} is a Lean metaprogram that will write Lean programs, these (non-meta) programs can
+Note that in the list above, the notion of a Lean tactics is mentioned. Loosely speaking, a \texttt{tactic} is a Lean metaprogram that will write Lean programs, these (non-meta) programs can
 be the usual code one would write for an algorithm or it could be the program which corresponds to the proof term that one needs to construct to formalise
-a statement in Lean. Examples of tactics and how they are used will be illustrated in the following example.
+a mathematical statement in Lean. Examples of tactics and how they are used will be illustrated in the following example.
 
 \begin{example}[Proving and formalising the sum of the first $n$ odd integers]
     To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs 
@@ -99,8 +105,8 @@ a statement in Lean. Examples of tactics and how they are used will be illustrat
             Consider the sum $\sum_{k = 1}^{m + 1} 2k - 1$, then we have that
             \begin{align}
                 \sum_{k = 1}^{m + 1} 2k - 1 &= \left(\sum_{k = 1}^{m} 2k - 1\right) + 2(m + 1) - 1 \tag{by definition of the summation}\\
-                    &=  n^2 + 2n + 1 \tag{by the induction hypothesis}\\
-                    &= (n + 1)^2
+                    &=  m^2 + 2m + 1 \tag{by the induction hypothesis}\\
+                    &= (m + 1)^2
             \end{align}
 
             This proves the induction step, and therefore by the principle of mathematical induction. The claim holds true for all $n \in \N$.
@@ -116,8 +122,7 @@ a statement in Lean. Examples of tactics and how they are used will be illustrat
         \sum_{k = 1}^{0} f(k) &= 0
     \end{align*}
 
-    where in Lean that naturals numbers include zero.
-
+    Where it is noteworthy to add that in Lean that naturals numbers include zero.
 \begin{footnotesize}
 \begin{verbatim}
         def sum_of_n_odd : ℕ → ℕ
@@ -126,23 +131,30 @@ a statement in Lean. Examples of tactics and how they are used will be illustrat
 \end{verbatim}
 \end{footnotesize}
 
-    This definition of summing the odd numbers is equivalent up to reindexing to the definition above. The reason we do not use subtraction is because
-    the natural numbers are a commutative semiring, in particular, it does not always make sense to subtract one from a natural number, the predecessor of
-    zero is not defined. We only need understand that a natural number is either zero or a successor of a natural number. In essence, when defining a function from the natural,
-    we only need to think about where to send zero and where to send the successor of a natural number, such functions are defined inductively/recursively.
-    This pattern of thought is continually used throughout Lean.
+    This definition above which sums the odd numbers is equivalent up to re-indexing to the definition above. 
+    
+    The reason we do not use subtraction is because the natural numbers are a commutative semiring, so 
+    it does not always make sense to subtract a natural number from a another natural number. For instance, the predecessor of
+    zero is not defined. 
+    
+    Instead to understand a generic natural number we only need understand that a natural number is either zero or a successor of a natural number.
+    Thus, when defining a function from the naturals,
+    we only need to think about where to send zero and where to send the successor of a natural number, such a definition for a function
+    are often denoted as inductive/recursive definitions. This pattern of thought is continually used throughout Lean's inductive types.
 
     Given the code definition above is a program one can indeed compute using the
-    function, this might be how one would first conjecture that such a theorem about 
-    the sums of the first odd natural numbers is true in the first place!
+    function defined in this programming language!
 
-    To state the theorem in Lean, we use the keyword \texttt{thorem} or \texttt{lemma};
+    In fact, this might be how one would first conjecture that such a theorem about 
+    the sums of the first odd natural numbers might be true in the first place!
+
+    To state the theorem in Lean, we use the keyword \texttt{theorem} or \texttt{lemma};
     followed by the name we would like to give the theorem, in this case it is, \texttt{closed\_eq\_sum\_of\_first\_n\_odd\_nat};
-    then followed by a list of arguments which will either be the objects and assumptions on the objects, in this case we only
+    then followed by a list of arguments which will either be the objects or assumptions on the objects, in this case we only
     specify that \texttt{n} is a natural number; then after a colon \texttt{:}, we specify the mathematical statement,
-    in this case that \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. 
-    We will walk through the formal proof after providing the Lean code
+    in this case that \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. We have stated our first mathematical statement in Lean!
 
+    Now we will walk through the formal proof in Lean:
 
     \begin{footnotesize}
     \begin{verbatim}
@@ -165,17 +177,19 @@ a statement in Lean. Examples of tactics and how they are used will be illustrat
     \end{verbatim}
     \end{footnotesize}
 
-    After the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}, it is possible to
+    After the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. It is possible to
     define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \textit{tactic mode}.
 
-    As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics
-    in Lean; to enter tactic mode one must begin the proof with the \texttt{by} tactic. Furthermore, using tactic mode allows access to an extremely useful
-    interactive \textit{infoview} which displays the objects at play in the proof, the assumptions on the objects, the state of the proof
+    As outlined above, tactics are metaprograms, programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics
+    in Lean; to enter tactic mode one must begin the proof with the \texttt{by} tactic. A benefit of using tactic mode is that it allows access to an extremely useful
+    interactive \textit{infoview} which displays the objects at play in the proof, the assumptions on the objects and the state of the proof.
 
-    Once in tactic mode, we have access to other tactics accessible throught the keywords \texttt{induction}, \texttt{case}, \texttt{rw}, \texttt{rw}, \texttt{ring}, \texttt{simp} and so on.
-    Given the natural number are defined inductively in Lean, Lean understands that to prove that a property $P$ holds true for all natural numbers
+    Once in tactic mode, we have access to other tactics accessible through the keywords like: \texttt{induction}, \texttt{case}, \texttt{rw}, \texttt{rw}, \texttt{ring}, \texttt{simp} and so on.
+    
+    Given the natural numbers are defined inductively in Lean, Lean understands that to prove that a property $P$ holds true for all natural numbers
     it is sufficient to provide a proof term for $P(0)$ and supposing $P(n)$ holds we can show that then $P(n+1)$ holds, in Lean terminology, the natural numbers
-    have their own induction principle. In fact this will be automatically true for any inductive datatype, but we will not go into this.
+    have their own induction principle; notice the similarity to defining a function from the naturals. In fact, the generation of an induction principle 
+    will be automatically true for any inductive datatype, but we will not go into this.
     
     To access this fact, we must invoke the \texttt{induction} tactic which splits the original goal of \texttt{sum\_of\_first\_n\_odd\_nat n = n * n} into two smaller goals
 
@@ -186,11 +200,13 @@ a statement in Lean. Examples of tactics and how they are used will be illustrat
 
     The \texttt{case} tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label \textit{zero} to prove the base case;
     then we focus in on the induction step by typing \texttt{case succ m hm} which also introduces two new objects into the proof context, the natural number $m$ and the assumption
-    on \texttt{m} which says that $m$ satisfies the induction hypothesis, \texttt{sum\_of\_first\_n\_odd\_nat m = m * m}. We then proceed to use the rewrite tactic, \texttt{rewrite},
-    which allows to replace equal or logically equivalent terms, so if you have the theorem \texttt{h : a = b}, then \texttt{rw [h]} will replace every ocurrence of \texttt{a} in the goal
-    for a \texttt{b}, in the new modified goal.
+    on \texttt{m} which says that $m$ satisfies the induction hypothesis, \texttt{sum\_of\_first\_n\_odd\_nat m = m * m}. 
+    
+    We then proceed to use the rewrite tactic, \texttt{rewrite}, which allows to replace equal or logically equivalent terms, so if you have the theorem \texttt{h : a = b}, then \texttt{rw [h]} will replace every occurrence of \texttt{a} in the goal
+    for a \texttt{b}, in the new modified goal. For this particular example, the proof for the base case labelled by \texttt{zero} involves using the rewrites \texttt{mul_zero} which states that \texttt{a * 0 = 0} and
+    the definition of  \texttt{sum\_of\_first\_n\_odd\_nat} itself, where Lean is clever enough to choose which of two equalities to rewrite.
 
-    Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation. Typically, one
+    Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflexivity of the equality relation. Typically, one
     uses the \texttt{rw} tactic which is a combination of \texttt{rewrite} followed by \texttt{rfl}.
 
     Theorems and lemmas in Lean are given an identifier by which to access through, for example, the theorem \texttt{add\_mul\_self\_eq} states that for all $a, b \in S$ where $S$ is a semiring
@@ -225,10 +241,12 @@ In fact, much is known about the case when $n = 2$; it is known that all Pythago
     \[
     a = r \cdot (s^2 - t^2), \qquad b = r \cdot (2st), \qquad c = r \cdot (s^2 + t^2)
     \]
+
+    where $s > t > 0$.
 \end{theorem}
 
 The natural question to ask from such an extremely satisfying theorem is whether the same can be said for when $n \ge 2$. Initially, mathematicians set out to
-to find solutions $n = 3$. However, it seemed only the "trivial" triple satsfied Fermat's equation for when $n = 2$
+to find solutions $n = 3$. However, it seemed only the "trivial" triple satisfied Fermat's equation for when $n = 2$
 
 \[
 0^3 + 1^3 = 1^3
@@ -251,33 +269,28 @@ It took Euler to provide a (flawed) proof for the nonexistence of nontrivial sol
 The case where $n = 4$ was also proved by Euler; soon enough particular cases where $n$ was some fixed natural number where being shown, which indeed seemed to suggest Fermat's conjecture was true.
 However, no approach seemed to generalise to prove the general case...
 
-% Kummer, Lame, Wiles
-
-%Fermat's conjecture was shown to be true for particular values of $n > 2$.  
-TODO - link paragraphs and clean up
-
-The proof of Fermat's Last Theorem is the culmination of the effort of mathematicians spanning generations.
-
-From Diophantus, the first known person to systematically study what we now call \textit{Diophantine equations}, to Fermat developing the elementary theory of number theory and then due to the invaluable work of countless mathematicians 
-around the world which built upon each other's work a list of such mathematicians contains the names of: Gauss, Galois, Euler, Abel, Dedekind, Noether, Euler, Kummer, Mazur, Kronecker, etc.
-
+The proof of Fermat's Last Theorem is the culmination of the effort of mathematicians spanning generations, and it took the direct and indirect efforts of mathematicians like: 
+Gauss, Galois, Euler, Abel, Dedekind, Noether, Euler, Kummer, Mazur, Kronecker and so on to put Andrew Wiles and his collaborator Richard Taylor in the position 
+to finally put to rest Fermat's Last Theorem.
 
 
 \section{Formalizing Fermat's Last Theorem}
 
-Following the sequence of success stories ranging from the Liquid Tensor Experiment to the formalisation of the Polynomial Freiman-Rusza conjecture. 
+Following the sequence of Lean success stories ranging from the Liquid Tensor Experiment to the formalisation of the Polynomial Freiman-Rusza conjecture. 
 
 Prof. Kevin Buzzard from Imperial College London has received a five-year grant that will allow him to lead the formalisation of Fermat's Last Theorem. This grant kicked in in October of 2024. 
 
-At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project.
-
-Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task.
+At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project. Alongside other infrastructure like the project dashboard, mathematicians around the world can 
+claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task.
 
 \subsubsection{The first target of the formalisation of Fermat's Last Theorem}
 
-The goal of the ongoing efforts of the formalisation is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \text{Mazur's Theorem}.
+The goal of the ongoing efforts of the formalisation is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \text{Mazur's Theorem} 
+which bounds the torsion subgroup points of an elliptic curve.
+%https://imperialcollegelondon.github.io/FLT/blueprint/ch_frey.html
 
-However, it should be mentioned that the proof being formalised is not the proof Andrew Wiles and Richard Taylor initially came up with during 1994, but a more modernised approach that has been refined over the last 20 years.
+However, it should be mentioned that the proof being formalised is not the original proof Andrew Wiles and Richard Taylor provided in 1994, 
+but a more modernised approach that has been refined over the last 20 years.
 
 At the time of writing, the first target set by Prof. Kevin Buzzard is to formalise the \textbf{Modularity Lifting Theorem}
 % https://imperialcollegelondon.github.io/FLT/blueprint/ch_overview.html#a0000000021
@@ -297,21 +310,8 @@ the mathematics library of Lean \texttt{mathlib}, contains all mathematics known
 
 \section{Classification of finite subgroups of the $\PGL_2(\Fbar_p)$ within Fermat's Last Theorem}
 
-The primary concern of this project is to formalise Theorem 2.47 of \cite{dtt} which states:
-
-\begin{enumerate}
-    \item If $H$ is finite subgroup of $\PGL_2(\C)$ then $H$ is isomorphic to one of the following groups: the cyclic group $C_n$ of order $n$ ($n \in \Z_{>0}$), the dihedral group $D_{2n}$ of order $2n$ ($n \in \Z_{>1}$), $A_4$, $S_4$ or $A_5$.
-\item If $H$ is a finite subgroup of $\PGL_2(\Fbar_\ell)$ then one of the following holds:
-\begin{enumerate}
-    \item $H$ is conjugate to a subgroup of the upper triangular matrices;
-    \item $H$ is conjugate to $\PGL_2(\F_{\ell^r})$ and $\PSL_2(\F_{\ell^{r}})$ for some $r \in \Z_{>0}$;
-    \item $H$ is isomorphic to $A_4$, $S_4$, $A_5$ or the dihedral group $D_{2r}$ of order $2r$ for some $r \in \Z_{>1}$ not divisible by $\ell$
-
-\end{enumerate}
-    Where $\ell$ is assumed to be an odd prime.
-\end{enumerate}
-
-Recall that the Projective General Linear Group is defined to be:
+The primary concern of this project is to formalise Theorem 2.47 of \cite{dtt} which 
+concerns the projective general and special linear groups:
 
 \begin{definition}[Projective general linear group]
     The projective general linear group is the quotient group
@@ -328,34 +328,27 @@ Similarly, the Projective Special Linear Group is defined to be:
     \]
 \end{definition}
 
-At first glance, neither the statement or the definitions seem to indicate how the classification of finite subgroups of $\PGL_2(\Fbar_p)$ play a role in the proof of Fermat's Last Theorem, after all, Fermat's Last Theorem is a statement
-regarding natural numbers. 
-
-Upon inspection of the proof it turns out that Theorem 2.47 of \cite{dtt} is required is for Theorem 2.49, Remark 2.47 and Lemma 4.11. Where in particular, Theorem 2.49 is a key component in Theorem 3.42 which states that:
-
-\begin{theorem}[Theorem 3.42]
-    For all finite sets $\Sigma \subset \Sigma_{\bar{\rho}}$, the map $\phi_\Sigma : R_\Sigma \rightarrow \mathbb{T}_\Sigma$ is an isomorphism and these rings are complete intersections,
-\end{theorem}
-
-There is of course a lot of notation to hidden within these statement, yet unpacking and understanding in detail the following two theorems is not at all the concern for this project. 
-Naturally, the reference \cite{dtt} would be the indicated source to truly understand what these statements claim and how they fit together in the big picture of proving Fermat's Last Theorem; but for completeness,
-very loosely the key idea is that the two key players:
+The theorem states:
 
 \begin{enumerate}
-    \item The local ring $R_\Sigma$ which is called the universal deformation ring for representations of type $\Sigma$.
-    
-    \item The ring $\mathbb{T}_\Sigma$ is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms.
+    \item If $H$ is finite subgroup of $\PGL_2(\C)$ then $H$ is isomorphic to one of the following groups: the cyclic group $C_n$ of order $n$ ($n \in \Z_{>0}$), the dihedral group $D_{2n}$ of order $2n$ ($n \in \Z_{>1}$), $A_4$, $S_4$ or $A_5$.
+\item If $H$ is a finite subgroup of $\PGL_2(\Fbar_\ell)$ then one of the following holds:
+\begin{enumerate}
+    \item $H$ is conjugate to a subgroup of the upper triangular matrices;
+    \item $H$ is conjugate to $\PGL_2(\F_{\ell^r})$ and $\PSL_2(\F_{\ell^{r}})$ for some $r \in \Z_{>0}$;
+    \item $H$ is isomorphic to $A_4$, $S_4$, $A_5$ or the dihedral group $D_{2r}$ of order $2r$ for some $r \in \Z_{>1}$ not divisible by $\ell$
+
+\end{enumerate}
+    Where $\ell$ is assumed to be an odd prime.
 \end{enumerate}
 
-Where $\Sigma_{\bar{\rho}}$ is the set of primes $p$ satisfying
-    \begin{itemize}
-        \item $p = \ell$ and $\bar{\rho}|_{G_{\ell}}$ is good and ordinary; or
-        \item $p \ne \ell$ and $\bar{\rho}$ is unramified at $p$.
-    \end{itemize}
+% Theorem 2.47 fits into 
 
-TODO - explain why this isomorphism is crucial.
 
-Moreover, the statement of Theorem 2.49 is the following:
+% At first glance, neither the statement or the definitions seem to indicate how the classification of finite subgroups of $\PGL_2(\Fbar_p)$ play a role in the proof of Fermat's Last Theorem, after all, Fermat's Last Theorem is a statement
+% regarding natural numbers. 
+
+Upon inspection of the proof, it turns out that Theorem 2.47 of \cite{dtt} is required to prove the results: Theorem 2.49, Remark 2.47 and Lemma 4.11. Where Theorem 2.49 states:
 
 \begin{theorem}[Theorem 2.49]
     Suppose $L = \Q(\sqrt{(-1)^{\ell -1}/2} \ell)$ then $\bar{\rho}$ is absolutely irreducible. Then
@@ -374,7 +367,32 @@ and has $\Gal(\Q(\zeta_\ell)/\Q)$ as a quotient.
 
 Provided the classification of finite subgroups of $\PGL_2(\Fbar_\ell)$, it suffices to prove that the cohomology group is trivial for the case where $\ell = 3$.
 
-This explains in a very vauge fashion why the classification of finite subgroups of $\PGL_2(\Fbar)$ is relevant to proving Fermat's Last Theorem.
+% In turn, Theorem 2.49 is a key component in Theorem 3.42 which states:
+
+% \begin{theorem}[Theorem 3.42]
+%     For all finite sets $\Sigma \subset \Sigma_{\bar{\rho}}$, the map $\phi_\Sigma : R_\Sigma \rightarrow \mathbb{T}_\Sigma$ is an isomorphism and these rings are complete intersections,
+% \end{theorem}
+
+% This theorem 
+
+% \begin{enumerate}
+%     \item The local ring $R_\Sigma$ which is called the universal deformation ring for representations of type $\Sigma$.
+    
+%     \item The ring $\mathbb{T}_\Sigma$ is a Hecke algebra, defined as a subalgebra of the linear endomorphisms of a certain space of automorphic forms.
+% \end{enumerate}
+
+% Where $\Sigma_{\bar{\rho}}$ is the set of primes $p$ satisfying
+%     \begin{itemize}
+%         \item $p = \ell$ and $\bar{\rho}|_{G_{\ell}}$ is good and ordinary; or
+%         \item $p \ne \ell$ and $\bar{\rho}$ is unramified at $p$.
+%     \end{itemize}
+
+% TODO - explain why this isomorphism is crucial.
+
+% Moreover, the statement of Theorem 2.49 is the following:
+
+
+
 
 % Since we have that for an odd prime $\ell > 3$ we have that $\ell$ does not divide the orders of the finite subgroups of $\PGL_2(\Fbar_\ell)$ as the finite subgroups can only have the order of the finit subgroups they are isomorphic to which
 % are: $|A_4| = 4! / 2$, $|S_5| = 5 !$, $|A_5| = 5! / 2 $,  $|\PSL_2(k)| = \ell^k(\ell^{2k} - 1)$ or $|\PGL_2(k)| = (\ell^2 -1)(q^2 - q)$.
@@ -407,14 +425,15 @@ This explains in a very vauge fashion why the classification of finite subgroups
 
 \section{Overview and reduction to the classification problem}
 
-Returning to the domain of the problem of interest, classifying finite subgroups of $\PGL_2(\Fbar_p)$.
+Returning to the domain of the problem of interest, classifying finite subgroups of $\PGL_2(\Fbar_p)$. One can observe that $\Fbar_p$ is by construction an algebraically closed field, since it is the algebraic closure of $\F_p$,
+and it turns out that for any $n \in \N$, it is possible to show that $\PGL_n(F)$ is isomorphic to $\PSL_n(F)$, thus reducing our original classification of finite subgroups to the classification of finite subgroups of $\PSL_2(\Fbar)$.
 
-Observing that $\Fbar_p$ is by construction an algebraically closed field, since it is the algebraic closure of $\F_p$; it turns out that for any $n \in \N$, we can show that $\PGL_n(F)$ is isomorphic to $\PSL_n(F)$
-and thus we only need consider finite subgroups of $\PSL_2(\Fbar)$.
+Furthermore, on the back of the isomorphism defined between $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$, and determining that the center of $\SL_2(F)$ is $Z(\SL_2(\Fbar_p)) = \langle -I\rangle$, we can in fact focus on the much more tractable problem of 
+classifying the finite subgroups of $SL_2(\Fbar_p)$ to eventually classify the finite subgroups of $\PSL_2(\Fbar_p)$, and overall obtain our desired result. 
 
-Furthermore, on the back of the isomorphism defined between $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$, and determining that the center $Z(\SL_2(\Fbar_p)) = \langle -I\rangle$, we can in fact focus on the much more tractable problem of 
-classifying the finite subgroups of $SL_2(\Fbar_p)$ to eventually classify the finite subgroups of $\PGL_2(\Fbar_p)$. Moreover, since the more general problem of classifying the finite subgroups of $\SL_2(F)$ where $F$ is an arbitrary algebraically closed field
-yields a statement very close to the desired statement and Christopher Butler has a in-depth exposition of this result, the formalisation of slightly more general result was chosen.
+Moreover, since the more general problem of classifying the finite subgroups of $\SL_2(F)$ where $F$ is an arbitrary algebraically closed field
+yields a statement that is very close to the desired statement and Christopher Butler has a in-depth exposition of this result, the formalisation of slightly more general result was chosen.
 
-Considering proving the existence of such an isomorphism $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$ is no more difficult in the general case, the goal of the next chapter will be to formalise the definition of a suitable homomorphism between $\PGL_n(F)$ and $\PSL_n(F)$, where $F$ is an algebraically closed field, 
+Considering proving the existence of such an isomorphism $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$ is no more difficult in the general case, 
+the goal of the next chapter will be to formalise the definition of a suitable homomorphism between $\PGL_n(F)$ and $\PSL_n(F)$, where $F$ is an algebraically closed field, 
 and formally prove in the Lean proof assistant that this homomorphism actually defines an isomorphism.

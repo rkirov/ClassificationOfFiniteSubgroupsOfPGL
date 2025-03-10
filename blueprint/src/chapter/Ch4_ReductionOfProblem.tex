@@ -3,7 +3,9 @@
 \section{Over an algebraically closed field $\PSL_n(F)$ is isomorphic to the projective $\PGL_n(F)$}
 
 
-When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct an isomorphism between the projective special linear group and the projective general linear group.
+When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ it one can construct an isomorphism between 
+the projective special linear group and the projective general linear group.
+
 \begin{definition}
 \label{SL_monoidHom_PGL}
 \lean{SL_monoidHom_PGL}
@@ -17,13 +19,13 @@ When $F$ is algebraically closed and $\textrm{char}(F) \neq 2$ we can construct 
 \end{definition}
 \begin{footnotesize}
 \begin{verbatim}
-def SL_monoidHom_GL  (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRing R] :
-    SL n R →* GL n R := SpecialLinearGroup.toGL
+  def SL_monoidHom_PGL (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRing R] :
+  SL n R →*  PGL n R := (GL_monoidHom_PGL n R).comp (SL_monoidHom_GL n R)
 \end{verbatim}
 \end{footnotesize}
 
 
-We prove a useful fact about elements that belong to the center of $\GL_n(R)$:
+We now prove a useful fact about elements that belong to the center of $\GL_n(R)$.
 
 \begin{lemma}
     \label{GeneralLinearGroup.mem_center_general_linear_group_iff}
@@ -35,7 +37,7 @@ We prove a useful fact about elements that belong to the center of $\GL_n(R)$:
     \begin{proof}
         \leanok
         \begin{itemize}
-        \item Suppose $G \in GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
+        \item Suppose $G \in \GL_n(F)$ belongs to $Z(\GL_n(F))$ then for all $H \in \GL_n(F)$ we have that $G H = H G$. We will find it sufficient to only consider the case where $H$ is a transvection matrices.
         Let $1 \leq i < j \leq n$, then the transvection matrices are of the form $T_{ij} = I + E_{ij}$ where $E_{ij}$ is the standard basis matrix given by
         \[
         E_{{ij}_{kl}} = \begin{cases}
@@ -90,7 +92,7 @@ theorem mem_center_general_linear_group_iff {n : Type u} [DecidableEq n]
 \uses{SL_monoidHom_PGL}
 \lean{center_SL_le_ker}
 \leanok
-Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \subseteq \ker (\varphi)$.
+Let $R$ be a non-trivial commutative ring, then $Z(\SL_n(R)) \le \ker (\varphi)$.
 \end{lemma}
 \begin{proof}
 \uses{GeneralLinearGroup.mem_center_general_linear_group_iff}
@@ -129,6 +131,7 @@ lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
 \lean{PSL_monoidHom_PGL}
 \leanok
     Given $Z(\SL_n(F)) \leq \ker \varphi$ as shown in \ref{center_SL_le_ker}, by the universal property there exists a unique homomorphism $\bar{\varphi} : \PSL_n(F) \rightarrow \PGL_n(F)$ which is the lift of $\varphi$. 
+    
     Where $\varphi = \bar{\varphi} \circ \pi_{Z(\SL_n(F))}$ and $\pi_{Z(\SL_n(F))} : \SL_n(F) \rightarrow \PSL_n(F)$ is the canonical homomorphism from the group into its quotient.
 \end{definition}
 \begin{footnotesize}
@@ -140,8 +143,6 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   
 \end{verbatim}
 \end{footnotesize}
-
-
 
 
 \begin{lemma}
@@ -157,12 +158,11 @@ def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
 
 To show $\bar{\varphi}$ is injective we must show that $\ker \bar{\varphi} \leq \bot_{\PSL_n(F)}$ where $\bot_{\PSL_n(F)}$ is the trivial subgroup of $\PSL_n(F)$.
 
-Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$. If $[S] \in \ker \bar{\varphi}$ then $\bar{\varphi} ([S]) = [1]_{\PGL_n(F)}$. But on the other hand, $\bar{\varphi} ([S]) = \varphi(s)$ and so $\varphi(S) = 1_{\PGL_n(F)}$
-
-and thus $S \in Z(\GL_n(F))$, from \ref{GeneralLinearGroup.mem_center_general_linear_group_iff} it follows that $s = r \cdot I$ for some $r \in R^\times$. But given the restriction of $S \in \SL_n(F)$ we know that 
+Let $[S] \in \PSL_n(F)$ and suppose $[S] \in \ker \bar{\varphi}$. If $[S] \in \ker \bar{\varphi}$ then $\bar{\varphi} ([S]) = [1]_{\PGL_n(F)}$. But on the other hand, $\bar{\varphi} ([S]) = \varphi(s)$ and so $\varphi(S) = 1_{\PGL_n(F)}$, 
+and thus $S \in Z(\GL_n(F))$, from \ref{GeneralLinearGroup.mem_center_general_linear_group_iff} it follows that $s = r \cdot I$ for some $r \in R^\times$. But given $S \in \SL_n(F)$ we know that 
 
 \begin{equation*}
-    \det(S) = \det(r \cdot I) = r^n = 1 \implies \text{$r$ is a $n$th root of unity}
+    \det(S) = \det(r \cdot I) = r^n \cdot 1 = 1 \implies \text{$r$ is a $n$th root of unity}
 \end{equation*}
 
 Therefore, given elements of $Z(\SL_n(F))$ are those matrices of the form $\omega \cdot I$ where $\omega$ is a $n$th root of unity, we can conclude that $[S] = [1]_{\PSL_n(F)}$ and thus $\ker \bar{\varphi} \leq \bot_{\PSL_n(F)}$ as required.
@@ -198,72 +198,89 @@ Which shows that the homomorphism $\bar{\varphi}$ is injective.
     \begin{remark}[Quotients and their maps in Lean]
     When formalising results on quotient groups or for that matter any quotient type, it is valuable to appreciate which model Lean uses for quotients. 
     
-    Typically when one thinks of the elements of the quotient group say $\Z/2\Z$ there are two elements: 
-    $[0]$ which represents the coset $\{\ldots, -2, 0, 2, \ldots\}$, and $[1]$ which represents the coset $\{\ldots, -3, -1, 1, 1, \ldots\}$
-    since under the equivalence relation $a \sim b$ if and only if $a - b \in 2\Z$ all the elements belonging to the same coset, or equivalence class,
-    are indistinguishable.
+    Typically, when one thinks of the elements of the quotient group say $\Z/2\Z$ there are two elements: 
+    $[0]$ which represents the coset $\{\ldots, -2, 0, 2, \ldots\}$, and $[1]$ which represents the coset $\{\ldots, -3, -1, 1, 3, \ldots\}$
+    since under the equivalence relation, $a \sim b$ if and only if $a - b \in 2\Z$. In this new setting all the elements belonging to the same coset, 
+    or equivalence class, are now considered to be indistinguishable.
 
     Similarly, when defining a group homomorphism from $\theta : (\Z /2\Z, \dot{+}) \rightarrow G$, under this model one has to make sure that
     all the elements in $[0]$ are sent to the same element $g \in G$ in the target; and likewise, all the elements of $[1]$ are sent to the same element $h \in H$.
 
-    Otherwise, should $\theta([0]) \ne \theta([2])$ then this would mean that $\theta$ is somehow telling us that $0$ is \textbf{not} indistinguishable from $2$.
-    This is the idea of \textit{well-definedness}.
+    Otherwise, should $\theta([0]) \ne \theta([2])$ then this would mean that $\theta$ would be treating what we thought were the indistinguishable elements $0$ and $2$, as different,
+    This is the idea of showing the \textit{well-definedness} of a map on a quotient.
 
-    In general, the idea of quotients (not only group quotients) is to somehow eliminate the redundant information, because if one only cares about say if the lights are on or off,
-    it turns out we only need to care about the parity of the number of times we have pressed the light switch, that is, the act of pressing the light switch $12$ 
-    times is indistinguishable from pressing the button $1400$ times. This is the notion of well-defined.
+    In general, one of the idea of quotients (not only group quotients) is to somehow eliminate redundant information.
 
-    In this particular example, we defined a map $f : \N \rightarrow \{\text{On}, \; \text{Off}\}$ where we realised
-    that both $12$ and $1400$ and all even natural numbers seem to behave equivalently under this map if and only if their difference is an even integer,
-    that is, $a \sim b$ if and only if $a - b \in 2\Z$ where $a$ and $b$ are promoted to being elements of $\N \subset \Z$.
+    Let us run with the following amusing example in every day life:
     
-    This allows to define a map which now takes in the only relevant information which determines if the lights are on or not,
+    Suppose the lights are on in a room and suppose Bob asks Alice what would happen should he press the light switch $n \in \N$ times. It then occurs to
+    Alice that in this setting pressing the light switch on $12$ times or $1400$ times, or for that matter, any even number of times yields to indistinguishable outcomes,
+     the lights will be on; so in a sense the elements belonging to the set of even numbers are indistinguishable from each other, 
+     what is more is that we are not interested in so much the number but the parity of the number.
+
+    In this particular example, we defined a map $\psi : \N \rightarrow \{\text{On}, \; \text{Off}\}$ where we realised
+    that both $12$ and $1400$ and all even natural numbers seem to behave equivalently under this map if and only if their difference is an even integer,
+    that is, $a \sim b$ if and only if $a - b \in 2\Z$ where $a$ and $b$ are promoted to being elements of $\N \subset \Z$.    
+    
+    Given this map $\psi$ behaves the same on all elements which are indistinguishable, it seems natural to 
+    define a map which now takes in the only relevant information which determines if the lights are on or not,
     the parity of the number of times the light switch has been pressed.
     
     \[
-    \psi : \N / \sim \rightarrow \{\text{On}, \; \text{Off}\}
+    \bar{\psi} : \N / \sim \rightarrow \{\text{On}, \; \text{Off}\}
     \]
 
-    The quotient on $\N$ now allows us to say that $[12] = [1400]$ and our new map $\bar{f}$ now recognises that these numbers are the same
-    under this new light.
+    The quotient on $\N$ now allows us to say treat $[12] = [1400]$ and our new map $\bar{\psi}$ now recognises that these numbers are the same
+    under this new light. 
 
-    The upshot of all of this is that when we define a quotient and a map from the quotient, we ultimately want such a function to respect the equivalence relation. Whether the elements of a quotient are
-    modelled as a coset, a set of equivalent elements, or as an abstract object which satisfies our needs should not be a problem. 
-    This is what the definition of quotients in Lean recognises, it would turn out to be rather strange to think of a term of a quotient type as a set, it would be rather clunky to work with; instead
-    one simply modifies the definition of equality, and in particular, when wanting to define in Lean the lift of an existing homomorphism $\gamma : G \rightarrow H$
-    to $\bar{\gamma} : G/N \rightarrow H$, the most natural way to verify such a lift is sensible in Lean is to prove that equivalent elements map to the same output under $\gamma$.
+    However, we could have also phrased this observation as saying that $\psi$ respects the equivalence relation on $\sim$ and
+    thus have defined a $\bar{\psi}$ to be the map which given the parity, an element of $\N / \sim = \{[0], [1]\}$ outputs whether the light is on or off. 
 
-    In fact, this is exactly what \texttt{Quot.lift} does:
+    The upshot of all of this is that when we define a quotient and a map from a quotient, we ultimately want such a function to respect the equivalence relation. Whether the elements of a quotient are
+    modelled as a coset, a set of equivalent elements, or as an abstract object which satisfies our needs should not be the main concern. 
+
+    This is what the definition of quotients in Lean recognises, but it also recognises that it would be rather strange to think of a term of a quotient type as a set, since it would be rather clunky to work with; 
+    instead one simply modifies the definition of equality, and in particular, when wanting to define in Lean the lift of an existing homomorphism $\gamma : G \rightarrow H$
+    to $\bar{\gamma} : G/N \rightarrow H$, the most natural way to define/verify such a lift is sensible in Lean is to prove that equivalent elements map to the same output under $\gamma$.
+
+    In fact, this is exactly what the general \texttt{Quot.lift} does:
 
     \begin{footnotesize}
     \begin{verbatim}
-        Quot.lift.{u, v} {α : Sort u} {r : α → α → Prop} {β : Sort v} 
+        Quot.lift.{u, v} 
+          {α : Sort u} {r : α → α → Prop} {β : Sort v} 
         (f : α → β) (a : ∀ (a b : α), r a b → f a = f b) : Quot r → β
     \end{verbatim}
     \end{footnotesize}
 
-    Similarly, \texttt{QuotientGroup.lift}, i.e the universal property for factor groups, corresponds to:
+    Similarly, \texttt{QuotientGroup.lift}, the universal property for factor groups, corresponds to:
 
     \begin{footnotesize}
     \begin{verbatim}
-        QuotientGroup.lift.{u, x} {G : Type u} [Group G] (N : Subgroup G) [nN : N.Normal] {M : Type x} [Monoid M] (φ : G →* M)
-        (HN : N ≤ φ.ker) : G ⧸ N →* M
+        QuotientGroup.lift.{u, x} {G : Type u} [Group G] (N : Subgroup G) 
+          [nN : N.Normal] {M : Type x} [Monoid M] (φ : G →* M)
+          (HN : N ≤ φ.ker) : G ⧸ N →* M
     \end{verbatim}
     \end{footnotesize}
 
-    From these definitions one can see that there is no trace whatsoever to cosets. That being said it is still possible to formalise a such a definition in a way that is akin to the notion of well-definedness, 
+    From this last definition one can see that there is no trace whatsoever to cosets. It is still possible to formalise a such a
+    definition in a way that is akin to the notion of well-definedness, which is closer to the model of quotients as sets of subsets,
     since one can for example invoke \texttt{Quotient.exists_rep} which states:
 
     \begin{footnotesize}
     \begin{verbatim}
-        Quotient.exists_rep.{u} {α : Sort u} {s : Setoid α} (q : Quotient s) : ∃ a, ⟦a⟧ = q
+        Quotient.exists_rep.{u} 
+          {α : Sort u} {s : Setoid α} (q : Quotient s) : ∃ a, ⟦a⟧ = q
     \end{verbatim}
     \end{footnotesize}    
     
-    In fact, some of the theorems and definitions below heavily rely on this notion. Yet it becomes useful later on to come to terms with this model of quotients and their maps, objects that satisfy the universal property.
+    In fact, some of the theorems and definitions below heavily rely on this notion.
+    Yet it becomes extremely useful later on to come to terms with this model of quotients and their maps which
+    hinges on the universal property.
     \end{remark}
 
-Before we can show that $\bar{\varphi}$ is surjective we need the following lemma which allows us to find a suitable representative for an arbitrary element of $\PGL_n(F)$.
+Before we can show that $\bar{\varphi}$ is surjective we need the following
+lemma which allows us to find a suitable representative for an arbitrary element of $\PGL_n(F)$.
 
 \begin{lemma}
 \label{exists_SL_eq_scaled_GL_of_IsAlgClosed}
@@ -291,7 +308,7 @@ By assumption $F$ is algebraically closed and $\det(G) \in F^\times$ thus there 
 Let $S = \frac{1}{\alpha} \cdot G$, by construction $S \in \SL_n(F)$ as 
 
 \begin{equation*}
-    \det(S) = \left(\frac{1}{\alpha}\right) \cdot \det(G) = \frac{1}{\det(G)} \det(G) = 1
+    \det(S) = \left(\frac{1}{\alpha^n}\right) \cdot \det(G) = \frac{1}{\det(G)} \det(G) = 1
 \end{equation*}
 \end{proof}
 \begin{footnotesize}
@@ -391,7 +408,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
 \uses{Injective_PSL_monoidHom_PGL, Surjective_PSL_monoidHom_PGL}
 \leanok
  We have shown that $\bar{\varphi}$ is injective in \ref{Injective_PSL_monoidHom_PGL} and have shown that $\bar{\varphi}$ is surjective in \ref{Surjective_PSL_monoidHom_PGL}. 
- Therefore,$\bar{\varphi}$ defines a bijection from $\PSL_n(F)$ to $\PGL_n(F)$.
+ Therefore, $\bar{\varphi}$ defines a bijection from $\PSL_n(F)$ to $\PGL_n(F)$.
 \end{proof}
 \begin{footnotesize}
 \begin{verbatim}
@@ -446,18 +463,20 @@ noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Field F
 % \end{center}
 % \end{proof}
 
-This isomorphism will be essential to the classification of finite subgroups of $\PGL_2(\bar{\F}_p)$, as we only need understand a the classification of subgroups of $\PSL_2(F)$ structure to reach our desired result.
+This isomorphism will be essential to the classification of finite subgroups of $\PGL_2(\bar{\F}_p)$, as we only need understand a the classification of subgroups of $\PSL_2(\Fbar_p)$ to reach the desired result.
 
 
 \section{Christopher Butler's exposition}
 
 Following from the isomorphism defined in the previous section, we can now proceed to classify the finite subgroups of $\PGL_2(\bar{\F}_p)$ by classifying the finite subgroups of $\PSL_2(\bar{\F}_p)$. 
-In turn, one can begin classifying the finite subgroups of $\PSL_2(\Fbar_p)$ by classifying the finite subgroups of $\SL_2(\Fbar_p)$ and then considering what happens after quotienting by the center, $Z(\SL_2(F)) = \langle -I\rangle$.
+In turn, one can begin classifying the finite subgroups of $\PSL_2(\Fbar_p)$ by classifying the finite subgroups of $\SL_2(\Fbar_p)$ and then considering what happens after
+quotienting by the center, $Z(\SL_2(F)) = \langle -I\rangle$.
 
 We now turn our attention to the more general setting when $F$ is an arbitrary field that is algebraically closed, as this will turn out to be sufficient for our purposes.
 
-Given $|\langle -I \rangle| = 2$ when $\textrm{char} F \ne 2$ and $\langle -I\rangle = \bot$ when $\textrm{char} F = 2$.
-When a finite subgroup of $\SL_2(F)$ is sent through the canonical mapping $\pi_{Z(\SL_2(F))} : \SL_2(F) \rightarrow \PSL_2(F)$ the resulting subgroup will at most shrink by a factor of two or remain intact should the center not be contained within the subgroup. 
+Given $|\langle -I \rangle| = 2$ when $\textrm{char} F \ne 2$; and $\langle -I\rangle = \bot$ when $\textrm{char} F = 2$.
+When a finite subgroup of $\SL_2(F)$ is sent through the canonical mapping $\pi_{Z(\SL_2(F))} : \SL_2(F) \rightarrow \PSL_2(F)$ 
+the resulting subgroup will either shrink by a factor of two or it will remain intact should the center not be contained within the subgroup. 
 
 We now proceed to classify all finite subgroups of $\SL_2(F)$ when $F$ is algebraically closed field. 
 From now on, we follow Christopher Butler's exposition of Dickson's classification of finite subgroups of $\SL_2(F)$ over an algebraically closed field $F$. 

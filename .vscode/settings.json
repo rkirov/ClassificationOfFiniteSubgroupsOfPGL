@@ -9,9 +9,12 @@
         "Frobenius",
         "Injective",
         "mathlib",
+        "Monic",
         "monomorphism",
         "noncenter",
         "realised",
-        "sublattice"
+        "sublattice",
+        "surjective",
+        "Sylow"
     ]
 }

@@ -263,7 +263,11 @@
 <h1 id="Ch1_AbstractAndAcknowledgements">1 Abstract and Summary</h1>
 
 <h1 id="a0000000003">1.1 Acknowledgements</h1>
-<p>I would to thank my supervisor Prof. David Jordan for his invaluable support and guidance throughout the project; Christopher Butler for providing the TeX code so I could easily set up the blueprint, and hopefully, improve and add to his amazing exposition of <b class="bfseries">Dickson’s Classification Theorem</b>. </p>
+<p>I would to thank my supervisor Prof. David Jordan for his invaluable support and guidance throughout the project; Christopher Butler for providing the TeX code so I could easily set up the blueprint, and hopefully, improve and add to his amazing exposition of <b class="bfseries">Dickson’s Classification Theorem</b> <span class="cite">
+	[
+	<a href="sect0001.html#butler" >1</a>
+	]
+</span>. </p>
 <p>I would also like to thank Prof. Kevin Buzzard for his support, patience and guidance throughout the project. His advice and comments on how I should go about formalising mathematics have been of utmost value. </p>
 <p>Finally, I would like to thank the many members of the Lean Zulip community who have provided insightful ideas and comments that have helped me progress much faster than otherwise, this also includes assistance with technical issues with setting up the blueprint and so forth. I am grateful to: </p>
 <ul class="itemize">
@@ -296,6 +300,17 @@
 <h1 id="a0000000004">1.2 Summary</h1>
 <p>The primary aim of this project is to present the ongoing formalisation of the classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) in the Lean proof assistant. This result fits into to the much larger and more ambitious project of formalising Fermat’s Last Theorem <a href ="https://imperialcollegelondon.github.io/FLT/blueprint/">FLT</a> in Lean, an effort being led by Prof. Kevin Buzzard at Imperial College London. In fact, this theorem corresponds to theorem 12.7 in <a href ="https://imperialcollegelondon.github.io/FLT/blueprint/ch_bestiary.html">Appendix</a>. Furthermore, another goal of this project is to serve as a Rosetta stone for how informal mathematics corresponds to formal mathematics; the hope is that the blueprint will serve as an example of how late undergraduate mathematics is formalised using <span class="ttfamily">mathlib</span>, the mathematics library of Lean. A pleasant outcome of presenting both the informal and formal mathematics alongside into one cohesive website is that it allows to new ways of presenting mathematics, where the informal and formal mathematics complement each other. </p>
 <h1 id="a0000000005">1.3 How to read this blueprint</h1>
+<p>The general layout of the blueprint is: </p>
+<ol class="enumerate">
+  <li><p>Statement of Definition/Theorem/Lemma/Corollary </p>
+</li>
+  <li><p>Proof where relevant. </p>
+</li>
+  <li><p>Formalisation of the statement of the Definition/Theorem/Lemma/Corollary and proof. </p>
+</li>
+  <li><p>Further remarks on the formalisation where relevant. </p>
+</li>
+</ol>
 <h2 id="a0000000006">1.3.1 Navigating the blueprint</h2>
 <p>The main distinctions are due to the interactive side of this blueprint: </p>
 <ul class="itemize">
@@ -319,7 +334,7 @@
 <ol class="enumerate">
   <li><p>Displays only definitions and statements of theorems. </p>
 </li>
-  <li><p>Displays definitions, statements, accompanying text and allows to toggle proofs being displayed or being hidden always </p>
+  <li><p>Displays definitions, statements, accompanying text and allows to toggle proofs being displayed or being hidden always. </p>
 </li>
   <li><p>Displays defintions, statements, accompanying text and proofs. </p>
 </li>
@@ -353,18 +368,29 @@
 <h3 id="a0000000009">The dependency graph</h3>
 <p>To the left of the website there should be an index which lists out the chapters of this blueprint which will eventually contain all proofs and intermediate formal statements necessary to prove the overarching claim. But, in addition to the index of chapters and bibliography there is an entry for the <span class="ttfamily">Dependency graph</span>. </p>
 <p>This will display a directed acyclic graph which demonstrates how all relevant definitions and statements feed into each to produce the final claim. </p>
+<p><b class="bfseries">Note</b> the dependency graph and icons to the bottom right are only visible if the html page is launched on a local server since having otherwise would be a security hazard. </p>
+<p>If the reader wishes to see the dependency graph and the icons (the icons are still functional despite not being visible), the reader should run <span class="ttfamily">python3 -m http.server</span> within the folder which contains the HTML for these pages (assumes a python installation). </p>
+<figure >
+  <p><img src="images/img-0001.png" alt="\includegraphics[width=0.8\textwidth ]{dependencygraph.png}" style="width:0.8" />
+ </p>
+
+</figure>
 <h2 id="a0000000010">1.3.3 Distinguishing my work from Christopher Butler’s work</h2>
 <p>Naturally, the largest bulk of my original work in this project consists of the formalisation of mathematics since Christopher Butler has kindly provided the TeX for his original master’s thesis exposition on the classification of finite subgroups of \(\operatorname{SL}_2(F)\). Bear in mind, the goal of the formalisation is this classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}})\), it turns out the classifications problems are tightly related and this is why a lot of Christopher Butler’s work is reused here. </p>
-<p>Nonetheless, it may be surprising to understand that so far I having formalised around two thirds of the exposition alognside additional results relevant to concrete goal for formalising Fermat’s Last Theorem. It turns out, that so far there is a rough correspondence for two lines of code/formal mathematics per one line of informal/pen-and-paper mathematics. That is to say, if 50 lines of code were displayed per page, all the code I have written would constitute a total of around 86 pages, since there are 4344 lines of Lean. </p>
+<p>Nonetheless, it may be surprising to understand that so far, around two thirds of the exposition alongside additional results relevant to concrete goal for formalising Fermat’s Last Theorem have been formalised. </p>
+<p>It turns out, that so far there is a rough correspondence for two lines of code/formal mathematics per one line of informal/pen-and-paper mathematics. That is to say, if 50 lines of code were displayed per page, all the code written would constitute a total of around 86 pages, since there are 4344 lines of Lean. </p>
 <p>Moreover, on the basis of academic integrity I provide a rough overview of what constitutes my work and what constitutes Christopher Butler’s work. </p>
 <ul class="itemize">
   <li><p>My work: </p>
-<p>Chapter 2, Chapter 4, Chapter 6 </p>
+<p>All the <span class="ttfamily">verbatim</span> environments which contain Lean code is my original contribution. </p>
+<p>Chapter 2 and Chapter 4 constitute my work completely; a lot of the structure and set up for Chapter 6 is my work since the original argument turned out to be not easily formalisable; Chapter 5 includes many intermediate lemmas relevant to the classification of elements of \(\operatorname{SL}_2(F)\) up to conjugation. </p>
 </li>
   <li><p>Christopher Butler’s work: </p>
+<p>Aside from the Lean code displayed in Chapter 3 and Chapter 7, these chapters are primarily Christopher Butler’s work. Aside from when the embedding of \(\mathbb {F}_{p^n}\) into \(\mathbb {F}_{p^{2n}}\) and the group presentation for the dihedral group were defined in Chapter 7. </p>
 <p>Aside from particular points where I have completely modified the approach to prove a particular statement, most proofs belong to Christopher Butler’s exposition. </p>
-<p>Part of the intention of this is to highlight how the formal proof differs from the original informal proof;I have tried at every stage to follow the argument within Christopher Butler’s exposition. Therefore, it is my hope that comparing the informal and formal mathematics side by side should be interesting to the reader. </p>
-<p>There are parts where I have had to stray from the original path: </p>
+<p>Part of the intention of this is to highlight how the formal proof differs from the original informal proof; I have tried at every stage to follow the argument within Christopher Butler’s exposition. </p>
+<p>Therefore, it is the hope that comparing the informal and formal mathematics side by side should be interesting to the reader. </p>
+<p>There are parts where the arguments have had to stray from the original path: </p>
 <ul class="itemize">
   <li><p>When classifying elements of \(\operatorname{SL}_2(F)\) up to conjugacy. </p>
 </li>
@@ -372,10 +398,10 @@
 </li>
   <li><p>When formalising arguments which hinge on the complete lattice structure of subgroups. </p>
 </li>
-  <li><p>When formalizing the maximal abelian subgroup class equation. </p>
+  <li><p>When formalizing the maximal abelian subgroup class equation which hinge on defining a suitable quotient and the corresponding lifts rather than working with indexing sets. </p>
 </li>
 </ul>
-<p>Often, I have broken up theorems into smaller lemmas to allow mapping Lean lemmas one-to-one with the corresponding lemma. This has often meant I have to define and prove intermediate definitions and theorems or prove particular statements more explicitly, and other terms, more generally. </p>
+<p>Often, large theorems have been broken up into smaller lemmas to allow mapping Lean lemmas one-to-one with the corresponding lemmas. This has often meant that intermediate definitions and theorems have been defined and proven more explicitly; and in some cases, in more general terms. </p>
 </li>
 </ul>
 <h1 id="a0000000011">1.4 Christopher Butler’s acknowledgements and popular science summary</h1>
