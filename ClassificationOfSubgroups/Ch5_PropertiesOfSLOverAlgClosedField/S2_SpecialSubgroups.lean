@@ -572,7 +572,6 @@ instance : Finite (center SL(2,F)) := by
 
 lemma card_Z_eq_two_of_two_ne_zero [NeZero (2 : F)]: Nat.card (Z F) = 2 := by
   rw [Nat.card_eq_two_iff]
-  -- have neg_one_mem_Z : (-1 : SL(2,F)) ∈ Z F := by simp [Z]
   use 1, ⟨-1, neg_one_mem_Z⟩
   split_ands
   · intro h

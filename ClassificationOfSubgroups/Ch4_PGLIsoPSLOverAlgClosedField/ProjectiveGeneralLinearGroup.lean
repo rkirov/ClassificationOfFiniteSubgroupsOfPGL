@@ -300,6 +300,8 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
   -- by definition these equivalence classes are the same
   rfl
 
+#check QuotientGroup.lift
+
 theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
   [Field F] [IsAlgClosed F] :  Bijective (PSL_monoidHom_PGL n F) := by
   refine ⟨?injective, ?surjective⟩

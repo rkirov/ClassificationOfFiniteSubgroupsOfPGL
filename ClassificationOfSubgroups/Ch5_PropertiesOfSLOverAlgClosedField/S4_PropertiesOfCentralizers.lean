@@ -17,7 +17,7 @@ variable
   {G : Type u} [Group G]
 
 /- Proposition 1.6.ii C_L(± s σ) = T × Z where σ ≠ 0 -/
-def centralizer_s_eq_SZ {σ : F} (hσ : σ ≠ 0) : centralizer { s σ } = SZ F := by
+theorem centralizer_s_eq_SZ {σ : F} (hσ : σ ≠ 0) : centralizer { s σ } = SZ F := by
   ext x
   constructor
   · intro hx

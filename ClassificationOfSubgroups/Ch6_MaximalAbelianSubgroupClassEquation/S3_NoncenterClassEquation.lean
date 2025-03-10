@@ -77,7 +77,8 @@ instance lift_noncenter_MaximalAbelianSubgroupsOf {F : Type*} [Field F] (G : Sub
 Define $C (A)^* = \bicup_{x \in G} x A^*  x^{-1}$
 -/
 def noncenter_C {F : Type*} [Field F] (G : Subgroup SL(2,F)) [Finite G] :
-  noncenter_MaximalAbelianSubgroupsOf G → Set SL(2,F) := fun A => ⋃ x ∈ G, conj x • A.val
+  noncenter_MaximalAbelianSubgroupsOf G → Set SL(2,F) :=
+    fun A => ⋃ x ∈ G, conj x • A.val
 
 lemma noncenter_C_eq_of_related {F : Type*} [Field F] (G : Subgroup SL(2,F)) [Finite G] :
  (∀ (A B : (noncenter_MaximalAbelianSubgroupsOf G)),

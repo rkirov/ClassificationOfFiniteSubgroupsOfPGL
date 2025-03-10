@@ -280,13 +280,14 @@ theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ} 
   Isomorphic G (PSL (Fin 2) (𝕂))
   ∨
   Isomorphic G (PGL (Fin 2) (𝕂)) := by
-  let CharFpbar : CharP (AlgebraicClosure (ZMod p)) p := by infer_instance
-  refine Or.elim (em' (p ∣ Nat.card G)) ?caseI ?caseII
-  case caseII =>
-    intro p_dvd_card_G
-    -- rcases dickson_classification_theorem_class_II (AlgebraicClosure (ZMod p)) _ _ p _ _ p_dvd_card_G
     sorry
-  case caseI =>
-    sorry
+  -- let CharFpbar : CharP (AlgebraicClosure (ZMod p)) p := by infer_instance
+  -- refine Or.elim (em' (p ∣ Nat.card G)) ?caseI ?caseII
+  -- case caseII =>
+  --   intro p_dvd_card_G
+  --   -- rcases dickson_classification_theorem_class_II (AlgebraicClosure (ZMod p)) _ _ p _ _ p_dvd_card_G
+  --   sorry
+  -- case caseI =>
+  --   sorry
 
 #min_imports

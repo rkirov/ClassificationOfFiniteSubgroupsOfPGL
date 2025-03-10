@@ -2,7 +2,7 @@
 
 \section{What is the formalisation of mathematics?}
 
-formalisation of mathematics is the art of teaching a computer what a piece of mathematics means.
+Formalisation of mathematics is the art of teaching a computer what a piece of mathematics means.
 
 That is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. 
 
@@ -42,21 +42,28 @@ it is possible for any $r,s \in R$ to find a unique linear combination which is 
 
 In \texttt{mathlib}, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
 
-% \begin{verbatim}
-% def xgcdAux (r s t r' s' t' : R) : R × R × R :=
-% if _hr : r = 0 then (r', s', t')
-% else
-%   let q := r' / r
-%   have _ := mod_lt r' _hr
-%   xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
-% termination_by r
-% \end{verbatim}
+\begin{footnotesize}
+\begin{verbatim}
+def xgcdAux (r s t r' s' t' : R) : R × R × R :=
+if _hr : r = 0 then (r', s', t')
+else
+  let q := r' / r
+  have _ := mod_lt r' _hr
+  xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
+termination_by r
+\end{verbatim}
+\end{footnotesize}
 
-It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless, and it is known as the \textbf{Curry-Howard correspondence} where formulas correspond to \textit{types}, which correspond to the notion of a specification, 
-proofs for formulas correspond to constructing a term of the corresponding type and so forth. In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. 
+It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless.
+
+The correspondence is known as the \textbf{Curry-Howard correspondence} where formulas correspond to \textit{types}, which correspond to the notion of a specification, 
+proofs for formulas correspond to constructing a term of the corresponding type and so forth. 
+
+In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a corresponding type system which express the valid rules for programs. 
+
 For our purposes, we will not provide a deep overview of this fundamental correspondence, but rather we will illustrate the core principle with a suitable example.
 
-Furthermore, within the block of Lean code there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. the following example hopes to
+Furthermore, within the block of Lean code above there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. the following example hopes to
 illustrate a simpler example and give an overview of how to:
 
 \begin{itemize}
@@ -65,11 +72,13 @@ illustrate a simpler example and give an overview of how to:
     \item Formalise the mathematical statement using Lean tactics.
 \end{itemize}
 
-Loosely speaking, a \texttt{tactic} in Lean is a me
+Note that in the list Lean tactics are mentioned. Loosely speaking, a \texttt{tactic} is a Lean metaprogram that will write Lean programs, these (non-meta) programs can
+be the usual code one would write for an algorithm or it could be the program which corresponds to the proof term that one needs to construct to formalise
+a statement in Lean. Examples of tactics and how they are used will be illustrated in the following example.
 
 \begin{example}[Proving and formalising the sum of the first $n$ odd integers]
     To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs 
-    for why the sum of the first $n$ odd integers equals the $n$\textsuperscript{th} square. That is, we will prove and formalise:
+    for why the sum of the first $n$ odd integers equals the $n$th square. That is, we will prove and formalise:
 
     \begin{equation}
         \label{ih}
@@ -109,11 +118,13 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
 
     where in Lean that naturals numbers include zero.
 
-    % \begin{verbatim}
-    %     def sum_of_n_odd : ℕ → ℕ
-    %         | 0 => 0
-    %         | n + 1 => sum_of_n_odd n + (2*n + 1)
-    % \end{verbatim}
+\begin{footnotesize}
+\begin{verbatim}
+        def sum_of_n_odd : ℕ → ℕ
+             | 0 => 0
+             | n + 1 => sum_of_n_odd n + (2*n + 1)
+\end{verbatim}
+\end{footnotesize}
 
     This definition of summing the odd numbers is equivalent up to reindexing to the definition above. The reason we do not use subtraction is because
     the natural numbers are a commutative semiring, in particular, it does not always make sense to subtract one from a natural number, the predecessor of
@@ -133,27 +144,30 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
     We will walk through the formal proof after providing the Lean code
 
 
-    % \begin{verbatim}
-    %     theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : sum_of_first_n_odd_nat n = n * n := by
-    %         induction n
-    %         -- Prove the base case.
-    %         case zero =>
-    %             rw [mul_zero, sum_of_first_n_odd_nat]
-    %         -- Prove the induction step.
-    %         case succ m hm =>
-    %             rewrite [sum_of_first_n_odd_nat]
-    %              -- Apply the induction hypothesis
-    %             rewrite [hm]
-    %             -- Multiply out the square of sum
-    %             rewrite [add_mul_self_eq]
-    %             -- We finish it off by hand
-    %             rewrite [mul_one, mul_one, add_assoc]
-    %             rfl
-    %             done
-    % \end{verbatim}
+    \begin{footnotesize}
+    \begin{verbatim}
+        theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : sum_of_first_n_odd_nat n = n * n := by
+            induction n
+            -- Prove the base case.
+            case zero =>
+                rw [mul_zero, sum_of_first_n_odd_nat]
+            -- Prove the induction step.
+            case succ m hm =>
+                rewrite [sum_of_first_n_odd_nat]
+                 -- Apply the induction hypothesis
+                rewrite [hm]
+                -- Multiply out the square of sum
+                rewrite [add_mul_self_eq]
+                -- We finish it off by hand
+                rewrite [mul_one, mul_one, add_assoc]
+                rfl
+                done
+    \end{verbatim}
+    \end{footnotesize}
 
-    after the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}, it is possible to
+    After the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}, it is possible to
     define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \textit{tactic mode}.
+
     As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics
     in Lean; to enter tactic mode one must begin the proof with the \texttt{by} tactic. Furthermore, using tactic mode allows access to an extremely useful
     interactive \textit{infoview} which displays the objects at play in the proof, the assumptions on the objects, the state of the proof
@@ -170,13 +184,14 @@ Loosely speaking, a \texttt{tactic} in Lean is a me
         \item The induction step: \texttt{sum\_of\_first\_n\_odd\_nat (m + 1) = (m + 1) * (m + 1)}
     \end{enumerate}
 
-    the \texttt{case} tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label \textit{zero} to prove the base case;
+    The \texttt{case} tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label \textit{zero} to prove the base case;
     then we focus in on the induction step by typing \texttt{case succ m hm} which also introduces two new objects into the proof context, the natural number $m$ and the assumption
     on \texttt{m} which says that $m$ satisfies the induction hypothesis, \texttt{sum\_of\_first\_n\_odd\_nat m = m * m}. We then proceed to use the rewrite tactic, \texttt{rewrite},
     which allows to replace equal or logically equivalent terms, so if you have the theorem \texttt{h : a = b}, then \texttt{rw [h]} will replace every ocurrence of \texttt{a} in the goal
     for a \texttt{b}, in the new modified goal.
 
-    Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation.
+    Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation. Typically, one
+    uses the \texttt{rw} tactic which is a combination of \texttt{rewrite} followed by \texttt{rfl}.
 
     Theorems and lemmas in Lean are given an identifier by which to access through, for example, the theorem \texttt{add\_mul\_self\_eq} states that for all $a, b \in S$ where $S$ is a semiring
     we have that \texttt{(a + b) * (a + b) = a * a + 2 * a * b + b * b}.

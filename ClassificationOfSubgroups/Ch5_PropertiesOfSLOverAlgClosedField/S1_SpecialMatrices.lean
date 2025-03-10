@@ -24,7 +24,7 @@ lemma SpecialLinearGroup.fin_two_ext (A B : SL(2,R))
 
 namespace SpecialMatrices
 
-def s (σ : F): SL(2,F) :=
+def s (σ : F) : SL(2,F) :=
   ⟨!![1, 0; σ, 1], by simp⟩
 
 section Shear
@@ -55,21 +55,22 @@ lemma inv_neg_t_eq (σ : F) : (- s σ)⁻¹ = - s (-σ) := by
 
 -- (ii)
 @[simp]
-lemma s_mul_s_eq_s_add (σ μ : F) : s σ * s μ = s (σ + μ) := by ext <;> simp [s]
+lemma s_mul_s_eq_s_add (σ μ : F) : s σ * s μ = s (σ + μ) := by
+  ext <;> simp [s]
 
 @[simp]
 lemma s_pow_eq_s_mul (σ : F) (n : ℕ) : (s σ)^n = s (n • σ) := by
   induction n
-  case zero => simp
+  case zero => simp only [pow_zero, zero_smul, s_zero_eq_one]
   case succ k hk =>
-    simp [pow_add, hk]
+    simp only [pow_add, hk, nsmul_eq_mul, pow_one, s_mul_s_eq_s_add, Nat.cast_add, Nat.cast_one]
     congr
     ring
 
 lemma order_s_eq_char {p : ℕ} [hp : Fact (Nat.Prime p)] [hC : CharP F p]
   (σ : F) (hσ : σ ≠ 0) : orderOf (s σ) = p := by
   refine orderOf_eq_prime ?hg ?hg1
-  · simp
+  · simp only [s_pow_eq_s_mul, nsmul_eq_mul, CharP.cast_eq_zero, zero_mul, s_zero_eq_one]
   · contrapose! hσ
     exact (s_eq_one_iff σ).mp hσ
 
@@ -80,7 +81,7 @@ section Diagonal
 /-
 The diagonal matrix with $\delta \in F^\times$ as the top left entry.
 -/
-def d {F : Type*} [Field F] (δ : Fˣ) : SL(2, F) :=
+def d (δ : Fˣ) : SL(2, F) :=
   ⟨!![(δ : F), (0 : F); (0 :F) , (δ⁻¹ : F)], by norm_num⟩
 
 @[simp]
@@ -111,7 +112,8 @@ lemma d_0_0_is_unit (δ : Fˣ) : IsUnit ((d δ) 0 0) := by simp [d]
 
 -- (i)
 @[simp]
-lemma d_mul_d_eq_d_mul (δ ρ : Fˣ) : d δ * d ρ = d (δ * ρ) := by ext <;> simp [d, mul_comm]
+lemma d_mul_d_eq_d_mul (δ ρ : Fˣ) : d δ * d ρ = d (δ * ρ) := by
+  ext <;> simp [d, mul_comm]
 
 end Diagonal
 
@@ -129,7 +131,7 @@ lemma s_eq_d_iff {δ : Fˣ} {σ : F} : d δ = s σ ↔ δ = 1 ∧ σ = 0 := by
 section Rotation
 
 -- Defines the matrix which corresponds to a rotation by `π / 2` radians
-def w {F : Type*} [Field F] : SL(2, F) :=
+def w : SL(2, F) :=
   ⟨!![0,1;-1,0], by norm_num⟩
 
 @[simp]

@@ -179,7 +179,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000035"><span class="toc_ref">5.3</span> <span class="toc_entry">The Centre of \(\operatorname{SL}_2(F)\)</span></a>
+  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000035"><span class="toc_ref">5.3</span> <span class="toc_entry">The Center of \(\operatorname{SL}_2(F)\)</span></a>
  </li>
 <li class="">
   <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000036"><span class="toc_ref">5.4</span> <span class="toc_entry">Conjugacy of the Elements of \(\operatorname{SL}_2(F)\)</span></a>
@@ -263,8 +263,7 @@
 <h1 id="Ch1_AbstractAndAcknowledgements">1 Abstract and Summary</h1>
 
 <h1 id="a0000000003">1.1 Acknowledgements</h1>
-<p>I thank my supervisor Prof. David Jordan for his invaluable support and guidance throughout the project, </p>
-<p>I would also like to thank Christopher Butler for providing the TeX code so I could easily set up the blueprint, and hopefully, improve and add to his amazing exposition of <b class="bfseries">Dickson’s Classification Theorem</b>. </p>
+<p>I would to thank my supervisor Prof. David Jordan for his invaluable support and guidance throughout the project; Christopher Butler for providing the TeX code so I could easily set up the blueprint, and hopefully, improve and add to his amazing exposition of <b class="bfseries">Dickson’s Classification Theorem</b>. </p>
 <p>I would also like to thank Prof. Kevin Buzzard for his support, patience and guidance throughout the project. His advice and comments on how I should go about formalising mathematics have been of utmost value. </p>
 <p>Finally, I would like to thank the many members of the Lean Zulip community who have provided insightful ideas and comments that have helped me progress much faster than otherwise, this also includes assistance with technical issues with setting up the blueprint and so forth. I am grateful to: </p>
 <ul class="itemize">
@@ -282,6 +281,8 @@
 </li>
   <li><p>Andrew Yang </p>
 </li>
+  <li><p>Patrick Massot </p>
+</li>
   <li><p>Johan Commelin </p>
 </li>
   <li><p>Scott Carnahan </p>
@@ -291,6 +292,7 @@
   <li><p>Aron Liu </p>
 </li>
 </ul>
+<p>I apologise if I have forgotten to include any names. </p>
 <h1 id="a0000000004">1.2 Summary</h1>
 <p>The primary aim of this project is to present the ongoing formalisation of the classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) in the Lean proof assistant. This result fits into to the much larger and more ambitious project of formalising Fermat’s Last Theorem <a href ="https://imperialcollegelondon.github.io/FLT/blueprint/">FLT</a> in Lean, an effort being led by Prof. Kevin Buzzard at Imperial College London. In fact, this theorem corresponds to theorem 12.7 in <a href ="https://imperialcollegelondon.github.io/FLT/blueprint/ch_bestiary.html">Appendix</a>. Furthermore, another goal of this project is to serve as a Rosetta stone for how informal mathematics corresponds to formal mathematics; the hope is that the blueprint will serve as an example of how late undergraduate mathematics is formalised using <span class="ttfamily">mathlib</span>, the mathematics library of Lean. A pleasant outcome of presenting both the informal and formal mathematics alongside into one cohesive website is that it allows to new ways of presenting mathematics, where the informal and formal mathematics complement each other. </p>
 <h1 id="a0000000005">1.3 How to read this blueprint</h1>
@@ -354,13 +356,15 @@
 <h2 id="a0000000010">1.3.3 Distinguishing my work from Christopher Butler’s work</h2>
 <p>Naturally, the largest bulk of my original work in this project consists of the formalisation of mathematics since Christopher Butler has kindly provided the TeX for his original master’s thesis exposition on the classification of finite subgroups of \(\operatorname{SL}_2(F)\). Bear in mind, the goal of the formalisation is this classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}})\), it turns out the classifications problems are tightly related and this is why a lot of Christopher Butler’s work is reused here. </p>
 <p>Nonetheless, it may be surprising to understand that so far I having formalised around two thirds of the exposition alognside additional results relevant to concrete goal for formalising Fermat’s Last Theorem. It turns out, that so far there is a rough correspondence for two lines of code/formal mathematics per one line of informal/pen-and-paper mathematics. That is to say, if 50 lines of code were displayed per page, all the code I have written would constitute a total of around 86 pages, since there are 4344 lines of Lean. </p>
-<p>Moreover, on the basis of academic integrity I provide an overview of what constitutes my work and what constitutes Christopher Butler’s work. </p>
+<p>Moreover, on the basis of academic integrity I provide a rough overview of what constitutes my work and what constitutes Christopher Butler’s work. </p>
 <ul class="itemize">
   <li><p>My work: </p>
 <p>Chapter 2, Chapter 4, Chapter 6 </p>
 </li>
   <li><p>Christopher Butler’s work: </p>
-<p>Aside from particular points where I have completely modified the approach to prove a particular statement, most proofs belong to Christopher Butler’s exposition. Part of the intention of this is to highlight how the formal proof differs from the original informal proof, at every stage I have tried to faithfully follow Christopher Butler’s proof. Therefore, it should be interesting to observe how the formal proof may or may not be similar to the informal proof. There are parts where I have had to stray from the original path: </p>
+<p>Aside from particular points where I have completely modified the approach to prove a particular statement, most proofs belong to Christopher Butler’s exposition. </p>
+<p>Part of the intention of this is to highlight how the formal proof differs from the original informal proof;I have tried at every stage to follow the argument within Christopher Butler’s exposition. Therefore, it is my hope that comparing the informal and formal mathematics side by side should be interesting to the reader. </p>
+<p>There are parts where I have had to stray from the original path: </p>
 <ul class="itemize">
   <li><p>When classifying elements of \(\operatorname{SL}_2(F)\) up to conjugacy. </p>
 </li>

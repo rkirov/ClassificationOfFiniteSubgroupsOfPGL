@@ -179,7 +179,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000035"><span class="toc_ref">5.3</span> <span class="toc_entry">The Centre of \(\operatorname{SL}_2(F)\)</span></a>
+  <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000035"><span class="toc_ref">5.3</span> <span class="toc_entry">The Center of \(\operatorname{SL}_2(F)\)</span></a>
  </li>
 <li class="">
   <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#a0000000036"><span class="toc_ref">5.4</span> <span class="toc_entry">Conjugacy of the Elements of \(\operatorname{SL}_2(F)\)</span></a>
@@ -263,7 +263,7 @@
 <h1 id="Ch2_Introduction">2 Introduction</h1>
 
 <h1 id="a0000000015">2.1 What is the formalisation of mathematics?</h1>
-<p>formalisation of mathematics is the art of teaching a computer what a piece of mathematics means. </p>
+<p>Formalisation of mathematics is the art of teaching a computer what a piece of mathematics means. </p>
 <p>That is, it is the process of carefully writing down a mathematical statement typically in first order logic or higher order logic and then scrutinously justifying each step of the proof to a computer program that checks the validity of every step of the reasoning. </p>
 <p>Typically one formalizes mathematics with the help of a proof assistant or interactive theorem prover, a piece of software which enables a human to write down mathematics and have the software verify the claims. </p>
 <p>There exist many proof assistants, such examples are Lean, Isabelle, Coq, Metamath, etc. </p>
@@ -315,8 +315,20 @@
   </div>
 </div>
 <p>In <span class="ttfamily">mathlib</span>, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout’s lemma </p>
-<p>It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless, and it is known as the <b class="bfseries">Curry-Howard correspondence</b> where formulas correspond to <i class="itshape">types</i>, which correspond to the notion of a specification, proofs for formulas correspond to constructing a term of the corresponding type and so forth. In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a type system which express the valid rules for programs. For our purposes, we will not provide a deep overview of this fundamental correspondence, but rather we will illustrate the core principle with a suitable example. </p>
-<p>Furthermore, within the block of Lean code there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. the following example hopes to illustrate a simpler example and give an overview of how to: </p>
+<p><small class="footnotesize"> <pre class="verbatim">
+def xgcdAux (r s t r' s' t' : R) : R × R × R :=
+if _hr : r = 0 then (r', s', t')
+else
+  let q := r' / r
+  have _ := mod_lt r' _hr
+  xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
+termination_by r
+</pre> </small> </p>
+<p>It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless. </p>
+<p>The correspondence is known as the <b class="bfseries">Curry-Howard correspondence</b> where formulas correspond to <i class="itshape">types</i>, which correspond to the notion of a specification, proofs for formulas correspond to constructing a term of the corresponding type and so forth. </p>
+<p>In fact it turns out that for every logic, such as classical or intuitionistic logic, there corresponds a corresponding type system which express the valid rules for programs. </p>
+<p>For our purposes, we will not provide a deep overview of this fundamental correspondence, but rather we will illustrate the core principle with a suitable example. </p>
+<p>Furthermore, within the block of Lean code above there was a lot of unfamiliar syntax which one is somehow meant to believe correspond to mathematics. the following example hopes to illustrate a simpler example and give an overview of how to: </p>
 <ul class="itemize">
   <li><p>Define the assumptions for a mathematical statement. </p>
 </li>
@@ -325,7 +337,7 @@
   <li><p>Formalise the mathematical statement using Lean tactics. </p>
 </li>
 </ul>
-<p>Loosely speaking, a <span class="ttfamily">tactic</span> in Lean is a me </p>
+<p>Note that in the list Lean tactics are mentioned. Loosely speaking, a <span class="ttfamily">tactic</span> is a Lean metaprogram that will write Lean programs, these (non-meta) programs can be the usual code one would write for an algorithm or it could be the program which corresponds to the proof term that one needs to construct to formalise a statement in Lean. Examples of tactics and how they are used will be illustrated in the following example. </p>
 <div class="example_thmwrapper theorem-style-remark" id="a0000000053">
   <div class="example_thmheading">
     <span class="example_thmcaption">
@@ -345,7 +357,7 @@
         </div>
   </div>
   <div class="example_thmcontent">
-  <p> To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs for why the sum of the first \(n\) odd integers equals the \(n\)<sup>th</sup> square. That is, we will prove and formalise: </p>
+  <p> To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs for why the sum of the first \(n\) odd integers equals the \(n\)th square. That is, we will prove and formalise: </p>
 <div class="equation" id="ih">
 <p>
   <div class="equation_content">
@@ -385,10 +397,34 @@
   \begin{align*}  \sum _{k = 1}^{n + 1} f(k) & = \sum _{k = 1}^{n} f(k) + f(n + 1) \tag {for $n \geq 0$}\\ & \text{and}\\ \sum _{k = 1}^{0} f(k) & = 0 \end{align*}
 </div>
 <p>where in Lean that naturals numbers include zero. </p>
+<p><small class="footnotesize"> <pre class="verbatim">
+        def sum_of_n_odd : ℕ → ℕ
+             | 0 =&gt; 0
+             | n + 1 =&gt; sum_of_n_odd n + (2*n + 1)
+</pre> </small> </p>
 <p>This definition of summing the odd numbers is equivalent up to reindexing to the definition above. The reason we do not use subtraction is because the natural numbers are a commutative semiring, in particular, it does not always make sense to subtract one from a natural number, the predecessor of zero is not defined. We only need understand that a natural number is either zero or a successor of a natural number. In essence, when defining a function from the natural, we only need to think about where to send zero and where to send the successor of a natural number, such functions are defined inductively/recursively. This pattern of thought is continually used throughout Lean. </p>
 <p>Given the code definition above is a program one can indeed compute using the function, this might be how one would first conjecture that such a theorem about the sums of the first odd natural numbers is true in the first place! </p>
 <p>To state the theorem in Lean, we use the keyword <span class="ttfamily">thorem</span> or <span class="ttfamily">lemma</span>; followed by the name we would like to give the theorem, in this case it is, <span class="ttfamily">closed_eq_sum_of_first_n_odd_nat</span>; then followed by a list of arguments which will either be the objects and assumptions on the objects, in this case we only specify that <span class="ttfamily">n</span> is a natural number; then after a colon <span class="ttfamily">:</span>, we specify the mathematical statement, in this case that <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>. We will walk through the formal proof after providing the Lean code </p>
-<p>after the <span class="ttfamily">:=</span> Lean expects a proof term of the type <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>, it is possible to define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as <i class="itshape">tactic mode</i>. As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics in Lean; to enter tactic mode one must begin the proof with the <span class="ttfamily">by</span> tactic. Furthermore, using tactic mode allows access to an extremely useful interactive <i class="itshape">infoview</i> which displays the objects at play in the proof, the assumptions on the objects, the state of the proof </p>
+<p><small class="footnotesize"> <pre class="verbatim">
+        theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : sum_of_first_n_odd_nat n = n * n := by
+            induction n
+            -- Prove the base case.
+            case zero =&gt;
+                rw [mul_zero, sum_of_first_n_odd_nat]
+            -- Prove the induction step.
+            case succ m hm =&gt;
+                rewrite [sum_of_first_n_odd_nat]
+                 -- Apply the induction hypothesis
+                rewrite [hm]
+                -- Multiply out the square of sum
+                rewrite [add_mul_self_eq]
+                -- We finish it off by hand
+                rewrite [mul_one, mul_one, add_assoc]
+                rfl
+                done
+    </pre> </small> </p>
+<p>After the <span class="ttfamily">:=</span> Lean expects a proof term of the type <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span>, it is possible to define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as <i class="itshape">tactic mode</i>. </p>
+<p>As outlined above, tactics are metaprograms, i. e: programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics in Lean; to enter tactic mode one must begin the proof with the <span class="ttfamily">by</span> tactic. Furthermore, using tactic mode allows access to an extremely useful interactive <i class="itshape">infoview</i> which displays the objects at play in the proof, the assumptions on the objects, the state of the proof </p>
 <p>Once in tactic mode, we have access to other tactics accessible throught the keywords <span class="ttfamily">induction</span>, <span class="ttfamily">case</span>, <span class="ttfamily">rw</span>, <span class="ttfamily">rw</span>, <span class="ttfamily">ring</span>, <span class="ttfamily">simp</span> and so on. Given the natural number are defined inductively in Lean, Lean understands that to prove that a property \(P\) holds true for all natural numbers it is sufficient to provide a proof term for \(P(0)\) and supposing \(P(n)\) holds we can show that then \(P(n+1)\) holds, in Lean terminology, the natural numbers have their own induction principle. In fact this will be automatically true for any inductive datatype, but we will not go into this. </p>
 <p>To access this fact, we must invoke the <span class="ttfamily">induction</span> tactic which splits the original goal of <span class="ttfamily">sum_of_first_n_odd_nat n = n * n</span> into two smaller goals </p>
 <ol class="enumerate">
@@ -397,8 +433,8 @@
   <li><p>The induction step: <span class="ttfamily">sum_of_first_n_odd_nat (m + 1) = (m + 1) * (m + 1)</span> </p>
 </li>
 </ol>
-<p>the <span class="ttfamily">case</span> tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label <i class="itshape">zero</i> to prove the base case; then we focus in on the induction step by typing <span class="ttfamily">case succ m hm</span> which also introduces two new objects into the proof context, the natural number \(m\) and the assumption on <span class="ttfamily">m</span> which says that \(m\) satisfies the induction hypothesis, <span class="ttfamily">sum_of_first_n_odd_nat m = m * m</span>. We then proceed to use the rewrite tactic, <span class="ttfamily">rewrite</span>, which allows to replace equal or logically equivalent terms, so if you have the theorem <span class="ttfamily">h : a = b</span>, then <span class="ttfamily">rw [h]</span> will replace every ocurrence of <span class="ttfamily">a</span> in the goal for a <span class="ttfamily">b</span>, in the new modified goal. </p>
-<p>Finally, <span class="ttfamily">rfl</span> proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation. </p>
+<p>The <span class="ttfamily">case</span> tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label <i class="itshape">zero</i> to prove the base case; then we focus in on the induction step by typing <span class="ttfamily">case succ m hm</span> which also introduces two new objects into the proof context, the natural number \(m\) and the assumption on <span class="ttfamily">m</span> which says that \(m\) satisfies the induction hypothesis, <span class="ttfamily">sum_of_first_n_odd_nat m = m * m</span>. We then proceed to use the rewrite tactic, <span class="ttfamily">rewrite</span>, which allows to replace equal or logically equivalent terms, so if you have the theorem <span class="ttfamily">h : a = b</span>, then <span class="ttfamily">rw [h]</span> will replace every ocurrence of <span class="ttfamily">a</span> in the goal for a <span class="ttfamily">b</span>, in the new modified goal. </p>
+<p>Finally, <span class="ttfamily">rfl</span> proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflecivity of the equality relation. Typically, one uses the <span class="ttfamily">rw</span> tactic which is a combination of <span class="ttfamily">rewrite</span> followed by <span class="ttfamily">rfl</span>. </p>
 <p>Theorems and lemmas in Lean are given an identifier by which to access through, for example, the theorem <span class="ttfamily">add_mul_self_eq</span> states that for all \(a, b \in S\) where \(S\) is a semiring we have that <span class="ttfamily">(a + b) * (a + b) = a * a + 2 * a * b + b * b</span>. </p>
 
   </div>
