@@ -1276,7 +1276,7 @@ theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z {F : Type*}
 #check IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z_of_center_ne
 
 /- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
-theorem index_normalizer_le_two {F : Type*} [Field F] {p : ℕ}(A G : Subgroup SL(2,F))
+theorem index_normalizer_le_two {F : Type*} [Field F] {p : ℕ}  (A G : Subgroup SL(2,F))
   (center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
   (hA' : Nat.Coprime (Nat.card A) p) : (A.subgroupOf G).normalizer.index ≤ 2 := by
   sorry

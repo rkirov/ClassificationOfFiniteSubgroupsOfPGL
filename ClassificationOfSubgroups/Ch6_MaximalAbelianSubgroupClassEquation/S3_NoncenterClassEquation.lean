@@ -574,7 +574,6 @@ theorem card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer {
     lift_card_noncenter G lift_A * Nat.card (lift_noncenter_C G lift_A) := by sorry
 
 #check Sylow
-#leansearch "subtype which satisfies property."
 
 -- inductive lift_noncenter_MaximalAbelianSubgroupsOfType {L : Type*} [Group L] (G : Subgroup L) extends lift_noncenter_MaximalAbelianSubgroupsOf G
 --   | S
