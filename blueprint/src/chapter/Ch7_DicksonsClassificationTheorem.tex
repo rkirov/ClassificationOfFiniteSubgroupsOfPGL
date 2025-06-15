@@ -35,13 +35,7 @@ where the orbits are pairwise disjoint. Now since $p$ divides $|S|$, $p$ divides
 \end{align*} 
 
 \end{proof}
-\begin{footnotesize}
-    \begin{verbatim}
-    lemma IsPGroup.not_le_normalizer {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
-        [CharP F p] (G : Subgroup SL(2,F)) (H K : Subgroup G) (hK : IsPGroup p K )
-        (H_lt_K : H < K) : ¬ H ≤ Subgroup.normalizer K := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{lemma}
     \label{Sylow.not_normal_subgroup_of_G}
@@ -90,16 +84,7 @@ xy &= yx. \\
 Therefore $(Q$ $\cap$ $N_G(K)) \times K$ is an abelian subgroup of which $K$ is a proper subgroup. This contradicts the fact that $K$ is a maximal abelian subgroup, thus $Q$ is not a normal subgroup of $G$.
 
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma Sylow.not_normal_subgroup_of_G {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
-    [CharP F p] (G K : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G)
-    (hK : K ∈ MaximalAbelianSubgroupsOf G)
-    (hQK : map G.subtype (normalizer Q.toSubgroup) = (map G.subtype Q.toSubgroup) ⊔ K) :
-    ¬ Normal Q.toSubgroup := by
-    sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 %HEREE
 % MAY NOT BE NEEDED
@@ -178,12 +163,7 @@ Thus,
 \end{align*}
 
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma card_SL_field {𝔽 : Type u_1} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
-    Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{lemma}
     % in mathlib
@@ -237,14 +217,7 @@ Thus $G = N_G(Q)$ and so $Q \vartriangleleft G$. Therefore $Q \neq G$ and is an 
 Thus $G/Q$ is a cyclic group whose order is relatively prime to $p$.
 
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma case_I {F : Type*} {p : ℕ} [Field F] [CharP F p ] (G : Subgroup SL(2,F)) [Finite G]
-    (Q : Sylow p G) (Q_ne_G : (⊤ : Subgroup G) ≠ Q.toSubgroup)
-    (hQ : IsElementaryAbelian p Q.toSubgroup) [Normal Q.toSubgroup] :
-    IsCyclic (G ⧸ Q.toSubgroup) ∧ Nat.Coprime p (Nat.card (G ⧸ Q.toSubgroup)) := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{theorem}[Case II]
 \label{case_II}
@@ -463,13 +436,7 @@ Since $G$ and $\SL_2(3)$ have the same order and since their respective generato
 \end{align*} 
 \end{proof}
 
-\begin{footnotesize}
-\begin{verbatim}
-lemma case_II {F : Type*} {p : ℕ} [Field F] [CharP F p ]
-    (G : Subgroup SL(2,F)) [Finite G] (hG : Nat.Coprime p (Nat.card G)) :
-    Isomorphic G SL(2, ZMod 3) ∨ ∃ n, Odd n ∧ Isomorphic G (DihedralGroup (4*n)) := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 
 \begin{theorem}[Case III]
@@ -494,13 +461,7 @@ Thus $k = 1$ and equation (\ref{case3a}) reduces to $1/q = 1/g$, that is $g=q$.
 \end{align*}
 \qedhere
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma case_III {F : Type*} {p : ℕ} [Field F] [CharP F p ]
-    (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) :
-    Isomorphic G ((Subgroup.map G.subtype Q.toSubgroup) ⊔ (center SL(2,F)) :) := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 
 \begin{theorem}[Case IV]
@@ -667,14 +628,7 @@ Notice that Fig 5 is almost identical to Fig 2 in the study of Case IIb. This is
 
 
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma case_IV {F : Type*} {p : ℕ} [Field F] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] :
-    (p = 2 ∧ (∃ n, Odd n ∧ Isomorphic G (DihedralGroup (2*n))))
-    ∨
-    (p = 3) ∧ Isomorphic G (SL(2, ZMod 3)) := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 For the next case we first need to define the field extension of $\mathbb{F}_q$ into $\mathbb{F}_{q^2}$, to do this we need
 to define the following polynomial
@@ -688,13 +642,7 @@ to define the following polynomial
     P_n(X) := X^{p^n} - X
     \]
 \end{definition}
-\begin{footnotesize}
-\begin{verbatim}
-noncomputable abbrev GaloisField.polynomial 
-    (p : ℕ) [hp : Fact (Nat.Prime p)] (n : ℕ+) : (ZMod p)[X] := 
-    X ^ p ^ n.val - X
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{lemma}
     \label{GaloisField.splits_of_dvd}
@@ -707,53 +655,7 @@ noncomputable abbrev GaloisField.polynomial
     \leanok
     % PROOF
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
-    Splits (algebraMap (ZMod p) (GaloisField p m)) (GaloisField.polynomial p n) := by
-  have hsk : Splits (algebraMap (ZMod p) (GaloisField p m)) (GaloisField.polynomial p m) :=
-    IsSplittingField.splits (GaloisField p m) (GaloisField.polynomial p m)
-  have hsk' : Splits (algebraMap (ZMod p) (GaloisField p m)) (X ^ (p ^ m.val - 1) - 1) := by
-    refine splits_of_splits_of_dvd _ polynomial_ne_zero hsk ⟨X, ?_⟩
-    suffices (X : (ZMod p)[X]) ^ p ^ m.val = X ^ (p ^ m.val - 1 + 1) by
-      simpa [GaloisField.polynomial, sub_mul, ← pow_succ]
-    rw [tsub_add_cancel_of_le]
-    exact Nat.pow_pos (Nat.Prime.pos Fact.out)
-  obtain ⟨k, rfl⟩ := hn
-  have hd : (p ^ n.val - 1) ∣ (p ^ (n.val * k) - 1) :=
-    nat_pow_one_sub_dvd_pow_mul_sub_one p ↑n ↑k
-  have hdx : (X : (ZMod p)[X]) ^ (p ^ n.val - 1) - 1 ∣ X ^ (p ^ (n.val * k) - 1) - 1 := by
-    let  Y : (ZMod p)[X] := X ^ (p ^ n.val - 1)
-    obtain ⟨m, hm⟩ := hd
-    simp_rw [hm, pow_mul]
-    suffices Y - 1 ∣ Y^m - 1 by
-      simp [Y] at this
-      exact this
-    exact sub_one_dvd_pow_sub_one Y m
-  have hs' : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (X ^ (p ^ n.val - 1) - 1) := by
-    -- if g | f and f splits then g splits
-    refine splits_of_splits_of_dvd _ ?_ hsk' hdx
-    refine Monic.ne_zero_of_ne (zero_ne_one' (ZMod p)) ?_
-    refine monic_X_pow_sub ?_
-    simp [hp.out.one_lt]
-  have hs : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (GaloisField.polynomial p n) := by
-    rw [GaloisField.polynomial]
-    suffices Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (X * (X ^ (p ^ n.val - 1) - 1)) by
-      convert this using 1
-      simp only [mul_sub, mul_one, sub_left_inj]
-      nth_rewrite 2 [← pow_one X]
-      rw [← pow_add, Nat.one_add, Nat.sub_one, Nat.succ_pred]
-      exact Ne.symm (NeZero.ne' (p ^ n.val))
-    -- product of X * (X^(p^n - 1) - 1) splits if each term in the product splits
-    rw [splits_mul_iff]
-    exact ⟨splits_X _, hs'⟩
-    exact X_ne_zero
-    refine Monic.ne_zero_of_ne (zero_ne_one' (ZMod p)) ?_
-    refine monic_X_pow_sub ?_
-    simp [hp.out.one_lt]
-  exact hs
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{definition}[Field extension of $\mathbb{F}_{q^2}$ of $\mathbb{F}_{q}$]
     \label{GaloisField.algHom_of_dvd}
@@ -763,13 +665,7 @@ lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
     Following \ref{GaloisField.splits_of_dvd} we can define an $\mathbb{F}_p$-algebra 
     $\zeta : \mathbb{F}_{p^n} \rightarrow \mathbb{F}_{p^{2n}}$ which embeds $\mathbb{F}_{p^n}$ into $\mathbb{F}_{p^{2n}}$ as a subfield.
 \end{definition}
-\begin{footnotesize}
-\begin{verbatim}
-noncomputable  def GaloisField.algHom_of_dvd (hn : n ∣ m) : 
-    GaloisField p n →ₐ[ZMod p] GaloisField p m :=
-      Polynomial.SplittingField.lift _ (splits_of_dvd hn)
-\end{verbatim}
-\end{footnotesize}
+
 
 From this $\mathbb{F}_p$-algebra we can now define the embedding of $\SL_2(\mathbb{F}_{q})$ into $\SL_2(\mathbb{F}_{q^2})$
 
@@ -780,28 +676,14 @@ From this $\mathbb{F}_p$-algebra we can now define the embedding of $\SL_2(\math
     \leanok
     We define the group homomorphism $\chi$ which embeds $\SL_2(\mathbb{F}_{q})$ into $\SL_2(\mathbb{F}_{q^2})$
 \end{definition}
-\begin{footnotesize}
-\begin{verbatim}
-noncomputable def SL2_monoidHom_SL2  {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} :
-    SL(2, GaloisField p k.val) →* SL(2, GaloisField p (2* k.val)) :=
-      Matrix.SpecialLinearGroup.map
-        (@GaloisField.algHom_of_dvd p _ k (2*k) (dvd_mul_left k 2)).toRingHom
-\end{verbatim}
-\end{footnotesize}
+
 
 This allows us to define the following subgroup which will play a role in the case to come.
 
 \begin{definition}
     We define the subgroup $\langle \SL_2(\mathbb{F}_q), d_\pi \rangle$ in Lean
 \end{definition}
-\begin{footnotesize}
-\begin{verbatim}
-noncomputable def SL2_join_d (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) (π : (GaloisField p (2* k.val))ˣ ) :=
-    (Subgroup.map (@SL2_monoidHom_SL2 p _ k) (⊤ : Subgroup SL(2, GaloisField p k.val)))
-     ⊔
-     Subgroup.closure { d π }
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{theorem}[Case V]
 \label{case_V}
@@ -1088,17 +970,7 @@ Let $N$ be a normal subgroup of $G / Z$. Observe that each non-central element o
 By \cite[p.145]{dummit}, the only simple groups of order 60 are those isomorphic to the alternating group $A_5$ (not to be confused with an element of $\mathfrak{M}$), thus $G / Z \cong A_5$. Since $Z \cong \mathbb{Z}_2$, we have that $G$ is isomorphic to a central extension of $A_5$ which, according to Schur \cite{schur}, is unique and isomorphic to $\SL_2(5)$ as desired. The proofs of these 2 claims are beyond the scope of this thesis. \qedhere
 
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma case_V {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
-    (G : Subgroup SL(2,F)) [Finite G] :
-    ∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)
-    ∨
-    ∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ, Isomorphic G (SL2_join_d p k π)
-    ∨
-    Isomorphic G SL(2, ZMod 5) := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 Before, we can state the final case we must first define the following group presentation
 
@@ -1108,20 +980,7 @@ Before, we can state the final case we must first define the following group pre
     \langle x,y \; | \; x^n = y^2, \, yxy^{-1} = x^{-1} \, \rangle
     \]
 \end{definition}
-\begin{footnotesize}
-\begin{verbatim}
-inductive Symbols
-| x
-| y
 
-def Relations (n : ℕ) : Set (FreeGroup (Symbols)) :=
-  {.of x ^ n * (.of y)⁻¹ * (.of y)⁻¹ } ∪
-  {.of y * .of x * (.of y)⁻¹ * .of x }
-
-abbrev D (n : ℕ) :=
-  PresentedGroup (Relations n)
-\end{verbatim}
-\end{footnotesize}
 
 \begin{theorem}[Case VI]
 \label{case_VI}
@@ -1220,17 +1079,7 @@ We conclude that $ker(\phi) = \{ I \}$ and so $\phi$ is injective. Since $G / Z$
 Thus $|g| = 60$ and $|G| = 120$. Observe that a simple relabelling of the maximal abelian subgroups gives the same situation as described in \textbf{Case Vd:}. Thus $G \cong \SL_2(5)$, however in this case $p$ does not divide $|G|$.
 
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma case_VI {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
-    (G : Subgroup SL(2,F)) [Finite G] :
-    ∃ n, Even n ∧ Isomorphic G (D n)
-    ∨
-    Isomorphic G (GL (Fin 2) (ZMod 5))
-    ∨
-    Isomorphic G SL(2, ZMod 5) := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 \section{Dickson's Classification Theorem}
 
@@ -1264,22 +1113,7 @@ Let $F$ be an arbitary algebraically closed field of characteristic $p$. Any fin
     Case VIc: This leads to Class I (iv). \\
     
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
-    {p : ℕ} [CharP F p] (hp : Prime p) (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p)
-    (G : Subgroup (SL(2,F)))  [Finite G] :
-    IsCyclic G ∨
-    Isomorphic G (DihedralGroup n)
-    ∨
-    Isomorphic G SL(2, ZMod 3)
-    ∨
-    Isomorphic G SL(2, ZMod 5)
-    ∨
-    Isomorphic G (GL (Fin 2) (ZMod 3))
-    := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{theorem}[Class II]
     \label{dicksons_classification_theorem_class_II}
@@ -1311,23 +1145,7 @@ Case Vb: This leads to Class II (x). \\
 Case Vc: This leads to Class II (x) with $q=3$. \\
 Case Vd: This leads to Class II (viii). \\
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClosed F]{p : ℕ}
-    [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup (SL(2,F))) [Finite G] (hp : p ∣ Nat.card G)  :
-    ∃ Q : Subgroup SL(2,F), IsElementaryAbelian p Q ∧ Normal Q ∧ Isomorphic G Q
-    ∨
-    (p = 2 ∧ ∃ n : ℕ, Odd n ∧ Isomorphic G (DihedralGroup n))
-    ∨
-    Isomorphic G SL(2, ZMod 5)
-    ∨
-    ∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k)
-    ∨
-    ∃ k : ℕ+, ∃ x : GaloisField p (2* k), orderOf x^2 = p^(k : ℕ) ∧
-      ∃ φ : G ≃* SL(2, GaloisField p k), True
-    := by sorry
-\end{verbatim}
-\end{footnotesize}
+
 
 % HEREE
 \begin{lemma} 
@@ -1347,27 +1165,5 @@ theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClo
     \leanok
     Let $G$ be a finite subgroup of $\PGL_2(\Fbar_p)$ then $G$ is isomorphic to either a cyclic group, a dihedral group, $A_4$, $S_5$, $A_5$, or is isomorphic to $\PSL_2(k)$ or $\PGL_2(k)$ for some finite field $k$ of characteristic $p$.
 \end{theorem}
-\begin{footnotesize}
-\begin{verbatim}
-theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod 
-    {p : ℕ} [Fact (Nat.Prime p)] (𝕂 : Type*)
-    [Field 𝕂] [CharP 𝕂 p] [Finite 𝕂]
-    (G : Subgroup (PGL (Fin 2) (AlgebraicClosure (ZMod p)))) 
-    [hG : Finite G] :
-    IsCyclic G
-    ∨
-    ∃ n, Isomorphic G (DihedralGroup n)
-    ∨
-    Isomorphic G (alternatingGroup (Fin 4))
-    ∨
-    Isomorphic G (Equiv.Perm (Fin 5))
-    ∨
-    Isomorphic G (alternatingGroup (Fin 5))
-    ∨
-    Isomorphic G (PSL (Fin 2) (𝕂))
-    ∨
-    Isomorphic G (PGL (Fin 2) (𝕂)) := by
-      sorry
-\end{verbatim}
-\end{footnotesize}
+
 % PROOF

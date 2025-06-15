@@ -154,17 +154,11 @@ In Lean, to state that two elements $g, h \in G$ where $G$ is a group are conjug
 Lean uses the slightly more general definition of conjugacy over monoids which is accessible through
 the keyword \texttt{IsConj}:
 
-\begin{verbatim}
-    IsConj g h
-\end{verbatim}
+
 
 It is possible to define the notion of conjugacy as a it is done typically, that is, as the statement:
 
-\begin{footnotesize}
-    \begin{verbatim}
-    ∃ c : α, c * a * c⁻¹ = b
-    \end{verbatim}  
-    \end{footnotesize}
+
 
 However, it is often convenient to define abstractions to make the process of formalisation more amenable and furthermore,
 set up what is known as an \textit{API} which contains all the relevant theorems to conjugate elements.
@@ -180,9 +174,6 @@ Let $H_1$ be a proper subgroup of $G$ and fix $x \in G \setminus H_1$. The set $
 In Lean, to state that two subgroups $H, K$ of a group $G$ are conjugate subgroups similar to how is done 
 in \ref{conj_elem}. Once the \texttt{MulAut} namespace is opened one can make use of the convenient syntax:
 
-\begin{verbatim}
-conj c • H = K 
-\end{verbatim}
 
 This notation and API is useful because conjugation by a particular element is defined to be an element in the automorphism group of $G$, $\Aut(G)$. 
 
@@ -307,58 +298,7 @@ b_1 b_2^{-1} &= a_1^{-1} a_2 \in A \cap B.
 Since $A \cap B = \{ I_G \}$, we have $b_1 b_2^{-1} = I_G = a_1^{-1} a_2$ and so $b_1 = b_2$, $a_1 = a_2$ and $\phi$ is injective. So $\phi$ is an isomorphism and $AB \cong A \times B$.
 \\
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-def prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H] [hK : Normal K]
-    (hHK : Disjoint H K) : H × K →* (H ⊔ K :) where
-    toFun h_k := ⟨h_k.1 * h_k.2, mul_mem_sup h_k.1.property h_k.2.property⟩
-    map_one' := by simp
-    map_mul' := by
-      rintro ⟨⟨h₁, hh₁⟩, ⟨k₁, hk₁⟩⟩ ⟨⟨h₂, hh₂⟩, ⟨k₂, hk₂⟩⟩
-      simp
-      rw [mul_assoc, mul_assoc, ← mul_assoc k₁,
-        (Commute.eq (commute_of_normal_of_disjoint K H hK hH (Disjoint.symm hHK) k₁ h₂ hk₁ hh₂))]
-      group
-    
-lemma Bijective_prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H]
-    [hK : Normal K] (hHK : Disjoint H K) : Bijective (prod_monoidHom_join H K hHK) :=  by
-    refine ⟨?injective, ?surjective⟩
-    case injective =>
-      rintro ⟨⟨h₁, h₁_in_H⟩, k₁, k₁_in_K⟩ ⟨⟨h₂, h₂_in_H⟩, k₂, k₂_in_K⟩ h
-      simp [prod_monoidHom_join] at h
-      have : h₁⁻¹ * h₂ * k₂ * k₁⁻¹ = 1 := by
-        rw [mul_assoc, mul_assoc, ← mul_assoc h₂, ← h]
-        group
-      -- show h₁ * h₂⁻¹  = 1 and k₁ * k₂⁻¹ = 1
-      have H₁ : k₂ * k₁⁻¹ = (k₁ * k₂⁻¹)⁻¹ := by
-        group
-      have key₁ : h₁⁻¹ * h₂ = k₁ * k₂⁻¹ := by
-        rw [mul_assoc] at this
-        rw [H₁, mul_inv_eq_one] at this
-        exact this
-      have mul_in_H : k₁ * k₂⁻¹ ∈ H := key₁.symm ▸ mul_mem (inv_mem h₁_in_H) h₂_in_H
-      have mul_in_K : k₁ * k₂⁻¹ ∈ K := mul_mem k₁_in_K (inv_mem k₂_in_K)
-      rw [disjoint_iff_inf_le] at hHK
-      have key₂ : k₁ * k₂⁻¹ = 1 := by
-        rw [← mem_bot]
-        apply hHK
-        refine mem_inf.mpr ⟨mul_in_H, mul_in_K⟩
-      rw [key₂] at key₁
-      rw [inv_mul_eq_one] at key₁
-      rw [mul_inv_eq_one] at key₂
-      ext <;> simp [key₁, key₂]
-    case surjective =>
-      rintro ⟨x, hx⟩
-      rw [← SetLike.mem_coe, mul_normal] at hx
-      obtain ⟨h, h_in_H, k, k_in_K, hh⟩ := hx
-      use ⟨⟨h, h_in_H⟩, ⟨k, k_in_K⟩⟩
-      simp [prod_monoidHom_join, hh]
-  
-noncomputable def prod_mulEquiv_join_of_disjoint_of_normal {G : Type*} [Group G] (H K : Subgroup G)
-    (hHK : Disjoint H K) [hH : Normal H] [hK : Normal K] : H × K ≃* (H ⊔ K :) :=
-    MulEquiv.ofBijective (prod_monoidHom_join H K hHK) (Bijective_prod_monoidHom_join H K hHK)
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{remark}[Internal direct product and complete lattice structure of subgroups]
     Given the pointwise product of subgroups is not necessarily a subgroup. 
@@ -377,19 +317,13 @@ noncomputable def prod_mulEquiv_join_of_disjoint_of_normal {G : Type*} [Group G]
 
     This notion corresponds to taking the supremum or join of two subgroups \texttt{H : Subgroup G} and \texttt{K : Subgroup G} which denoted by 
 
-    \begin{verbatim}
-        H ⊔ K : Subgroup G
-    \end{verbatim}
 
     As one would hope, we indeed have that $H \le H \sqcup K$ and $K \le H \sqcup K$.
     Yet what is more is that, if we now supply the appropriate assumptions, it is
     possible to recover the desired properties regarding the supremum of the two subgroups. Following from the previous example,
     it is possible to recover information about the underlying set of the supremum of two subgroups where one of them is normal 
     through the theorem \texttt{Subgroup.mul\textunderscore normal}, which states:
-    
-    \begin{verbatim}
-        ∀ {G : Type u_2} [inst : Group G] (H N : Subgroup G) [hN : N.Normal], ↑(H ⊔ N) = ↑H * ↑N
-    \end{verbatim}
+ 
     
     Thus, instead of defining the product of subgroups to be a subgroup, we can define their supremum and then
     assuming that one (!) of subgroups is normal, we would be allowed to conclude that indeed the supremum

@@ -17,12 +17,7 @@ the projective special linear group and the projective general linear group.
 
     where $i : \SL_n(F) \hookrightarrow \GL_n(F)$ is the natural injection of the special linear group into the general linear group.
 \end{definition}
-\begin{footnotesize}
-\begin{verbatim}
-  def SL_monoidHom_PGL (n : Type*) [Fintype n] [DecidableEq n] (R : Type*) [CommRing R] :
-  SL n R →*  PGL n R := (GL_monoidHom_PGL n R).comp (SL_monoidHom_GL n R)
-\end{verbatim}
-\end{footnotesize}
+
 
 
 We now prove a useful fact about elements that belong to the center of $\GL_n(R)$.
@@ -57,35 +52,7 @@ We now prove a useful fact about elements that belong to the center of $\GL_n(R)
         \item Suppose $G = r \cdot I$ for some $r \in R^\times$ then it is clear that for all $H \in \GL_n(F)$ that $r \cdot I  H = r \cdot H = H \cdot r = H (r \cdot I)$
         \end{itemize}
     \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-theorem mem_center_general_linear_group_iff {n : Type u} [DecidableEq n]
-    [Fintype n] {R : Type*} [CommRing R] {M : GL n R} :
-    M ∈ center (GL n R) ↔ (∃ r : Rˣ, (r • 1) = M) := by
-    rw [mem_center_iff]
-    refine ⟨?mp, ?mpr⟩
-    case mp =>
-      intro hM
-      -- If M commutes with every matrix then it must commute with the transvection matrices
-      have h₀ : ∀ (t : TransvectionStruct n R), Commute (t.toGL) M := fun t => hM t.toGL
-      /-
-      If M commutes with the transvection matrices,
-      then M ∈ Set.range (Matrix.scalar n) where Set.range is Rˣ
-      -/
-      simp_rw [← Commute.units_val_iff] at h₀
-      have h₁ : (M : Matrix n n R) ∈ Set.range ⇑(Matrix.scalar n) :=
-        mem_range_scalar_of_commute_transvectionStruct h₀
-      obtain ⟨r, rfl⟩ :=
-        mem_range_unit_scalar_of_mem_range_scalar_and_mem_general_linear_group h₁
-      use r
-    case mpr =>
-      intro hM N
-      obtain ⟨r, rfl⟩ := hM
-      ext i j
-      simp [GeneralLinearGroup.coe_mul, GeneralLinearGroup.coe_mul,
-        ← coe_scalar_matrix, scalar_commute]
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{lemma}
 \label{center_SL_le_ker}
@@ -103,25 +70,7 @@ Because $\varphi = \pi_{Z(\GL_n(F))} \circ i$, the kernel of $\varphi$ is $i^{-1
 
 But given $i(S) = i(\omega \cdot I) = \omega \cdot I$ is of the form $r \cdot I$ where $r \in R^\times$ by \ref{GeneralLinearGroup.mem_center_general_linear_group_iff} it follows that $S \in \ker \varphi$, as desired.
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
-    (R : Type*) [CommRing R]:
-    center (SpecialLinearGroup n R) ≤ (SL_monoidHom_PGL n R).ker := by
-    cases hn : isEmpty_or_nonempty n
-    · exact le_of_subsingleton
-    · intro x x_mem_center
-      rw [SpecialLinearGroup.mem_center_iff] at x_mem_center
-      obtain ⟨ω, hω, h⟩ := x_mem_center
-      simp [MonoidHom.mem_ker, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL]
-      rw [GeneralLinearGroup.mem_center_general_linear_group_iff]
-      have IsUnit_ω : IsUnit ω := IsUnit.of_pow_eq_one hω Fintype.card_ne_zero
-      use IsUnit_ω.unit
-      ext
-      simp only [coe, ← h, scalar_eq_smul_one]
-      rfl
-\end{verbatim}
-\end{footnotesize}
+
 
 
 
@@ -134,15 +83,7 @@ lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
     
     Where $\varphi = \bar{\varphi} \circ \pi_{Z(\SL_n(F))}$ and $\pi_{Z(\SL_n(F))} : \SL_n(F) \rightarrow \PSL_n(F)$ is the canonical homomorphism from the group into its quotient.
 \end{definition}
-\begin{footnotesize}
-\begin{verbatim}
-def PSL_monoidHom_PGL (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
-    PSL n R →* PGL n R :=
-    @QuotientGroup.lift (SL n R) _ (center (SL n R)) (center_is_normal n R) (PGL n R)
-      (PGL_is_monoid n R) (SL_monoidHom_PGL n R) (center_SL_le_ker n R)
-  
-\end{verbatim}
-\end{footnotesize}
+
 
 
 \begin{lemma}
@@ -169,31 +110,6 @@ Therefore, given elements of $Z(\SL_n(F))$ are those matrices of the form $\omeg
 
 Which shows that the homomorphism $\bar{\varphi}$ is injective.
 \end{proof}
-\begin{footnotesize}
-    \begin{verbatim}
-    theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-        [Field F] [IsAlgClosed F] :  Injective (PSL_monoidHom_PGL n F) := by
-        rw [← MonoidHom.ker_eq_bot_iff, eq_bot_iff]
-        intro psl psl_in_ker
-        obtain ⟨S, hS⟩ := Quotient.exists_rep psl
-        rw [← hS] at psl_in_ker
-        simp only [PSL_monoidHom_PGL, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL,
-          MonoidHom.mem_ker, QuotientGroup.lift_mk, MonoidHom.coe_comp, QuotientGroup.coe_mk',
-          Function.comp_apply, QuotientGroup.eq_one_iff] at psl_in_ker
-        rw [GeneralLinearGroup.mem_center_general_linear_group_iff] at psl_in_ker
-        obtain ⟨ω, hω⟩ := psl_in_ker
-        have ω_eq_root_of_unity : det S.val = 1 := SpecialLinearGroup.det_coe S
-        simp [GeneralLinearGroup.ext_iff, SpecialLinearGroup.toGL] at hω
-        have S_eq_omega_smul_one : (S : Matrix n n F) = ω • 1 := Eq.symm (Matrix.ext hω)
-        simp [S_eq_omega_smul_one] at ω_eq_root_of_unity
-        simp [← hS]
-        refine SpecialLinearGroup.mem_center_iff.mpr ?_
-        use ω
-        refine ⟨?ω_is_root_of_unity, ?S_is_scalar_matrix⟩
-        case ω_is_root_of_unity => exact (eq_one_iff_eq_one_of_mul_eq_one ω_eq_root_of_unity).mpr rfl
-        case S_is_scalar_matrix => rw [S_eq_omega_smul_one]; exact scalar_eq_smul_one n F ↑ω
-    \end{verbatim}
-    \end{footnotesize}
     
     \begin{remark}[Quotients and their maps in Lean]
     When formalising results on quotient groups or for that matter any quotient type, it is valuable to appreciate which model Lean uses for quotients. 
@@ -246,34 +162,17 @@ Which shows that the homomorphism $\bar{\varphi}$ is injective.
 
     In fact, this is exactly what the general \texttt{Quot.lift} does:
 
-    \begin{footnotesize}
-    \begin{verbatim}
-        Quot.lift.{u, v} 
-          {α : Sort u} {r : α → α → Prop} {β : Sort v} 
-        (f : α → β) (a : ∀ (a b : α), r a b → f a = f b) : Quot r → β
-    \end{verbatim}
-    \end{footnotesize}
+ 
 
     Similarly, \texttt{QuotientGroup.lift}, the universal property for factor groups, corresponds to:
 
-    \begin{footnotesize}
-    \begin{verbatim}
-        QuotientGroup.lift.{u, x} {G : Type u} [Group G] (N : Subgroup G) 
-          [nN : N.Normal] {M : Type x} [Monoid M] (φ : G →* M)
-          (HN : N ≤ φ.ker) : G ⧸ N →* M
-    \end{verbatim}
-    \end{footnotesize}
+    
 
     From this last definition one can see that there is no trace whatsoever to cosets. It is still possible to formalise a such a
     definition in a way that is akin to the notion of well-definedness, which is closer to the model of quotients as sets of subsets,
     since one can for example invoke \texttt{Quotient.exists_rep} which states:
 
-    \begin{footnotesize}
-    \begin{verbatim}
-        Quotient.exists_rep.{u} 
-          {α : Sort u} {s : Setoid α} (q : Quotient s) : ∃ a, ⟦a⟧ = q
-    \end{verbatim}
-    \end{footnotesize}    
+   
     
     In fact, some of the theorems and definitions below heavily rely on this notion.
     Yet it becomes extremely useful later on to come to terms with this model of quotients and their maps which
@@ -312,39 +211,7 @@ Let $S = \frac{1}{\alpha} \cdot G$, by construction $S \in \SL_n(F)$ as
     \det(S) = \left(\frac{1}{\alpha^n}\right) \cdot \det(G) = \frac{1}{\det(G)} \det(G) = 1
 \end{equation*}
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [DecidableEq n]
-    [Field F] [IsAlgClosed F] (G : GL n F) :
-    ∃ α : Fˣ, ∃ S : SL n F, α • S.toGL = G := by
-    cases hn : isEmpty_or_nonempty n
-    · exact ⟨1, 1, Subsingleton.elim _ _⟩
-    let P : F[X] := X^(Nat.card n) - C (det G.val)
-    have nat_card_ne_zero : (Nat.card n) ≠ 0 :=
-      Nat.card_ne_zero.mpr ⟨inferInstance, inferInstance⟩;
-    have deg_P_ne_zero : degree P ≠ 0 := by
-      rw [Polynomial.degree_X_pow_sub_C]
-      exact Nat.cast_ne_zero.mpr nat_card_ne_zero
-      exact Nat.card_pos
-    obtain ⟨α, hα⟩ := @IsAlgClosed.exists_root F _ _ P deg_P_ne_zero
-    have c_ne_zero : α ≠ 0 := by
-      rintro rfl
-      simp [P] at hα
-      have det_G_ne_zero : det G.val ≠ 0 := IsUnit.ne_zero <| isUnits_det_units G
-      contradiction
-    have IsUnit_c : IsUnit α := by exact Ne.isUnit c_ne_zero
-    have hα' : ∃ c : Fˣ, c^(Nat.card n) = det G.val := by
-      use IsUnit_c.unit
-      simp [P, sub_eq_zero] at hα
-      simp [hα]
-    obtain ⟨α, hα⟩ := hα'
-    have det_inv_c_G_eq_one : det (α⁻¹ • G).1 = (1 : F) := by
-      simp [← hα, inv_smul_eq_iff, Units.smul_def]
-    use α, ⟨(α⁻¹ • G), det_inv_c_G_eq_one⟩
-    ext
-    simp [coe]
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{lemma}
 \label{Surjective_PSL_monoidHom_PGL}
@@ -373,30 +240,7 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
     
     Therefore, $\varphi(G') = i(G') (F^\times I) = G' (F^\times I) = G (F^\times I)$.
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-    [Field F] [IsAlgClosed F] :  Surjective (PSL_monoidHom_PGL n F) := by
-    intro pgl
-    obtain ⟨G, hG⟩ := Quotient.exists_rep pgl
-    obtain ⟨c, S, h⟩ := exists_SL_eq_scaled_GL_of_IsAlgClosed G
-    use (SL_monoidHom_PSL n F) S
-    have class_G_eq_class_S : (⟦G⟧ : PGL n F) = ⟦S.toGL⟧ := by
-      rw [Quotient.eq, QuotientGroup.leftRel_apply,
-        GeneralLinearGroup.mem_center_general_linear_group_iff]
-      use c⁻¹
-      suffices c⁻¹ • 1 * G = S by
-        simp [← h]
-        ext
-        simp [GeneralLinearGroup.scalar,
-          nonsing_inv_mul _ <| isUnits_det_units (SpecialLinearGroup.toGL S),
-          ← Matrix.smul_one_eq_diagonal]
-      rw [← h, smul_mul_assoc, one_mul, inv_smul_eq_iff]
-    rw [← hG, class_G_eq_class_S]
-    -- by definition these equivalence classes are the same
-    rfl
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{lemma}
 \label{Bijective_PSL_monoidHom_PGL}
@@ -411,15 +255,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
  We have shown that $\bar{\varphi}$ is injective in \ref{Injective_PSL_monoidHom_PGL} and have shown that $\bar{\varphi}$ is surjective in \ref{Surjective_PSL_monoidHom_PGL}. 
  Therefore, $\bar{\varphi}$ defines a bijection from $\PSL_n(F)$ to $\PGL_n(F)$.
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
-    [Field F] [IsAlgClosed F] :  Bijective (PSL_monoidHom_PGL n F) := by
-    refine ⟨?injective, ?surjective⟩
-    case injective => exact Injective_PSL_monoidHom_PGL n F
-    case surjective => exact Surjective_PSL_monoidHom_PGL n F
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{theorem}
 \label{PGL_iso_PSL}
@@ -435,13 +271,7 @@ theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidable
     The map $\bar{\varphi}$ was shown to be a bijection in \ref{Bijective_PSL_monoidHom_PGL} and given $\bar{\varphi}$ is mulitplicative as it was defined to be the lift of the homomorphism $\varphi$, we can conclude that 
     $\bar{\varphi}$ defines a group isomorphism between $\PSL_n(F)$ and $ºPGL_n(F)$
 \end{proof}
-\begin{footnotesize}
-\begin{verbatim}
-noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Field F]
-    [IsAlgClosed F] : PSL n F ≃* PGL n F :=
-      MulEquiv.ofBijective (PSL_monoidHom_PGL n F) (Bijective_PSL_monoidHom_PGL n F)
-\end{verbatim}
-\end{footnotesize}
+
 
 \begin{remark}[Noncomputable]
     Observe in the definition above it was necessary to add the \texttt{noncomputable} keyword before the definition, the reason for this is

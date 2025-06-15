@@ -47,17 +47,6 @@ For example, such is the case for the following theorem:
 The proof for this theorem uses the extended euclidean algorithm and proves that when the algorithm terminates it produces the desired witnesses.
 In \texttt{mathlib}, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
 
-\begin{footnotesize}
-\begin{verbatim}
-def xgcdAux (r s t r' s' t' : R) : R × R × R :=
-if _hr : r = 0 then (r', s', t')
-else
-  let q := r' / r
-  have _ := mod_lt r' _hr
-  xgcdAux (r' % r) (s' - q * s) (t' - q * t) r s t
-termination_by r
-\end{verbatim}
-\end{footnotesize}
 
 It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless.
 
@@ -123,13 +112,6 @@ a mathematical statement in Lean. Examples of tactics and how they are used will
     \end{align*}
 
     Where it is noteworthy to add that in Lean that naturals numbers include zero.
-\begin{footnotesize}
-\begin{verbatim}
-        def sum_of_n_odd : ℕ → ℕ
-             | 0 => 0
-             | n + 1 => sum_of_n_odd n + (2*n + 1)
-\end{verbatim}
-\end{footnotesize}
 
     This definition above which sums the odd numbers is equivalent up to re-indexing to the definition above. 
     
@@ -155,27 +137,6 @@ a mathematical statement in Lean. Examples of tactics and how they are used will
     in this case that \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. We have stated our first mathematical statement in Lean!
 
     Now we will walk through the formal proof in Lean:
-
-    \begin{footnotesize}
-    \begin{verbatim}
-        theorem closed_eq_sum_of_first_n_odd_nat (n : ℕ) : sum_of_first_n_odd_nat n = n * n := by
-            induction n
-            -- Prove the base case.
-            case zero =>
-                rw [mul_zero, sum_of_first_n_odd_nat]
-            -- Prove the induction step.
-            case succ m hm =>
-                rewrite [sum_of_first_n_odd_nat]
-                 -- Apply the induction hypothesis
-                rewrite [hm]
-                -- Multiply out the square of sum
-                rewrite [add_mul_self_eq]
-                -- We finish it off by hand
-                rewrite [mul_one, mul_one, add_assoc]
-                rfl
-                done
-    \end{verbatim}
-    \end{footnotesize}
 
     After the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. It is possible to
     define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \textit{tactic mode}.
