@@ -164,7 +164,7 @@ a mathematical statement in Lean. Examples of tactics and how they are used will
     on \texttt{m} which says that $m$ satisfies the induction hypothesis, \texttt{sum\_of\_first\_n\_odd\_nat m = m * m}. 
     
     We then proceed to use the rewrite tactic, \texttt{rewrite}, which allows to replace equal or logically equivalent terms, so if you have the theorem \texttt{h : a = b}, then \texttt{rw [h]} will replace every occurrence of \texttt{a} in the goal
-    for a \texttt{b}, in the new modified goal. For this particular example, the proof for the base case labelled by \texttt{zero} involves using the rewrites \texttt{mul_zero} which states that \texttt{a * 0 = 0} and
+    for a \texttt{b}, in the new modified goal. For this particular example, the proof for the base case labelled by \texttt{zero} involves using the rewrites \texttt{mul\_zero} which states that \texttt{a * 0 = 0} and
     the definition of  \texttt{sum\_of\_first\_n\_odd\_nat} itself, where Lean is clever enough to choose which of two equalities to rewrite.
 
     Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflexivity of the equality relation. Typically, one

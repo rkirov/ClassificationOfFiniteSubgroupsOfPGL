@@ -338,7 +338,7 @@ lemma SpecialLinearGroup.sq_eq_one_iff {F : Type*} [Field F] [two_ne_zero : NeZe
   · right
     ext <;> simp [x11_eq_neg_one, x00_eq_x11, x01_eq_zero, x10_eq_zero]
 
-
+-- There is a gap in the informal proof for when p = 2
 lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [hG : Finite G]
   (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
   (card_A_le_two : Nat.card A ≤ 2) :
