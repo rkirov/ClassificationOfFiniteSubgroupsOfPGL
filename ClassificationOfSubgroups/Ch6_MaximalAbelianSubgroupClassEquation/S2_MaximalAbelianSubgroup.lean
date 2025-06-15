@@ -10,7 +10,7 @@ set_option synthInstance.maxHeartbeats 0
 
 open Subgroup
 
-def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal (IsCommutative) G
+def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal IsCommutative G
 
 def MaximalAbelianSubgroupsOf { L : Type*} [Group L] (G : Subgroup L) : Set (Subgroup L) :=
   { K : Subgroup L | IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G}
@@ -128,7 +128,7 @@ theorem Units.coeHom_injective {M : Type*} [Monoid M] : Function.Injective (Unit
 
 open Function Units
 
-lemma order_ne_char (F : Type*) [Field F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p] :
+lemma order_ne_char (F : Type*) [Field F] (p : ℕ) [hp' : Fact (Nat.Prime p)] [hC : CharP F p] :
   ∀ x : Fˣ, orderOf x ≠ p := by
   intro x
   by_contra H
@@ -157,19 +157,33 @@ lemma dvd_pow_totient_sub_one_of_coprime {m p : ℕ} (hp : Nat.Prime p) (h : Nat
 -- G ≤ 𝔽ₚ(g₁, g₂, …, gₙ)
 -- Here formalized the argument by Mitchell
 
-
-lemma coprime_card_fin_subgroup_of_inj_hom_group_iso_units {F G : Type*} [Field F] {p : ℕ}
+lemma coprime_card_fin_subgroup_of_monomorphism {F G : Type*} [Field F] {p : ℕ}
   [hp' : Fact (Nat.Prime p)] [hC : CharP F p] [Group G] (H : Subgroup G) [Finite H]
   (f : H →* Fˣ) (hf : Injective f) :
   Nat.Coprime (Nat.card H) p := by
+  -- A prime number `p` is coprime to a natural number `n`
+  -- if and only if `¬ p ∣ n`.
   rw [Nat.coprime_comm, Nat.Prime.coprime_iff_not_dvd hp'.out]
-  have order_ne_p := @order_ne_char F _ p _ _
+  -- The order of an element `x` in the group of units of a field
+  -- cannot equal the characteristic of the field `F`.
+  have order_ne_p : ∀ (x : Fˣ), orderOf x ≠ p := order_ne_char F p
+  -- We contrapose the statement with the assumption:
+  -- `∀ x : Fˣ, orderOf x ≠ p`
+  -- and the claim:
+  -- `¬ p ∣ Nat.card ↥H`
   contrapose! order_ne_p
+  -- `order_ne_p` now contains the assumption which states:
+  -- `p ∣ Nat.card ↥H`,
+  -- and the goal is to now to prove the statement:
+  -- `∃ x : Fˣ, orderOf x = p`.
   let H_fintype : Fintype H := Fintype.ofFinite ↥H
   simp only [Nat.card_eq_fintype_card] at order_ne_p
+  -- Since `p ∣ Nat.card ↥H`, by Cauchy's Theorem there must exist an
+  -- an element `h` of the subgroup `H` which has order `p`.
   obtain ⟨h, hh⟩ := exists_prime_orderOf_dvd_card p order_ne_p
+  -- The image of `h` under the monomorphism `f : H → Fˣ` is the desired witness.
   use f h
-  rw [orderOf_injective f hf ↑h, ← hh]
+  rw [orderOf_injective f hf h, ← hh]
 
 instance SZ_Comm {F : Type*} [Field F] : CommGroup (S F ⊔ Z F :) := by
   rw [S_join_Z_eq_SZ]
@@ -291,21 +305,102 @@ lemma singleton_of_cen_eq_G {G : Type*} [Group G] (H : Subgroup G) (hH : H = cen
 
 open scoped MatrixGroups
 
+#check card_Z_eq_two_of_two_ne_zero
 
+#check card_Z_eq_one_of_two_eq_zero
 
-lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F))
-  (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
-  (card_A_le_two : Nat.card A ≤ 2):
-  A = center SL(2,F) := by
-  have cen_le_A := center_le G A hA center_le_G
-  have card_cen_eq_two : Nat.card (center SL(2,F)) = 2 := by sorry
-  refine le_antisymm ?A_le_cen ?cen_le_A
-  case A_le_cen =>
-    have one_mem_A : 1 ∈ A := by exact Subgroup.one_mem A
-    have neg_one_mem_A : -1 ∈ A := cen_le_A (center_SL2_eq_Z F ▸ neg_one_mem_Z)
-    -- split on the case where the characteristic is different
+#check Set.subset_iff_eq_of_ncard_le
+-- Argue for when cardinality of A equals two
+
+lemma SpecialLinearGroup.sq_eq_one' {F : Type*} [Field F] (two_eq_zero : (2 : F) = 0)
+  {x : SL(2,F)} (hx : x ^ 2 = 1) : x = 1 ∨ x = -1 ∨ x.val = !![1, 1; 0,1] ∨ x.val = !![1,0; 1, 0] := by
+
     sorry
-  case cen_le_A => exact cen_le_A
+-- Argue for when cardinality of A is less than equal to one
+lemma SpecialLinearGroup.sq_eq_one_iff {F : Type*} [Field F] [two_ne_zero : NeZero (2 : F)]
+  {x : SL(2,F)} (hx : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
+  rw [sq, _root_.mul_eq_one_iff_eq_inv, SpecialLinearGroup.fin_two_ext_iff,
+    @Matrix.SpecialLinearGroup.SL2_inv_expl] at hx
+  simp only [Fin.isValue, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one,
+    Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const] at hx
+  obtain ⟨x00_eq_x11, x01_eq_zero, x10_eq_zero, -⟩ := hx
+  have det_eq_one : Matrix.det x.val = (1 : F) := by
+    exact Matrix.SpecialLinearGroup.det_coe x
+  rw [Matrix.det_fin_two] at det_eq_one
+  have h := two_ne_zero.out
+  rw [← add_eq_zero_iff_eq_neg, ← two_mul,
+    mul_eq_zero_iff_left h] at x01_eq_zero x10_eq_zero
+  simp only [Fin.isValue, x00_eq_x11, x01_eq_zero, x10_eq_zero, mul_zero, sub_zero] at det_eq_one
+  rw [← sq, _root_.sq_eq_one_iff] at det_eq_one
+  rcases det_eq_one with (x11_eq_one | x11_eq_neg_one)
+  · left
+    ext <;> simp [x11_eq_one, x00_eq_x11, x01_eq_zero, x10_eq_zero]
+  · right
+    ext <;> simp [x11_eq_neg_one, x00_eq_x11, x01_eq_zero, x10_eq_zero]
+
+
+lemma eq_center_of_card_le_two {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [hG : Finite G]
+  (center_le_G : center (SL(2,F)) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
+  (card_A_le_two : Nat.card A ≤ 2) :
+  A = center SL(2,F) := by
+  let inst : Finite (Z F) := by infer_instance
+  let inst : Finite (Z F).carrier := by exact inst
+  have ncard_Z_le_ncard_A : (Z F).carrier.ncard ≤ A.carrier.ncard := by sorry
+  rw [center_SL2_eq_Z]
+  suffices A.carrier = (Z F).carrier by
+    simp_rw [@Subgroup.ext_iff, ← mem_carrier, this]
+    exact fun x ↦ trivial
+  rw [← Set.subset_iff_eq_of_ncard_le ncard_Z_le_ncard_A]
+  intro a a_mem_A
+  rw [mem_carrier] at a_mem_A
+  let A_finite : Finite (A : Set SL(2,F)) := Finite.Set.subset G hA.right
+  have orderOf_a_le_two : orderOf a ≤ 2 := calc
+    orderOf a ≤ Nat.card A := Subgroup.orderOf_le_card A A_finite a_mem_A
+    _ ≤ 2 := card_A_le_two
+  rw [@Nat.le_succ_iff_eq_or_le] at orderOf_a_le_two
+  rcases orderOf_a_le_two with ( orderOf_a_eq_two | orderOf_a_le_one)
+  · simp at orderOf_a_eq_two
+    rw [orderOf_eq_iff (by norm_num)] at orderOf_a_eq_two
+    obtain ⟨a_sq_eq_one, -⟩ := orderOf_a_eq_two
+    simp
+
+    by_cases h : (2 : F) = 0
+    · by_contra! h
+      obtain ⟨a_ne_one, a_ne_neg_one⟩ := h
+
+      sorry
+
+    · rw [← ne_eq] at h
+      let two_ne_zero : NeZero (2 : F) := { out := h }
+      exact SpecialLinearGroup.sq_eq_one_iff a_sq_eq_one
+
+
+
+
+
+
+  -- We show $a$ is of finite order and thus the order is greater than one
+  · have a_IsOfFinOrder : IsOfFinOrder a := by
+      obtain ⟨n, n_pos, hn⟩ := isOfFinOrder_of_finite (⟨a, a_mem_A⟩ : A)
+      use n
+      split_ands
+      · exact n_pos
+      · rw [isPeriodicPt_mul_iff_pow_eq_one] at hn ⊢
+        simp only [SubmonoidClass.mk_pow, Subtype.ext_val_iff, OneMemClass.coe_one] at hn
+        exact hn
+    rw [← orderOf_pos_iff, pos_iff_ne_zero] at a_IsOfFinOrder
+    rw [Nat.le_one_iff_eq_zero_or_eq_one] at orderOf_a_le_one
+    apply Or.resolve_left at orderOf_a_le_one
+    specialize orderOf_a_le_one a_IsOfFinOrder
+    rw [@orderOf_eq_one_iff] at orderOf_a_le_one
+    rw [orderOf_a_le_one]
+    simp only [Z_carrier_eq, Set.mem_insert_iff, Set.mem_singleton_iff, true_or]
+
+  -- if there exists an element not equal to the identity, then
+  -- and -1 = 1 then the order of the group is not equal to 2.
+  -- if x^2  = 1 then since $F$ is a field either x = 1 or x = -1.
+
+
 
 
 /- Theorem 2.3 (i) If x ∈ G\Z then we have CG (x) ∈ M. -/
@@ -376,7 +471,9 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAl
     have cen_le_B := center_le G B hB center_le_G
     exact le_inf cen_le_A cen_le_B hx
 
--- lemma NeZero_neg_CharP [CharP F p] : ∀ (x : F), NeZero x ↔ p • (1 : F) ≠ x := by sorry
+-- lemma NeZero_neg_CharP [CharP F p] : ∀ (x : F), NeZero x ↔ p • (1 : F) ≠ x := by
+
+
 
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
@@ -534,6 +631,19 @@ lemma conj_inv_conj_eq (F : Type*) [Field F](G : Subgroup SL(2,F)) (c : SL(2,F))
   conj c⁻¹ • ((conj c • S F ⊓ G) ⊔ Z F) = (S F ⊓ conj c⁻¹ • G) ⊔ Z F := by
   simp only [smul_inf, ← center_SL2_eq_Z, smul_normal c⁻¹, smul_sup]
   simp [map_inv, inv_smul_smul]
+
+lemma coprime_card_fin_subgroup_of_inj_hom_group_iso_units {F G : Type*} [Field F] {p : ℕ}
+    [hp' : Fact (Nat.Prime p)] [hC : CharP F p] [Group G] (H : Subgroup G) [Finite H]
+    (f : H →* Fˣ) (hf : Injective f) :
+    Nat.Coprime (Nat.card H) p := by
+    rw [Nat.coprime_comm, Nat.Prime.coprime_iff_not_dvd hp'.out]
+    have order_ne_p := @order_ne_char F _ p _ _
+    contrapose! order_ne_p
+    let H_fintype : Fintype H := Fintype.ofFinite ↥H
+    simp only [Nat.card_eq_fintype_card] at order_ne_p
+    obtain ⟨h, hh⟩ := exists_prime_orderOf_dvd_card p order_ne_p
+    use f h
+    rw [orderOf_injective f hf ↑h, ← hh]
 
 
 theorem IsCyclic_and_card_coprime_CharP_of_IsConj_d {F : Type*} [Field F]

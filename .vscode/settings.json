@@ -1,20 +1,29 @@
 {
     "cSpell.words": [
         "Abelian",
+        "Ackermann",
+        "Bijective",
         "Coprime",
+        "Finset",
+        "Fintype",
         "formalisation",
         "formalise",
         "formalised",
         "formalising",
         "Frobenius",
         "Injective",
+        "loogle",
         "mathlib",
         "Monic",
         "monomorphism",
         "noncenter",
         "realised",
+        "semiring",
         "sublattice",
+        "succ",
         "surjective",
-        "Sylow"
+        "Sylow",
+        "symm",
+        "Transvection"
     ]
 }

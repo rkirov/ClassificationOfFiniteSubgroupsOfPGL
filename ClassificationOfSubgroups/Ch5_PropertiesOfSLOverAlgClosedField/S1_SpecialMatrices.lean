@@ -82,7 +82,7 @@ section Diagonal
 The diagonal matrix with $\delta \in F^\times$ as the top left entry.
 -/
 def d (δ : Fˣ) : SL(2, F) :=
-  ⟨!![(δ : F), (0 : F); (0 :F) , (δ⁻¹ : F)], by norm_num⟩
+  ⟨!![(δ : F), 0; 0 , δ⁻¹], by norm_num⟩
 
 @[simp]
 lemma inv_d_eq_d_inv (δ : Fˣ) : (d δ)⁻¹ = d (δ⁻¹) := by

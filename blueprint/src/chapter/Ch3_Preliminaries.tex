@@ -178,7 +178,7 @@ Let $H_1$ be a proper subgroup of $G$ and fix $x \in G \setminus H_1$. The set $
 
 \begin{remark}
 In Lean, to state that two subgroups $H, K$ of a group $G$ are conjugate subgroups similar to how is done 
-in \ref{conj_elem}. Once the \texttt{MulAut} namespace is opened onecan make use of the convenient syntax:
+in \ref{conj_elem}. Once the \texttt{MulAut} namespace is opened one can make use of the convenient syntax:
 
 \begin{verbatim}
 conj c • H = K 
@@ -186,7 +186,7 @@ conj c • H = K
 
 This notation and API is useful because conjugation by a particular element is defined to be an element in the automorphism group of $G$, $\Aut(G)$. 
 
-This becomes particularly crucial when formalizing the interactions of subgroups with the complete lattice structure on the set of subgroups of a group. 
+This becomes particularly crucial when formalising the interactions of subgroups with the complete lattice structure on the set of subgroups of a group. 
 
 Further discussion on the complete lattice structure on the set of subgroups of a group will happen later on.
 \end{remark}
@@ -365,11 +365,11 @@ noncomputable def prod_mulEquiv_join_of_disjoint_of_normal {G : Type*} [Group G]
 
     For example, the pointwise product subgroups of $S_3$, $\langle e, (1\;2) \rangle$ and $\langle e, (1\;3) \rangle$ produce the set 
     $\langle e, (1\;2) \rangle \langle e, (1\;3) \rangle =\{e, (1\;2), (1\;3), (3\;2\;1)\}$ which has cardinality four which does not divide six,
-    thus cannot be a subgroup by Lagrange's theorem.
+    thus cannot be a subgroup of $S_3$ by Lagrange's theorem.
 
     Thus, it does not make sense to define the product of two subgroups as having the type of a subgroup.
 
-    Nonetheless, provided appropriate assumptions the two subgroups, such as for example disjointness and normality, the pointwise product turns out to indeed be a subgroup.
+    Nonetheless, provided appropriate assumptions on the two subgroups, such as for example disjointness and normality, the pointwise product turns out to indeed be a subgroup.
     
     What turns out to be much more sensible in the bigger picture is to harness the complete lattice structure on subgroups. It is often the case that
     subgroups do not satisfy the appropriate conditions for the pointwise product of sets to be a subgroup, but still one would like to define the smallest subgroup which contains both subgroups,

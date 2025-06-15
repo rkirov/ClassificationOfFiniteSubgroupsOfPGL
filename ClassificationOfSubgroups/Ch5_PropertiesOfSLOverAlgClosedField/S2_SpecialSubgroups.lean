@@ -21,24 +21,15 @@ namespace SpecialSubgroups
 
 section Diagonal
 
+
 /- Lemma 1.2.1.1 -/
 def D (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ | δ : Fˣ }
-  mul_mem' := by
-              intro S Q hS hQ
-              simp at *
-              obtain ⟨δS, hδS⟩ := hS
-              obtain ⟨δQ, hδQ⟩ := hQ
-              use δS * δQ
-              rw [← hδS, ← hδQ]
-              simp
-  one_mem' := ⟨1, by simp⟩
-  inv_mem' := by
-              intro S
-              simp
-              intro δ hS
-              use δ⁻¹
-              simp [← hS]
+  mul_mem' := by rintro S Q ⟨δS, hδS⟩ ⟨δQ, hδQ⟩
+                 use δS * δQ; simp [← hδS, ← hδQ]
+  one_mem' := ⟨1, d_one_eq_one⟩
+  inv_mem' := by rintro S ⟨δ, hS⟩
+                 use δ⁻¹; simp [← hS]
 
 /- Lemma 1.2.1.3 -/
 def D_iso_units (F : Type*) [Field F] : SpecialSubgroups.D F ≃* Fˣ where
@@ -72,21 +63,11 @@ section Shear
 /- Lemma 1.2.1.2 -/
 def S (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { s σ | σ : F }
-  mul_mem' := by
-              intro S Q hS hQ
-              simp at *
-              obtain ⟨σS, hσS⟩ := hS
-              obtain ⟨σQ, hσQ⟩ := hQ
-              use σS + σQ
-              rw [← hσS, ← hσQ]
-              simp
-  one_mem' := ⟨0, by simp⟩
-  inv_mem' := by
-              intro S hS
-              simp at *
-              obtain ⟨σ, hσ⟩ := hS
-              use (-σ)
-              simp [← hσ]
+  mul_mem' := by rintro S Q ⟨σS, hσS⟩ ⟨σQ, hσQ⟩
+                 use σS + σQ; simp [← hσS, ← hσQ]
+  one_mem' := ⟨0, s_zero_eq_one⟩
+  inv_mem' := by rintro S ⟨σ, hσ⟩
+                 use (-σ); simp [← hσ]
 
 /- Lemma 1.2.1.4 { T σ } ≃* F -/
 def S_iso_F (F : Type*) [Field F]: S F ≃* (Multiplicative F) where

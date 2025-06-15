@@ -32,6 +32,7 @@ I apologise if I have forgotten to include any names.
 
 The primary aim of this project is to present the ongoing formalisation of the classification of finite subgroups of $\PGL_2(\Fbar_p)$ in the Lean proof assistant. This result fits into to the much larger and more ambitious project
 of formalising Fermat's Last Theorem \href{https://imperialcollegelondon.github.io/FLT/blueprint/}{FLT} in Lean, an effort being led by Prof. Kevin Buzzard at Imperial College London. In fact, this theorem corresponds to theorem 12.7 in \href{https://imperialcollegelondon.github.io/FLT/blueprint/ch_bestiary.html}{Appendix}.
+
 Furthermore, another goal of this project is to serve as a Rosetta stone for how informal mathematics corresponds to formal mathematics; the hope is that the blueprint will serve as an example of how late undergraduate mathematics is formalised using \texttt{mathlib}, the mathematics library of Lean.
 A pleasant outcome of presenting both the informal and formal mathematics alongside into one cohesive website is that it allows to new ways of presenting mathematics, where the informal and formal mathematics complement each other.
 
@@ -69,7 +70,7 @@ There are three states for toggling how much text, ordered from least to most te
 \begin{enumerate}
     \item Displays only definitions and statements of theorems.
     \item Displays definitions, statements, accompanying text and allows to toggle proofs being displayed or being hidden always.
-    \item Displays defintions, statements, accompanying text and proofs.
+    \item Displays definitions, statements, accompanying text and proofs.
 \end{enumerate}
 
 \subsection{Note on \texttt{remarks}}
@@ -91,8 +92,7 @@ to prove the overarching claim. But, in addition to the index of chapters and bi
 
 This will display a directed acyclic graph which demonstrates how all relevant definitions and statements feed into each to produce the final claim.
 
-\textbf{Note} the dependency graph and icons to the bottom right are only visible if the html page is launched on a local server since
-having otherwise would be a security hazard.
+\textbf{Note}: For security reasons, the dependency graph and icons to the bottom right are only visible if the html page is launched on a local server.
 
 If the reader wishes to see the dependency graph and the icons (the icons are still functional despite not being visible), the reader should run
 \texttt{python3 -m http.server} within the folder which contains the HTML for these pages (assumes a python installation).
@@ -144,7 +144,7 @@ Moreover, on the basis of academic integrity I provide a rough overview of what 
         \item When classifying elements of $\SL_2(F)$ up to conjugacy.
         \item When formalising arguments using group homomorphisms and isomorphisms.
         \item When formalising arguments which hinge on the complete lattice structure of subgroups.
-        \item When formalizing the maximal abelian subgroup class equation which hinge on defining
+        \item When formalising the maximal abelian subgroup class equation which hinge on defining
         a suitable quotient and the corresponding lifts rather than working with indexing sets.
     \end{itemize}
     
@@ -173,7 +173,11 @@ I would like to take this opportunity to thank my advisor Arne Meurman. This pap
 
 In order to explain what this paper is about, it is necessary to first define a few of the mathematical concepts which it concerns. A \textit{group} is a set of objects, called \textit{elements}, together with a rule, called an \textit{operation}, which tells us how two elements combine with each other to make a third. Furthermore, to be considered a group it must also satisfy 4 conditions, called \textit{axioms}. One of which is that the group must be \textit{closed} under it's operation. This means that whenever any two elements in the group are combined, the resulting element is also part of the group. The remaining axioms require that the group must also be \textit{associative}, have an \textit{identity} element and each element must have an \textit{inverse}. The way in which the elements in a group act with each other is called the group's \textit{structure}. If 2 groups have the same number of elements and share the same structure, then they are regarded as being \textit{isomorphic} to each other, which essentially means that they equivalent. Many everyday things can be regarded as groups, such as the symmetries of geometrical objects, or the number systems we use. \\
 \\
-The set of 2 x 2 matrices whose \textit{determinant} is equal to 1, together with the operation of ordinary matrix multiplication, forms a group called the \textit{special linear group}. This is a group because the product of 2 matrices has a determinant equal to the product of the determinants of the 2 matrices, so since 1 x 1 = 1, this new element also belongs to the group, hence the axiom of being closed is satisfied. Furthermore, it is crucial that the entries in the matrices are taken from a specified \textit{ring} or \textit{field}. Rings and fields are, like groups, abstract mathematical objects, albeit they satisy even more axioms than groups do. Crucially, rings and fields have both an additive and a multiplicative identity. \\
+The set of 2 x 2 matrices whose \textit{determinant} is equal to 1, together with the operation of ordinary matrix multiplication, 
+forms a group called the \textit{special linear group}. This is a group because the product of 2 matrices has a determinant equal to the product of the determinants of the 2 matrices, 
+so since 1 x 1 = 1, this new element also belongs to the group, hence the axiom of being closed is satisfied. 
+Furthermore, it is crucial that the entries in the matrices are taken from a specified \textit{ring} or \textit{field}. 
+Rings and fields are, like groups, abstract mathematical objects, albeit they satisfy even more axioms than groups do. Crucially, rings and fields have both an additive and a multiplicative identity. \\
 \\
 This paper focuses on $\SL_2(F)$, which is the two-dimensional special linear group whose entries are taken from an \textit{algebraically closed} field. Algebraically closed fields are infinite in size, which means that the resulting special linear group is also infinite. A \textit{subgroup} of a group is simply a group with the added requirement that each of it's elements must also belong to the original group. Thus a finite subgroup of $\SL_2(F)$ is any finite set of elements belonging to this infinite group $\SL_2(F)$, which satisfy the 4 axioms of being a group. \\
 \\

@@ -102,7 +102,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalizing Fermat’s Last Theorem</span></a>
+  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalising Fermat’s Last Theorem</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
@@ -1218,7 +1218,7 @@ lemma IsComm_of_center_join_IsComm {G : Type* } [Group G] (H : Subgroup G)
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>    Let \(H\) be a subgroup of \(G\), if \(Z(G) \le H\) then for any maximal abelian subgroup of \(H\), \(A\) we have that \(Z(G) \le A\) </p>
+  <p>    Let \(H\) be a subgroup of a group \(G\), if \(Z(G) \le H\) then for any maximal abelian subgroup of \(H\), \(A\) we have that \(Z(G) \le A\) </p>
 
   </div>
 </div>
@@ -1326,7 +1326,7 @@ lemma center_le {G : Type*} [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbel
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   Let \(H\) be a subgroup of \(G\) and let \(A\) be a maximal abelian subgroup of \(H\), and let \(x \in A\) then \(A \le C_G(x)\). </p>
+  <p>   Let \(H\) be a subgroup of a group \(G\), let \(A\) be a maximal abelian subgroup of \(H\), and let \(x \in A\) then \(A \le C_G(x)\). </p>
 
   </div>
 </div>
@@ -1772,7 +1772,7 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAl
   <div class="proof_content">
   <p> We show that \(A \in \mathfrak {M}\) if and only if \(A = Z(G)\) </p>
 <ul class="itemize">
-  <li><p>Suppose \(A\) is a maximal abelian subgroup of \(H\), then by ?? \(Z(G) \le A\). Furthermore, \(A \le H = Z(G)\); which overall shows \(A = Z(G)\) as required. </p>
+  <li><p>Suppose \(A\) is a maximal abelian subgroup of \(H\), then by <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.center_le">6.16</a> \(Z(G) \le A\). Furthermore, \(A \le H = Z(G)\); which overall shows \(A = Z(G)\) as required. </p>
 </li>
   <li><p>Suppose \(A = Z(G)\) we now show that \(A\) is a maximal abelian subgroup. On the one hand, \(A = Z(G)\) so it follows that \(A\) is abelian. On the other hand, we need to show that \(Z(G)\) is maximal. Let \(B\) be a subgroup of \(H\) that is commutative and such that \(Z(G) \sqcap H \le B\), we show that it follows that \(B \le Z(G) \sqcap H\). But this follows trivially as \(B \leq H = Z(G) \sqcap H = \top \). </p>
 </li>
@@ -6015,49 +6015,73 @@ lemma normalizer_Sylow_join_center_eq_normalizer_Sylow {F : Type*} [Field F] {p 
       normalizer (map G.subtype Q.toSubgroup) := by
     sorry
 </pre> </small> </p>
-<p>We now start to count the elements of the seperate components of \(G\) and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of \(G\), something we will call the <b class="bfseries">Maximal Abelian Subgroup Class Equation</b> of \(G\). <br /><br />First we split \(\mathfrak {M}\) into the conjugacy classes of it’s elements. Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z">6.37</a> tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to \(p\) or of the form \(Q \times Z\) where \(Q\) is a Sylow \(p\)-subgroup. Let \(\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}\) (where \(s, t \in \mathbb {Z}^+\)) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to \(p\). Recall that part (iv) of Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.index_normalizer_le_two">6.38</a> tells us that \([N_G(A): A] = 1\) or 2. Let \(A\) be a representative from each \(\mathcal{C}_i\) such that, </p>
-<div class="displaymath" id="a0000000361">
+<p>We now start to count the elements of the seperate components of \(G\) and use the preceeding 2 theorems to construct what will be an invaluable formula in determining the structure of \(G\), something we will call the <b class="bfseries">Maximal Abelian Subgroup Class Equation</b> of \(G\). <br /></p>
+<div class="remark_thmwrapper theorem-style-remark" id="a0000000361">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <span class="remark_thmlabel">6.64</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="Ch6_MaximalAbelianSubgroupClassEquation.html#a0000000361">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  <p>From here on, the formalisation of statements may not be completely accurate or even correct since the approach for formalising the case split which shall be outlined below is still provisional. The main purpose of the Lean statements that follow in the remaining text are to set up the scaffolding for the remaining formalisation. </p>
+
+  </div>
+</div>
+<p> <br />First we split \(\mathfrak {M}\) into the conjugacy classes of it’s elements. Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z">6.37</a> tells us that every maximal abelian subgroup is either a cyclic subgroup whose order is relatively prime to \(p\) or of the form \(Q \times Z\) where \(Q\) is a Sylow \(p\)-subgroup. Let \(\mathcal{C}_1, \mathcal{C}_2,...,\mathcal{C}_s, \mathcal{C}_{s+1},..., \mathcal{C}_{s+t}\) (where \(s, t \in \mathbb {Z}^+\)) denote the conjugacy classes of the cyclic subgroups whose order is relatively prime to \(p\). Recall that part (iv) of Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.index_normalizer_le_two">6.38</a> tells us that \([N_G(A): A] = 1\) or 2. Let \(A\) be a representative from each \(\mathcal{C}_i\) such that, </p>
+<div class="displaymath" id="a0000000362">
   \begin{align*}  [N_G(A) : A] & = 1, \tag {for $i \leq s$} \\[2mm] [N_G(A) : A] & = 2. \tag {for $s {\lt} i \leq s+t$}, \end{align*}
 </div>
 <p>Now let \(Q_1\) and \(Q_2\) be any two Sylow \(p\)-subgroups of \(G\). By the Second Sylow Theorem, \(Q_1\) and \(Q_2\) are conjugate to each other in \(G\). That is, there exists a \(g \in G\) such that \(gQ_1g^{-1} = Q_2\). </p>
-<div class="displaymath" id="a0000000362">
-  \begin{align*}  gQ_1g^{-1} = Q_2 & \iff gQ_1g^{-1}Z = Q_2Z \\ & \iff gQ_1Zg^{-1} = Q_2Z \\ & \iff g(Q_1 \times Z)g^{-1} = (Q_2 \times Z). \tag {by Corollary \ref{directproductZ}} \end{align*}
+<div class="displaymath" id="a0000000363">
+  \begin{align*}  gQ_1g^{-1} = Q_2 & \iff gQ_1g^{-1}Z = Q_2Z \\ & \iff gQ_1Zg^{-1} = Q_2Z \\ & \iff g(Q_1 \times Z)g^{-1} = (Q_2 \times Z). \end{align*}
 </div>
 <p>So \(Q_1 \times Z\) and \(Q_2 \times Z\) belong to the same conjugacy class, furthermore there is thus only 1 conjugacy class of elements of this form in \(\mathfrak {M}\). Let \(\mathcal{C}_{Q \times Z}\) denote this conjugacy class and let \(Q \times Z\) be a representative from it. The following diagram provides a visual representation of \(G\) divided into it’s maximal abelian subgroups. </p>
-<p>We can reformulate the counting formula in Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer">6.61</a> using the notation we have introduced to show that it agrees with the intuitive approach that Fig 1 suggests. </p>
-<div class="displaymath" id="a0000000363">
-  \begin{align*}  |G \!  \setminus \!  Z| = \sum _{[A^*] \in S} |A^*| [G:N_G(A)] = \sum _{A^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|. \end{align*}
-</div>
-<p>We are now able to begin to evaluate \(G\). Firstly, let \(|Z| = e\) and \(|G| = eg\). We know well by now that \(e = 1\) or 2 depending on whether \(p\) equals 2 or not, and by Lagrange’s Theorem, the order of a subgroup divides the order of the group, so \(e\) divides \(|G|\) since \(Z {\lt} G\). <br /><br />We consider the cyclic case first. Again, by Lagrange’s Theorem, since \(Z\) is a subgroup of each \(A\), \(e\) divides \(|A|\). So set \(|A| = eg_i\). Since \(Z \notin \mathfrak {M}\), each \(A\) is therefore strictly larger than \(Z\) and so each \(g_i\) is an integer greater than or equal to 2. <br /><br />To determine the order of each \(C_i\), we return to the set \(\mathfrak {M}^*\). The size of one representative of each class is, </p>
+<p>We can reformulate the counting formula in Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer">6.61</a> in the following way. </p>
+<p><b class="bfseries">Note</b>: Here we return to Christopher Butler’s notation which uses an indexing set, this formalisation is still in progress. </p>
 <div class="displaymath" id="a0000000364">
-  \begin{align*}  |A^*| = |A \!  \setminus \!  Z| = eg_i-e = e(g_i-1). \end{align*}
+  \begin{align*}  |G \!  \setminus \!  Z| = \sum _{A_i^* \in S} |A_i^*| [G:N_G(A_i)] = \sum _{A_i^* \in S} |C_i^*| = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|. \end{align*}
 </div>
-<p> The number of \(A^*\) in each conjugacy class \(\mathcal{C}_i\) for \(i \leq s\) is thus, </p>
+<p>We are now able to begin to evaluate \(G\). Firstly, let \(|Z| = e\) and \(|G| = eg\). We know well by now that \(e = 1\) or 2 depending on whether \(p\) equals 2 or not, and by Lagrange’s Theorem, the order of a subgroup divides the order of the group, so \(e\) divides \(|G|\) since \(Z {\lt} G\). <br /><br />We consider the cyclic case first. Again, by Lagrange’s Theorem, since \(Z\) is a subgroup of each \(A_i\), \(e\) divides \(|A_i|\). So set \(|A_i| = eg_i\). Since \(Z \notin \mathfrak {M}\), each \(A_i\) is therefore strictly larger than \(Z\) and so each \(g_i\) is an integer greater than or equal to 2. <br /><br />To determine the order of each \(C_i\), we return to the set \(\mathfrak {M}^*\). The size of one representative of each class is, </p>
 <div class="displaymath" id="a0000000365">
-  \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A)] = \frac{|G|}{|A|} = \frac{eg}{eg_i} = \frac{g}{g_i}. \end{align*}
+  \begin{align*}  |A_i^*| = |A_i \!  \setminus \!  Z| = eg_i-e = e(g_i-1). \end{align*}
+</div>
+<p> The number of \(A_i^*\) in each conjugacy class \(\mathcal{C}_i\) for \(i \leq s\) is thus, </p>
+<div class="displaymath" id="a0000000366">
+  \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{|A_i|} = \frac{eg}{eg_i} = \frac{g}{g_i}. \end{align*}
 </div>
 <p> <br />Therefore the total number of elements of \(G\) in the noncentral part of \(C_i\) for \(i \leq s\) is, </p>
 <div class="displaymath" id="classeq1of3">
-  \begin{align}  \label{classeq1of3} \sum _{i=1}^{s} |C_i^*| = \sum _{i=1}^{s} |A^*| |\mathcal{C}_i^*| = \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i}. \end{align}
+  \begin{align}  \label{classeq1of3} \sum _{i=1}^{s} |C_i^*| = \sum _{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| = \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i}. \end{align}
 </div>
-<p> <br />The number of \(A^*\) in each conjugacy class \(\mathcal{C}_i\) for \(s {\lt} i \leq s+t\) is thus, </p>
-<div class="displaymath" id="a0000000366">
-  \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A)] = \frac{|G|}{2|A|} = \frac{eg}{2eg_i} = \frac{g}{2g_i}. \end{align*}
+<p> <br />The number of \(A_i^*\) in each conjugacy class \(\mathcal{C}_i\) for \(s {\lt} i \leq s+t\) is thus, </p>
+<div class="displaymath" id="a0000000367">
+  \begin{align*}  |\mathcal{C}_i^*| = |\mathcal{C}_i| = [G:N_G(A_i)] = \frac{|G|}{2|A_i|} = \frac{eg}{2eg_i} = \frac{g}{2g_i}. \end{align*}
 </div>
 <p> <br />Therefore the total number of elements of \(G\) in the noncentral part of \(C_i\) for \(s {\lt} i \leq s+t\) is, </p>
 <div class="displaymath" id="classeq2of3">
-  \begin{align} \label{classeq2of3} \sum _{i=s+1}^{s+t} |C_i^*| = \sum _{i=s+1}^{s+t} |A^*| |\mathcal{C}_i^*| = \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}. \end{align}
+  \begin{align} \label{classeq2of3} \sum _{i=s+1}^{s+t} |C_i^*| = \sum _{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*| = \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}. \end{align}
 </div>
-<p> We next determine the order of \(C_{Q \times Z}\). Let \(|Q| = q\). If \(p \nmid |G|\) then \(q=1\) and if \(p = 0\), then we consider a Sylow \(p\)-subgroup to simply be \(I_G\). So \(q\) is always at least 1. Since \(Z {\lt} K\), we can let \(|K| = ek\). Observe that if \(K \in \mathfrak {M}\), then by Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K">6.41</a>, \(K = A\) for some \(0 {\lt} i \leq t\) and \(k = g_i\). Recall that \(N_G(Q) = QK\) and so, </p>
-<div class="displaymath" id="a0000000367">
+<p> We next determine the order of \(C_{Q \times Z}\). Let \(|Q| = q\). If \(p \nmid |G|\) then \(q=1\) and if \(p = 0\), then we consider a Sylow \(p\)-subgroup to simply be \(I_G\). So \(q\) is always at least 1. Since \(Z {\lt} K\), we can let \(|K| = ek\). Observe that if \(K \in \mathfrak {M}\), then by Theorem <a href="Ch6_MaximalAbelianSubgroupClassEquation.html#MaximalAbelianSubgroup.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K">6.41</a>, \(K = A_i\) for some \(0 {\lt} i \leq t\) and \(k = g_i\). Recall that \(N_G(Q) = QK\) and so, </p>
+<div class="displaymath" id="a0000000368">
   \begin{align*}  |N_G(Q \times Z)^*| & = |N_G(Q \times Z)| \\ & = |N_G(Q)| \\ & = |QK| = eqk. \end{align*}
 </div>
 <p>Again we count the size and number of these maximal abelian groups. </p>
-<div class="displaymath" id="a0000000368">
+<div class="displaymath" id="a0000000369">
   \begin{align*}  |(Q \times Z)^*| = |QZ| - |Z| = e(q-1). \end{align*}
 </div>
 <p>Since there is only one conjugacy class of \(Q \times Z\), the number of \((Q \times Z)^*\) in \(\mathfrak {M}^*\) is thus, </p>
-<div class="displaymath" id="a0000000369">
+<div class="displaymath" id="a0000000370">
   \begin{align*}  |\mathcal{C}_{Q \times Z}^*| = |\mathcal{C}_{Q \times Z}| = [G: N_G(Q \times Z)] = \frac{|G|}{|N_G(Q \times Z)^*|} = \frac{eg}{eqk} = \frac{g}{qk}. \end{align*}
 </div>
 <p>Therefore the total number of elements of \(G\) in the noncentral parts of each \(Q \times Z\) is, </p>
@@ -6066,18 +6090,18 @@ lemma normalizer_Sylow_join_center_eq_normalizer_Sylow {F : Type*} [Field F] {p 
 </div>
 <p>We now sum together (<a href="Ch6_MaximalAbelianSubgroupClassEquation.html#classeq1of3">13</a>), (<a href="Ch6_MaximalAbelianSubgroupClassEquation.html#classeq2of3">14</a>) and (<a href="Ch6_MaximalAbelianSubgroupClassEquation.html#classeq3of3">15</a>) to create the <b class="bfseries">Maximal Abelian Subgroup Class Equation</b> of \(G\). </p>
 <div class="displaymath" id="classeq">
-  \begin{align} \label{classeq} |G \!  \setminus \!  Z| & = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|, \nonumber \\ |G \!  \setminus \!  Z| & = |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| + \sum _{i=1}^{s} |A^*| |\mathcal{C}_i^*| + \sum _{i=s+1}^{s+t} |A^*| |\mathcal{C}_i^*|, \nonumber \\ eg - e & = \frac{eg(q-1)}{qk} + \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i} + \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}, \nonumber \\ 1 & = \frac{1}{g} + \frac{q-1}{qk} + \sum _{i=1}^{s} \frac{g_i-1}{g_i} + \sum _{i=s+1}^{s+t} \frac{g_i-1}{2g_i}. \end{align}
+  \begin{align} \label{classeq} |G \!  \setminus \!  Z| & = |C_{Q \times Z}^*| + \sum _{i=1}^{s+t} |C_i^*|, \nonumber \\ |G \!  \setminus \!  Z| & = |(Q \times Z)^*| |\mathcal{C}_{Q \times Z}^*| + \sum _{i=1}^{s} |A_i^*| |\mathcal{C}_i^*| + \sum _{i=s+1}^{s+t} |A_i^*| |\mathcal{C}_i^*|, \nonumber \\ eg - e & = \frac{eg(q-1)}{qk} + \sum _{i=1}^{s} \frac{eg(g_i-1)}{g_i} + \sum _{i=s+1}^{s+t} \frac{eg(g_i-1)}{2g_i}, \nonumber \\ 1 & = \frac{1}{g} + \frac{q-1}{qk} + \sum _{i=1}^{s} \frac{g_i-1}{g_i} + \sum _{i=s+1}^{s+t} \frac{g_i-1}{2g_i}. \end{align}
 </div>
 <p>Since \(g,k,q \in \mathbb {Z}^+\) this implies that, </p>
-<div class="displaymath" id="a0000000370">
+<div class="displaymath" id="a0000000371">
   \begin{align*}  \frac{1}{g} {\gt} 0 \quad \text{and} \quad \frac{q-1}{qk} \geq 0. \end{align*}
 </div>
 <p>Also, since \(g_i \geq 2\) for \(1 \leq i \leq s + t\), we have, </p>
-<div class="displaymath" id="a0000000371">
+<div class="displaymath" id="a0000000372">
   \begin{align*}  \frac{g_i-1}{g_i} \geq \frac{1}{2}, \quad \sum _{i=1}^{s} \frac{g_i-1}{g_i} \geq \frac{s}{2} \quad \text{and} \quad \sum _{i=s+1}^{s+t} \frac{g_i-1}{2g_i} \geq \frac{t}{4}. \end{align*}
 </div>
 <p>Thus we can find a lower bound for (<a href="Ch6_MaximalAbelianSubgroupClassEquation.html#classeq">16</a>) which limits the possible number of conjugacy classes somewhat, </p>
-<div class="displaymath" id="a0000000372">
+<div class="displaymath" id="a0000000373">
   \begin{align*}  1 {\gt} \frac{s}{2} + \frac{t}{4}. \end{align*}
 </div>
 <p>There are only 6 possible different pairs of values which \(s\) and \(t\) can take:  </p>

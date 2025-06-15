@@ -78,9 +78,9 @@ The following example hopes to illustrate a simpler example and give a very brie
     \item Formalise the mathematical statement using Lean tactics.
 \end{itemize}
 
-Note that in the list above, the notion of a Lean tactics is mentioned. Loosely speaking, a \texttt{tactic} is a Lean metaprogram that will write Lean programs, these (non-meta) programs can
+Note that in the list above, the notion of a Lean tactic is mentioned. Loosely speaking, a \texttt{tactic} is a Lean metaprogram that will write Lean programs, these (non-meta) programs can
 be the usual code one would write for an algorithm or it could be the program which corresponds to the proof term that one needs to construct to formalise
-a mathematical statement in Lean. Examples of tactics and how they are used will be illustrated in the following example.
+a mathematical statement in Lean. Examples of tactics and how they are used will be illustrated in the following example, yet a comprehensive list of Lean tactics can be found at \href{https://lean-lang.org/doc/reference/latest//Tactic-Proofs/Tactic-Reference/}{Tactics}.
 
 \begin{example}[Proving and formalising the sum of the first $n$ odd integers]
     To understand how the nature of proof is preserved when passed into a theorem prover, we will compare side by side the informal and formal proofs 
@@ -91,7 +91,7 @@ a mathematical statement in Lean. Examples of tactics and how they are used will
         \sum_{k = 1}^{n} 2k - 1 = n^2
     \end{equation}
 
-    There are many ways to prove this statement, other proofs can be found at \cite{sangwin}. The proof that is best suited to be formalise is the
+    There are many ways to prove this statement, other proofs can be found at \cite{sangwin}. The proof that is best suited to be formalised is the
     proof by induction which goes as the following:
 
     \begin{proof}
@@ -274,14 +274,14 @@ Gauss, Galois, Euler, Abel, Dedekind, Noether, Euler, Kummer, Mazur, Kronecker a
 to finally put to rest Fermat's Last Theorem.
 
 
-\section{Formalizing Fermat's Last Theorem}
+\section{Formalising Fermat's Last Theorem}
 
 Following the sequence of Lean success stories ranging from the Liquid Tensor Experiment to the formalisation of the Polynomial Freiman-Rusza conjecture. 
 
 Prof. Kevin Buzzard from Imperial College London has received a five-year grant that will allow him to lead the formalisation of Fermat's Last Theorem. This grant kicked in in October of 2024. 
 
 At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project. Alongside other infrastructure like the project dashboard, mathematicians around the world can 
-claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task.
+claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a \texttt{sorry} free proof then one can claim the glory of having completed the task.
 
 \subsubsection{The first target of the formalisation of Fermat's Last Theorem}
 
@@ -310,7 +310,7 @@ the mathematics library of Lean \texttt{mathlib}, contains all mathematics known
 
 \section{Classification of finite subgroups of the $\PGL_2(\Fbar_p)$ within Fermat's Last Theorem}
 
-The primary concern of this project is to formalise Theorem 2.47 of \cite{dtt} which 
+The primary goal for this project is to formalise Theorem 2.47 of \cite{dtt} which 
 concerns the projective general and special linear groups:
 
 \begin{definition}[Projective general linear group]
@@ -425,15 +425,17 @@ Provided the classification of finite subgroups of $\PGL_2(\Fbar_\ell)$, it suff
 
 \section{Overview and reduction to the classification problem}
 
-Returning to the domain of the problem of interest, classifying finite subgroups of $\PGL_2(\Fbar_p)$. One can observe that $\Fbar_p$ is by construction an algebraically closed field, since it is the algebraic closure of $\F_p$,
-and it turns out that for any $n \in \N$, it is possible to show that $\PGL_n(F)$ is isomorphic to $\PSL_n(F)$, thus reducing our original classification of finite subgroups to the classification of finite subgroups of $\PSL_2(\Fbar)$.
+Returning to the domain of the problem of interest, classifying finite subgroups of $\PGL_2(\Fbar_p)$; one observe that $\Fbar_p$ is by construction an algebraically closed field, since it is the algebraic closure of $\F_p$,
+and it turns out that for any $n \in \N$, it is possible to show that $\PGL_n(F)$ is isomorphic to $\PSL_n(F)$ for any algebraically closed field $F$, thus reducing our original classification of finite subgroups to the classification of finite subgroups of $\PSL_2(\Fbar)$.
 
-Furthermore, on the back of the isomorphism defined between $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$, and determining that the center of $\SL_2(F)$ is $Z(\SL_2(\Fbar_p)) = \langle -I\rangle$, we can in fact focus on the much more tractable problem of 
+Furthermore, on the back of the isomorphism defined between $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$, and determining that the center of $\SL_2(\Fbar_p)$ is $Z(\SL_2(\Fbar_p)) = \langle -I\rangle$, we can in fact focus on the much more tractable problem of 
 classifying the finite subgroups of $SL_2(\Fbar_p)$ to eventually classify the finite subgroups of $\PSL_2(\Fbar_p)$, and overall obtain our desired result. 
 
 Moreover, since the more general problem of classifying the finite subgroups of $\SL_2(F)$ where $F$ is an arbitrary algebraically closed field
-yields a statement that is very close to the desired statement and Christopher Butler has a in-depth exposition of this result, the formalisation of slightly more general result was chosen.
+yields a statement that is very close to the desired statement and Christopher Butler has a in-depth exposition of this result, the formalisation of the slightly more general result was chosen.
 
 Considering proving the existence of such an isomorphism $\PGL_2(\Fbar_p)$ and $\PSL_2(\Fbar_p)$ is no more difficult in the general case, 
 the goal of the next chapter will be to formalise the definition of a suitable homomorphism between $\PGL_n(F)$ and $\PSL_n(F)$, where $F$ is an algebraically closed field, 
 and formally prove in the Lean proof assistant that this homomorphism actually defines an isomorphism.
+
+But before we dive into proving and formalising this result, we recall some preliminary results that will be used throughout the blueprint.

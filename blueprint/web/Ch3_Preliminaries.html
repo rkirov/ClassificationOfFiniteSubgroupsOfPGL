@@ -102,7 +102,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalizing Fermat’s Last Theorem</span></a>
+  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalising Fermat’s Last Theorem</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
@@ -779,12 +779,12 @@
         </div>
   </div>
   <div class="remark_thmcontent">
-  <p>In Lean, to state that two subgroups \(H, K\) of a group \(G\) are conjugate subgroups similar to how is done in <a href="Ch3_Preliminaries.html#conj_elem">3.17</a>. Once the <span class="ttfamily">MulAut</span> namespace is opened onecan make use of the convenient syntax: </p>
+  <p>In Lean, to state that two subgroups \(H, K\) of a group \(G\) are conjugate subgroups similar to how is done in <a href="Ch3_Preliminaries.html#conj_elem">3.17</a>. Once the <span class="ttfamily">MulAut</span> namespace is opened one can make use of the convenient syntax: </p>
 <pre class="verbatim">
 conj c • H = K 
 </pre>
 <p>This notation and API is useful because conjugation by a particular element is defined to be an element in the automorphism group of \(G\), \(\operatorname{Aut}(G)\). </p>
-<p>This becomes particularly crucial when formalizing the interactions of subgroups with the complete lattice structure on the set of subgroups of a group. </p>
+<p>This becomes particularly crucial when formalising the interactions of subgroups with the complete lattice structure on the set of subgroups of a group. </p>
 <p>Further discussion on the complete lattice structure on the set of subgroups of a group will happen later on. </p>
 
   </div>
@@ -1085,9 +1085,9 @@ noncomputable def prod_mulEquiv_join_of_disjoint_of_normal {G : Type*} [Group G]
   </div>
   <div class="remark_thmcontent">
   <p> Given the pointwise product of subgroups is not necessarily a subgroup. </p>
-<p>For example, the pointwise product subgroups of \(S_3\), \(\langle e, (1\; 2) \rangle \) and \(\langle e, (1\; 3) \rangle \) produce the set \(\langle e, (1\; 2) \rangle \langle e, (1\; 3) \rangle =\{ e, (1\; 2), (1\; 3), (3\; 2\; 1)\} \) which has cardinality four which does not divide six, thus cannot be a subgroup by Lagrange’s theorem. </p>
+<p>For example, the pointwise product subgroups of \(S_3\), \(\langle e, (1\; 2) \rangle \) and \(\langle e, (1\; 3) \rangle \) produce the set \(\langle e, (1\; 2) \rangle \langle e, (1\; 3) \rangle =\{ e, (1\; 2), (1\; 3), (3\; 2\; 1)\} \) which has cardinality four which does not divide six, thus cannot be a subgroup of \(S_3\) by Lagrange’s theorem. </p>
 <p>Thus, it does not make sense to define the product of two subgroups as having the type of a subgroup. </p>
-<p>Nonetheless, provided appropriate assumptions the two subgroups, such as for example disjointness and normality, the pointwise product turns out to indeed be a subgroup. </p>
+<p>Nonetheless, provided appropriate assumptions on the two subgroups, such as for example disjointness and normality, the pointwise product turns out to indeed be a subgroup. </p>
 <p>What turns out to be much more sensible in the bigger picture is to harness the complete lattice structure on subgroups. It is often the case that subgroups do not satisfy the appropriate conditions for the pointwise product of sets to be a subgroup, but still one would like to define the smallest subgroup which contains both subgroups, whether it turns out to be the pointwise product of the subgroups or something whose underlying set is larger. </p>
 <p>This notion corresponds to taking the supremum or join of two subgroups <span class="ttfamily">H : Subgroup G</span> and <span class="ttfamily">K : Subgroup G</span> which denoted by </p>
 <pre class="verbatim">

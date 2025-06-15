@@ -59,7 +59,8 @@ instance lift_noncenter_MaximalAbelianSubgroupsOf {F : Type*} [Field F] (G : Sub
   Setoid (noncenter_MaximalAbelianSubgroupsOf G) where
   r A B := ∃ x ∈ G, conj x • A.val = B.val
   iseqv := {
-    refl A := ⟨1, Subgroup.one_mem G, by simp⟩
+    refl := by rintro A
+               exact ⟨1, Subgroup.one_mem G, by simp⟩
     symm := by
       rintro A B ⟨x, x_in_G, hx⟩
       use x⁻¹
@@ -571,6 +572,17 @@ theorem card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer {
   Nat.card (G.carrier \ (center SL(2,F)).carrier : Set SL(2,F)) =
   ∑ lift_A : Quotient (lift_noncenter_MaximalAbelianSubgroupsOf G),
     lift_card_noncenter G lift_A * Nat.card (lift_noncenter_C G lift_A) := by sorry
+
+#check Sylow
+#leansearch "subtype which satisfies property."
+
+-- inductive lift_noncenter_MaximalAbelianSubgroupsOfType {L : Type*} [Group L] (G : Subgroup L) extends lift_noncenter_MaximalAbelianSubgroupsOf G
+--   | S
+--   | T
+
+#check MonoidHom
+
+
 
 /- Lemma 2.5 N_G(A) = N_G(A*)-/
 lemma normalizer_noncentral_eq {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [Finite G]

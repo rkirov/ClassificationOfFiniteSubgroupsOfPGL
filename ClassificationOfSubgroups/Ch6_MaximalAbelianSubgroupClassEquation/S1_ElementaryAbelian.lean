@@ -63,10 +63,16 @@ lemma primeFac_eq {G : Type*} [Group G] (p : ℕ)
     exact
       ⟨hp, dvd_card p H hH bot_lt_H, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
 
-lemma IsPGroup {G : Type*} [Group G] (p : ℕ) (hp : Nat.Prime p)
-  (H : Subgroup G) [Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H : ⊥ < H):
+
+
+
+
+
+
+lemma IsPGroup {G : Type*} [hG : Group G] (p : ℕ) (hp : Nat.Prime p)
+  (H : Subgroup G) [hH₀ : Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H : ⊥ < H):
   IsPGroup p H := by
-  let inst : Fact (Nat.Prime p) := { out := hp }
+  let hp' : Fact (Nat.Prime p) := { out := hp }
   rw [IsPGroup.iff_card]
   have : Nat.primeFactors (Nat.card (H :)) = {p} :=
     @primeFac_eq G _ p hp H _ hH bot_lt_H
@@ -82,6 +88,7 @@ lemma IsPGroup {G : Type*} [Group G] (p : ℕ) (hp : Nat.Prime p)
     exact ⟨hp', p'_dvd_card, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
   simp [this] at p_eq_p'
   use k, p_eq_p'▸ card_eq.symm
+
 
 lemma subgroupOf {G : Type*} [Group G]
   (H K : Subgroup G) {p : ℕ} [Fact (Nat.Prime p)] (hH : IsElementaryAbelian p H) :

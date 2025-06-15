@@ -646,7 +646,8 @@ The map $\psi : F^\times \overset{\sim}{\rightarrow} D$ defined by $\delta \maps
 \begin{proof}
     \leanok
     The function $\psi: F^\times \rightarrow D$ defined by $\psi(\delta) = d_\delta$ is a homomorphism between the group $F^\times$ under normal multiplication and $D$ under normal matrix multiplication:
-\begin{align*} \psi(\delta \rho) = d_{\delta \rho} =  d_\delta d_\rho = \psi(\delta) \psi(\rho). 
+\begin{align*} 
+  \psi(\delta \rho) = d_{\delta \rho} =  d_\delta d_\rho = \psi(\delta) \psi(\rho). 
 \end{align*}
 Observe that $\psi$ is trivially injective and surjective and thus an isomorphism. So $D\cong F^\times$ and $D$ is a subgroup of $L$.\\
 \end{proof}
@@ -813,7 +814,7 @@ lemma normal_S_subgroupOf_L {F : Type*} [Field F] : ((S F).subgroupOf (L F)).Nor
 \uses{SpecialSubgroups.normal_S_subgroupOf_L}
 \leanok
 The function $\pi: L \rightarrow D$ defined by $\pi(d_\delta s_\sigma) = d_\delta$ is a homomorphism between $L$ under normal matrix multiplication and $D$ under normal matrix multiplication:
-\begin{align*} \pi(d_\delta s_\sigma d_\rho s_\gamma) &= \pi(d_\delta d_\rho s_\sigma s_\gamma) \tag{where $\sigma = \sigma \rho^{2}$ by Lemma \ref{6.1}}
+\begin{align*} \pi(d_\delta s_\sigma d_\rho s_\gamma) &= \pi(d_\delta d_\rho s_\sigma s_\gamma) \tag{where $\sigma = \sigma \rho^{2}$}
 \\ &= d_\delta d_\rho
 \\ &= \pi(d_\delta s_\sigma)\pi(d_\rho s_\gamma).
 \end{align*}
@@ -996,7 +997,7 @@ Since we are working in the special linear group, det$(z)=1$, thus $z_1 = \pm 1$
 \end{proof}
 \begin{footnotesize}
 \begin{verbatim}
-lemma center_SL2_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
+lemma center_SL2_eq_Z (R : Type*) [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
     ext x
     constructor
     · intro hx
@@ -1646,7 +1647,7 @@ Let $s_\sigma$ be an arbitary element of $S_0$ with $\sigma \neq 0$. To determin
 \\[1.5ex] &= \begin{bmatrix} \alpha \delta - \beta \gamma + \beta \delta \sigma & - \beta^2  \sigma \\ \delta^2 \sigma & \alpha \delta - \beta \gamma - \beta \delta \sigma \end{bmatrix}.
 \end{align*}
 Since $x s_\sigma x^{-1} \in S_0$ we have $- \beta^2  \sigma = 0$ and since $\sigma \neq 0$, we have $\beta = 0$. Since $s_\sigma$ was chosen arbitrarily, 
-any element which normalizes $S_0$ is a lower triangular matrix and is therefore in $L$ by (\ref{Hlowertri}). Thus $N_{\SL_2(F)}(S_0) \subset L$ as required. \\
+any element which normalizes $S_0$ is a lower triangular matrix and is therefore in $L$ by \ref{mem_L_iff_lower_triangular}. Thus $N_{\SL_2(F)}(S_0) \subset L$ as required. \\
 \end{proof}
 \begin{footnotesize}
 \begin{verbatim}
@@ -2209,7 +2210,7 @@ Thus $y$ and indeed $H$ is contained in Stab$(P)$, so Stab$(P) = H$ as desired. 
 
 This shows that $P_i$ is a fixed point of $x$ if and only if $g^{-1} P_i$ is a fixed point of $y$. Thus conjugate elements have the same number of fixed points. \\
 \\
-(iv) By Proposition \ref{6.3}(i), every  element of $\SL_2(F)$is conjugate to either $d_\delta$ or $\pm s_\sigma$, so since conjugate elements have the same number of fixed points, every element of $\SL_2(F)\! \setminus \! Z$ has either the same number of fixed points as $d_\delta$ (with $\delta \neq \pm 1$), namely 2, or the same number as $\pm s_\sigma$, (with $\sigma \neq 0$), namely 1.
+(iv) By Proposition \ref{ISL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed} every  element of $\SL_2(F)$is conjugate to either $d_\delta$ or $\pm s_\sigma$, so since conjugate elements have the same number of fixed points, every element of $\SL_2(F)\! \setminus \! Z$ has either the same number of fixed points as $d_\delta$ (with $\delta \neq \pm 1$), namely 2, or the same number as $\pm s_\sigma$, (with $\sigma \neq 0$), namely 1.
 
 \end{proof}
 

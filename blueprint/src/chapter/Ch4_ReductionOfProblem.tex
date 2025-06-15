@@ -209,12 +209,12 @@ Which shows that the homomorphism $\bar{\varphi}$ is injective.
     Otherwise, should $\theta([0]) \ne \theta([2])$ then this would mean that $\theta$ would be treating what we thought were the indistinguishable elements $0$ and $2$, as different,
     This is the idea of showing the \textit{well-definedness} of a map on a quotient.
 
-    In general, one of the idea of quotients (not only group quotients) is to somehow eliminate redundant information.
+    In general, one of the ideas of quotients (not only group quotients) is to somehow eliminate redundant information.
 
     Let us run with the following amusing example in every day life:
     
-    Suppose the lights are on in a room and suppose Bob asks Alice what would happen should he press the light switch $n \in \N$ times. It then occurs to
-    Alice that in this setting pressing the light switch on $12$ times or $1400$ times, or for that matter, any even number of times yields to indistinguishable outcomes,
+    Suppose the lights in a room are on, and suppose Bob asks Alice what would happen should he press the light switch $n \in \N$ times. It then occurs to
+    Alice that in this setting pressing the light switch on $12$ times or $1400$ times, or for that matter, any even number of times yields indistinguishable outcomes,
      the lights will be on; so in a sense the elements belonging to the set of even numbers are indistinguishable from each other, 
      what is more is that we are not interested in so much the number but the parity of the number.
 
@@ -230,17 +230,18 @@ Which shows that the homomorphism $\bar{\varphi}$ is injective.
     \bar{\psi} : \N / \sim \rightarrow \{\text{On}, \; \text{Off}\}
     \]
 
-    The quotient on $\N$ now allows us to say treat $[12] = [1400]$ and our new map $\bar{\psi}$ now recognises that these numbers are the same
+    The quotient on $\N$ now allows us to say treat $[12] = [1400]$, as they are equal sets, and our new map $\bar{\psi}$ now recognises them to be the same
     under this new light. 
 
     However, we could have also phrased this observation as saying that $\psi$ respects the equivalence relation on $\sim$ and
-    thus have defined a $\bar{\psi}$ to be the map which given the parity, an element of $\N / \sim = \{[0], [1]\}$ outputs whether the light is on or off. 
+    thus have defined a $\bar{\psi}$ to be the map which given the parity, an element of the new abstract object $\N / \sim = \{[0], [1]\}$,
+    outputs whether the light is on or off. 
 
     The upshot of all of this is that when we define a quotient and a map from a quotient, we ultimately want such a function to respect the equivalence relation. Whether the elements of a quotient are
     modelled as a coset, a set of equivalent elements, or as an abstract object which satisfies our needs should not be the main concern. 
 
-    This is what the definition of quotients in Lean recognises, but it also recognises that it would be rather strange to think of a term of a quotient type as a set, since it would be rather clunky to work with; 
-    instead one simply modifies the definition of equality, and in particular, when wanting to define in Lean the lift of an existing homomorphism $\gamma : G \rightarrow H$
+    This is what the definition of quotients in Lean recognises, but it also recognises that it would be rather strange to think of a term of a quotient type as a set, since it would be clunky to  constantly work with
+    the type \texttt{Set (Set s)}, to define a quotient;  instead one simply modifies the definition of equality on terms, and in particular, when wanting to define in Lean the lift of an existing homomorphism $\gamma : G \rightarrow H$
     to $\bar{\gamma} : G/N \rightarrow H$, the most natural way to define/verify such a lift is sensible in Lean is to prove that equivalent elements map to the same output under $\gamma$.
 
     In fact, this is exactly what the general \texttt{Quot.lift} does:
@@ -355,7 +356,7 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
 \begin{proof}
 \uses{exists_SL_eq_scaled_GL_of_IsAlgClosed}
 \leanok
-    Let $G \; (F^\times I) = [G] \in \PGL_n(F)$, then $G \in \GL_n(F)$ we can find a representative of $[G']$, that lies within the special linear group.
+    Let $G \; (F^\times I) = [G] \in \PGL_n(F)$, then $G \in \GL_n(F)$ we can find a representative of $[G']$ that lies within the special linear group.
     Given elements of the special linear group are matrices with determinant equal to one, we must scale $G$ to a suitable factor to yield a representative which lies within $\SL_n(F)$. Suppose $\det(G) \ne 1$ and let
     \[
     P(X) := X^n - \det(G) \in F[X]
@@ -481,4 +482,4 @@ the resulting subgroup will either shrink by a factor of two or it will remain i
 We now proceed to classify all finite subgroups of $\SL_2(F)$ when $F$ is algebraically closed field. 
 From now on, we follow Christopher Butler's exposition of Dickson's classification of finite subgroups of $\SL_2(F)$ over an algebraically closed field $F$. 
 
-Christopher has been kind enough to provide the TeX code so I could prepare this blueprint which crucially hinges on the result which his exposition covers.
+Christopher has been kind enough to provide the TeX code so I could prepare this blueprint which crucially hinges on the result which his exposition \cite{butler} covers.

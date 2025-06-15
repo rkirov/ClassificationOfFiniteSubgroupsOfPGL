@@ -102,7 +102,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalizing Fermat’s Last Theorem</span></a>
+  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalising Fermat’s Last Theorem</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
@@ -339,7 +339,7 @@ termination_by r
   <li><p>Formalise the mathematical statement using Lean tactics. </p>
 </li>
 </ul>
-<p>Note that in the list above, the notion of a Lean tactics is mentioned. Loosely speaking, a <span class="ttfamily">tactic</span> is a Lean metaprogram that will write Lean programs, these (non-meta) programs can be the usual code one would write for an algorithm or it could be the program which corresponds to the proof term that one needs to construct to formalise a mathematical statement in Lean. Examples of tactics and how they are used will be illustrated in the following example. </p>
+<p>Note that in the list above, the notion of a Lean tactic is mentioned. Loosely speaking, a <span class="ttfamily">tactic</span> is a Lean metaprogram that will write Lean programs, these (non-meta) programs can be the usual code one would write for an algorithm or it could be the program which corresponds to the proof term that one needs to construct to formalise a mathematical statement in Lean. Examples of tactics and how they are used will be illustrated in the following example, yet a comprehensive list of Lean tactics can be found at <a href ="https://lean-lang.org/doc/reference/latest//Tactic-Proofs/Tactic-Reference/">Tactics</a>. </p>
 <div class="example_thmwrapper theorem-style-remark" id="a0000000053">
   <div class="example_thmheading">
     <span class="example_thmcaption">
@@ -372,7 +372,7 @@ termination_by r
 	[
 	<a href="sect0001.html#sangwin" >2</a>
 	]
-</span>. The proof that is best suited to be formalise is the proof by induction which goes as the following: </p>
+</span>. The proof that is best suited to be formalised is the proof by induction which goes as the following: </p>
 <div class="proof_wrapper" id="a0000000054">
   <div class="proof_heading">
     <span class="proof_caption">
@@ -518,10 +518,10 @@ termination_by r
 <p>This copy and many of Pierre de Fermat’s belongings were searched in the hope of finding such a proof. Nonetheless, to this date no proof has been found. </p>
 <p>It took Euler to provide a (flawed) proof for the nonexistence of nontrivial solutions to Fermat’s equation for the exponent \(n = 3\), so far so good, Fermat’s conjecture held true for \(n = 3\). The case where \(n = 4\) was also proved by Euler; soon enough particular cases where \(n\) was some fixed natural number where being shown, which indeed seemed to suggest Fermat’s conjecture was true. However, no approach seemed to generalise to prove the general case... </p>
 <p>The proof of Fermat’s Last Theorem is the culmination of the effort of mathematicians spanning generations, and it took the direct and indirect efforts of mathematicians like: Gauss, Galois, Euler, Abel, Dedekind, Noether, Euler, Kummer, Mazur, Kronecker and so on to put Andrew Wiles and his collaborator Richard Taylor in the position to finally put to rest Fermat’s Last Theorem. </p>
-<h1 id="a0000000019">2.3 Formalizing Fermat’s Last Theorem</h1>
+<h1 id="a0000000019">2.3 Formalising Fermat’s Last Theorem</h1>
 <p>Following the sequence of Lean success stories ranging from the Liquid Tensor Experiment to the formalisation of the Polynomial Freiman-Rusza conjecture. </p>
 <p>Prof. Kevin Buzzard from Imperial College London has received a five-year grant that will allow him to lead the formalisation of Fermat’s Last Theorem. This grant kicked in in October of 2024. </p>
-<p>At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project. Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a "sorry" free proof then one can claim the glory of having completed the task. </p>
+<p>At the time of writing, since October of 2024, a digital blueprint has been set up to manage the project. Alongside other infrastructure like the project dashboard, mathematicians around the world can claim tasks that are set by Prof. Kevin Buzzard and if in return a task is returned with a <span class="ttfamily">sorry</span> free proof then one can claim the glory of having completed the task. </p>
 <h3 id="a0000000020">The first target of the formalisation of Fermat’s Last Theorem</h3>
 <p>The goal of the ongoing efforts of the formalisation is to reduce the proof of Fermat’s Last Theorem to results that were known in the 1980s such as Mazur’s Theorem which bounds the torsion subgroup points of an elliptic curve. </p>
 <p>However, it should be mentioned that the proof being formalised is not the original proof Andrew Wiles and Richard Taylor provided in 1994, but a more modernised approach that has been refined over the last 20 years. </p>
@@ -529,7 +529,7 @@ termination_by r
 <p>After all, the ultimate goal is to formalise all of mathematics and so far the library relevant to Algebraic Number Theory, Algebraic Geometry and Arithmetic Geometry is not developed enough to be even able to state the propositions and let alone formalise their corresponding proofs. </p>
 <p>Morally, the goal of the formalisation of Fermat’s Last Theorem is to formalise much of Algebraic Number Theory, Algebraic Geometry, Arithmetic Geometry and so forth so that one day the mathematics library of Lean <span class="ttfamily">mathlib</span>, contains all mathematics known to human kind. </p>
 <h1 id="a0000000021">2.4 Classification of finite subgroups of the \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) within Fermat’s Last Theorem</h1>
-<p>The primary concern of this project is to formalise Theorem 2.47 of <span class="cite">
+<p>The primary goal for this project is to formalise Theorem 2.47 of <span class="cite">
 	[
 	<a href="sect0001.html#dtt" >3</a>
 	]
@@ -641,10 +641,11 @@ termination_by r
 <p>The place where the theorem 2.47 is of interest, the theorem that this project aims to be a blueprint for, is because proving proving the claim above requires showing that the cohomology group \(H^1(\textrm{Gal}(F_n / F_0), \textrm{ad}^0\bar{\rho }(1))^G_{\mathbb {Q}}\) is trivial, which in turn reduces to showing that \(\ell \), an odd prime, does not divide the Galois group \(\operatorname{Gal}(F_0 /\mathbb {Q})\) which is isomorphic to a finite subgroup \(\operatorname{PGL}_2(\bar{\mathbb {F}}_\ell )\) and has \(\operatorname{Gal}(\mathbb {Q}(\zeta _\ell )/\mathbb {Q})\) as a quotient. </p>
 <p>Provided the classification of finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_\ell )\), it suffices to prove that the cohomology group is trivial for the case where \(\ell = 3\). </p>
 <h1 id="a0000000022">2.5 Overview and reduction to the classification problem</h1>
-<p>Returning to the domain of the problem of interest, classifying finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\). One can observe that \(\bar{\mathbb {F}}_p\) is by construction an algebraically closed field, since it is the algebraic closure of \(\mathbb {F}_p\), and it turns out that for any \(n \in \mathbb {N}\), it is possible to show that \(\operatorname{PGL}_n(F)\) is isomorphic to \(\operatorname{PSL}_n(F)\), thus reducing our original classification of finite subgroups to the classification of finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}})\). </p>
-<p>Furthermore, on the back of the isomorphism defined between \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) and \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\), and determining that the center of \(\operatorname{SL}_2(F)\) is \(Z(\operatorname{SL}_2(\bar{\mathbb {F}}_p)) = \langle -I\rangle \), we can in fact focus on the much more tractable problem of classifying the finite subgroups of \(SL_2(\bar{\mathbb {F}}_p)\) to eventually classify the finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\), and overall obtain our desired result. </p>
-<p>Moreover, since the more general problem of classifying the finite subgroups of \(\operatorname{SL}_2(F)\) where \(F\) is an arbitrary algebraically closed field yields a statement that is very close to the desired statement and Christopher Butler has a in-depth exposition of this result, the formalisation of slightly more general result was chosen. </p>
+<p>Returning to the domain of the problem of interest, classifying finite subgroups of \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\); one observe that \(\bar{\mathbb {F}}_p\) is by construction an algebraically closed field, since it is the algebraic closure of \(\mathbb {F}_p\), and it turns out that for any \(n \in \mathbb {N}\), it is possible to show that \(\operatorname{PGL}_n(F)\) is isomorphic to \(\operatorname{PSL}_n(F)\) for any algebraically closed field \(F\), thus reducing our original classification of finite subgroups to the classification of finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}})\). </p>
+<p>Furthermore, on the back of the isomorphism defined between \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) and \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\), and determining that the center of \(\operatorname{SL}_2(\bar{\mathbb {F}}_p)\) is \(Z(\operatorname{SL}_2(\bar{\mathbb {F}}_p)) = \langle -I\rangle \), we can in fact focus on the much more tractable problem of classifying the finite subgroups of \(SL_2(\bar{\mathbb {F}}_p)\) to eventually classify the finite subgroups of \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\), and overall obtain our desired result. </p>
+<p>Moreover, since the more general problem of classifying the finite subgroups of \(\operatorname{SL}_2(F)\) where \(F\) is an arbitrary algebraically closed field yields a statement that is very close to the desired statement and Christopher Butler has a in-depth exposition of this result, the formalisation of the slightly more general result was chosen. </p>
 <p>Considering proving the existence of such an isomorphism \(\operatorname{PGL}_2(\bar{\mathbb {F}}_p)\) and \(\operatorname{PSL}_2(\bar{\mathbb {F}}_p)\) is no more difficult in the general case, the goal of the next chapter will be to formalise the definition of a suitable homomorphism between \(\operatorname{PGL}_n(F)\) and \(\operatorname{PSL}_n(F)\), where \(F\) is an algebraically closed field, and formally prove in the Lean proof assistant that this homomorphism actually defines an isomorphism. </p>
+<p>But before we dive into proving and formalising this result, we recall some preliminary results that will be used throughout the blueprint. </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->

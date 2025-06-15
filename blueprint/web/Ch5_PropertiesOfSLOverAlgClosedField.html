@@ -102,7 +102,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalizing Fermat’s Last Theorem</span></a>
+  <a href="Ch2_Introduction.html#a0000000019"><span class="toc_ref">2.3</span> <span class="toc_entry">Formalising Fermat’s Last Theorem</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-2">
      <li class="">
@@ -2555,7 +2555,7 @@ lemma normal_S_subgroupOf_L {F : Type*} [Field F] : ((S F).subgroupOf (L F)).Nor
   <div class="proof_content">
   <p> The function \(\pi : L \rightarrow D\) defined by \(\pi (d_\delta s_\sigma ) = d_\delta \) is a homomorphism between \(L\) under normal matrix multiplication and \(D\) under normal matrix multiplication: </p>
 <div class="displaymath" id="a0000000177">
-  \begin{align*}  \pi (d_\delta s_\sigma d_\rho s_\gamma ) & = \pi (d_\delta d_\rho s_\sigma s_\gamma ) \tag {where $\sigma = \sigma \rho ^{2}$ by Lemma \ref{6.1}} \\ & = d_\delta d_\rho \\ & = \pi (d_\delta s_\sigma )\pi (d_\rho s_\gamma ). \end{align*}
+  \begin{align*}  \pi (d_\delta s_\sigma d_\rho s_\gamma ) & = \pi (d_\delta d_\rho s_\sigma s_\gamma ) \tag {where $\sigma = \sigma \rho ^{2}$} \\ & = d_\delta d_\rho \\ & = \pi (d_\delta s_\sigma )\pi (d_\rho s_\gamma ). \end{align*}
 </div>
 <p>We see that \(\pi \) is trivially surjective and has kernel </p>
 <div class="displaymath" id="a0000000178">
@@ -2986,7 +2986,7 @@ lemma closure_neg_one_eq : (closure {(-1 : SL(2,R))} : Set SL(2,R)) = {1, -1} :=
   </div>
 </div>
 <p> <small class="footnotesize"> <pre class="verbatim">
-lemma center_SL2_eq_Z (R : Type*)  [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
+lemma center_SL2_eq_Z (R : Type*) [CommRing R] [NoZeroDivisors R]: center SL(2,R) = Z R := by
     ext x
     constructor
     · intro hx
@@ -4577,7 +4577,7 @@ lemma lower_triangular_iff_top_right_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F
 
 \end{bmatrix}. \end{align*}
 </div>
-<p> Since \(x s_\sigma x^{-1} \in S_0\) we have \(- \beta ^2 \sigma = 0\) and since \(\sigma \neq 0\), we have \(\beta = 0\). Since \(s_\sigma \) was chosen arbitrarily, any element which normalizes \(S_0\) is a lower triangular matrix and is therefore in \(L\) by (??). Thus \(N_{\operatorname{SL}_2(F)}(S_0) \subset L\) as required. <br /></p>
+<p> Since \(x s_\sigma x^{-1} \in S_0\) we have \(- \beta ^2 \sigma = 0\) and since \(\sigma \neq 0\), we have \(\beta = 0\). Since \(s_\sigma \) was chosen arbitrarily, any element which normalizes \(S_0\) is a lower triangular matrix and is therefore in \(L\) by <a href="Ch5_PropertiesOfSLOverAlgClosedField.html#mem_L_iff_lower_triangular">5.24</a>. Thus \(N_{\operatorname{SL}_2(F)}(S_0) \subset L\) as required. <br /></p>
 
   </div>
 </div>
@@ -5882,7 +5882,7 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
 <div class="displaymath" id="a0000000257">
   \begin{align*}  x P_i & = P_i, \\ gyg^{-1} P_i & = P_i, \\ y(g^{-1} P_i) & = (g^{-1} P_i). \end{align*}
 </div>
-<p>This shows that \(P_i\) is a fixed point of \(x\) if and only if \(g^{-1} P_i\) is a fixed point of \(y\). Thus conjugate elements have the same number of fixed points. <br /><br />(iv) By Proposition ??(i), every element of \(\operatorname{SL}_2(F)\)is conjugate to either \(d_\delta \) or \(\pm s_\sigma \), so since conjugate elements have the same number of fixed points, every element of \(\operatorname{SL}_2(F)\!  \setminus \!  Z\) has either the same number of fixed points as \(d_\delta \) (with \(\delta \neq \pm 1\)), namely 2, or the same number as \(\pm s_\sigma \), (with \(\sigma \neq 0\)), namely 1. </p>
+<p>This shows that \(P_i\) is a fixed point of \(x\) if and only if \(g^{-1} P_i\) is a fixed point of \(y\). Thus conjugate elements have the same number of fixed points. <br /><br />(iv) By Proposition ?? every element of \(\operatorname{SL}_2(F)\)is conjugate to either \(d_\delta \) or \(\pm s_\sigma \), so since conjugate elements have the same number of fixed points, every element of \(\operatorname{SL}_2(F)\!  \setminus \!  Z\) has either the same number of fixed points as \(d_\delta \) (with \(\delta \neq \pm 1\)), namely 2, or the same number as \(\pm s_\sigma \), (with \(\sigma \neq 0\)), namely 1. </p>
 
   </div>
 </div>
