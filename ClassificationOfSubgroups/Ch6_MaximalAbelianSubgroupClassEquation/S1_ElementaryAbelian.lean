@@ -22,7 +22,7 @@ def IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G) : Prop 
 
 namespace IsElementaryAbelian
 
-lemma dvd_card {G : Type*} [Group G] (p : ℕ) (H : Subgroup G)
+lemma dvd_card {G : Type*} [Group G] {p : ℕ} {H : Subgroup G}
   [Finite H] (hH : IsElementaryAbelian p H) (bot_lt_H: ⊥ < H) : p ∣ (Nat.card H) := by
   simp [@SetLike.lt_iff_le_and_exists] at bot_lt_H
   obtain ⟨h, h_in_H, h_ne_one⟩ := bot_lt_H
@@ -61,11 +61,7 @@ lemma primeFac_eq {G : Type*} [Group G] (p : ℕ)
     trivial
   · simp
     exact
-      ⟨hp, dvd_card p H hH bot_lt_H, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
-
-
-
-
+      ⟨hp, dvd_card hH bot_lt_H, Nat.ne_zero_iff_zero_lt.mpr Nat.card_pos⟩
 
 
 
