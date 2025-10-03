@@ -7,7 +7,7 @@ set_option linter.style.longLine true
 
 open Matrix MatrixGroups Subgroup Pointwise
 
-open SpecialMatrices SpecialSubgroups
+open SpecialMatrices SpecialSubgroups MatrixShapes
 
 universe u
 
@@ -51,7 +51,8 @@ lemma normalizer_subgroup_S_le_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     obtain ⟨σ' , hσ'⟩ := this
     simp [x_eq] at hσ'
     -- uses decidable equality
-    rw [SpecialSubgroups.mem_L_iff_lower_triangular, lower_triangular_iff_top_right_entry_eq_zero]
+    rw [SpecialSubgroups.mem_L_iff_lower_triangular]
+    rw [lower_triangular_iff]
     have β_eq_zero : s σ' 0 1 = 0 := by simp [s]
     rw [hσ'] at β_eq_zero
     simp [x_eq, s] at β_eq_zero
@@ -60,7 +61,8 @@ lemma normalizer_subgroup_S_le_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     apply eq_zero_of_ne_zero_of_mul_right_eq_zero σ_ne_zero at β_eq_zero
     rw [sq_eq_zero_iff] at β_eq_zero
     simp [x_eq]
-    exact β_eq_zero
+    use α, γ, δ
+    simp [β_eq_zero]
   · push_neg at h'
     have S₀_eq_bot : S₀ = ⊥ := by
       rw [eq_bot_iff_forall]
