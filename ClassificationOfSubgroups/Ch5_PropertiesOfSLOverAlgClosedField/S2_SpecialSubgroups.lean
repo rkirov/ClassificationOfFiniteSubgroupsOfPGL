@@ -17,10 +17,84 @@ variable
   {R : Type u} [CommRing R]
   {G : Type u} [Group G]
 
+namespace MatrixShapes
+
+def IsDiagonal (x : Matrix (Fin 2) (Fin 2) F) : Prop := x 0 1 = 0 ∧ x 1 0 = 0
+def IsLowerTriangular (x : Matrix (Fin 2) (Fin 2) F) : Prop := x 0 1 = 0
+def IsUpperTriangular (x : Matrix (Fin 2) (Fin 2) F) : Prop := x 1 0 = 0
+
+/-
+A 2x2 matrix is lower triangular if and only the top right entry is zero.
+-/
+lemma lower_triangular_iff {M : Matrix (Fin 2) (Fin 2) F} :
+  IsLowerTriangular M ↔ (∃ a c d, !![a, 0; c, d] = M) := by
+  constructor
+  · intro h
+    unfold IsLowerTriangular at h
+    use M 0 0, M 1 0, M 1 1
+    simp_rw [← h]
+    ext <;> rfl
+  · intro h
+    unfold IsLowerTriangular
+    obtain ⟨a, c, d, hM⟩ := h
+    simp [← hM]
+
+/-
+A 2x2 matrix is upper triangular if and only if the bottom left entry is zero.
+-/
+lemma upper_triangular_iff {M : Matrix (Fin 2) (Fin 2) F} :
+  IsUpperTriangular M ↔ (∃ a b d, !![a, b; 0, d] = M) := by
+  constructor
+  · intro h
+    unfold IsUpperTriangular at h
+    use M 0 0, M 0 1, M 1 1
+    simp_rw [← h]
+    ext <;> rfl
+  · intro h
+    unfold IsUpperTriangular
+    obtain ⟨a, b, d, hM⟩ := h
+    simp [← hM]
+
+lemma diagonal_iff {M : Matrix (Fin 2) (Fin 2) F} :
+  IsDiagonal M ↔ (∃ a d, !![a, 0; 0, d] = M) := by
+  constructor
+  · intro h
+    obtain ⟨h01, h10⟩ := h
+    use M 0 0, M 1 1
+    ext <;> simp [h01, h10]
+  · intro h
+    unfold IsDiagonal
+    obtain ⟨a, d, hM⟩ := h
+    simp [← hM]
+
+lemma diagonal_iff_upper_and_lower {M: Matrix (Fin 2) (Fin 2) F} :
+  IsDiagonal M ↔ IsUpperTriangular M ∧ IsLowerTriangular M := by
+  constructor
+  · intro h
+    rw [diagonal_iff] at h
+    obtain ⟨h01, h10, h⟩ := h
+    rw [upper_triangular_iff, lower_triangular_iff]
+    constructor
+    . use h01, 0, h10
+    . use h01, 0, h10
+  · intro h
+    obtain ⟨h_upper, h_lower⟩ := h
+    rw [diagonal_iff]
+    rw [upper_triangular_iff] at h_upper
+    rw [lower_triangular_iff] at h_lower
+    obtain ⟨a, b, d, hM_upper⟩ := h_upper
+    obtain ⟨a', c, d', hM_lower⟩ := h_lower
+    use a, d
+    ext <;> simp [← hM_upper, ← hM_lower]
+    have : b = M 0 1 := by rw [← hM_upper]; rfl
+    rw [this]
+    rw [← hM_lower]
+    simp
+
+end MatrixShapes
+
 namespace SpecialSubgroups
-
 section Diagonal
-
 
 /- Lemma 1.2.1.1 -/
 def D (F : Type*) [Field F] : Subgroup SL(2,F) where
@@ -54,13 +128,13 @@ def D_iso_units (F : Type*) [Field F] : SpecialSubgroups.D F ≃* Fˣ where
                   simp_rw [← hδ₁, ← hδ₂]
                   simp [SpecialMatrices.d, mul_comm]
 
-
-
 end Diagonal
-
 section Shear
 
-/- Lemma 1.2.1.2 -/
+/--
+  Lemma 1.2.1.2
+  This is T in the notes.
+-/
 def S (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { s σ | σ : F }
   mul_mem' := by rintro S Q ⟨σS, hσS⟩ ⟨σQ, hσQ⟩
@@ -88,8 +162,6 @@ def S_iso_F (F : Type*) [Field F]: S F ≃* (Multiplicative F) where
 
 end Shear
 
-
-
 lemma D_meet_S_eq_bot (F : Type*) [Field F] : D F ⊓ S F = ⊥ := by
   ext x
   constructor
@@ -106,6 +178,9 @@ lemma D_meet_S_eq_bot (F : Type*) [Field F] : D F ⊓ S F = ⊥ := by
     · simp [h]; exact Subgroup.one_mem (D F)
     · simp [h]; exact Subgroup.one_mem (S F)
 
+/--
+  This is H in the notes.
+-/
 def L (F : Type*) [Field F] : Subgroup SL(2,F) where
   carrier := { d δ * s σ | (δ : Fˣ) (σ : F) }
   mul_mem' := by
@@ -125,31 +200,28 @@ def L (F : Type*) [Field F] : Subgroup SL(2,F) where
               simp [d_mul_s_eq_ds, Matrix.SpecialLinearGroup.SL2_inv_expl]
               ext <;> simp [ds]
 
-
-def lower_triangular [DecidableEq F] (a c d : F) : SL(2, F) :=
-  if h : a * d = 1 then ⟨!![a, 0; c, d], by simp [h]⟩ else 1
-
 /-
 For every lower triangular matrix, l,
 there exists a representation of l as an element of L
 -/
 lemma mem_L_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
-  x ∈ L F ↔ ∃ a c d, !![a, 0; c, d] = (x : Matrix (Fin 2) (Fin 2) F) := by
+  x ∈ L F ↔ MatrixShapes.IsLowerTriangular x.val := by
   constructor
   · intro hx
+    rw [MatrixShapes.lower_triangular_iff]
     obtain ⟨δ, σ, h⟩ := hx
     use δ, σ * δ⁻¹, δ⁻¹
     rw [← h]
     ext <;> simp [d, s, mul_comm]
-  · rintro ⟨a, c, d, hx⟩
+  · rw [MatrixShapes.lower_triangular_iff]
+    rintro ⟨a, c, d, hx⟩
     have had : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by simp
     simp [← hx] at had
     have a_is_unit : IsUnit a := isUnit_of_mul_eq_one a d had
     have a_inv_eq_d : a⁻¹ = d := DivisionMonoid.inv_eq_of_mul a d had
     use a_is_unit.unit, c * a_is_unit.unit
-    simp [SpecialMatrices.d, SpecialMatrices.s, lower_triangular, had]
+    simp [SpecialMatrices.d, SpecialMatrices.s, had]
     ext <;> field_simp [a_inv_eq_d, had, ← hx]; exact (eq_one_div_of_mul_eq_one_right had).symm
-
 
 lemma S_le_L : S F ≤ L F := by
   rintro x ⟨σ, rfl⟩
@@ -165,10 +237,10 @@ lemma normal_S_subgroupOf_L {F : Type*} [Field F] : ((S F).subgroupOf (L F)).Nor
   · intro _hx
     exact mem_top _
   · intro hx
-    rw [← @subgroupOf_self] at hx
-    rw [@mem_subgroupOf] at hx
+    rw [← subgroupOf_self] at hx
+    rw [mem_subgroupOf] at hx
     obtain ⟨δ, σ, hx⟩ := hx
-    rw [@mem_normalizer_iff'']
+    rw [mem_normalizer_iff'']
     intro t'
     constructor
     · rintro ⟨σ', hσ'⟩
@@ -189,8 +261,6 @@ lemma normal_S_subgroupOf_L {F : Type*} [Field F] : ((S F).subgroupOf (L F)).Nor
          mul_assoc (d δ), ← mul_assoc (s (σ + σ')), s_mul_s_eq_s_add, ← mul_assoc,
          ← inv_d_eq_d_inv, d_mul_s_mul_d_inv_eq_s, add_neg_cancel_comm, Units.val_inv_eq_inv_val]
       use σ' * (δ : F)⁻¹ * (δ :F)⁻¹
-
-
 
 def prod_monoidHom_join {G : Type*} [Group G] (H K : Subgroup G) [hH : Normal H] [hK : Normal K]
   (hHK : Disjoint H K) : H × K →* (H ⊔ K :) where

@@ -11,7 +11,7 @@ set_option linter.style.longLine true
 
 open Matrix MatrixGroups Subgroup Pointwise
 
-open SpecialMatrices SpecialSubgroups
+open SpecialMatrices SpecialSubgroups MatrixShapes
 
 universe u
 
@@ -22,7 +22,7 @@ variable
   {G : Type u} [Group G]
 
 @[simp]
-lemma SpecialLinearGroup.coe_coe {n : ℕ}{S : SL(n, F)} :
+lemma SpecialLinearGroup.coe_coe {n : ℕ} {S : SL(n, F)} :
   ((S : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) = (S : Matrix (Fin n) (Fin n) F) :=  by rfl
 
 @[simp]
@@ -34,8 +34,8 @@ lemma GeneralLinearGroup.coe_mk'_inv {R : Type*} [CommRing R] {M : Matrix (Fin 2
   {hM : Invertible (det M) } : (GeneralLinearGroup.mk' M hM)⁻¹ = M⁻¹ := by simp only [coe_units_inv,
     coe_mk']
 
-lemma GL_eq_iff_Matrix_eq {n R : Type* } [Fintype n] [DecidableEq n] [CommRing R] { A B :  GL n R}
-  (h : (A :  Matrix n n R) = (B : Matrix n n R) ) : A = B := by
+lemma GL_eq_iff_Matrix_eq {n R : Type* } [Fintype n] [DecidableEq n] [CommRing R] {A B : GL n R}
+  (h : (A : Matrix n n R) = (B : Matrix n n R) ) : A = B := by
   apply Matrix.GeneralLinearGroup.ext
   rw [← Matrix.ext_iff] at h
   exact h
@@ -84,38 +84,14 @@ lemma minpoly_eq_X_sub_C_implies_matrix_is_diagonal { n R : Type*} [Fintype n] [
     -- This shows M is diagonal
     exact M_eq_diagonal
 
-/-
-A 2x2 matrix is lower triangular if and only the top right entry is zero.
--/
-lemma lower_triangular_iff_top_right_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F} :
-  (∃ a c d, !![a, 0; c, d] = M) ↔ M 0 1 = 0 := by
-  constructor
-  · rintro  ⟨a, b, d, hM⟩
-    simp [← hM]
-  · intro h
-    use M 0 0, M 1 0, M 1 1
-    simp_rw [← h]
-    ext <;> rfl
-
-/-
-A 2x2 matrix is upper triangular if and only if the bottom left entry is zero.
--/
-lemma upper_triangular_iff_bottom_left_entry_eq_zero {M : Matrix (Fin 2) (Fin 2) F} :
-  (∃ a b d, !![a, b; 0, d] = M) ↔ M 1 0 = 0 := by
-  constructor
-  · rintro  ⟨a, b, d, hM⟩
-    simp [← hM]
-  · intro h
-    use M 0 0, M 0 1, M 1 1
-    simp_rw [← h]
-    ext <;> rfl
 
 /-
 The product of the top left entry and the bottom right entry equals one
 if the bottom left entry is zero.
 -/
-lemma det_eq_mul_diag_of_upper_triangular (S : SL(2,F)) (hγ : S.1 1 0  = 0) :
+lemma det_eq_mul_diag_of_upper_triangular (S : SL(2,F)) (hγ : IsUpperTriangular S.val) :
   S 0 0 * S 1 1 = 1 := by
+  rw [IsUpperTriangular] at hγ
   have det_eq_one : det (S.val) = 1 := by simp
   simp only [det_fin_two, hγ, mul_zero, sub_zero] at det_eq_one
   exact det_eq_one
@@ -124,8 +100,9 @@ lemma det_eq_mul_diag_of_upper_triangular (S : SL(2,F)) (hγ : S.1 1 0  = 0) :
 The product of the top left entry and the bottom right entry equals one
 if the top right entry is zero.
 -/
-lemma det_eq_mul_diag_of_lower_triangular (S : SL(2,F)) (hβ : S.1 0 1 = 0) :
+lemma det_eq_mul_diag_of_lower_triangular (S : SL(2,F)) (hβ : IsLowerTriangular S.val) :
   S 0 0 * S 1 1 = 1 := by
+  rw [IsLowerTriangular] at hβ
   have det_eq_one : det (S.val) = 1 := by simp
   simp only [det_fin_two, hβ, zero_mul, sub_zero] at det_eq_one
   exact det_eq_one
@@ -195,28 +172,6 @@ lemma SpecialLinearGroup.fin_two_shear_iff (x : SL(2,F)) :
     · simp [← hα, ← hδ, ← hβ, s]
     · simp [← hα, ← hδ, ← hβ, s]
 
-
-
-/-
-A 2×2 matrix, G is conjugate to an upper triangular if there exists an invertible matrix
-such that when conjugated the bottom left entry is annhilated
--/
-lemma isConj_upper_triangular_iff [DecidableEq F] [IsAlgClosed F]
-  {m : Matrix (Fin 2) (Fin 2) F} :
-  (∃ a b d , ∃ (C : SL(2,F)), (C  * m * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d]) ↔
-    ∃ c : SL(2,F), ((c * m * (c⁻¹)) : Matrix (Fin 2) (Fin 2) F) 1 0 = 0 := by
-  constructor
-  · rintro ⟨a, b, d, c, hc⟩
-    use c
-    rw [hc]
-    rfl
-  · rintro ⟨c, hc⟩
-    rw [← upper_triangular_iff_bottom_left_entry_eq_zero] at hc
-    obtain ⟨a, b, d, h⟩ := hc
-    use a, b, d
-    use c
-    rw [h]
-
 @[simp]
 lemma Matrix.special_inv_eq {x : F} :
   !![1, 0; x, 1]⁻¹ = !![1, 0; - x, 1] := by simp [inv_def]
@@ -247,15 +202,12 @@ def SpecialLinearGroup.mk' {n : ℕ} (M : Matrix (Fin n) (Fin n) F) (h : det M =
 -- Note: I do not use IsConj as the the matrix which acts by conjugation has determinant 1
 theorem isTriangularizable_of_algClosed [DecidableEq F] [IsAlgClosed F]
   (M : Matrix (Fin 2) (Fin 2) F) :
-  ∃ a b d, ∃ (C : SL(2,F)), (C * M * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] := by
+  ∃ (C : SL(2,F)), IsUpperTriangular (C * M * C⁻¹ : Matrix (Fin 2) (Fin 2) F) := by
   let α := M 0 0
   let β := M 0 1
   let γ := M 1 0
   let δ := M 1 1
   have M_coe_eq : M = !![α, β; γ, δ] := by ext <;> rfl
-  -- Is conjugate to an upper triangular matrix iff there exists a matrix such that
-  -- when conjugated kills the bottom left entry
-  rw [isConj_upper_triangular_iff]
   -- If β ≠ 0 then we solve the quadratic to force the bottom left entry to be 0
   by_cases hβ : β ≠ 0
   · obtain ⟨σ, hσ⟩ := exists_root_of_special_poly α β γ δ hβ
@@ -265,6 +217,7 @@ theorem isTriangularizable_of_algClosed [DecidableEq F] [IsAlgClosed F]
     exact hσ
   simp at hβ
   · use w
+    rw [upper_triangular_iff]
     simp [M_coe_eq, w, inv_def, hβ]
 
 /-
@@ -309,7 +262,7 @@ lemma mul_left_eq_mul_right_iff {α : Type*} [Monoid α]{N M : α}(c : αˣ) :
     rw [h, ← mul_assoc, ← mul_assoc, Units.mul_inv, one_mul]
 
 -- Note: [isConj_iff] can be strengthened for monoids
-lemma det_eq_det_IsConj {n : ℕ}{M N : Matrix (Fin n) (Fin n) R} (h : IsConj N M) :
+lemma det_eq_det_IsConj {n : ℕ} {M N : Matrix (Fin n) (Fin n) R} (h : IsConj N M) :
   det N = det M := by
   rw [isConj_comm, IsConj] at h
   obtain ⟨c, hc⟩ := h
@@ -320,7 +273,7 @@ lemma det_eq_det_IsConj {n : ℕ}{M N : Matrix (Fin n) (Fin n) R} (h : IsConj N 
 If the underlying matrices are the same then the matrices
 as subtypes of the special linear group are also the same
 -/
-lemma SpecialLinearGroup.eq_of {S L : SL(2,F) } (h : (S : Matrix (Fin 2) (Fin 2) F)  = L) :
+lemma SpecialLinearGroup.eq_of {S L : SL(2,F) } (h : (S : Matrix (Fin 2) (Fin 2) F) = L) :
   S = L := by ext <;> simp [h]
 
 lemma IsConj_coe {M N : Matrix (Fin 2) (Fin 2) F} (hM : det M = 1) (hN : det N = 1)
@@ -345,14 +298,15 @@ theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [I
   ∨
   (∃ σ : F, IsConj (- s σ) S) := by
   -- S is conjugate to an upper triangular matrix
-  have S_IsConj_upper_triangular :
-    ∃ a b d, ∃ C : SL(2,F), (C * S * C⁻¹ : Matrix (Fin 2) (Fin 2) F) = !![a, b; 0, d] :=
+  have S_IsConj_upper_triangular :=
     isTriangularizable_of_algClosed (S : Matrix (Fin 2) (Fin 2) F)
   have det_coe_S_eq_one : det (S : Matrix (Fin 2) (Fin 2) F ) = 1 := by simp
-  obtain ⟨a, b, d, C, h⟩ := S_IsConj_upper_triangular
+  obtain ⟨C, h⟩ := S_IsConj_upper_triangular
+  rw [upper_triangular_iff] at h
+  obtain ⟨a, b, d, h⟩ := h
   -- Because !![a, b; 0, d] is conjugate to S it also has determinant 1
   have det_eq_one : det !![a, b; 0, d] = 1 := by
-    rw [← det_coe_S_eq_one, ← h]
+    rw [← det_coe_S_eq_one, h]
     simp only [det_mul, SpecialLinearGroup.det_coe, mul_one, one_mul]
   have had := det_eq_one
   -- The determinant being equal to 1 implies a * d = 1

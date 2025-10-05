@@ -10,7 +10,7 @@ universe u
 variable {R F : Type u} [CommRing R] [Field F]
 
 @[ext]
-lemma Matrix.fin_two_ext { R : Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
+lemma Matrix.fin_two_ext {R : Type*} [CommSemiring R] {M N : Matrix (Fin 2) (Fin 2) R}
   (h₀₀ : M 0 0 = N 0 0)(h₀₁ : M 0 1 = N 0 1)(h₁₀ : M 1 0 = N 1 0)(h₁₁ : M 1 1 = N 1 1) : M = N := by
   ext i j
   fin_cases i <;> fin_cases j <;> assumption
@@ -24,6 +24,10 @@ lemma SpecialLinearGroup.fin_two_ext (A B : SL(2,R))
 
 namespace SpecialMatrices
 
+/-
+The shear matrix with $\sigma \in F$ as the bottom left entry.
+This is $t_\lambda$ in the notes.
+-/
 def s (σ : F) : SL(2,F) :=
   ⟨!![1, 0; σ, 1], by simp⟩
 
@@ -67,7 +71,7 @@ lemma s_pow_eq_s_mul (σ : F) (n : ℕ) : (s σ)^n = s (n • σ) := by
     congr
     ring
 
-lemma order_s_eq_char {p : ℕ} [hp : Fact (Nat.Prime p)] [hC : CharP F p]
+lemma order_s_eq_char {p : ℕ} [Fact (Nat.Prime p)] [CharP F p]
   (σ : F) (hσ : σ ≠ 0) : orderOf (s σ) = p := by
   refine orderOf_eq_prime ?hg ?hg1
   · simp only [s_pow_eq_s_mul, nsmul_eq_mul, CharP.cast_eq_zero, zero_mul, s_zero_eq_one]
@@ -138,7 +142,7 @@ def w : SL(2, F) :=
 lemma w_inv {F : Type*} [Field F] :
   (w : SL(2,F))⁻¹  = - w := by ext <;> simp [w]
 
-lemma w_mul_w_eq_neg_one : w * w = (-1 : SL(2,F)) := by ext <;> simp [w]
+lemma w_mul_w_eq_neg_one : w * w = (-1 : SL(2, F)) := by ext <;> simp [w]
 
 end Rotation
 
