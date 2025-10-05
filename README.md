@@ -7,17 +7,17 @@ This project contains the $\LaTeX$ blueprint and the (ongoing) Lean formalizatio
 
 Which states:
 
-- If $H$ is finite subgroup of $\textrm{PGL}_2 (C)$ then $H$ is isomorphic to one of the following groups: the cyclic group $C_n$ of order $n$ ($n \in Z_{>0}$), the dihedral group $D_{2n}$ of order $2n$ ($n \in Z_{>1}$), $A_4$, $S_4$ or $A_5$.
+- If $H$ is finite subgroup of $\textrm{PGL}\_2(\mathbb{C})$ then $H$ is isomorphic to one of the following groups: the cyclic group $C_n$ of order $n$ ($n \in Z_{>0}$), the dihedral group $D_{2n}$ of order $2n$ ($n \in Z_{>1}$), $A_4$, $S_4$ or $A_5$.
 - If $H$ is a finite subgroup of $\textrm{PGL}_2(\bar{F}_p)$ then one of the following holds:
   1. $H$ is conjugate to a subgroup of the upper triangular matrices;
-  2. $H$ is conjugate to $\textrm{PGL}_2 (F_{\ell^r})$ and $ \textrm{PSL}_2 (F_{\ell^{r}})$ for some $r \in Z_{>0}$;
-  3.  $H$ is isomorphic to $A_4$, $S_4$, $A_5$ or the dihedral group $D_{2r}$ of order $2r$ for some $r \in Z_{>1}$ not divisible by $\ell$
+  2. $H$ is conjugate to $\textrm{PGL}\_2 (F_{\ell^r})$ and $\textrm{PSL}\_2 (F\_{\ell^r})$ for some $r \in Z_{>0}$;
+  3. $H$ is isomorphic to $A_4$, $S_4$, $A_5$ or the dihedral group $D_{2r}$ of order $2r$ for some $r \in Z_{>1}$ not divisible by $\ell$
 
 Where $\ell$ is assumed to be an odd prime.
 
 ## The big picture
 
-This project is a small (yet tedious) contribution towards the formalization of Fermat's Last Theorem (see https://github.com/ImperialCollegeLondon/FLT), the result formalized covers Theorem 2.47 in [FermatLastTheorem](https://www.math.mcgill.ca/darmon/pub/Articles/Expository/05.DDT/paper.pdf)
+This project is a contribution towards the formalization of Fermat's Last Theorem (see https://github.com/ImperialCollegeLondon/FLT), the result formalized covers Theorem 2.47 in [FermatLastTheorem](https://www.math.mcgill.ca/darmon/pub/Articles/Expository/05.DDT/paper.pdf)
 
 ## Acknowledgements
 
