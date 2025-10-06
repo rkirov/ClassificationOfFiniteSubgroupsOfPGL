@@ -13,7 +13,7 @@ universe u
 
 
 variable
-  (F : Type u) [Field F]
+  {F : Type u} [Field F]
   (n : Type u) [Fintype n]
   (R : Type u) [CommRing R]
   {G : Type u} [Group G]
@@ -76,62 +76,118 @@ lemma normalizer_subgroup_S_le_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     -- contradiction with the assumption that Nat.card S₀ > 1
     linarith
 
-#check mul_normal
 /-
 Proposition 1.7.
 (i) N_L (D₀) = ⟨D, W⟩, where D₀ is any subgroup of D with order greater than 2.
 -/
 lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
- (hD₀ : 2 < Nat.card D₀ ) (D₀_leq_D : D₀ ≤ D F) : normalizer D₀ ≤ DW F := by
-  intro x hx
-  rw [mem_normalizer_iff] at hx
-  have ⟨δ', h₀, h₁, hδ'⟩ := ex_of_card_D_gt_two hD₀ D₀_leq_D
-  specialize hx (d δ')
-  rw [hx] at hδ'
-  have mem_D := D₀_leq_D hδ'
-  rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff] at mem_D
-  rcases get_entries x with ⟨α, β, γ, δ, hα, hβ, hγ, hδ, x_eq⟩
-  rcases mem_D with ⟨top_right, bottom_left⟩
-  simp [d, x_eq] at top_right bottom_left
-  ring_nf at top_right bottom_left
-  have top_right_eq : -(α * (δ' : F) * β) + α * β * (δ' : F)⁻¹ = α * β * ((↑δ')⁻¹ - ↑δ') := by ring
-  have bottom_left_eq : (δ' : F) * γ * δ - (δ' : F)⁻¹ * γ * δ  = γ * δ * (↑δ' - (↑δ')⁻¹) := by ring
-  replace top_right := top_right_eq ▸ top_right
-  replace bottom_left := bottom_left_eq ▸ bottom_left
-  have det_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by rw [SpecialLinearGroup.det_coe]
-  have δ_sub_δ_inv_ne_zero : (δ' : F)⁻¹ - δ' ≠ 0 := by
-    field_simp
-    intro h
-    rw [sub_eq_zero, ← sq] at h
-    symm at h
-    rw [sq_eq_one_iff] at h
-    apply not_or_intro h₀ h₁ h
-  have δ_inv_neg_δ_ne_zero : (δ') - (δ' : F)⁻¹ ≠ 0 := by
-    rw [← neg_ne_zero, neg_sub]; exact δ_sub_δ_inv_ne_zero
-  have α_or_β_eq_zero : α * β = 0 :=
-    eq_zero_of_ne_zero_of_mul_right_eq_zero δ_sub_δ_inv_ne_zero top_right
-  have γ_or_δ_eq_zero : γ * δ = 0 :=
-    eq_zero_of_ne_zero_of_mul_right_eq_zero δ_inv_neg_δ_ne_zero bottom_left
-  rw [mul_eq_zero] at α_or_β_eq_zero γ_or_δ_eq_zero
-  rcases α_or_β_eq_zero with (α_eq_zero | β_eq_zero) <;>
-  rcases γ_or_δ_eq_zero with (γ_eq_zero | δ_eq_zero)
-  · have det_eq_zero : det (x : Matrix (Fin 2) (Fin 2) F) = 0 := by
-      rw [det_fin_two, ← hα, ← hγ, α_eq_zero, γ_eq_zero, mul_zero, zero_mul, sub_zero]
-    rw [det_eq_zero] at det_eq_one
-    absurd zero_ne_one det_eq_one
-    trivial
-  · apply Dw_leq_DW
-    rw [mem_D_w_iff, ← SpecialLinearGroup.fin_two_antidiagonal_iff]
-    simp_rw [← hα, ← hδ, α_eq_zero, δ_eq_zero]
-    trivial
-  · apply D_leq_DW
-    rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff]
-    simp_rw [← hβ, ← hγ, β_eq_zero, γ_eq_zero]
-    trivial
-  · have det_eq_zero : det (x : Matrix (Fin 2) (Fin 2) F) = 0 := by
-      rw [det_fin_two, ← hβ, ← hδ, β_eq_zero, δ_eq_zero, mul_zero, zero_mul, sub_zero]
-    rw [det_eq_zero] at det_eq_one
-    absurd zero_ne_one det_eq_one
-    trivial
+ (hD₀ : 2 < Nat.card D₀ ) (D₀_le_D : D₀ ≤ D F) : normalizer D₀ = DW F := by
+  apply le_antisymm
+  · intro x hx
+    rw [mem_normalizer_iff] at hx
+    have ⟨δ', h₀, h₁, hδ'⟩ := ex_of_card_D_gt_two hD₀ D₀_le_D
+    specialize hx (d δ')
+    rw [hx] at hδ'
+    have mem_D := D₀_le_D hδ'
+    rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff] at mem_D
+    rcases get_entries x with ⟨α, β, γ, δ, hα, hβ, hγ, hδ, x_eq⟩
+    rcases mem_D with ⟨top_right, bottom_left⟩
+    simp [d, x_eq] at top_right bottom_left
+    ring_nf at top_right bottom_left
+    have top_right_eq :
+      -(α * (δ' : F) * β) + α * β * (δ' : F)⁻¹ = α * β * ((↑δ')⁻¹ - ↑δ') := by ring
+    have bottom_left_eq :
+      (δ' : F) * γ * δ - (δ' : F)⁻¹ * γ * δ  = γ * δ * (↑δ' - (↑δ')⁻¹) := by ring
+    replace top_right := top_right_eq ▸ top_right
+    replace bottom_left := bottom_left_eq ▸ bottom_left
+    have det_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := SpecialLinearGroup.det_coe _
+    have δ_sub_δ_inv_ne_zero : (δ' : F)⁻¹ - δ' ≠ 0 := by
+      field_simp
+      intro h
+      rw [sub_eq_zero, ← sq] at h
+      symm at h
+      rw [sq_eq_one_iff] at h
+      apply not_or_intro h₀ h₁ h
+    have δ_inv_neg_δ_ne_zero : (δ') - (δ' : F)⁻¹ ≠ 0 := by
+      rw [← neg_ne_zero, neg_sub]; exact δ_sub_δ_inv_ne_zero
+    have α_or_β_eq_zero : α * β = 0 :=
+      eq_zero_of_ne_zero_of_mul_right_eq_zero δ_sub_δ_inv_ne_zero top_right
+    have γ_or_δ_eq_zero : γ * δ = 0 :=
+      eq_zero_of_ne_zero_of_mul_right_eq_zero δ_inv_neg_δ_ne_zero bottom_left
+    rw [mul_eq_zero] at α_or_β_eq_zero γ_or_δ_eq_zero
+    rcases α_or_β_eq_zero with (α_eq_zero | β_eq_zero) <;>
+    rcases γ_or_δ_eq_zero with (γ_eq_zero | δ_eq_zero)
+    · have det_eq_zero : det (x : Matrix (Fin 2) (Fin 2) F) = 0 := by
+        rw [det_fin_two, ← hα, ← hγ, α_eq_zero, γ_eq_zero, mul_zero, zero_mul, sub_zero]
+      rw [det_eq_zero] at det_eq_one
+      absurd zero_ne_one det_eq_one
+      trivial
+    · apply Dw_leq_DW
+      rw [mem_D_w_iff, ← SpecialLinearGroup.fin_two_antidiagonal_iff]
+      simp_rw [← hα, ← hδ, α_eq_zero, δ_eq_zero]
+      trivial
+    · apply D_leq_DW
+      rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff]
+      simp_rw [← hβ, ← hγ, β_eq_zero, γ_eq_zero]
+      trivial
+    · have det_eq_zero : det (x : Matrix (Fin 2) (Fin 2) F) = 0 := by
+        rw [det_fin_two, ← hβ, ← hδ, β_eq_zero, δ_eq_zero, mul_zero, zero_mul, sub_zero]
+      rw [det_eq_zero] at det_eq_one
+      absurd zero_ne_one det_eq_one
+      trivial
+  · intro x hx
+    simp [DW] at hx
+    rcases hx with (hx | hx)
+    · obtain ⟨δ, rfl⟩ := hx
+      simp [mem_normalizer_iff]
+      intro y
+      constructor
+      · intro y_mem_D₀
+        have y_mem_D := D₀_le_D y_mem_D₀
+        rw [mem_D_iff] at y_mem_D
+        obtain ⟨δ₀, rfl⟩ := y_mem_D
+        simpa
+      · intro conj_mem_D₀
+        obtain ⟨δ₀, hδ₀⟩ := D₀_le_D conj_mem_D₀
+        have y_eq_conj : y = d δ * y * d δ⁻¹ := by
+          suffices y = d δ₀ by simp [this]
+          rw [← mul_left_inj (d δ⁻¹), ← mul_right_inj (d δ)]
+          group at hδ₀ ⊢
+          rw [← hδ₀]
+          simp
+        rwa [y_eq_conj]
+    · obtain ⟨δ, rfl⟩ := hx
+      rw [mem_normalizer_iff]
+      intro y
+      constructor
+      · intro y_mem_D₀
+        group
+        nth_rewrite 1 [d_eq_inv_d_inv,  ← w_mul_d_eq_d_inv_w]
+        rw [zpow_neg, zpow_neg, zpow_one, zpow_one,
+          w_inv, mul_neg, neg_mul, inv_d_eq_d_inv,
+          show -(w * d δ⁻¹ * y * w * d δ⁻¹) = -(w * d δ⁻¹ * y * (w * d δ⁻¹)) by group]
+        nth_rewrite 2 [w_mul_d_eq_d_inv_w δ⁻¹]
+        rw [← d_eq_inv_d_inv]
+        obtain ⟨δ₀, rfl⟩ := D₀_le_D y_mem_D₀
+        rw [show -(w * d δ⁻¹ * d δ₀ * (d δ * w)) = -(w * ((d δ⁻¹ * d δ₀) * d δ) * w) by group,
+          d_mul_d_eq_d_mul, d_mul_d_eq_d_mul, inv_mul_cancel_comm,
+          w_mul_d_eq_d_inv_w, inv_d_eq_d_inv]
+        rw [show -(d δ₀⁻¹ * w * w) = -(d δ₀⁻¹ * (w * w)) by group, w_mul_w_eq_neg_one,
+          mul_neg, mul_one, neg_d_eq_d_neg, neg_d_eq_d_neg, neg_neg, ← inv_d_eq_d_inv]
+        exact Subgroup.inv_mem D₀ y_mem_D₀
+      · intro conj_mem_D₀
+        obtain ⟨δ₀, hδ₀⟩ := D₀_le_D conj_mem_D₀
+        rw [eq_mul_inv_iff_mul_eq, ← inv_mul_eq_iff_eq_mul] at hδ₀
+        rw [_root_.mul_inv_rev, w_inv, inv_d_eq_d_inv, ← mul_assoc (d δ₀),
+          d_mul_d_eq_d_mul, mul_assoc, ← mul_assoc (d δ⁻¹), d_mul_d_eq_d_mul, ← mul_assoc δ⁻¹,
+          inv_mul_cancel_comm, neg_mul, ← mul_assoc, w_mul_d_eq_d_inv_w, mul_assoc,
+          w_mul_w_eq_neg_one, mul_neg_one, neg_neg, inv_d_eq_d_inv] at hδ₀
+        rw [← hδ₀] at conj_mem_D₀ ⊢
+        rw [mul_assoc, mul_assoc, ← mul_assoc w, w_mul_d_eq_d_inv_w,
+          ← d_eq_inv_d_inv, _root_.mul_inv_rev, mul_assoc, ← mul_assoc w,
+          mul_inv_cancel, one_mul, inv_d_eq_d_inv, d_mul_d_eq_d_mul,
+            d_mul_d_eq_d_mul, ← mul_assoc, mul_inv_cancel_comm] at conj_mem_D₀
+        rw [← inv_d_eq_d_inv]
+        exact Subgroup.inv_mem D₀ conj_mem_D₀
 
 #min_imports
