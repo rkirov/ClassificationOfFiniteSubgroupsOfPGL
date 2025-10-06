@@ -1664,7 +1664,7 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
         refine Nat.card_congr ϕ.symm
       have two_lt_card_A' : 2 < Nat.card A' := by sorry
       have normalizer_A'_le_DW := normalizer_subgroup_D_eq_DW two_lt_card_A' A'_le_D
-      have := QuotientGroup.quotientInfEquivProdNormalQuotient (H := A'.normalizer ⊓ G') (N := (D F).subgroupOf (D F).normalizer)
+      -- have := QuotientGroup.quotientInfEquivProdNormalQuotient (H := A'.normalizer ⊓ G') (N := (D F).subgroupOf (D F).normalizer)
 
 
 
