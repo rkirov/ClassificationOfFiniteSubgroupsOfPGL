@@ -3,9 +3,8 @@ import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S5_Propert
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S1_ElementaryAbelian
 import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.GroupTheory.Sylow
 
-set_option linter.style.longLine true
-set_option autoImplicit false
 set_option maxHeartbeats 0
 set_option synthInstance.maxHeartbeats 0
 set_option linter.unusedTactic false

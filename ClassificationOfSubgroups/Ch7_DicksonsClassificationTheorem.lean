@@ -14,6 +14,7 @@ open Matrix Subgroup LinearMap
 
 open scoped MatrixGroups
 
+universe u v
 
 /- Lemma 3.1 -/
 lemma IsPGroup.not_le_normalizer {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
@@ -44,7 +45,7 @@ instance field_R {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
 
 -- abbrev SL := Matrix.SpecialLinearGroup
 
-lemma card_SL_field {𝔽 : Type u_1} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
+lemma card_SL_field {𝔽 : Type u} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
   Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by sorry
 
 /- Lemma 3.5. Correspondence theorem -/
@@ -210,8 +211,8 @@ instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
 
 /- Theorem 3.6 -/
 theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
-  {p : ℕ} [CharP F p] (hp : Prime p) (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p)
-  (G : Subgroup (SL(2,F)))  [Finite G] :
+  {p : ℕ} [CharP F p] (hp : Prime p) (G : Subgroup (SL(2,F))) [Finite G]
+   (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p) :
   IsCyclic G ∨
   Isomorphic G (DihedralGroup n)
   ∨
