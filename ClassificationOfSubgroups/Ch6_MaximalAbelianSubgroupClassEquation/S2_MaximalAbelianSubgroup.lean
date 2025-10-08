@@ -1738,5 +1738,3 @@ theorem K_mem_MaximalAbelianSubgroups_of_center_lt_card_K {F : Type*} [Field F] 
   sorry
 
 end MaximalAbelianSubgroup
-
-#min_imports

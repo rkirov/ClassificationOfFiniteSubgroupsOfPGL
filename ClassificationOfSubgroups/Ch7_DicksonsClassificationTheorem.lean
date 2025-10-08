@@ -6,6 +6,8 @@ import Mathlib.GroupTheory.PresentedGroup
 import Mathlib.GroupTheory.SpecificGroups.Alternating
 import Mathlib.GroupTheory.QuotientGroup.Basic
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
 
 set_option linter.style.longLine true
 set_option maxHeartbeats 0
@@ -41,12 +43,37 @@ instance field_R {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
   [CharP F p] {k : ℕ+} : Field (R F p k) := by sorry
 
 /- Lemma 3.4 -/
-#check Matrix.card_GL_field
+noncomputable instance Fintype_GL {F : Type*} {n : ℕ} [Field F] [Fintype F] :
+    Fintype (GL (Fin n) F) := by
+  exact Fintype.ofFinite (GL (Fin n) F)
 
--- abbrev SL := Matrix.SpecialLinearGroup
+theorem GL_card {q : ℕ} {F : Type*} [Field F] [Fintype F] (hq : Fintype.card F = q) :
+    Fintype.card (GL (Fin 2) F)= (q ^ 2 - 1) * (q ^ 2 - q) := by
+  rw [← Nat.card_eq_fintype_card]
+  rw [Matrix.card_GL_field]
+  simp [hq]
 
-lemma card_SL_field {𝔽 : Type u} [Field 𝔽] [Fintype 𝔽] (n : ℕ) :
-  Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by sorry
+-- Matrix.card_SL_field seems to be missing from mathlib
+lemma card_SL_field {𝔽 : Type u} [Field 𝔽] [Fintype 𝔽] (n : ℕ):
+  Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by
+  sorry
+
+noncomputable instance Fintype_SL {F : Type*} {n : ℕ} [Field F] [Fintype F] :
+    Fintype (SL (Fin n) F) := by
+  exact Fintype.ofFinite (SL(n, F))
+
+theorem SL_card {q : ℕ} {F : Type*} [Field F] [Fintype F]
+    (hq : Fintype.card F = q) (hqone: q > 1): Fintype.card SL(2, F) = (q ^ 2 - 1) * q := by
+  rw [← Nat.card_eq_fintype_card]
+  rw [card_SL_field]
+  simp [hq]
+  rw [GL_card hq]
+  have : q ^ 2 - q = q * (q - 1) := by
+    rw [Nat.mul_sub_left_distrib, pow_two]
+    simp
+  rw [this]
+  ring_nf
+  apply Nat.mul_div_left (q * (q ^ 2 - 1)) (by exact Nat.zero_lt_sub_of_lt hqone)
 
 /- Lemma 3.5. Correspondence theorem -/
 #check QuotientGroup.comapMk'OrderIso

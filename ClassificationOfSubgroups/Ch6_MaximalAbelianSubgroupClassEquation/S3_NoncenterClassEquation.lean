@@ -714,6 +714,4 @@ lemma normalizer_Sylow_join_center_eq_normalizer_Sylow {F : Type*} [Field F] {p 
     normalizer (map G.subtype Q.toSubgroup) := by
   sorry
 
-
-
 #min_imports

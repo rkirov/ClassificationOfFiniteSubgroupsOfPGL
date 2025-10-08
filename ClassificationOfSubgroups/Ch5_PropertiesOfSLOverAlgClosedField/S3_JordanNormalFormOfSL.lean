@@ -366,5 +366,3 @@ theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [I
     simp only [SpecialMatrices.d, IsUnit.unit_spec]
     -- conjugation is transitive
     apply IsConj.trans isConj₂.symm isConj₁.symm
-
-#min_imports
