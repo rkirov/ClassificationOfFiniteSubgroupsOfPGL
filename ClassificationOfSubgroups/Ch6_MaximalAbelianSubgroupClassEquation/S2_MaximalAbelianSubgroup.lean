@@ -4,8 +4,6 @@ import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S1_Elem
 import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.FieldTheory.Finite.Basic
 
-set_option linter.style.longLine true
-set_option autoImplicit false
 set_option maxHeartbeats 0
 set_option synthInstance.maxHeartbeats 0
 set_option linter.unusedTactic false
@@ -16,9 +14,6 @@ def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal Is
 
 def MaximalAbelianSubgroupsOf { L : Type*} [Group L] (G : Subgroup L) : Set (Subgroup L) :=
   { K : Subgroup L | IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G}
-
-structure MaximalAbelian {G : Type*} [Group G] (H : Subgroup G) extends Subgroup G where
-  is_maximal' : Maximal (IsCommutative) H
 
 def MaximalAbelianSubgroups' {L : Type*} [Group L] (G : Subgroup L) :=
   { K : Subgroup L // IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G }
@@ -58,7 +53,7 @@ lemma IsCommutative_of_IsCommutative_subgroupOf {G : Type*} [ Group G ] (H K : S
 
 open Pointwise
 
-def center_mul  {G : Type* } [Group G] (H : Subgroup G) : Subgroup G where
+def center_mul {G : Type* } [Group G] (H : Subgroup G) : Subgroup G where
   carrier := (center G : Set G) * (H : Set G)
   mul_mem' := by
     intro x y ⟨z₁, hz₁, a₁, ha₁, h₁⟩ ⟨z₂, hz₂, a₂, ha₂, h₂⟩
@@ -112,7 +107,7 @@ lemma IsComm_of_center_join_IsComm {G : Type* } [Group G] (H : Subgroup G)
 
 end IsCommutative
 
-lemma ne_union_left_of_ne {X : Type*} (A B : Set X)(not_B_le_A : ¬ B ≤ A) : A ⊂ A ∪ B := by
+lemma ne_union_left_of_ne {X : Type*} (A B : Set X) (not_B_le_A : ¬ B ⊆ A) : A ⊂ A ∪ B := by
   rw [Set.ssubset_def]
   split_ands
   exact Set.subset_union_left
@@ -191,10 +186,7 @@ instance SZ_Comm {F : Type*} [Field F] : CommGroup (S F ⊔ Z F :) := by
   rw [S_join_Z_eq_SZ]
   let inst := IsCommutative_SZ F
   exact IsCommutative.commGroup (SZ F)
-
 namespace MaximalAbelianSubgroup
-
-
 
 lemma not_le_of_ne {G : Type*} [Group G] (A B H : Subgroup G)
   (hA : A ∈ MaximalAbelianSubgroupsOf H) (hB : B ∈ MaximalAbelianSubgroupsOf H) (A_ne_B : A ≠ B):
@@ -218,7 +210,6 @@ lemma not_le_of_ne {G : Type*} [Group G] (A B H : Subgroup G)
   rw [A_meet_G_eq_A, B_meet_G_eq_B] at contr
   contradiction
 
-
 lemma le_centralizer_of_mem {G : Type*} [Group G] {A H : Subgroup G}
   (hA : A ∈ MaximalAbelianSubgroupsOf H) {x : G} (x_in_A : x ∈ A) : A ≤ centralizer {x} := by
   intro a a_in_A
@@ -235,7 +226,6 @@ theorem le_centralizer_meet {G : Type*} [Group G] (A H : Subgroup G)
   apply le_inf
   exact le_centralizer_of_mem hA x_in_A
   apply hA.right
-
 
 lemma lt_centralizer_meet_G {G : Type*} [Group G] {A B H : Subgroup G}
   (hA : A ∈ MaximalAbelianSubgroupsOf H)  (hB : B ∈ MaximalAbelianSubgroupsOf H)
@@ -285,7 +275,6 @@ lemma center_le {G : Type*} [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbel
     · simp only [mem_subgroupOf]; exact z_not_in_A
   contradiction
 
-
 lemma singleton_of_center_eq_G {G : Type*} [Group G] (H : Subgroup G) (hH : H = center G) :
   MaximalAbelianSubgroupsOf H = {center G} := by
   ext A
@@ -307,11 +296,6 @@ lemma singleton_of_center_eq_G {G : Type*} [Group G] (H : Subgroup G) (hH : H = 
 
 open scoped MatrixGroups
 
-#check card_Z_eq_two_of_two_ne_zero
-
-#check card_Z_eq_one_of_two_eq_zero
-
-#check Set.subset_iff_eq_of_ncard_le
 -- Argue for when cardinality of A equals two
 
 
@@ -367,7 +351,7 @@ lemma eq_center_of_card_le_two {p : ℕ} [Fact (Nat.Prime p)] {F : Type*} [Field
     have orderOf_a_le_two : orderOf a ≤ 2 := calc
       orderOf a ≤ Nat.card A := Subgroup.orderOf_le_card A A_finite a_mem_A
       _ ≤ 2 := card_A_le_two
-    rw [@Nat.le_succ_iff_eq_or_le] at orderOf_a_le_two
+    rw [Nat.le_succ_iff_eq_or_le] at orderOf_a_le_two
     rcases orderOf_a_le_two with ( orderOf_a_eq_two | orderOf_a_le_one)
     · simp at orderOf_a_eq_two
       rw [orderOf_eq_iff (by norm_num)] at orderOf_a_eq_two
@@ -398,9 +382,6 @@ lemma eq_center_of_card_le_two {p : ℕ} [Fact (Nat.Prime p)] {F : Type*} [Field
   -- and -1 = 1 then the order of the group is not equal to 2.
   -- if x^2  = 1 then since $F$ is a field either x = 1 or x = -1.
 
-
-
-
 /- Theorem 2.3 (i) If x ∈ G\Z then we have CG (x) ∈ M. -/
 theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} [Field F]
   [IsAlgClosed F] [DecidableEq F] (G : Subgroup SL(2,F)) (x : SL(2,F))
@@ -426,9 +407,6 @@ theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} 
     have := mul_comm_of_mem_isCommutative J x_in_J j_in_J
     exact SetLike.coe_eq_coe.mpr this
   exact inf_le_right
-
-
-
 
 /- Theorem 2.3 (ii) For any two distinct subgroups A and B of M, we have A ∩ B = Z. -/
 theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAlgClosed F]
@@ -468,10 +446,6 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAl
     have cen_le_A := center_le G A hA center_le_G
     have cen_le_B := center_le G B hB center_le_G
     exact le_inf cen_le_A cen_le_B hx
-
--- lemma NeZero_neg_CharP [CharP F p] : ∀ (x : F), NeZero x ↔ p • (1 : F) ≠ x := by
-
-
 
 /- Theorem 2.3 (iii) An element A of M is either a cyclic group whose order is relatively prime
 to p, or of the form Q × Z where Q is an elementary abelian Sylow p-subgroup
@@ -1259,15 +1233,13 @@ theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z_of_center_ne
       A_eq_Q_join_Z_of_IsConj_s_or_neg_s G A hA center_le_G center_lt_A x x_in_G
         x_not_in_center A_eq_centra σ x_IsConj_s_or_neg_s
 
-
-
 /-
 Theorem 2.3 (iii)
 -/
 theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z {F : Type*}
   [Field F] [IsAlgClosed F] [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
   (G : Subgroup SL(2, F)) [hG₀ : Finite ↥G] (A : Subgroup SL(2, F))
-  (hA : A ∈ MaximalAbelianSubgroupsOf G) (center_le_G : center SL(2, F) ≤ G)  :
+  (hA : A ∈ MaximalAbelianSubgroupsOf G) (center_le_G : center SL(2, F) ≤ G) :
   IsCyclic ↥A ∧ (Nat.card ↥A).Coprime p
   ∨
   ∃ Q : Subgroup SL(2,F),
@@ -1285,15 +1257,6 @@ theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z {F : Type*}
       exact ⟨h₂, h₁⟩
     · right
       exact h₃
-
-
-
-
-
-
-#check IsCyclic_and_card_Coprime_CharP_of_center_eq
-
-#check IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z_of_center_ne
 
 -- could probably generalise to any map
 lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
@@ -1400,8 +1363,6 @@ lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
         map_subgroupOf_eq_of_le A_le_H, pointwise_smul_le_pointwise_smul_iff,
         map_le_iff_le_comap] at hA₂
     · exact pointwise_smul_le_pointwise_smul_iff.mp A_le_H
-
-
 
 /- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
 theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
@@ -1654,36 +1615,66 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
           }
         have : Subgroup.map φ ((A.subgroupOf G).subgroupOf (A.subgroupOf G).normalizer)
           = (A'.subgroupOf G').subgroupOf (A'.subgroupOf G').normalizer := by
-          sorry
+          ext x
+          simp [mem_map, mem_subgroupOf, mem_normalizer_iff'', φ]
+          constructor
+          . intro h
+            obtain ⟨g, hg₁, hg₂⟩ := h
+            obtain ⟨g', hg'₁⟩ := hg₂
+            obtain ⟨g'', hg''₁, hg''₂⟩ := hg'₁
+            simp
+            rw [← A_eq_conj_A']
+            rw [show c⁻¹ * g * c = conj c⁻¹ • g by simp [conj_apply]]
+            rwa [smul_mem_pointwise_smul_iff]
+          . intro h
+            use c * x * c⁻¹
+            constructor
+            . simp [← A_eq_conj_A'] at h
+              suffices x.val.val ∈ conj c⁻¹ • A by
+                simp [mem_pointwise_smul_iff_inv_smul_mem] at this
+                exact this
+              simp [h]
+            . use (by
+                have : (conj c • ↑↑x) ∈ A := by
+                  sorry
+                simp [conj_apply] at this
+                obtain ⟨_, ha⟩ := hA
+                exact ha this
+              ), by (
+                intro a ha
+                simp
+                suffices c * ((↑↑x)⁻¹ * c⁻¹) * a * (c * ↑↑x * c⁻¹) = ((conj c • conj (x.val.val)⁻¹) • conj c⁻¹) • a by
+                  rw [this]
+                  have : a ∈ A ↔ conj c⁻¹ • a ∈ A' := by
+                    rw [← A_eq_conj_A']
+                    exact Iff.symm smul_mem_pointwise_smul_iff
+                  have : a ∈ A ↔ ((conj (↑↑x : SL(2, F))⁻¹) • conj c⁻¹) • a ∈ A' := by
+                    rw [this]
+                    have := mem_normalizer_iff''.mp x.prop
+                    specialize this (⟨(conj c⁻¹ • a), by sorry⟩ : G')
+                    sorry
+                  have : a ∈ A ↔ (conj c • ((conj (↑↑x : SL(2, F))⁻¹) • conj c⁻¹)) • a ∈ A := by
+                    rw [this]
+                    simp only [← A_eq_conj_A']
+                    rw [mem_pointwise_smul_iff_inv_smul_mem]
+                    simp
+                    group
+                  exact this
+                simp
+                group
+              )
+              group
         -- let p : Normal ((A.subgroupOf G).normalizer) := by apply?
         let ϕ := QuotientGroup.congr
           ((A.subgroupOf G).subgroupOf (A.subgroupOf G).normalizer)
           ((A'.subgroupOf G').subgroupOf (A'.subgroupOf G').normalizer) φ this
-
 
         refine Nat.card_congr ϕ.symm
       have two_lt_card_A' : 2 < Nat.card A' := by sorry
       have normalizer_A'_le_DW := normalizer_subgroup_D_eq_DW two_lt_card_A' A'_le_D
       -- have := QuotientGroup.quotientInfEquivProdNormalQuotient (H := A'.normalizer ⊓ G') (N := (D F).subgroupOf (D F).normalizer)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       -- problem: One is equality between subgroups and the other is an isomorphism
-
-
 
       -- let Normal_A: Normal A := by apply?
       -- let Normal_A : Normal (A.subgroupOf G) := by
@@ -1691,6 +1682,9 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
       -- let f₁ : A →* (conj c • D F:) := inclusion A_le_conj_D
       -- let f₂ : (conj c • D F:) →* D F := (MulEquiv.subgroupMap (conj c) (D F)).symm.toMonoidHom
       -- Show that the quotient is a subgroup of ℤ₂ and thus its order is less than 2.
+      rw [← index_eq]
+      rw [normalizer_eq]
+
       sorry
     -- Contradiction since the cardinality of A is coprime to p and
     -- should A = Q ⊔ Z where Q is p elementary abelian, then p ∣ |A|
@@ -1707,8 +1701,6 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
       apply Subgroup.card_dvd_of_le
       exact le_sup_left
 
-#check QuotientGroup.map
-#check MulEquiv.toEquiv
 /-
 Theorem 2.3 (iv b) Furthermore, if [NG (A) : A] = 2,
 then there is an element y of NG (A)\A such that, yxy⁻¹ = x⁻¹  for all x ∈ A.
