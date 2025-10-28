@@ -1,10 +1,5 @@
 import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S2_SpecialSubgroups
-import Mathlib.Algebra.GroupWithZero.Conj
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.LinearAlgebra.FreeModule.PID
-import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
-import Mathlib.RingTheory.Artinian.Instances
-import Mathlib.RingTheory.FiniteLength
+import Mathlib
 
 set_option autoImplicit false
 set_option linter.style.longLine true
@@ -57,8 +52,8 @@ lemma associated_of_dvd_mul_irreducibles {k : Type*} [Field k] {q p₁ p₂: k[X
   rcases hp₂ with ⟨-, hp₂⟩
   rcases hd₁ with ⟨k₁, hk₁⟩
   rcases hd₂ with ⟨k₂, hk₂⟩
-  specialize hp₁ d₁ k₁ hk₁
-  specialize hp₂ d₂ k₂ hk₂
+  specialize hp₁ hk₁
+  specialize hp₂ hk₂
   rcases hp₁ with (h₁ | h₁)
   · rcases hp₂ with (h₂ | h₂)
     · left
@@ -194,7 +189,8 @@ lemma Matrix.conj_s_eq {x : F} {a b c d : F} :
   s x * !![a, b; c, d] * s (-x) =
   !![-b * x + a, b; (-b) * x * x + (a -d) * x + c, b*x + d] := by
   simp [s]
-  ext; ring_nf
+  ring_nf
+  trivial
 
 def SpecialLinearGroup.mk' {n : ℕ} (M : Matrix (Fin n) (Fin n) F) (h : det M = 1) : SL(n, F) :=
   ⟨M, h⟩
@@ -212,13 +208,13 @@ theorem isTriangularizable_of_algClosed [DecidableEq F] [IsAlgClosed F]
   by_cases hβ : β ≠ 0
   · obtain ⟨σ, hσ⟩ := exists_root_of_special_poly α β γ δ hβ
     use s σ
-    simp [M_coe_eq, s, Matrix.conj_s_eq]
+    simp [M_coe_eq, s]
     ring_nf at hσ ⊢
     exact hσ
   simp at hβ
   · use w
     rw [upper_triangular_iff]
-    simp [M_coe_eq, w, inv_def, hβ]
+    simp [M_coe_eq, w, hβ]
 
 /-
 A 2x2 upper triangular matrix is conjugate to a diagonal matrix if `a ≠ d`
@@ -227,7 +223,6 @@ lemma upper_triangular_isConj_diagonal_of_nonzero_det  [DecidableEq F]
   {a b d : F} (had : a - d ≠ 0) : ∃ C : SL(2,F), C * !![a, b; 0, d] * C⁻¹ = !![a, 0; 0, d] := by
   use ⟨!![1, b / (a - d); 0, 1], by simp⟩
   simp
-  ext
   repeat'
   field_simp
   ring_nf
@@ -239,8 +234,7 @@ lemma upper_triangular_isConj_jordan {a b : F} (hb : b ≠ 0) :
   IsConj !![a, b; 0, a] !![a, 1; 0, a] := by
   use GeneralLinearGroup.mk' !![1 / b, 0; 0, 1]
     (by simp; apply invertibleOfNonzero <| inv_ne_zero hb)
-  ext
-  repeat' field_simp
+  ext <;> simp <;> field_simp
 
 /-
 A 2x2 lower triangular matrix is conjugate to an upper triangular matrix
@@ -307,7 +301,7 @@ theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [I
   -- Because !![a, b; 0, d] is conjugate to S it also has determinant 1
   have det_eq_one : det !![a, b; 0, d] = 1 := by
     rw [← det_coe_S_eq_one, h]
-    simp only [det_mul, SpecialLinearGroup.det_coe, mul_one, one_mul]
+    simp only [det_mul, SpecialLinearGroup.det_coe, mul_one]
   have had := det_eq_one
   -- The determinant being equal to 1 implies a * d = 1
   simp at had

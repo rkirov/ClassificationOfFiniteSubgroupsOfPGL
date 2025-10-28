@@ -1,5 +1,5 @@
 import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S3_JordanNormalFormOfSL
-
+import Mathlib
 
 set_option autoImplicit false
 set_option linter.style.longLine true
@@ -49,12 +49,12 @@ theorem centralizer_s_eq_SZ {σ : F} (hσ : σ ≠ 0) : centralizer { s σ } = S
 
 
 lemma Field.self_eq_inv_iff (x : F) (x_ne_zero : x ≠ 0) : x = x⁻¹ ↔ x = 1 ∨ x = - 1 := by
-  rw [← sq_eq_one_iff, sq, propext (mul_eq_one_iff_eq_inv₀ x_ne_zero)]
+  rw [← sq_eq_one_iff, sq, (mul_eq_one_iff_eq_inv₀ x_ne_zero)]
 
 lemma Units.val_neg_one : ((-1 : Fˣ) : F) = -1 := by simp only [Units.val_neg, val_one]
 
 lemma Units.val_eq_neg_one (x : Fˣ) : (x : F) = -1 ↔ x = (-1 : Fˣ) := by
-  rw [← Units.val_neg_one, eq_iff]
+  rw [← Units.val_neg_one, val_inj]
 
 lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ ≠ -1) :
   centralizer {d δ} = D F := by
@@ -68,13 +68,19 @@ lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ �
     have δ_ne_zero : (δ : F) ≠ 0 := Units.ne_zero δ
     have δ_ne_δ_inv : (δ : F) ≠ δ⁻¹ := by
       intro h
-      rw [Field.self_eq_inv_iff _ δ_ne_zero] at h
-      simp_rw [Units.val_eq_one, Units.val_eq_neg_one] at h
-      absurd not_or.mpr ⟨δ_ne_one, δ_ne_neg_one⟩ h
-      trivial
+      rw [Units.val_inj] at h
+      rw [← mul_eq_one_iff_eq_inv] at h
+      suffices δ = 1 ∨ δ = -1 by
+        rcases this <;> contradiction
+      refine Units.eq_or_eq_neg_of_sq_eq_sq δ 1 ?_
+      rwa [one_pow, sq]
     rw [mul_comm, mul_eq_mul_left_iff] at hb hc
-    replace hb := Or.resolve_left hb δ_ne_δ_inv
-    replace hc := Or.resolve_left hc δ_ne_δ_inv.symm
+    -- rw [ne_eq] at δ_ne_δ_inv
+    have not_eq_inv : ¬ (δ : F)⁻¹ = (δ : F) := by
+      norm_cast
+      exact fun a ↦ δ_ne_δ_inv (congrArg Units.val (id (Eq.symm a)))
+    replace hb : b = 0 := Or.resolve_left hb (Ne.symm not_eq_inv)
+    replace hc : c = 0 := Or.resolve_left hc not_eq_inv
     rw [mem_D_iff, ← SpecialLinearGroup.fin_two_diagonal_iff]
     simp [hb, hc, ← hb', ← hc']
   · rintro ⟨δ', rfl⟩
@@ -140,8 +146,8 @@ lemma MulAut.conj_smul_symm {G : Type*} [Group G] (H K : Subgroup G) (c : G)
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
 -/
-lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](x : SL(2,F))
-  (hx : x ∉ center SL(2,F)) : IsCommutative (centralizer { x }) := by
+lemma IsMulCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](x : SL(2,F))
+  (hx : x ∉ center SL(2,F)) : IsMulCommutative (centralizer { x }) := by
   rcases SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed x with
     (⟨δ, x_IsConj_d⟩ | ⟨σ, x_IsConj_s⟩ | ⟨σ, x_IsConj_neg_s⟩ )
   · obtain ⟨x, centralizer_x_eq⟩ := conjugate_centralizers_of_IsConj (d δ) x x_IsConj_d
@@ -156,7 +162,7 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
       rw [← x_IsConj_d, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_x_eq, centralizer_d_eq_D _ δ_ne_one δ_ne_neg_one]
-    exact map_isCommutative _ _
+    exact map_isMulCommutative _ _
   · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (s σ) x x_IsConj_s
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
@@ -164,7 +170,7 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
       rw [← x_IsConj_s, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq, centralizer_s_eq_SZ σ_ne_zero]
-    exact map_isCommutative _ _
+    exact map_isMulCommutative _ _
   · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-s σ) x x_IsConj_neg_s
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
@@ -172,6 +178,6 @@ lemma IsCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F
       rw [← x_IsConj_neg_s, center_SL2_eq_Z] at hx
       simp at hx
     rw [← centralizer_S_eq,  ← centralizer_neg_eq_centralizer, centralizer_s_eq_SZ σ_ne_zero]
-    exact map_isCommutative _ _
+    exact map_isMulCommutative _ _
 
 #min_imports

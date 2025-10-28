@@ -103,7 +103,7 @@ lemma d_eq_diagonal (δ : Fˣ) :
 lemma d_one_eq_one : d (1 : Fˣ) = 1 := by ext <;> simp [d]
 
 @[simp]
-lemma d_neg_one_eq_neg_one : d (-1 : Fˣ) = -1 := by ext <;> simp [d, inv_neg_one]
+lemma d_neg_one_eq_neg_one : d (-1 : Fˣ) = -1 := by ext <;> simp [d]
 
 @[simp]
 lemma neg_d_eq_d_neg (δ : Fˣ) : - d δ = d (-δ) :=  by ext <;> simp [d, inv_neg]

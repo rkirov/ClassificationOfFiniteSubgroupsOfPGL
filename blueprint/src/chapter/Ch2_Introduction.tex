@@ -45,7 +45,7 @@ For example, such is the case for the following theorem:
   \end{proof}
 
 The proof for this theorem uses the extended euclidean algorithm and proves that when the algorithm terminates it produces the desired witnesses.
-In \texttt{mathlib}, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
+In mathlib, the extended euclidean algorithm is defined in the following way and is used to formalise Bézout's lemma
 
 
 It is not always clear how a proof corresponds to a program, but this correspondence does exist nonetheless.
@@ -67,7 +67,7 @@ The following example hopes to illustrate a simpler example and give a very brie
     \item Formalise the mathematical statement using Lean tactics.
 \end{itemize}
 
-Note that in the list above, the notion of a Lean tactic is mentioned. Loosely speaking, a \texttt{tactic} is a Lean metaprogram that will write Lean programs, these (non-meta) programs can
+Note that in the list above, the notion of a Lean tactic is mentioned. Loosely speaking, a tactic is a Lean metaprogram that will write Lean programs, these (non-meta) programs can
 be the usual code one would write for an algorithm or it could be the program which corresponds to the proof term that one needs to construct to formalise
 a mathematical statement in Lean. Examples of tactics and how they are used will be illustrated in the following example, yet a comprehensive list of Lean tactics can be found at \href{https://lean-lang.org/doc/reference/latest//Tactic-Proofs/Tactic-Reference/}{Tactics}.
 
@@ -130,48 +130,48 @@ a mathematical statement in Lean. Examples of tactics and how they are used will
     In fact, this might be how one would first conjecture that such a theorem about 
     the sums of the first odd natural numbers might be true in the first place!
 
-    To state the theorem in Lean, we use the keyword \texttt{theorem} or \texttt{lemma};
-    followed by the name we would like to give the theorem, in this case it is, \texttt{closed\_eq\_sum\_of\_first\_n\_odd\_nat};
-    then followed by a list of arguments which will either be the objects or assumptions on the objects, in this case we only
-    specify that \texttt{n} is a natural number; then after a colon \texttt{:}, we specify the mathematical statement,
-    in this case that \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. We have stated our first mathematical statement in Lean!
+    % To state the theorem in Lean, we use the keyword \texttt{theorem} or \texttt{lemma};
+    % followed by the name we would like to give the theorem, in this case it is, \texttt{closed\_eq\_sum\_of\_first\_n\_odd\_nat};
+    % then followed by a list of arguments which will either be the objects or assumptions on the objects, in this case we only
+    % specify that \texttt{n} is a natural number; then after a colon \texttt{:}, we specify the mathematical statement,
+    % in this case that \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. We have stated our first mathematical statement in Lean!
 
-    Now we will walk through the formal proof in Lean:
+    % Now we will walk through the formal proof in Lean:
 
-    After the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. It is possible to
-    define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \textit{tactic mode}.
+    % After the \texttt{:=} Lean expects a proof term of the type \texttt{sum\_of\_first\_n\_odd\_nat n = n * n}. It is possible to
+    % define the corresponding program which constructs the term, but often it is more intuitive to enter what is known as \textit{tactic mode}.
 
-    As outlined above, tactics are metaprograms, programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics
-    in Lean; to enter tactic mode one must begin the proof with the \texttt{by} tactic. A benefit of using tactic mode is that it allows access to an extremely useful
-    interactive \textit{infoview} which displays the objects at play in the proof, the assumptions on the objects and the state of the proof.
+    % As outlined above, tactics are metaprograms, programs that write programs, which in this case allow the simulation of typical pen-and-paper mathematics
+    % in Lean; to enter tactic mode one must begin the proof with the \texttt{by} tactic. A benefit of using tactic mode is that it allows access to an extremely useful
+    % interactive \textit{infoview} which displays the objects at play in the proof, the assumptions on the objects and the state of the proof.
 
-    Once in tactic mode, we have access to other tactics accessible through the keywords like: \texttt{induction}, \texttt{case}, \texttt{rw}, \texttt{rw}, \texttt{ring}, \texttt{simp} and so on.
+    % Once in tactic mode, we have access to other tactics accessible through the keywords like: \texttt{induction}, \texttt{case}, \texttt{rw}, \texttt{rw}, \texttt{ring}, \texttt{simp} and so on.
     
-    Given the natural numbers are defined inductively in Lean, Lean understands that to prove that a property $P$ holds true for all natural numbers
-    it is sufficient to provide a proof term for $P(0)$ and supposing $P(n)$ holds we can show that then $P(n+1)$ holds, in Lean terminology, the natural numbers
-    have their own induction principle; notice the similarity to defining a function from the naturals. In fact, the generation of an induction principle 
-    will be automatically true for any inductive datatype, but we will not go into this.
+    % Given the natural numbers are defined inductively in Lean, Lean understands that to prove that a property $P$ holds true for all natural numbers
+    % it is sufficient to provide a proof term for $P(0)$ and supposing $P(n)$ holds we can show that then $P(n+1)$ holds, in Lean terminology, the natural numbers
+    % have their own induction principle; notice the similarity to defining a function from the naturals. In fact, the generation of an induction principle 
+    % will be automatically true for any inductive datatype, but we will not go into this.
     
-    To access this fact, we must invoke the \texttt{induction} tactic which splits the original goal of \texttt{sum\_of\_first\_n\_odd\_nat n = n * n} into two smaller goals
+    % To access this fact, we must invoke the \texttt{induction} tactic which splits the original goal of \texttt{sum\_of\_first\_n\_odd\_nat n = n * n} into two smaller goals
 
-    \begin{enumerate}
-        \item The base case: \texttt{sum\_of\_first\_n\_odd\_nat 0 = 0 * 0}.
-        \item The induction step: \texttt{sum\_of\_first\_n\_odd\_nat (m + 1) = (m + 1) * (m + 1)}
-    \end{enumerate}
+    % \begin{enumerate}
+    %     \item The base case: \texttt{sum\_of\_first\_n\_odd\_nat 0 = 0 * 0}.
+    %     \item The induction step: \texttt{sum\_of\_first\_n\_odd\_nat (m + 1) = (m + 1) * (m + 1)}
+    % \end{enumerate}
 
-    The \texttt{case} tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label \textit{zero} to prove the base case;
-    then we focus in on the induction step by typing \texttt{case succ m hm} which also introduces two new objects into the proof context, the natural number $m$ and the assumption
-    on \texttt{m} which says that $m$ satisfies the induction hypothesis, \texttt{sum\_of\_first\_n\_odd\_nat m = m * m}. 
+    % The \texttt{case} tactic allows us to focus in on one of the tactics, at first we focus on the goal with the label \textit{zero} to prove the base case;
+    % then we focus in on the induction step by typing \texttt{case succ m hm} which also introduces two new objects into the proof context, the natural number $m$ and the assumption
+    % on \texttt{m} which says that $m$ satisfies the induction hypothesis, \texttt{sum\_of\_first\_n\_odd\_nat m = m * m}. 
     
-    We then proceed to use the rewrite tactic, \texttt{rewrite}, which allows to replace equal or logically equivalent terms, so if you have the theorem \texttt{h : a = b}, then \texttt{rw [h]} will replace every occurrence of \texttt{a} in the goal
-    for a \texttt{b}, in the new modified goal. For this particular example, the proof for the base case labelled by \texttt{zero} involves using the rewrites \texttt{mul\_zero} which states that \texttt{a * 0 = 0} and
-    the definition of  \texttt{sum\_of\_first\_n\_odd\_nat} itself, where Lean is clever enough to choose which of two equalities to rewrite.
+    % We then proceed to use the rewrite tactic, \texttt{rewrite}, which allows to replace equal or logically equivalent terms, so if you have the theorem \texttt{h : a = b}, then \texttt{rw [h]} will replace every occurrence of \texttt{a} in the goal
+    % for a \texttt{b}, in the new modified goal. For this particular example, the proof for the base case labelled by \texttt{zero} involves using the rewrites \texttt{mul\_zero} which states that \texttt{a * 0 = 0} and
+    % the definition of \texttt{sum\_of\_first\_n\_odd\_nat} itself, where Lean is clever enough to choose which of two equalities to rewrite.
 
-    Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflexivity of the equality relation. Typically, one
-    uses the \texttt{rw} tactic which is a combination of \texttt{rewrite} followed by \texttt{rfl}.
+    % Finally, \texttt{rfl} proves any goal that is true by reflexivity of the given relation; in this case, we finish proving the goal by reflexivity of the equality relation. Typically, one
+    % uses the \texttt{rw} tactic which is a combination of \texttt{rewrite} followed by \texttt{rfl}.
 
-    Theorems and lemmas in Lean are given an identifier by which to access through, for example, the theorem \texttt{add\_mul\_self\_eq} states that for all $a, b \in S$ where $S$ is a semiring
-    we have that \texttt{(a + b) * (a + b) = a * a + 2 * a * b + b * b}.
+    % Theorems and lemmas in Lean are given an identifier by which to access through, for example, the theorem \texttt{add\_mul\_self\_eq} states that for all $a, b \in S$ where $S$ is a semiring
+    % we have that \texttt{(a + b) * (a + b) = a * a + 2 * a * b + b * b}.
 \end{example}
 
 
@@ -246,7 +246,7 @@ claim tasks that are set by Prof. Kevin Buzzard and if in return a task is retur
 
 \subsubsection{The first target of the formalisation of Fermat's Last Theorem}
 
-The goal of the ongoing efforts of the formalisation is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \text{Mazur's Theorem} 
+The goal of the ongoing efforts of the formalisation is to reduce the proof of Fermat's Last Theorem to results that were known in the 1980s such as \textbf{Mazur's Theorem} 
 which bounds the torsion subgroup points of an elliptic curve.
 %https://imperialcollegelondon.github.io/FLT/blueprint/ch_frey.html
 

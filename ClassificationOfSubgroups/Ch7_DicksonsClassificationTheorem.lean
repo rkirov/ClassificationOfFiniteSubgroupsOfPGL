@@ -113,8 +113,10 @@ lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
     rw [tsub_add_cancel_of_le]
     exact Nat.pow_pos (Nat.Prime.pos Fact.out)
   obtain ⟨k, rfl⟩ := hn
-  have hd : (p ^ n.val - 1) ∣ (p ^ (n.val * k) - 1) :=
-    nat_pow_one_sub_dvd_pow_mul_sub_one p ↑n ↑k
+  have hd : (p ^ n.val - 1) ∣ (p ^ (n.val * k) - 1) := by
+    refine Nat.pow_sub_one_dvd_pow_sub_one p ?_
+    apply dvd_mul_right
+    -- nat_pow_one_sub_dvd_pow_mul_sub_one p ↑n ↑k
   have hdx : (X : (ZMod p)[X]) ^ (p ^ n.val - 1) - 1 ∣ X ^ (p ^ (n.val * k) - 1) - 1 := by
     let  Y : (ZMod p)[X] := X ^ (p ^ n.val - 1)
     obtain ⟨m, hm⟩ := hd

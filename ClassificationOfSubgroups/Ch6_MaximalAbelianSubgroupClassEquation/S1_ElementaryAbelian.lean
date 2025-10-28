@@ -13,12 +13,12 @@ open Subgroup
 
 
 structure ElementaryAbelian (p : ℕ) (G : Type*) [Group G] extends Subgroup G where
-  is_comm : IsCommutative toSubgroup
+  is_comm : IsMulCommutative toSubgroup
   orderOf_eq : ∀ h : toSubgroup, h ≠ 1 → orderOf h = p
 
 
 def IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G) : Prop :=
-  IsCommutative H ∧ ∀ h : H, h ≠ 1 → orderOf h = p
+  IsMulCommutative H ∧ ∀ h : H, h ≠ 1 → orderOf h = p
 
 namespace IsElementaryAbelian
 
@@ -89,10 +89,10 @@ lemma IsPGroup {G : Type*} [hG : Group G] (p : ℕ) (hp : Nat.Prime p)
 lemma subgroupOf {G : Type*} [Group G]
   (H K : Subgroup G) {p : ℕ} [Fact (Nat.Prime p)] (hH : IsElementaryAbelian p H) :
   IsElementaryAbelian p (H.subgroupOf K) := by
-  refine ⟨?IsCommutative, ?orderOf_eq_p⟩
-  case IsCommutative =>
-    let IsCommutative_H : IsCommutative H := hH.left
-    exact subgroupOf_isCommutative K H
+  refine ⟨?IsMulCommutative, ?orderOf_eq_p⟩
+  case IsMulCommutative =>
+    let IsCommutative_H : IsMulCommutative H := hH.left
+    exact subgroupOf_isMulCommutative K H
   case orderOf_eq_p =>
     rintro ⟨h, hh⟩ h_ne_one
     have h_in_H := hh

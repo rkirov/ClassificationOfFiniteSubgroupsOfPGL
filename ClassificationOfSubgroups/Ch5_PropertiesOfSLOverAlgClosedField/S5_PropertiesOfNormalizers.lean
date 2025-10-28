@@ -49,7 +49,7 @@ lemma normalizer_subgroup_S_le_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     have x_eq : x = !![α, β; γ, δ] := by ext <;> rfl
     have : x * s σ * x⁻¹ ∈ S F := by exact h hσ
     obtain ⟨σ' , hσ'⟩ := this
-    simp [x_eq] at hσ'
+    simp only at hσ'
     -- uses decidable equality
     rw [SpecialSubgroups.mem_L_iff_lower_triangular]
     rw [lower_triangular_iff]
@@ -61,8 +61,7 @@ lemma normalizer_subgroup_S_le_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     apply eq_zero_of_ne_zero_of_mul_right_eq_zero σ_ne_zero at β_eq_zero
     rw [sq_eq_zero_iff] at β_eq_zero
     simp [x_eq]
-    use α, γ, δ
-    simp [β_eq_zero]
+    exact β_eq_zero.symm
   · push_neg at h'
     have S₀_eq_bot : S₀ = ⊥ := by
       rw [eq_bot_iff_forall]
@@ -102,9 +101,10 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
     replace bottom_left := bottom_left_eq ▸ bottom_left
     have det_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := SpecialLinearGroup.det_coe _
     have δ_sub_δ_inv_ne_zero : (δ' : F)⁻¹ - δ' ≠ 0 := by
-      field_simp
+      have δ'_ne_zero : (δ' : F) ≠ 0 := by sorry
       intro h
-      rw [sub_eq_zero, ← sq] at h
+      field_simp [δ'_ne_zero] at h
+      rw [mul_zero, sub_eq_zero] at h
       symm at h
       rw [sq_eq_one_iff] at h
       apply not_or_intro h₀ h₁ h
@@ -163,7 +163,7 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
       · intro y_mem_D₀
         group
         nth_rewrite 1 [d_eq_inv_d_inv,  ← w_mul_d_eq_d_inv_w]
-        rw [zpow_neg, zpow_neg, zpow_one, zpow_one,
+        rw [_root_.zpow_neg, _root_.zpow_neg, zpow_one, zpow_one,
           w_inv, mul_neg, neg_mul, inv_d_eq_d_inv,
           show -(w * d δ⁻¹ * y * w * d δ⁻¹) = -(w * d δ⁻¹ * y * (w * d δ⁻¹)) by group]
         nth_rewrite 2 [w_mul_d_eq_d_inv_w δ⁻¹]

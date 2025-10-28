@@ -1,8 +1,7 @@
 import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S4_PropertiesOfCentralizers
 import ClassificationOfSubgroups.Ch5_PropertiesOfSLOverAlgClosedField.S5_PropertiesOfNormalizers
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S1_ElementaryAbelian
-import Mathlib.Algebra.Order.Star.Basic
-import Mathlib.FieldTheory.Finite.Basic
+import Mathlib
 
 set_option linter.style.longLine true
 set_option autoImplicit false
@@ -12,13 +11,14 @@ set_option linter.unusedTactic false
 
 open Subgroup
 
-def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop := Maximal IsCommutative G
+def IsMaximalAbelian {L : Type*} [Group L] (G : Subgroup L) : Prop :=
+  Maximal (P := fun (K : Subgroup L)  => IsMulCommutative K) G
 
 def MaximalAbelianSubgroupsOf { L : Type*} [Group L] (G : Subgroup L) : Set (Subgroup L) :=
   { K : Subgroup L | IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G}
 
 structure MaximalAbelian {G : Type*} [Group G] (H : Subgroup G) extends Subgroup G where
-  is_maximal' : Maximal (IsCommutative) H
+  is_maximal' : Maximal (P := fun (K : Subgroup G)  => IsMulCommutative K) H
 
 def MaximalAbelianSubgroups' {L : Type*} [Group L] (G : Subgroup L) :=
   { K : Subgroup L // IsMaximalAbelian (K.subgroupOf G) ∧ K ≤ G }
@@ -28,21 +28,27 @@ open SpecialSubgroups
 lemma mem_centralizer_self {G : Type*} [Group G] (x : G) : x ∈ centralizer {x} := by
   rintro y ⟨rfl⟩; rfl
 
-section IsCommutative
+section IsMulCommutative
 
-lemma inf_IsCommutative_of_IsCommutative_left {G : Type*} [ Group G] (H K : Subgroup G)
-  (hH : IsCommutative H) : IsCommutative (H ⊓ K) := by
-  rw [IsCommutative_iff]
+lemma isCommutative_of_le_isCommutative {G : Type*} [Group G] (H K : Subgroup G) (H_le_K : H ≤ K)
+  [hK : IsMulCommutative K] : IsMulCommutative H := by
+  rw [IsMulCommutative_iff]
+  intro h₁ h₂
+  exact (inclusion_inj H_le_K).mp <| hK.is_comm.comm ⟨h₁, H_le_K h₁.prop⟩ ⟨h₂, H_le_K h₂.prop⟩
+
+lemma inf_IsMulCommutative_of_IsMulCommutative_left {G : Type*} [Group G] (H K : Subgroup G)
+  (hH : IsMulCommutative H) : IsMulCommutative (H ⊓ K : Subgroup G) := by
+  rw [IsMulCommutative_iff]
   intro x y
   have H_meet_K_le_H : H ⊓ K ≤ H := inf_le_left
   have x_in_H : (x : G) ∈ H := H_meet_K_le_H <| SetLike.coe_mem _
   have y_in_H : (y : G) ∈ H := H_meet_K_le_H <| SetLike.coe_mem _
-  have := @mul_comm_of_mem_isCommutative G _ H hH x y x_in_H y_in_H
+  have := @mul_comm_of_mem_isMulCommutative G _ H hH x y x_in_H y_in_H
   exact SetLike.coe_eq_coe.mp this
 
-lemma IsCommutative_of_IsCommutative_subgroupOf {G : Type*} [ Group G ] (H K : Subgroup G)
-  (hH : IsCommutative (H.subgroupOf K)) : IsCommutative (H ⊓ K) := by
-  rw [IsCommutative_iff] at hH ⊢
+lemma isCommutative_of_isCommutative_subgroupOf {G : Type*} [ Group G ] (H K : Subgroup G)
+  (hH : IsMulCommutative (H.subgroupOf K)) : IsMulCommutative (H ⊓ K : Subgroup G) := by
+  rw [IsMulCommutative_iff] at hH ⊢
   intro x y
   have x_in_K : (x : G) ∈ K := x.property.right
   have y_in_K : (y : G) ∈ K := y.property.right
@@ -53,7 +59,7 @@ lemma IsCommutative_of_IsCommutative_subgroupOf {G : Type*} [ Group G ] (H K : S
     simp [mem_subgroupOf]
     exact y.property.left
   specialize hH ⟨⟨x, x_in_K⟩, x_in_H_subgroupOf_K⟩ ⟨⟨y, y_in_K⟩, y_in_H_subgroupOf_K⟩
-  simp [SetLike.coe_eq_coe] at hH
+  simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq] at hH
   exact SetLike.coe_eq_coe.mp hH
 
 open Pointwise
@@ -93,8 +99,8 @@ def center_mul  {G : Type* } [Group G] (H : Subgroup G) : Subgroup G where
     group
 
 lemma IsComm_of_center_join_IsComm {G : Type* } [Group G] (H : Subgroup G)
-  (hH : IsCommutative H) : IsCommutative (center G ⊔ H) :=  by
-  rw [IsCommutative_iff]
+  (hH : IsMulCommutative H) : IsMulCommutative (center G ⊔ H : Subgroup G) :=  by
+  rw [IsMulCommutative_iff]
   rintro ⟨x, hx⟩ ⟨y, hy⟩
   have center_mul_subset_center_mul :
     ((center G) :  Set G) * H ⊆ (center_mul H) := by simp [center_mul]
@@ -106,11 +112,11 @@ lemma IsComm_of_center_join_IsComm {G : Type* } [Group G] (H : Subgroup G)
   simp at hz₁ hz₂ h₁' h₂' ⊢
   rw [← h₁', ← h₂', mul_assoc, ← mul_assoc h₁, (hz₂.comm h₁).symm,
    mul_assoc z₂, mul_assoc z₂, ← mul_assoc h₂, (hz₁.comm h₂).symm,
-   mul_comm_of_mem_isCommutative H hh₁ hh₂, ← mul_assoc,
+   mul_comm_of_mem_isMulCommutative H hh₁ hh₂, ← mul_assoc,
    Eq.symm (hz₂.comm z₁)]
   group
 
-end IsCommutative
+end IsMulCommutative
 
 lemma ne_union_left_of_ne {X : Type*} (A B : Set X)(not_B_le_A : ¬ B ≤ A) : A ⊂ A ∪ B := by
   rw [Set.ssubset_def]
@@ -123,10 +129,10 @@ lemma ne_union_left_of_ne {X : Type*} (A B : Set X)(not_B_le_A : ¬ B ≤ A) : A
 
 open MulAction Pointwise
 
-theorem Units.coeHom_injective {M : Type*} [Monoid M] : Function.Injective (Units.coeHom M) := by
-  intro x y h
-  rw [Units.coeHom_apply, Units.coeHom_apply, ← Units.ext_iff] at h
-  exact h
+-- theorem Units.coeHom_injective {M : Type*} [Monoid M] : Function.Injective (Units.coeHom M) := by
+--   intro x y h
+--   rw [Units.coeHom_apply, Units.coeHom_apply, ← Units.ext_iff] at h
+--   exact h
 
 open Function Units
 
@@ -189,8 +195,8 @@ lemma coprime_card_fin_subgroup_of_monomorphism {F G : Type*} [Field F] {p : ℕ
 
 instance SZ_Comm {F : Type*} [Field F] : CommGroup (S F ⊔ Z F :) := by
   rw [S_join_Z_eq_SZ]
-  let inst := IsCommutative_SZ F
-  exact IsCommutative.commGroup (SZ F)
+  let inst := IsMulCommutative_SZ F
+  exact CommGroup.ofIsMulCommutative
 
 namespace MaximalAbelianSubgroup
 
@@ -222,10 +228,11 @@ lemma not_le_of_ne {G : Type*} [Group G] (A B H : Subgroup G)
 lemma le_centralizer_of_mem {G : Type*} [Group G] {A H : Subgroup G}
   (hA : A ∈ MaximalAbelianSubgroupsOf H) {x : G} (x_in_A : x ∈ A) : A ≤ centralizer {x} := by
   intro a a_in_A
-  obtain ⟨⟨A_IsCommutative', -⟩, A_le_G⟩ := hA
-  have hA : IsCommutative (A ⊓ H) := IsCommutative_of_IsCommutative_subgroupOf A H A_IsCommutative'
+  obtain ⟨⟨A_IsMulCommutative', -⟩, A_le_G⟩ := hA
+  have hA : IsMulCommutative (A ⊓ H :) :=
+    isCommutative_of_isCommutative_subgroupOf A H A_IsMulCommutative'
   have A_meet_G_eq_A : A ⊓ H = A := inf_of_le_left A_le_G
-  have := @mul_comm_of_mem_isCommutative G _ A (A_meet_G_eq_A ▸ hA) x a x_in_A a_in_A
+  have := @mul_comm_of_mem_isMulCommutative G _ A (A_meet_G_eq_A ▸ hA) x a x_in_A a_in_A
   simp [mem_centralizer_iff]
   exact this
 
@@ -267,10 +274,11 @@ lemma center_le {G : Type*} [Group G] (H A : Subgroup G) (hA : A ∈ MaximalAbel
   -- We will yield that K is less than or equal to A
   have contr := hA.left.right
   let K := (center G ⊔ A).subgroupOf H
-  have A_IsComm : IsCommutative A :=
-    inf_of_le_left hA.right ▸ IsCommutative_of_IsCommutative_subgroupOf A H hA.left.left
-  have A_join_cen_IsComm : IsCommutative (center G ⊔ A) := IsComm_of_center_join_IsComm _ A_IsComm
-  have K_IsComm : IsCommutative K := subgroupOf_isCommutative H (center G ⊔ A)
+  have A_IsComm : IsMulCommutative A :=
+    inf_of_le_left hA.right ▸ isCommutative_of_isCommutative_subgroupOf A H hA.left.left
+  have A_join_cen_IsComm : IsMulCommutative (center G ⊔ A :) :=
+    IsComm_of_center_join_IsComm _ A_IsComm
+  have K_IsComm : IsMulCommutative K := subgroupOf_isMulCommutative H (center G ⊔ A)
   have A_le_cen_join_A : A.subgroupOf H ≤ (center G ⊔ A).subgroupOf H := by
     simp [← map_subtype_le_map_subtype, hA.right]
 
@@ -299,7 +307,7 @@ lemma singleton_of_center_eq_G {G : Type*} [Group G] (H : Subgroup G) (hH : H = 
   · rintro ⟨rfl⟩
     simp [MaximalAbelianSubgroupsOf, IsMaximalAbelian]
     split_ands
-    · exact subgroupOf_isCommutative H (center G)
+    · exact subgroupOf_isMulCommutative H (center G)
     · intro A _A_IsComm _cen_le_A
       simp_rw [← hH]
       simp only [subgroupOf_self, le_top]
@@ -344,8 +352,8 @@ lemma NeZero_two_of_char_ne_two (F : Type*) [Field F] {p : ℕ} [hp' : Fact (Nat
   have one_ne_zero : (1 : F) ≠ 0 := one_ne_zero
   let char_eq_two : CharP F 2 := by
     exact CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero two_eq_zero
-  have two_dvd_p : (p : F) = 0 := by exact CharP.cast_eq_zero F p
-  rw [char_eq_two.cast_eq_zero_iff'] at two_dvd_p
+  have two_dvd_p : (p : F) = 0 := @CharP.cast_eq_zero F _ p hC
+  rw [char_eq_two.cast_eq_zero_iff] at two_dvd_p
   have two_eq_p : p = 2 := ((Nat.prime_dvd_prime_iff_eq Nat.prime_two hp'.out).mp two_dvd_p).symm
   contradiction
 -- There is a gap in the informal proof for when p = 2
@@ -382,8 +390,7 @@ lemma eq_center_of_card_le_two {p : ℕ} [Fact (Nat.Prime p)] {F : Type*} [Field
         split_ands
         · exact n_pos
         · rw [isPeriodicPt_mul_iff_pow_eq_one] at hn ⊢
-          simp only [SubmonoidClass.mk_pow, Subtype.ext_val_iff, OneMemClass.coe_one] at hn
-          exact hn
+          simpa using hn
       rw [← orderOf_pos_iff, pos_iff_ne_zero] at a_IsOfFinOrder
       rw [Nat.le_one_iff_eq_zero_or_eq_one] at orderOf_a_le_one
       apply Or.resolve_left at orderOf_a_le_one
@@ -408,11 +415,12 @@ theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} 
   centralizer {x} ⊓ G ∈ MaximalAbelianSubgroupsOf G := by
   obtain ⟨x_in_G, x_not_in_Z⟩ := hx
   simp at x_not_in_Z
-  have IsCommutative_centralizer_S := IsCommutative_centralizer_of_not_mem_center x x_not_in_Z
+  have IsMulCommutative_centralizer_S :=
+    IsMulCommutative_centralizer_of_not_mem_center x x_not_in_Z
   dsimp [MaximalAbelianSubgroupsOf]
   split_ands
   · rw [inf_subgroupOf_right]
-    apply subgroupOf_isCommutative
+    apply subgroupOf_isMulCommutative
   · rintro J hJ hx j j_in_J
     rw [inf_subgroupOf_right, mem_subgroupOf, mem_centralizer_iff]
     simp only [Set.mem_singleton_iff, forall_eq]
@@ -423,7 +431,7 @@ theorem centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral {F : Type*} 
       split_ands
       · exact mem_centralizer_self x
       · exact x_in_G
-    have := mul_comm_of_mem_isCommutative J x_in_J j_in_J
+    have := mul_comm_of_mem_isMulCommutative J x_in_J j_in_J
     exact SetLike.coe_eq_coe.mpr this
   exact inf_le_right
 
@@ -442,9 +450,9 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAl
     by_cases hx : x ∈ G.carrier \ (center SL(2,F))
     · have cen_meet_G_in_MaximalAbelianSubgroups :=
         centralizer_meet_G_in_MaximalAbelianSubgroups_of_noncentral G x hx
-      obtain ⟨⟨cen_meet_G_IsCommutative, _h⟩, -⟩ :=
+      obtain ⟨⟨cen_meet_G_IsMulCommutative, _h⟩, -⟩ :=
         cen_meet_G_in_MaximalAbelianSubgroups
-      simp only [inf_subgroupOf_right] at cen_meet_G_IsCommutative
+      rw [inf_subgroupOf_right] at cen_meet_G_IsMulCommutative
       have cen_meet_G_le_A : centralizer {x} ⊓ G ≤ A := by
         suffices (centralizer {x}).subgroupOf G ≤ A.subgroupOf G by
           simp only [← map_subtype_le_map_subtype, subgroupOf_map_subtype, le_inf_iff, inf_le_right,
@@ -452,14 +460,14 @@ theorem center_eq_meet_of_ne_MaximalAbelianSubgroups {F : Type*} [Field F] [IsAl
           exact this
         -- apply maximality of A
         apply hA.left.right
-        exact cen_meet_G_IsCommutative
+        exact cen_meet_G_IsMulCommutative
         simp only [← map_subtype_le_map_subtype, subgroupOf_map_subtype, le_inf_iff, inf_le_right,
           and_true]
         rw [inf_of_le_left hA.right]
         exact le_centralizer_of_mem hA x_in_A
         -- obtain a contradiction
       have not_cen_meet_G_le_A :=
-        not_le_of_lt <| lt_centralizer_meet_G hA hB A_ne_B x_in_A x_in_B
+        not_le_of_gt <| lt_centralizer_meet_G hA hB A_ne_B x_in_A x_in_B
       contradiction
     · simp at hx
       specialize hx (hA.right x_in_A)
@@ -600,7 +608,7 @@ lemma conj_S_join_Z_meet_G_eq_conj_S_meet_G_join_Z {F : Type*} [Field F]{G : Sub
   (conj c • (S F ⊔ Z F)) ⊓ G = conj c • S F ⊓ G ⊔ Z F :=
   calc
   (conj c • (S F ⊔ Z F)) ⊓ G = (conj c • S F ⊔ Z F) ⊓ G := by
-    simp [smul_sup, ← center_SL2_eq_Z, smul_normal c]
+    simp [smul_sup, ← center_SL2_eq_Z, Subgroup.Normal.conj_smul_eq_self c]
   _ = (conj c • S F ⊓ G) ⊔ (Z F ⊓ G) := by
         ext y
         rw [← SetLike.mem_coe, ← Z_eq_Z_meet_G F G center_le_G, ← center_SL2_eq_Z,
@@ -627,7 +635,7 @@ lemma conj_S_join_Z_meet_G_eq_conj_S_meet_G_join_Z {F : Type*} [Field F]{G : Sub
 
 lemma conj_inv_conj_eq (F : Type*) [Field F](G : Subgroup SL(2,F)) (c : SL(2,F)):
   conj c⁻¹ • ((conj c • S F ⊓ G) ⊔ Z F) = (S F ⊓ conj c⁻¹ • G) ⊔ Z F := by
-  simp only [smul_inf, ← center_SL2_eq_Z, smul_normal c⁻¹, smul_sup]
+  simp only [smul_inf, ← center_SL2_eq_Z, Subgroup.Normal.conj_smul_eq_self c⁻¹, smul_sup]
   simp [map_inv, inv_smul_smul]
 
 lemma coprime_card_fin_subgroup_of_inj_hom_group_iso_units {F G : Type*} [Field F] {p : ℕ}
@@ -706,7 +714,6 @@ theorem IsConj_fin_subgroup_D_and_card_coprime_CharP_and_IsCyclic_of_IsConj_d {F
       -- A is cyclic as it is finite and there exists a monoid monomorphism into F
   · exact isCyclic_of_subgroup_isDomain f' f'_inj
 
-#check map_inf_eq
 lemma centralizer_eq_conj_SZ_of_IsConj_s_or_IsConj_neg_s {F : Type*} [Field F]
   [IsAlgClosed F] [DecidableEq F] (A G : Subgroup SL(2,F)) (σ : F) (x : SL(2,F))
   (x_IsConj_s_or_neg_s : IsConj (s σ) x ∨ IsConj (- s σ) x)
@@ -817,7 +824,7 @@ lemma exists_noncenter_of_card_center_lt_card_center_Sylow (F : Type*) [Field F]
     Set.ncard ((Subgroup.map (G.subtype.comp S.toSubgroup.subtype) (center S)) : Set SL(2,F)) := by
         rw [coe₁, coe₂]
         exact card_center_lt_card_center_S
-  exact Set.exists_mem_not_mem_of_ncard_lt_ncard ncard_center_lt_ncard_center_S
+  exact Set.exists_mem_notMem_of_ncard_lt_ncard ncard_center_lt_ncard_center_S
 
 
 theorem mul_center_inj {F : Type*} [Field F] (S Q : Subgroup SL(2,F))
@@ -954,13 +961,13 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
     rw [← orderOf_q_eq_p]
     exact orderOf_mk q (Exists.intro t₀ ⟨⟨Exists.intro σ₀ hσ₀, t₀_in_conj_G⟩, hf⟩)
   have IsElementaryAbelian_Q : IsElementaryAbelian p Q := by
-    refine ⟨?IsCommutative_Q, ?orderOf_eq_p⟩
-    case IsCommutative_Q =>
-      let CommInst₁ : IsCommutative (S F ⊓ conj c⁻¹ • G) :=
-        inf_IsCommutative_of_IsCommutative_left (S F) (conj c⁻¹ • G) (IsCommutative_S F)
-      let CommInst₂ : IsCommutative ((S F ⊓ conj c⁻¹ • G).subgroupOf (S F ⊓ conj c⁻¹ • G ⊔ Z F)) :=
-        subgroupOf_isCommutative _ _
-      exact Subgroup.map_isCommutative _ _
+    refine ⟨?IsMulCommutative_Q, ?orderOf_eq_p⟩
+    case IsMulCommutative_Q =>
+      let CommInst₁ : IsMulCommutative (S F ⊓ conj c⁻¹ • G :) :=
+        inf_IsMulCommutative_of_IsMulCommutative_left (S F) (conj c⁻¹ • G) (IsMulCommutative_S F)
+      let CommInst₂ : IsMulCommutative ((S F ⊓ conj c⁻¹ • G).subgroupOf (S F ⊓ conj c⁻¹ • G ⊔ Z F)) :=
+        subgroupOf_isMulCommutative _ _
+      exact Subgroup.map_isMulCommutative _ _
       -- Every element is order p
     case orderOf_eq_p => exact orderOf_eq_p
   -- We show A is the join of Q and Z
@@ -1084,7 +1091,7 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
       -- there must exist an element of center S that does not lie in SL(2,F)
       obtain ⟨y, y_in_center_S, y_not_in_center⟩ :=
         @exists_noncenter_of_card_center_lt_card_center_Sylow F _ p _ _ G _ S p_le_card_center_S
-      let inst : CommGroup (center S) := IsCommutative.commGroup (center S)
+      let inst : CommGroup (center S) := CommGroup.ofIsMulCommutative
       have y_commutes_in_S : ∀ w : S, w * y = y * w := by
         intro w
         simp only [mem_map] at y_in_center_S
@@ -1146,13 +1153,13 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
         A.subgroupOf G ≤ (centralizer {y} ⊓ G).subgroupOf G := by
         simp only [Subgroup.subgroupOf, comap_le_comap_of_le_range A_le_range]
         exact A_le_centra_meet_G
-      have IsCommutative_centra_y_meet_G : IsCommutative ((centralizer {y} ⊓ G)) := by
-        apply inf_IsCommutative_of_IsCommutative_left
-        apply IsCommutative_centralizer_of_not_mem_center _ y_not_in_center
+      have IsMulCommutative_centra_y_meet_G : IsMulCommutative ((centralizer {y} ⊓ G :)) := by
+        apply inf_IsMulCommutative_of_IsMulCommutative_left
+        apply IsMulCommutative_centralizer_of_not_mem_center _ y_not_in_center
       -- A subgroup of commutative group is commutative
-      have IsCommutative_centra_y_meet_G_subgroupOf_G :
-        IsCommutative ((centralizer {y} ⊓ G).subgroupOf G) := by
-        exact subgroupOf_isCommutative G (centralizer {y} ⊓ G)
+      have IsMulCommutative_centra_y_meet_G_subgroupOf_G :
+        IsMulCommutative ((centralizer {y} ⊓ G).subgroupOf G) := by
+        exact subgroupOf_isMulCommutative G (centralizer {y} ⊓ G)
       have centra_meet_G_le_range : centralizer {y} ⊓ G ≤ G.subtype.range := by simp
       -- By the maximality of A we have that in fact A = centralizer {y} ⊓ G
       have A_eq_centra_y_meet_G : A = centralizer {y} ⊓ G := by
@@ -1160,7 +1167,7 @@ theorem A_eq_Q_join_Z_of_IsConj_s_or_neg_s {F : Type*} [Field F]
         · exact A_le_centra_meet_G
         · have centra_meet_G_le_A := @hA.left.right
             ((centralizer {y} ⊓ G).subgroupOf G)
-              IsCommutative_centra_y_meet_G_subgroupOf_G
+              IsMulCommutative_centra_y_meet_G_subgroupOf_G
                 A_subgroupOf_G_le_centra_meet_G_subgroupOf_G
           simp only [← comap_le_comap_of_le_range centra_meet_G_le_range]
           exact centra_meet_G_le_A
@@ -1295,14 +1302,15 @@ theorem IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z {F : Type*}
 
 #check IsCyclic_and_card_coprime_CharP_or_eq_Q_join_Z_of_center_ne
 
--- could probably generalise to any map
+-- could probably generalise to any map with some structure or maybe none at all
 lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
   (A H : Subgroup G) (c : G) :
   A ∈ MaximalAbelianSubgroupsOf H ↔ conj c • A ∈ MaximalAbelianSubgroupsOf (conj c • H) := by
   constructor
   · intro ⟨⟨hA₁, hA₂⟩, A_le_H⟩
     split_ands
-    · rw [@IsCommutative_iff]
+    · simp only
+      rw [IsMulCommutative_iff]
       intro ⟨⟨x, hx₁⟩, hx₂⟩ ⟨⟨y, hy₁⟩, hy₂⟩
       have hx₁' := hx₁
       have hy₁' := hy₁
@@ -1314,18 +1322,19 @@ lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
       rw [← hx'.right] at hx₂
       rw [← hy'.right] at hy₂
       rw [@smul_mem_pointwise_smul_iff] at hx₂ hy₂
-      rw [@IsCommutative_iff] at hA₁
+      simp only at hA₁
+      rw [@IsMulCommutative_iff] at hA₁
       specialize hA₁ ⟨
         ⟨x', hx'.left⟩, mem_subgroupOf.mpr hx₂⟩ ⟨⟨y', hy'.left⟩, mem_subgroupOf.mpr hy₂⟩
       simp [← hx'.right, ← hy'.right]
       simpa using hA₁
     -- We show that the image of A under conjugation is maximal abelian subgroup
-    · intro K IsCommutative_K le_K
-      have h₁ : IsCommutative (conj c⁻¹ • map (conj c • H).subtype K) :=
-        map_isCommutative (Subgroup.map (conj c • H).subtype K)
+    · intro K IsMulCommutative_K le_K
+      have h₁ : IsMulCommutative (conj c⁻¹ • map (conj c • H).subtype K :) :=
+        map_isMulCommutative (Subgroup.map (conj c • H).subtype K)
             ((MulDistribMulAction.toMonoidEnd (MulAut G) G) (conj c⁻¹))
-      have h₂ : IsCommutative ((conj c⁻¹ • map (conj c • H).subtype K).subgroupOf H) := by
-        exact subgroupOf_isCommutative H (conj c⁻¹ • Subgroup.map (conj c • H).subtype K)
+      have h₂ : IsMulCommutative ((conj c⁻¹ • map (conj c • H).subtype K).subgroupOf H) := by
+        exact subgroupOf_isMulCommutative H (conj c⁻¹ • Subgroup.map (conj c • H).subtype K)
       have le_H : conj c⁻¹ • map (conj c • H).subtype K ≤ H := by
         rw [@pointwise_smul_subset_iff, MonoidHom.map_inv, inv_inv]
         intro x hx
@@ -1347,13 +1356,14 @@ lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
   · intro ⟨⟨hA₁, hA₂⟩, A_le_H⟩
     split_ands
     · replace hA₁ := hA₁.is_comm.comm
-      rw [@IsCommutative_iff]
+      simp only
+      rw [IsMulCommutative_iff]
       intro ⟨x, hx⟩ ⟨y, hy⟩
       have conj_x_mem_conj_H : conj c • H.subtype x ∈ (conj c • H) := by
-        rw [smul_mem_pointwise_smul_iff, coeSubtype]
+        rw [smul_mem_pointwise_smul_iff]
         exact SetLike.coe_mem x
       have conj_y_mem_conj_H : conj c • H.subtype y ∈ (conj c • H) := by
-        rw [smul_mem_pointwise_smul_iff, coeSubtype]
+        rw [smul_mem_pointwise_smul_iff]
         exact SetLike.coe_mem y
       simp only [Subtype.forall, MulMemClass.mk_mul_mk, Subtype.mk.injEq] at hA₁
       specialize hA₁ (conj c • H.subtype x) conj_x_mem_conj_H
@@ -1361,12 +1371,12 @@ lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
         (conj c • H.subtype y) conj_y_mem_conj_H
         (by rw [mem_subgroupOf, smul_mem_pointwise_smul_iff]; exact hy)
       simpa [← Subtype.val_inj] using hA₁
-    · intro K IsCommutative_K A_subgroupOf_le_K
-      have IsCommutative_conj_K :
-        IsCommutative ((conj c • (map H.subtype K) ).subgroupOf (conj c • H)) := by
-          rw [IsCommutative_iff]
+    · intro K IsMulCommutative_K A_subgroupOf_le_K
+      have IsMulCommutative_conj_K :
+        IsMulCommutative ((conj c • (map H.subtype K) ).subgroupOf (conj c • H)) := by
+          rw [IsMulCommutative_iff]
           intro ⟨x, hx⟩ ⟨y, hy⟩
-          replace IsCommutative_K := IsCommutative_K.is_comm.comm
+          replace IsMulCommutative_K := IsMulCommutative_K.is_comm.comm
           simp only [MulMemClass.mk_mul_mk, Subtype.mk.injEq]
           rw [mem_subgroupOf, mem_smul_pointwise_iff_exists] at hx hy
           obtain ⟨x', x'_mem_map, hx'⟩ := hx
@@ -1374,18 +1384,13 @@ lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
           rw [mem_map] at x'_mem_map y'_mem_map
           obtain ⟨x'', x''_mem_K, hx''⟩ := x'_mem_map
           obtain ⟨y'', y''_mem_K, hy''⟩ := y'_mem_map
-          simp only [← hx'', coeSubtype, MulAut.smul_def, conj_apply] at hx'
-          simp only [← hy'', coeSubtype, MulAut.smul_def, conj_apply] at hy'
+          simp only [← hx'', MulAut.smul_def, conj_apply] at hx'
+          simp only [← hy'', MulAut.smul_def, conj_apply] at hy'
           simp only [← Subtype.val_inj, Subgroup.coe_mul, ← hx', ← hy']
-          specialize IsCommutative_K ⟨x'', x''_mem_K⟩ ⟨y'', y''_mem_K⟩
+          specialize IsMulCommutative_K ⟨x'', x''_mem_K⟩ ⟨y'', y''_mem_K⟩
           suffices x'' * y'' = y'' * x'' by
-            rw [
-              show c * ↑x'' * c⁻¹ * (c * ↑y'' * c⁻¹) = c * ↑y'' * c⁻¹ * (c * ↑x'' * c⁻¹)
-                ↔ c * (↑x'' * ↑y'') * c⁻¹ = c * (↑y'' * ↑x'') * c⁻¹ by
-                  group]
-            simp only [_root_.mul_left_inj, _root_.mul_right_inj]
-            simpa [← Subtype.val_inj] using this
-          simpa using IsCommutative_K
+            simpa [Subtype.ext_iff] using this
+          simpa using IsMulCommutative_K
       have le_conj_H : conj c • Subgroup.map H.subtype K ≤ conj c • H := by
         rw [@pointwise_smul_le_pointwise_smul_iff]
         exact map_subtype_le K
@@ -1395,14 +1400,14 @@ lemma iff_conj_MaximalAbelianSubgroupsOf_conj {G : Type* } [Group G]
         subgroupOf_map_subtype, inf_of_le_left le_conj_H, pointwise_smul_le_pointwise_smul_iff]
         rwa [← @map_subtype_le_map_subtype, subgroupOf_map_subtype,
         inf_of_le_left (pointwise_smul_le_pointwise_smul_iff.mp A_le_H)] at A_subgroupOf_le_K
-      specialize hA₂ IsCommutative_conj_K conj_A_subgroupOf_conj_H_le
+      specialize hA₂ IsMulCommutative_conj_K conj_A_subgroupOf_conj_H_le
       rwa [← map_subtype_le_map_subtype, map_subgroupOf_eq_of_le le_conj_H,
         map_subgroupOf_eq_of_le A_le_H, pointwise_smul_le_pointwise_smul_iff,
         map_le_iff_le_comap] at hA₂
     · exact pointwise_smul_le_pointwise_smul_iff.mp A_le_H
 
 
-
+-- Need to split into smaller lemmas
 /- Theorem 2.3 (iv a) If A ∈ M and |A| is relatively prime to p, then we have [N_G (A) : A] ≤ 2. -/
 theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
   {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] [CharP F p] (p_ne_two : p ≠ 2)
@@ -1415,14 +1420,13 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
     rw [key]
     have center_is_normal : Normal ((center SL(2,F)).subgroupOf G) := normal_subgroupOf
     rw [normalizer_eq_top_iff.mpr center_is_normal, ← comap_subtype, ← subgroupOf_self, index_comap,
-      Subgroup.range_subtype, relindex_subgroupOf fun ⦃x⦄ a ↦ a]
-
+      Subgroup.range_subtype, Subgroup.relIndex_subgroupOf fun ⦃x⦄ a ↦ a]
     have G_eq_center : G = center SL(2,F) := by
       rw [key] at hA
       contrapose! hA
       exact center_not_mem_of_center_ne hA.symm
-    suffices (center SL(2, F)).relindex G = 1 by linarith
-    rw [relindex_eq_one]
+    suffices (center SL(2, F)).relIndex G = 1 by linarith
+    rw [relIndex_eq_one]
     exact le_of_eq_of_le G_eq_center fun ⦃x⦄ a ↦ a
   · simp only [not_le] at h
     have G_ne_center : G ≠ center SL(2,F) := by
@@ -1503,7 +1507,7 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
               rw [hs']
               group at ha' ⊢
               exact ha'
-          · rw [coeSubtype] at h
+          · simp only [subtype_apply] at h
             simpa [h] using conj_s_eq_x
         · intro hx
           rw [mem_map] at hx
@@ -1512,7 +1516,8 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
           obtain ⟨x', x'_mem_A', hx'⟩ := hx
           have  mem_conj_G' : conj c • G'.subtype x' ∈ conj c • G' := by
             rw [smul_mem_pointwise_smul_iff]
-            simp only [coeSubtype, SetLike.coe_mem, G']
+            simp only [G']
+            sorry
           have mem_normalizer : ⟨conj c • G'.subtype x', mem_conj_G'⟩
             ∈ (A.subgroupOf (conj c • G')).normalizer := by
             rw [mem_normalizer_iff] at x'_mem_A' ⊢
@@ -1567,9 +1572,7 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
                   constructor
                   · intro h_mem_A'
                     rw [← A_eq_conj_A', mem_subgroupOf, mem_pointwise_smul_iff_inv_smul_mem]
-                    simp only [map_inv, inv_inv, coeSubtype, MulAut.smul_def, conj_inv_apply,
-                      Subgroup.coe_mul, InvMemClass.coe_inv, mul_inv_rev, smul_mul', smul_inv',
-                      conj_apply, _root_.mul_inv_cancel_right, G']
+                    simp
                     group
                     rw [← A_eq_conj_A', mem_subgroupOf] at h_mem_A'
                     have conj_h_mem_G : conj c • G'.subtype h ∈ G := by
@@ -1589,10 +1592,11 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
                       exact h.property
 
                     specialize hg ⟨conj c • G'.subtype h,  conj_h_mem_G⟩
-                    simp only [coeSubtype, MulAut.smul_def, conj_apply, mem_subgroupOf,
+                    simp only [MulAut.smul_def, conj_apply, mem_subgroupOf,
                       Subgroup.coe_mul, InvMemClass.coe_inv, G'] at hg
                     simp only [← A_eq_conj_A', MonoidHom.map_inv,
                       mem_pointwise_smul_iff_inv_smul_mem, inv_inv, MulAut.smul_def, conj_apply, G']
+                    simp at hg
                     rw [hg]
                     simp [mem_subgroupOf, ← A_eq_conj_A',
                       mem_pointwise_smul_iff_inv_smul_mem] at conj_mem_A'
@@ -1611,7 +1615,7 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
                   intro g
                   constructor
                   · intro hg
-                    simp only [mem_subgroupOf, coeSubtype, MulAut.smul_def, conj_apply,
+                    simp only [mem_subgroupOf, MulAut.smul_def, conj_apply,
                       Subgroup.coe_mul, InvMemClass.coe_inv, mul_inv_rev, inv_inv, G'] at hg ⊢
                     specialize hg' ⟨
                       conj c⁻¹ • g,
@@ -1623,6 +1627,7 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
                     simp only [A_eq_conj_A', mem_pointwise_smul_iff_inv_smul_mem, smul_mul',
                       MulAut.smul_def, conj_inv_apply, inv_mul_cancel, one_mul, smul_inv',
                       mul_inv_rev, inv_inv] at hg ⊢
+                    simp
                     group at hg hg' ⊢
                     rwa [← hg']
                   · intro hg
@@ -1640,20 +1645,23 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
                 ⟩
             left_inv := by
               intro g
-              simp only [map_inv, coeSubtype, MulAut.smul_def, conj_inv_apply, smul_mul', smul_inv',
+              simp only [map_inv, MulAut.smul_def, conj_inv_apply, smul_mul', smul_inv',
                 conj_apply, _root_.mul_inv_cancel_right]
               group
+              sorry
             right_inv := by
               intro g'
-              simp only [map_inv, coeSubtype, MulAut.smul_def, conj_apply, smul_mul',
+              simp only [map_inv, MulAut.smul_def, conj_apply, smul_mul',
                 conj_inv_apply, inv_mul_cancel, one_mul, smul_inv']
               group
+              sorry
             map_mul' := by
               intro g₁ g₂
               simp
           }
         have : Subgroup.map φ ((A.subgroupOf G).subgroupOf (A.subgroupOf G).normalizer)
           = (A'.subgroupOf G').subgroupOf (A'.subgroupOf G').normalizer := by
+
           sorry
         -- let p : Normal ((A.subgroupOf G).normalizer) := by apply?
         let ϕ := QuotientGroup.congr
@@ -1664,6 +1672,73 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
         refine Nat.card_congr ϕ.symm
       have two_lt_card_A' : 2 < Nat.card A' := by sorry
       have normalizer_A'_le_DW := normalizer_subgroup_D_eq_DW two_lt_card_A' A'_le_D
+      have D_sup_normalizer_eq_D_mul_normalizer :
+        (D F) ⊔ (A'.normalizer ⊓ G')
+          = Subgroup.closure ((D F).carrier * (A'.normalizer ⊓ G').carrier) := by sorry
+      have A'_eq_normalizer_inf_D : A' = G' ⊓ (D F) := by
+        apply le_antisymm
+        · exact le_inf hA'.right A'_le_D
+        · by_contra! h
+          rw [SetLike.not_le_iff_exists] at h
+          obtain ⟨x, h, x_not_mem_A'⟩ := h
+          rw [mem_inf] at h
+          obtain ⟨x_mem_G', ⟨δ, hδ⟩⟩ := h
+          have A'_lt_closure_sup_A' : A' < Subgroup.closure {d δ} ⊔ A' := by
+            apply lt_of_le_of_ne le_sup_right
+            · symm
+              apply ne_of_not_le
+              rw [SetLike.not_le_iff_exists]
+              use d δ
+              split_ands
+              · apply mem_sup_left
+                exact mem_closure_singleton_self (d δ)
+              · exact hδ ▸ x_not_mem_A'
+          have isCommutative_sup : IsMulCommutative ((Subgroup.closure {d δ} ⊔ A').subgroupOf G') := by
+            have sup_le_D : Subgroup.closure {d δ} ⊔ A' ≤ D F := by
+              apply sup_le
+              · simp [closure_le, Set.singleton_subset_iff]
+              · exact A'_le_D
+            let isComm : IsMulCommutative (closure {d δ} ⊔ A' :) :=
+              isCommutative_of_le_isCommutative (closure {d δ} ⊔ A') (D F) sup_le_D
+            exact subgroupOf_isMulCommutative G' (Subgroup.closure {d δ} ⊔ A')
+          have A_subgroupOf_le_sup_subgroupOf :
+            A'.subgroupOf G' ≤ (Subgroup.closure {d δ} ⊔ A').subgroupOf G' := by
+            rw [← map_subtype_le_map_subtype, subgroupOf_map_subtype, subgroupOf_map_subtype]
+            apply inf_le_inf_right
+            exact le_sup_right
+          suffices (Subgroup.closure {d δ} ⊔ A').subgroupOf G' ≤ A'.subgroupOf G' by
+            apply not_lt_of_ge this
+            rw [← map_subtype_lt_map_subtype, subgroupOf_map_subtype, subgroupOf_map_subtype]
+            rw [Preorder.lt_iff_le_not_ge]
+            split_ands
+            · apply inf_le_inf_right
+              exact le_sup_right
+            · rw [SetLike.not_le_iff_exists]
+              use x
+              split_ands
+              · apply mem_sup_left
+                exact mem_closure.mpr fun K a ↦ a hδ.symm
+              · exact x_mem_G'
+              intro h
+              rw [mem_inf] at h
+              rcases h with ⟨x_mem_A', x_mem_G'⟩
+              contradiction
+          exact hA'.left.right isCommutative_sup A_subgroupOf_le_sup_subgroupOf
+
+
+
+
+
+
+
+
+
+      /-
+      QuotientGroup.quotientInfEquivProdNormalQuotient.{u} {G : Type u} [Group G] (H N : Subgroup G) [N.Normal] :
+      ↥H ⧸ N.subgroupOf H ≃* ↥(H ⊔ N) ⧸ N.subgroupOf (H ⊔ N)
+
+      -/
+      -- Need to figure out what the ambient groups are and potentially prove normality
       -- have := QuotientGroup.quotientInfEquivProdNormalQuotient (H := A'.normalizer ⊓ G') (N := (D F).subgroupOf (D F).normalizer)
 
 
@@ -1707,8 +1782,7 @@ theorem index_normalizer_le_two {p : ℕ} [hp : Fact (Nat.Prime p)]
       apply Subgroup.card_dvd_of_le
       exact le_sup_left
 
-#check QuotientGroup.map
-#check MulEquiv.toEquiv
+
 /-
 Theorem 2.3 (iv b) Furthermore, if [NG (A) : A] = 2,
 then there is an element y of NG (A)\A such that, yxy⁻¹ = x⁻¹  for all x ∈ A.

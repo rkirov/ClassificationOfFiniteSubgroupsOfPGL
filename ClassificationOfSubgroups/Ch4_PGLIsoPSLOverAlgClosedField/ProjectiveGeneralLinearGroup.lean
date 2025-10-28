@@ -89,8 +89,7 @@ theorem mem_center_general_linear_group_iff {n : Type u} [DecidableEq n]
     intro hM N
     obtain ⟨r, rfl⟩ := hM
     ext i j
-    simp [GeneralLinearGroup.coe_mul, GeneralLinearGroup.coe_mul,
-      ← coe_scalar_matrix, scalar_commute]
+    simp
 
 end Center
 
@@ -188,10 +187,10 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
     simp [hα]
   obtain ⟨α, hα⟩ := hα'
   have det_inv_c_G_eq_one : det (α⁻¹ • G).1 = (1 : F) := by
-    simp [← hα, inv_smul_eq_iff, Units.smul_def]
+    simp [← hα, Units.smul_def]
   use α, ⟨(α⁻¹ • G), det_inv_c_G_eq_one⟩
   ext
-  simp [coe]
+  simp
 
 open Function
 
@@ -206,7 +205,7 @@ instance (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   refine IsScalarTower.of_smul_one_mul ?_
   intro r g
   ext
-  simp [GeneralLinearGroup.coe_mul]
+  simp
 
 
 theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
@@ -235,7 +234,7 @@ theorem SpecialLinearGroup.toGL_inj {n : Type*} [DecidableEq n] [Fintype n] {R :
   [CommRing R] : Injective (@SpecialLinearGroup.toGL n _ _ R _) := by
   refine (injective_iff_map_eq_one SpecialLinearGroup.toGL).mpr ?_
   intro x hx
-  simp [GeneralLinearGroup.ext_iff, coe] at hx
+  simp [GeneralLinearGroup.ext_iff] at hx
   ext i j
   exact hx i j
 
@@ -258,7 +257,7 @@ theorem ker_SL_monoidHom_PGL_eq_center (n F : Type*) [hn₁ : Fintype n] [Decida
     simp [mem_center_iff]
     intro y
     ext i j
-    simp [coe, ← hr]
+    simp [← hr]
     exact CommMonoid.mul_comm (y i j) r
 
 theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
@@ -274,9 +273,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
     suffices c⁻¹ • 1 * G = S by
       simp [← h]
       ext
-      simp [GeneralLinearGroup.scalar,
-        nonsing_inv_mul _ <| isUnits_det_units (SpecialLinearGroup.toGL S),
-        ← Matrix.smul_one_eq_diagonal]
+      simp
     rw [← h, smul_mul_assoc, one_mul, inv_smul_eq_iff]
   rw [← hG, class_G_eq_class_S]
   -- by definition these equivalence classes are the same
