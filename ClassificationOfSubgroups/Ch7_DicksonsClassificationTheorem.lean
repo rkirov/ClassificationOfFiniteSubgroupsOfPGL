@@ -1,6 +1,7 @@
 import ClassificationOfSubgroups.Ch4_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_A_MaximalAbelianSubgroup
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S4_CaseArithmetic
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S5_NumericClassEquation
 import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.GroupTheory.Complement
 import Mathlib.GroupTheory.Nilpotent
@@ -319,8 +320,55 @@ order coprime to `p` -- this is literally Butler's `K ≅ G/Q` (e.g. tex line ~1
 
 /-- Butler Case I (tex 1421-1450): `s = 1, t = 0`. Butler shows this forces `Q` to be a *proper*
 elementary abelian normal subgroup of `G`, with `G ⧸ Q` cyclic of order coprime to `p`.
-Status: statement faithful to paper; proof pending (needs Theorem 6.8 to identify Butler's `K`
-with a concrete subgroup of `G`, then `CaseArithmetic.case_1_0`). -/
+Status: statement faithful to paper; **FAILED** -- proof attempted, blocked (analysis below), sorry
+restored. Attempted for ~3 sessions' worth of exploration of the available `S2_A`/`S2_B`/`S5`
+machinery; here is exactly where it breaks down.
+
+TODO / failure analysis:
+* The easy half (`(⊤ : Subgroup G) ≠ Q.toSubgroup`) *is* pure arithmetic and goes through in both
+  branches of `CaseArithmetic.case_1_0`'s conclusion `(q = 1 ∧ g = g1) ∨ (1 < q ∧ k = g1 ∧
+  g = q * k)`: in branch 1, `q = 1 < g1 ≤ g` (from `2 ≤ g1`); in branch 2, `q < q * k = g` (since
+  `k = g1 ≥ 2`); either way `q = Nat.card Q.toSubgroup < g` while `Nat.card G = e * g` forces
+  `Nat.card (⊤ : Subgroup G) = Nat.card G > Nat.card Q.toSubgroup` (this exact pattern is what makes
+  the analogous step of `case_III` above go through). This part alone is genuinely provable.
+* Everything else needs Butler's *concrete* `K = C_G(x) ⊓ G` (`x` a noncentral element of the
+  Sylow subgroup `Q`) and the cyclic maximal abelian subgroup `A₁` realizing `g₁ = |A₁| / e`, both
+  of which are only asserted to *exist abstractly* via the numeral `k`/`g1` in `heq` -- there is no
+  witness subgroup in the hypotheses to attach `IsCyclic`/coprimality/complement facts to. The
+  available machinery (`S2_B.exists_IsCyclic_K_normalizer_eq_Q_join_K`,
+  `S5.sylow_class_data`) *does* produce a concrete cyclic complement `K` to `Q` with
+  `normalizer Q.toSubgroup = Q.toSubgroup ⊔ K.subgroupOf G`, but critically **not** tied to the
+  numeral `k` from `heq`: `S5.sylow_class_data` only gives the divisibility
+  `Nat.card (center SL(2,F)) ∣ Nat.card K`, not the equality `Nat.card K = Nat.card (center
+  SL(2,F)) * k` that Butler's proof (tex "`|K| = ek = eg₁ = |N_G(Q)|`") crucially uses to conclude
+  `|N_G(Q)| = |G|` (hence `Q ⊴ G`) via the class-equation arithmetic. That equality is exactly
+  `main_bridge`'s *construction* of `k` (`S5_NumericClassEquation.lean` ~942: `k := Nat.card K / e`
+  for *this specific* `K`) -- i.e. the bridge from the abstract numeral `k` in `heq` back to a
+  concrete `K` is a genuine (nontrivial, not yet built) *inverse* of `main_bridge`'s forward
+  construction, not a bookkeeping gap. Concretely: `heq` is a bare existential over `k` with no
+  handle on *which* subgroup realizes it, so `k = g1` (branch 2 of `case_1_0`) cannot be transported
+  to `Nat.card K = Nat.card (center SL(2,F)) * g1` for the specific `K` `sylow_class_data` hands
+  back, without additional hypotheses threading that identification through (which would require
+  either (a) re-deriving `heq` from `main_bridge` applied to this very `G` so the same `K` is used
+  throughout -- not available compositionally at this lemma's level -- or (b) strengthening
+  `case_I`'s hypotheses to carry the witness `K`/`A₁` and the identifying equalities explicitly,
+  which is a substantially larger restatement than a "minimal fix" and was judged out of scope
+  here (it effectively promotes this lemma to redo the `K`-identification half of `main_bridge`
+  bespoke for the `s=1,t=0` case).
+* Separately, in branch 1 (`q = 1`, i.e. `Q = ⊥` trivial, `p ∤ Nat.card G`), the required conclusion
+  is that `G` itself (`= K`, the complement to the trivial `Q`) is cyclic of order coprime to `p`.
+  This is *Butler's actual content* of Case Ia (tex: "`G/Q = G = A₁`, which indeed is a cyclic
+  group") -- i.e. it requires identifying `G` with the abstract `A₁` witnessing `g = g1`, which is
+  precisely the same missing bridge (there is no `A₁` witness subgroup in `heq` to identify `G`
+  with). This is not a corollary of anything currently proved in `S2_A`/`S2_B`/`S5`: it is, in
+  effect, the base case of Butler's whole classification of the coprime-order groups (feeding into
+  `dicksons_classification_theorem_class_I`), so proving it here would essentially require
+  restating much of that theorem's content locally.
+* Adding `[IsAlgClosed F] [DecidableEq F]` (needed by every one of the `S2_B`/`S5` lemmas cited
+  above; `case_I` as given has neither) is a legitimate, well-justified *minimal* fix in the spirit
+  of the other restatements in this file (matching the ambient hypotheses used everywhere else in
+  `S2_A`/`S2_B`/`S5`, and matching `dicksons_classification_theorem_class_I`'s own hypotheses), but
+  does not by itself close the gap above; it was not applied since it doesn't change the outcome. -/
 lemma case_I {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
     (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
@@ -330,7 +378,13 @@ lemma case_I {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
     (⊤ : Subgroup G) ≠ Q.toSubgroup ∧ IsElementaryAbelian p Q.toSubgroup ∧
       Normal Q.toSubgroup ∧
       ∃ K : Subgroup G, IsComplement' Q.toSubgroup K ∧ IsCyclic K ∧
-        Nat.Coprime p (Nat.card K) := by sorry
+        Nat.Coprime p (Nat.card K) := by
+  -- TODO: see failure analysis in the docstring above -- the `(⊤ : Subgroup G) ≠ Q.toSubgroup`
+  -- conjunct alone is provable by the same numeric argument as `case_III` (`q < g`, both branches
+  -- of `CaseArithmetic.case_1_0`), but the remaining three conjuncts need a concrete witness for
+  -- Butler's `K`/`A₁` tied to the abstract `k`/`g1` in `heq`, which is not threaded through to
+  -- this lemma (see analysis above for exactly what would need to change).
+  sorry
 
 /-- Butler Case II (tex 1453-1640): `s = 1, t = 1`. Forces `p ∤ |G|` (`q = 1`) and pins down
 `g₁ ∈ {2,3}`; Case IIa (`g₁ = 2`) constructs the dicyclic group of order `4n` (`n` odd) presented
@@ -352,8 +406,14 @@ lemma case_II {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
 /-- Butler Case III (tex 1661-1670): `s = t = 0`, i.e. there are no cyclic maximal abelian
 subgroups of order coprime to `p` at all. Forces `K ≤ Z` (`k = 1`, Theorem 6.8(v)) and hence
 `g = q`, giving `G = QZ` as an internal direct product (Butler writes `G = Q × Z`).
-Status: statement faithful to paper; proof pending (needs `CaseArithmetic.case_0_0`, then the
-counting argument `|G| = |QZ|` giving the Subgroup equality). -/
+Status: statement faithful to paper, **except** that the second conjunct originally read
+`IsComplement' (Subgroup.map G.subtype Q.toSubgroup) (center SL(2,F))`: since `IsComplement'` for
+two subgroups of an ambient group `L` asserts their product is *all of `L`*
+(`IsComplement'.sup_eq_top`), this literally demanded `Subgroup.map G.subtype Q.toSubgroup ⊔
+center SL(2,F) = ⊤` (i.e. `= SL(2,F)`), contradicting the first conjunct (`= G`) whenever
+`G ≠ ⊤`. Restated as the internal-picture statement `IsComplement' Q.toSubgroup ((center
+SL(2,F)).subgroupOf G)` (complementary subgroups of `↥G`, matching Butler's "internal direct
+product `G = Q × Z`" and consistent with the first conjunct). PROVED. -/
 lemma case_III {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
     (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
@@ -361,7 +421,55 @@ lemma case_III {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
     (heq : ∃ k, 1 ≤ k ∧ k ≤ 1 ∧
       ClassEquation g q k (s := 0) (t := 0) (fun i => i.elim0) (fun i => i.elim0)) :
     Subgroup.map G.subtype Q.toSubgroup ⊔ center SL(2,F) = G ∧
-      IsComplement' (Subgroup.map G.subtype Q.toSubgroup) (center SL(2,F)) := by sorry
+      IsComplement' Q.toSubgroup ((center SL(2,F)).subgroupOf G) := by
+  obtain ⟨k, hk_ge, hk_le, heq'⟩ := heq
+  have hGpos : 0 < Nat.card G := Nat.card_pos
+  have hgpos : 1 ≤ g := by
+    rcases Nat.eq_zero_or_pos g with hg0 | hgpos
+    · rw [hg0, mul_zero] at hg; omega
+    · exact hgpos
+  have hqpos : 1 ≤ q := by
+    have := Nat.card_pos (α := Q.toSubgroup); omega
+  obtain ⟨-, hgq⟩ := CaseArithmetic.case_0_0 g q k hgpos hqpos hk_ge hk_le heq'
+  -- `Z' := (center SL(2,F)).subgroupOf G`, central in `↥G`, hence normal.
+  have hZ_le_G : center SL(2,F) ≤ G := center_le_G
+  have hZ'_central : (center SL(2,F)).subgroupOf G ≤ center ↥G := by
+    intro z hz
+    rw [Subgroup.mem_subgroupOf] at hz
+    rw [mem_center_iff]
+    intro g'
+    apply Subtype.ext
+    simp only [Subgroup.coe_mul]
+    exact mem_center_iff.mp hz (g' : SL(2,F))
+  haveI hZ'_normal : ((center SL(2,F)).subgroupOf G).Normal :=
+    instNormalLeCenter _ hZ'_central
+  have hZ'_card : Nat.card ((center SL(2,F)).subgroupOf G) = Nat.card (center SL(2,F)) :=
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe hZ_le_G).toEquiv
+  -- `Q.toSubgroup` (a `p`-group) and `Z'` (coprime order) are disjoint.
+  have hcopZp : Nat.Coprime (Nat.card (center SL(2,F))) p := by
+    rw [SpecialSubgroups.center_SL2_eq_Z]; exact NumericClassEquation.coprime_card_Z_prime
+  have hcop_Z'p : Nat.Coprime (Nat.card ((center SL(2,F)).subgroupOf G)) p := by
+    rw [hZ'_card]; exact hcopZp
+  obtain ⟨n, hn⟩ := IsPGroup.iff_card.mp Q.isPGroup'
+  have hcop : Nat.Coprime (Nat.card Q.toSubgroup)
+      (Nat.card ((center SL(2,F)).subgroupOf G)) := by
+    rw [hn]; exact (Nat.Coprime.pow_right n hcop_Z'p).symm
+  have hdisj : Disjoint Q.toSubgroup ((center SL(2,F)).subgroupOf G) :=
+    Subgroup.disjoint_of_coprime_natCard hcop
+  -- `|Q| ⋅ |Z'| = |G|`, so `Q.toSubgroup` and `Z'` are complementary in `↥G`.
+  have hcard_eq : Nat.card Q.toSubgroup * Nat.card ((center SL(2,F)).subgroupOf G)
+      = Nat.card G := by
+    rw [hq, hZ'_card, hg, hgq, mul_comm]
+  have hcomplement : IsComplement' Q.toSubgroup ((center SL(2,F)).subgroupOf G) :=
+    isComplement'_of_card_mul_and_disjoint hcard_eq hdisj
+  refine ⟨?_, hcomplement⟩
+  -- Push `Q.toSubgroup ⊔ Z' = ⊤` forward along `G.subtype` to get the first conjunct.
+  have hsup_top : Q.toSubgroup ⊔ (center SL(2,F)).subgroupOf G = ⊤ := hcomplement.sup_eq_top
+  have hmap := congrArg (Subgroup.map G.subtype) hsup_top
+  rw [Subgroup.map_sup, Subgroup.map_subgroupOf_eq_of_le hZ_le_G] at hmap
+  have hGtop : Subgroup.map G.subtype (⊤ : Subgroup ↥G) = G := by
+    rw [← MonoidHom.range_eq_map, Subgroup.range_subtype]
+  rwa [hGtop] at hmap
 
 /-- Butler Case IV (tex 1681-1745): `s = 0, t = 1`. Forces `k = 1` and `q ∈ {2,3}`. Case IVa
 (`q = 2`, so `p = 2`) constructs `G ≅ D_n` (dihedral of order `2n`, `n` odd -- note `Z` is
