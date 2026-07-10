@@ -142,6 +142,46 @@ here and in the corresponding docstrings.
    not imply `center_le_G`) and the char-2 finale (`hp2 : p ≠ 2` excludes `p = 2`
    entirely, tracking `case_IV`'s Case IVb-independent residual gap, item 1 above).
 
+10. **Case IIb / Case IVb residual gap** (tex ~1512-1653 and ~1785; `Ch7:
+    exists_Q8_generators_of_relIndex_two`, `case_II`'s `g1 = 3` branch, `case_IV`'s Case IVb
+    branch). Both branches are now **partially proved**: Butler's numerals (`g2 = 2`/`g1 = 2`,
+    `g = 12`, `e = 2`, `Nat.card G = 24`) and his `Q₈`-shaped presentation of `N_G(A₂)` (resp.
+    `N_G(A)`) -- `x0, y0 : ↥G` with `orderOf x0 = 4`, `x0² = y0²`, `y0 x0 y0⁻¹ = x0⁻¹`,
+    `y0 ∉ zpowers x0` -- are proved directly, via a new shared lemma
+    `exists_Q8_generators_of_relIndex_two` factoring out the derivation already inlined in
+    `case_II`'s (proved) Case IIa block. This is exactly the input `mulEquiv_SL2_ZMod3_of`
+    (item 8 above, already proved in `Ch7_GroupRecognition.lean`) needs, *except* for the
+    order-`3` element `r` and its exact conjugation relations `r x0 r⁻¹ = y0`,
+    `r y0 r⁻¹ = x0 y0`.
+
+    Producing `r` is left `sorry`, and investigation shows the gap is **deeper than "relation
+    labeling"**: Butler's own route (tex ~1582 "`N` is thus a unique Sylow `2`-subgroup ... by
+    Corollary 4thSylow, `N ⊴ G`") first shows `N := N_G(A₂)` is the *unique* Sylow `2`-subgroup
+    of `G` (hence normal) by a **global element-order count**: every element of `2`-power order
+    in `G` lies in a conjugate of `A₁` or of `A₂` (there being, since `s = 1, t = 1, q = 1`, no
+    other maximal abelian classes at all), and `A₁`'s conjugates (odd-times-`2` order, cyclic)
+    contribute none beyond `Z`, so exactly `|N| = 8` such elements exist in all of `G` -- forcing
+    every (conjugate, hence isomorphic) Sylow `2`-subgroup to coincide with `N`. Only *then* does
+    Butler let the order-`3` subgroup `H ≤ A₁` act (by conjugation) on `N`'s `3` maximal cyclic
+    subgroups, landing the desired relations after a `2`-way relabeling.
+
+    The "no maximal abelian class besides `A₁, A₂`" fact used in the first step is a genuine
+    *global* statement about all of `G` (not a per-subgroup local one like the rest of Theorem
+    6.8), and is not currently exposed as a reusable lemma: `S3_NoncenterClassEquation`'s
+    `Quotient (lift_noncenter_MaximalAbelianSubgroupsOf G)` Fintype construction and
+    `S5_NumericClassEquation`'s `exists_bridgeData` implicitly *prove* it while assembling
+    `s, t`, but do not *export* it, and `case_II`/`case_IV`'s own hypotheses (the per-class
+    witness data `A1, A2`/`A` plus the numeric `ClassEquation`) do not carry it either. A
+    self-contained alternative route was explored (using `H ∩ N = 1` -- provable directly from
+    Lagrange plus `SL(2,F)`'s unique involution, no exhaustiveness needed -- to get
+    `|G| = |H| · |N|` and hence, by orbit-stabilizer, a genuinely *transitive* action of `H` on
+    the `3` `G`-conjugates of `A₂`) but still bottoms out on the same fact: showing the specific
+    conjugate `r A₂ r⁻¹` lands *inside* `N` itself (as opposed to some other Sylow `2`-subgroup
+    conjugate to, but not equal to, `N`) is equivalent to `N ⊴ G`. This matches the same category
+    of gap already left open in `case_VI_core`'s `gb = gc = 3` branch (tex ~2149-2157, "Sylow-
+    conjugacy elimination... genuinely group-theoretic, not pure arithmetic, and is not attempted
+    here") -- both are instances of the same missing global-exhaustiveness infrastructure.
+
 ## Repaired Lean statement drafts (not Butler errors)
 
 - `IsPGroup.not_le_normalizer` → `IsPGroup.lt_normalizer_subgroupOf` (original

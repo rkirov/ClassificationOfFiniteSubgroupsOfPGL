@@ -572,6 +572,208 @@ lemma case_I {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
     exact ⟨htop_ne, hQelemAb, hQ_normal, K.subgroupOf G, hcompG, hK_cyc',
       hcop_index.coprime_dvd_left hp_dvd_Q⟩
 
+set_option maxHeartbeats 1000000 in
+/-- **Shared extraction** (Butler tex ~1490-1508 for Case IIb, ~1579-1581 restated for the same
+group `N_G(A₂)`; reused verbatim by Case IVb, tex ~1785 "numerically identical to IIb"): given a
+cyclic maximal abelian `A2` of order `2 * g2` with normalizer index `2` (Theorem 6.8(iv)), produces
+the `Q₈`-shaped generator pair `x0, y0 : ↥G` (`orderOf x0 = 2 * g2`, `y0 ^ 2 = x0 ^ g2`,
+`y0 * x0 * y0⁻¹ = x0⁻¹`, `y0 ∉ zpowers x0`) that both Case IIb and Case IVb build their
+`SL(2,3)`-presentation on. This is *exactly* the derivation already inlined in `case_II`'s Case IIa
+block above (and, again inlined, in `case_VI_core`'s Case VIa block) up through Butler's
+`y² = x^{g2}` identification -- extracted here as a genuine shared lemma since Case IIb and Case
+IVb both need only this much (not IIa's further oddness/`QuaternionGroup` machinery). -/
+private lemma exists_Q8_generators_of_relIndex_two {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F]
+    [DecidableEq F] [Fact (Nat.Prime p)] [CharP F p]
+    (G A2 : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (hA2_mem : A2 ∈ MaximalAbelianSubgroupsOf G) (hA2_cyc : IsCyclic A2)
+    (hA2_cop : Nat.Coprime (Nat.card A2) p) (g2 : ℕ) (hg2_ge : 2 ≤ g2)
+    (hA2_card : Nat.card A2 = 2 * g2)
+    (hA2_relIndex : relIndex (A2.subgroupOf G) (normalizer (A2.subgroupOf G : Set ↥G)) = 2)
+    (hp_ne_two : p ≠ 2) :
+    ∃ x0 y0 : ↥G, orderOf x0 = 2 * g2 ∧ y0 ^ 2 = x0 ^ g2 ∧ y0 * x0 * y0⁻¹ = x0⁻¹ ∧
+      y0 ∉ Subgroup.zpowers x0 := by
+  classical
+  haveI hF2 : NeZero (2 : F) := ⟨by
+    intro h2
+    have hCharP2 : CharP F 2 := CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero h2
+    exact hp_ne_two (CharP.eq F (‹CharP F p› : CharP F p) hCharP2)⟩
+  haveI hA2_fin : Finite A2 :=
+    (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hA2_mem.right).to_subtype
+  obtain ⟨g0, hg0_gen⟩ := hA2_cyc.exists_generator
+  have horder_g0 : orderOf g0 = Nat.card A2 := orderOf_eq_card_of_forall_mem_zpowers hg0_gen
+  have horder_g0SL : orderOf (g0 : SL(2,F)) = 2 * g2 := by
+    rw [orderOf_coe, horder_g0, hA2_card]
+  haveI hg0_finord : IsOfFinOrder g0 := orderOf_pos_iff.mp (horder_g0 ▸ Nat.card_pos)
+  obtain ⟨y, hy_mem, hy_conj⟩ :=
+    of_index_normalizer_eq_two hp_ne_two A2 G hA2_mem center_le_G hA2_cop hA2_relIndex g0
+  simp only [Set.mem_sdiff, SetLike.mem_coe, Subgroup.mem_carrier, Subgroup.mem_inf] at hy_mem
+  obtain ⟨⟨hy_mem_norm, hy_mem_G⟩, hy_notin_A2⟩ := hy_mem
+  -- `y` inverts every element of `A2` (it inverts the generator `g0`).
+  have hinvert : ∀ a : SL(2,F), a ∈ A2 → y * a * y⁻¹ = a⁻¹ := by
+    intro a ha
+    obtain ⟨n, hn⟩ := hg0_gen ⟨a, ha⟩
+    have hn' : (g0 : SL(2,F)) ^ n = a := by
+      have := congrArg (Subtype.val) hn
+      simpa using this
+    have hconj_pow : y * (g0 : SL(2,F)) ^ n * y⁻¹ = ((g0 : SL(2,F)) ^ n)⁻¹ := by
+      have h1 := map_zpow (MulAut.conj y).toMonoidHom (g0 : SL(2,F)) n
+      simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h1
+      rw [h1, hy_conj, Subgroup.coe_inv, _root_.inv_zpow]
+    rwa [hn'] at hconj_pow
+  -- `y²` commutes with every element of `A2`.
+  have hy2_comm : ∀ a : SL(2,F), a ∈ A2 → y ^ 2 * a = a * y ^ 2 := by
+    intro a ha
+    have h1 : y * a = a⁻¹ * y := by
+      have h := hinvert a ha
+      have h2 : y * a * y⁻¹ * y = a⁻¹ * y := by rw [h]
+      simpa [mul_assoc] using h2
+    have h2 : y * a⁻¹ = a * y := by
+      have h := hinvert a⁻¹ (Subgroup.inv_mem A2 ha)
+      rw [inv_inv] at h
+      have h3 : y * a⁻¹ * y⁻¹ * y = a * y := by rw [h]
+      simpa [mul_assoc] using h3
+    calc y ^ 2 * a = y * y * a := by rw [pow_two]
+      _ = y * (y * a) := by rw [mul_assoc]
+      _ = y * (a⁻¹ * y) := by rw [h1]
+      _ = y * a⁻¹ * y := by rw [mul_assoc]
+      _ = (a * y) * y := by rw [h2]
+      _ = a * (y * y) := by rw [mul_assoc]
+      _ = a * y ^ 2 := by rw [pow_two]
+  -- Maximality of `A2` (as an internal subgroup of `↥G`) forces `y² ∈ A2`.
+  have hy2_mem_G : y ^ 2 ∈ G := Subgroup.pow_mem G hy_mem_G 2
+  set A2' : Subgroup ↥G := A2.subgroupOf G with hA2'_def
+  set y2' : ↥G := ⟨y ^ 2, hy2_mem_G⟩ with hy2'_def
+  have hy2_mem_A2 : y ^ 2 ∈ A2 := by
+    set k : Set ↥G := (A2' : Set ↥G) ∪ {y2'} with hk_def
+    have hcomm_k : ∀ a ∈ k, ∀ b ∈ k, a * b = b * a := by
+      haveI := hA2_mem.left.1
+      rintro a (ha | ha) b (hb | hb)
+      · exact setLike_mul_comm ha hb
+      · simp only [Set.mem_singleton_iff] at hb; subst hb
+        apply Subtype.ext
+        have ha' : (a : SL(2,F)) ∈ A2 := by
+          rw [SetLike.mem_coe, hA2'_def, Subgroup.mem_subgroupOf] at ha; exact ha
+        simpa [hy2'_def] using (hy2_comm a ha').symm
+      · simp only [Set.mem_singleton_iff] at ha; subst ha
+        apply Subtype.ext
+        have hb' : (b : SL(2,F)) ∈ A2 := by
+          rw [SetLike.mem_coe, hA2'_def, Subgroup.mem_subgroupOf] at hb; exact hb
+        simpa [hy2'_def] using hy2_comm b hb'
+      · simp only [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
+    haveI hclosure_comm : IsMulCommutative (closure k) :=
+      Subgroup.isMulCommutative_closure hcomm_k
+    have hA2'_le_closure : A2' ≤ closure k := by
+      rw [← Subgroup.closure_eq A2']
+      exact Subgroup.closure_mono (Set.subset_union_left)
+    have hclosure_le : closure k ≤ A2' := hA2_mem.left.2 hclosure_comm hA2'_le_closure
+    have hy2'_mem_closure : y2' ∈ closure k := subset_closure (Set.mem_union_right _ rfl)
+    have hy2'_mem_A2' : y2' ∈ A2' := hclosure_le hy2'_mem_closure
+    rwa [hA2'_def, Subgroup.mem_subgroupOf] at hy2'_mem_A2'
+  -- `(y²)² = 1`: `y` both fixes `y²` (conjugation by a power of itself) and inverts it
+  -- (as an element of `A2`).
+  have h1 : y * y ^ 2 * y⁻¹ = (y ^ 2)⁻¹ := hinvert (y ^ 2) hy2_mem_A2
+  have h2 : y * y ^ 2 * y⁻¹ = y ^ 2 := by group
+  have hz0_inv : (y ^ 2)⁻¹ = y ^ 2 := h1.symm.trans h2
+  have hz0sq : y ^ 2 * y ^ 2 = 1 := by
+    calc y ^ 2 * y ^ 2 = y ^ 2 * (y ^ 2)⁻¹ := by rw [hz0_inv]
+      _ = 1 := mul_inv_cancel _
+  -- `y² ≠ 1`, else `y` would be an involution -- but `SL(2,F)`'s unique involution `-1`
+  -- already lies in `A2 ⊇ center SL(2,F)`, while `y ∉ A2`.
+  have hy2_ne_one : y ^ 2 ≠ 1 := by
+    intro hy2eq1
+    have hy_ne_one : y ≠ 1 := by
+      intro hy1
+      apply hy_notin_A2
+      rw [hy1]
+      exact Subgroup.one_mem A2
+    have hdvd : orderOf y ∣ 2 := orderOf_dvd_of_pow_eq_one hy2eq1
+    have hord_ne_one : orderOf y ≠ 1 := by
+      rw [Ne, orderOf_eq_one_iff]; exact hy_ne_one
+    have hy_ord2 : orderOf y = 2 := by
+      rcases Nat.prime_two.eq_one_or_self_of_dvd _ hdvd with h | h
+      · exact absurd h hord_ne_one
+      · exact h
+    have hy_eq_negone : y = -1 :=
+      SpecialSubgroups.exists_unique_orderOf_eq_two.unique hy_ord2
+        SpecialSubgroups.orderOf_neg_one_eq_two
+    apply hy_notin_A2
+    rw [hy_eq_negone]
+    have hcenle : center SL(2,F) ≤ A2 := center_le G A2 hA2_mem center_le_G
+    apply hcenle
+    rw [SpecialSubgroups.center_SL2_eq_Z]
+    exact SpecialSubgroups.neg_one_mem_Z
+  -- Hence `y²` is *the* order-`2` element of `A2`.
+  have hz0sq' : (y ^ 2) ^ 2 = 1 := by
+    have hexp : (y ^ 2) ^ 2 = y ^ 2 * y ^ 2 := by group
+    rw [hexp]; exact hz0sq
+  have horder_z0 : orderOf (y ^ 2) = 2 := by
+    have hdvd : orderOf (y ^ 2) ∣ 2 := orderOf_dvd_of_pow_eq_one hz0sq'
+    have hne1 : orderOf (y ^ 2) ≠ 1 := by rw [Ne, orderOf_eq_one_iff]; exact hy2_ne_one
+    rcases Nat.prime_two.eq_one_or_self_of_dvd _ hdvd with h | h
+    · exact absurd h hne1
+    · exact h
+  -- Write `y² = g0 ^ n` for some `n < orderOf g0 = 2 * g2`, and pin `n = g2` down using
+  -- `y² ≠ 1` and `(y²)² = 1`.
+  have hz0mem : (⟨y ^ 2, hy2_mem_A2⟩ : A2) ∈ Subgroup.zpowers g0 := hg0_gen _
+  rw [hg0_finord.mem_zpowers_iff_mem_range_orderOf] at hz0mem
+  simp only [Finset.mem_image, Finset.mem_range] at hz0mem
+  obtain ⟨n, hn_lt, hn_eq⟩ := hz0mem
+  have hn_eq' : (g0 : SL(2,F)) ^ n = y ^ 2 := by
+    have := congrArg (Subtype.val) hn_eq
+    simpa using this
+  have horder_g0_eq : orderOf g0 = 2 * g2 := by rw [horder_g0, hA2_card]
+  rw [horder_g0_eq] at hn_lt
+  have hn2 : (g0 : SL(2,F)) ^ (n * 2) = 1 := by
+    rw [pow_mul, hn_eq']; exact hz0sq'
+  have hdvd1 : orderOf (g0 : SL(2,F)) ∣ n * 2 := orderOf_dvd_of_pow_eq_one hn2
+  rw [horder_g0SL] at hdvd1
+  have hg2_dvd_n : g2 ∣ n := by
+    have h1 : g2 * 2 ∣ n * 2 := by rwa [mul_comm 2 g2] at hdvd1
+    exact (Nat.mul_dvd_mul_iff_right (by norm_num : (0:ℕ) < 2)).mp h1
+  obtain ⟨t, ht⟩ := hg2_dvd_n
+  have hn_ne : ¬ (2 * g2) ∣ n := by
+    intro hdvd
+    apply hy2_ne_one
+    have hdvd' : orderOf (g0 : SL(2,F)) ∣ n := by rw [horder_g0SL]; exact hdvd
+    rw [← hn_eq']
+    exact orderOf_dvd_iff_pow_eq_one.mp hdvd'
+  have ht2 : ¬ 2 ∣ t := by
+    intro h2t
+    apply hn_ne
+    rw [ht]
+    obtain ⟨j, hj⟩ := h2t
+    exact ⟨j, by rw [hj]; ring⟩
+  have ht_lt : t < 2 := by
+    by_contra hcon
+    push_neg at hcon
+    have hge : 2 * g2 ≤ g2 * t := by
+      calc 2 * g2 = g2 * 2 := by ring
+        _ ≤ g2 * t := Nat.mul_le_mul_left g2 hcon
+    rw [← ht] at hge
+    omega
+  have ht_eq : t = 1 := by omega
+  have hn_eq_g2 : n = g2 := by rw [ht, ht_eq, mul_one]
+  have hy2eq : y ^ 2 = (g0 : SL(2,F)) ^ g2 := by rw [← hn_eq_g2]; exact hn_eq'.symm
+  -- Assemble the return data.
+  set x0 : ↥G := ⟨(g0 : SL(2,F)), hA2_mem.right g0.2⟩ with hx0_def
+  set y0 : ↥G := ⟨y, hy_mem_G⟩ with hy0_def
+  have hx0_ord : orderOf x0 = 2 * g2 := by
+    have h := orderOf_injective G.subtype (Subgroup.subtype_injective G) x0
+    rw [← h]; exact horder_g0SL
+  have hy0_2 : y0 ^ 2 = x0 ^ g2 := Subtype.ext hy2eq
+  have hconj0 : y0 * x0 * y0⁻¹ = x0⁻¹ := Subtype.ext hy_conj
+  have hyx0 : y0 ∉ Subgroup.zpowers x0 := by
+    intro hmem
+    obtain ⟨k, hk⟩ := hmem
+    apply hy_notin_A2
+    have hk' : (g0 : SL(2,F)) ^ k = y := by
+      have := congrArg (Subtype.val) hk
+      simpa using this
+    rw [← hk']
+    exact Subgroup.zpow_mem A2 g0.2 k
+  exact ⟨x0, y0, hx0_ord, hy0_2, hconj0, hyx0⟩
+
+set_option maxHeartbeats 1000000 in
 /-- Butler Case II (tex 1453-1640): `s = 1, t = 1`. Forces `p ∤ |G|` (`q = 1`) and pins down
 `g₁ ∈ {2,3}`; Case IIa (`g₁ = 2`) constructs the dicyclic group of order `4n` (`n` odd) presented
 as `⟨x,y | x^n = y^2, yxy⁻¹ = x⁻¹⟩` (tex ~1550-1580) -- this is exactly mathlib's
@@ -618,9 +820,31 @@ with a self-contained cyclic-group argument instead. `mulEquiv_quaternionGroup_o
 `Nat.card G = 4 * g2`.
 PROVED for Case IIa.
 
-Case IIb (`g1 = 3`) is left sorried: Butler's construction there is a genuinely separate,
-substantial argument (an explicit `G ⧸ N ≅ ℤ/3` action on the three conjugates of `A₂`, tex
-~1600-1640) not otherwise available in this repo. -/
+Case IIb (`g1 = 3`) is **partially proved**: the numerals (`g2 = 2`, `g = 12`, hence `e = 2`,
+`p ≠ 2`, tex ~1512-1516) and the `Q₈`-shaped generator pair `x0, y0` on `A₂` (`orderOf x0 = 4`,
+`x0² = y0²`, `y0 x0 y0⁻¹ = x0⁻¹`, `y0 ∉ zpowers x0`, tex ~1579-1581, via the shared
+`exists_Q8_generators_of_relIndex_two` above) are proved directly. What remains sorried is
+Butler's own hardest step (tex ~1587-1637): producing an order-`3` element `r` with *exactly*
+`r * x0 * r⁻¹ = y0` and `r * y0 * r⁻¹ = x0 * y0` (`mulEquiv_SL2_ZMod3_of`'s hypotheses, already
+PROVED and waiting in `Ch7_GroupRecognition`, `DIVERGENCES.md` item 8). Butler gets this by
+showing `N := N_G(A₂)` (order `8`) is the *unique* Sylow `2`-subgroup of `G`, hence normal --
+via a global element-order count: every element of `2`-power order in `G` lies in a conjugate of
+`A₁` or `A₂` (there being, by hypothesis `s = 1, t = 1, q = 1`, no other maximal abelian
+classes), and `A₁`'s conjugates (order `6`, cyclic) contribute none beyond `Z`, so all `6`
+order-`4` elements plus `Z` account for exactly `|N| = 8` -- forcing every Sylow `2`-subgroup
+(all conjugate to `N`) to coincide with `N` itself. This "no other classes besides `A₁, A₂`"
+fact is a genuine *global* statement about `G` (every maximal abelian subgroup is conjugate to
+`A₁` or `A₂`), not a per-subgroup local one, and is not currently exposed as a reusable lemma
+by `S3_NoncenterClassEquation`/`S5_NumericClassEquation` (whose Fintype-quotient construction of
+`s, t` implicitly proves it while building `BridgeData`, but does not export it) nor carried as a
+hypothesis by `case_II` itself. Attempts to route around it (e.g. via `H ∩ N = 1` and
+`|G| = |H| * |N|` for `H` the order-`3` subgroup of `A₁`, giving `H` a *transitive* action on the
+`3` conjugates of `A₂` by orbit-stabilizer -- this part *does* go through with no extra
+hypotheses) still leave the harder question of whether `r`'s conjugate of `x0` lands *inside*
+`N` itself (as opposed to some other, a priori unrelated, conjugate of `N`) resting on exactly
+this global fact. This is the same category of gap already left open in `case_VI_core`'s
+`gb = gc = 3` branch above (tex ~2149-2157, "Sylow-conjugacy elimination... genuinely
+group-theoretic"); see `DIVERGENCES.md` (new item) for the precise statement of what is missing. -/
 lemma case_II {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
     [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -947,8 +1171,92 @@ lemma case_II {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
       rw [← hk']
       exact Subgroup.zpow_mem A2 g0.2 k
     exact ⟨mulEquiv_quaternionGroup_of x0 y0 hx0_ord hy0_2 hconj0 hyx0 hcardG4g2⟩
-  · -- **Case IIb** (`g1 = 3`): left sorried -- see docstring.
+  · -- **Case IIb** (`g1 = 3`): partially proved -- see docstring for exactly what remains.
     left
+    classical
+    -- Numerals (Butler tex ~1512-1516): `g2 = 2`, `g = 12`.
+    have hg1Q : (g1 : ℚ) = 3 := by exact_mod_cast hg1eq3
+    have hqQ : (q : ℚ) = 1 := by exact_mod_cast hq1
+    have hgposQ : (0 : ℚ) < (g : ℚ) := by exact_mod_cast hgpos
+    have hg2posQ : (0 : ℚ) < (g2 : ℚ) := by exact_mod_cast (by omega : 0 < g2)
+    unfold ClassEquation at heq'
+    simp only [Fin.sum_univ_one] at heq'
+    have e0 : ((q : ℚ) - 1) / (q * k) = 0 := by rw [hqQ]; simp
+    have e1 : ((g1 : ℚ) - 1) / g1 = 2 / 3 := by rw [hg1Q]; norm_num
+    have e2 : ((g2 : ℚ) - 1) / (2 * g2) = 1 / 2 - 1 / (2 * g2) := one_sub_inv_two_self hg2posQ.ne'
+    rw [e0, e1, e2] at heq'
+    have heqC : (1 : ℚ) / (2 * g2) = 1 / 6 + 1 / g := by linarith
+    have hg2lt3 : (g2 : ℚ) < 3 := by
+      by_contra hcon
+      push_neg at hcon
+      have hb : (1 : ℚ) / (2 * g2) ≤ 1 / 6 := by
+        rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+        linarith
+      have hgpos' : (0 : ℚ) < 1 / g := by positivity
+      linarith
+    have hg2eq2 : g2 = 2 := by
+      have h1 : g2 < 3 := by exact_mod_cast hg2lt3
+      omega
+    have hg2Q2 : (g2 : ℚ) = 2 := by exact_mod_cast hg2eq2
+    rw [hg2Q2] at heqC
+    have hgeq12 : g = 12 := by
+      have hgne : (g : ℚ) ≠ 0 := hgposQ.ne'
+      field_simp at heqC
+      have : (g : ℚ) = 12 := by linarith
+      exact_mod_cast this
+    -- `q = 1` means `Q` is trivial, so `p ∤ Nat.card G`; combined with `g = 12` (even), this
+    -- forces `p ≠ 2` (as in Case IIa above), hence `e = Nat.card (center SL(2,F)) = 2`.
+    have hp_ndvd : ¬ p ∣ Nat.card G := by
+      have hme : Nat.card Q.toSubgroup = p ^ (Nat.card G).factorization p :=
+        Sylow.card_eq_multiplicity Q
+      rw [hq, hq1] at hme
+      intro hdvd
+      have hGne : Nat.card G ≠ 0 := Nat.card_pos.ne'
+      have hpos : 0 < (Nat.card G).factorization p :=
+        (Fact.out : Nat.Prime p).factorization_pos_of_dvd hGne hdvd
+      have h1lt : 1 < p ^ (Nat.card G).factorization p :=
+        Nat.one_lt_pow hpos.ne' (Fact.out : Nat.Prime p).one_lt
+      omega
+    have he_ne_one : Nat.card (center SL(2,F)) ≠ 1 := by
+      intro he1
+      have h2 : (2 : F) = 0 := by
+        by_contra h2ne
+        haveI : NeZero (2 : F) := ⟨h2ne⟩
+        rw [SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.card_Z_eq_two_of_two_ne_zero] at he1
+        omega
+      have hCharP2 : CharP F 2 := CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero h2
+      have hp2 : p = 2 := (CharP.eq F (‹CharP F p› : CharP F p) hCharP2 : p = 2)
+      apply hp_ndvd
+      rw [hp2, hg, he1, one_mul, hgeq12]
+      exact ⟨6, rfl⟩
+    have he_le_two : Nat.card (center SL(2,F)) ≤ 2 := by
+      rw [SpecialSubgroups.center_SL2_eq_Z]; exact SpecialSubgroups.card_Z_le_two
+    have he2 : Nat.card (center SL(2,F)) = 2 := by
+      have := Nat.card_pos (α := center SL(2,F)); omega
+    have hp_ne_two : p ≠ 2 := by
+      intro hp2
+      subst hp2
+      have h2 : (2 : F) = 0 := CharTwo.two_eq_zero
+      have he1 : Nat.card (center SL(2,F)) = 1 := by
+        rw [SpecialSubgroups.center_SL2_eq_Z]
+        exact SpecialSubgroups.card_Z_eq_one_of_two_eq_zero h2
+      omega
+    have hcardG24 : Nat.card (↥G) = 24 := by rw [hg, he2, hgeq12]
+    -- `A₂`'s `Q₈`-shaped generator pair (Butler tex ~1579-1581), via the shared extraction.
+    have hA2_card' : Nat.card A2 = 2 * g2 := by rw [hA2_card, he2]
+    obtain ⟨x0, y0, hx0_ord, hy0_2, hconj0, hyx0⟩ :=
+      exists_Q8_generators_of_relIndex_two G A2 center_le_G hA2_mem hA2_cyc hA2_cop g2 hg2_ge
+        hA2_card' hA2_relIndex hp_ne_two
+    have hx0_ord4 : orderOf x0 = 4 := by rw [hx0_ord, hg2eq2]
+    have hy0_2' : y0 ^ 2 = x0 ^ 2 := by rw [hy0_2, hg2eq2]
+    -- TODO (this is the gap documented above): produce `r : ↥G` with `r ^ 3 = 1`,
+    -- `r * x0 * r⁻¹ = y0` and `r * y0 * r⁻¹ = x0 * y0` (Butler tex ~1587-1637, the "orbit
+    -- cycle" argument on the 3 conjugates of `A₂`, which needs `N_G(A₂)` shown normal in `G` --
+    -- itself needing a global "no maximal abelian class besides `A₁, A₂`" fact not currently
+    -- exposed by this lemma's hypotheses). Once `r` is in hand,
+    -- `mulEquiv_SL2_ZMod3_of x0 y0 r hx0_ord4 hy0_2' hconj0 hyx0 hr3 hrx hry hcardG24`
+    -- (from `Ch7_GroupRecognition`, already PROVED there, `DIVERGENCES.md` item 8) closes this
+    -- goal directly.
     sorry
 
 /-- Butler Case III (tex 1661-1670): `s = t = 0`, i.e. there are no cyclic maximal abelian
@@ -1049,8 +1357,12 @@ in place of the odd-characteristic `p_ne_two`). Butler's argument that `y` is an
 so `y²` centralizes `A`, hence `y² ∈ A` by maximality, and `y` inverting `y² ∈ A` while fixing it
 under conjugation by itself forces `(y²)² = 1`) but concludes more simply: since `A` has *odd*
 order `g1` here (no even-order "unique involution" subtlety as in `case_II`), Lagrange alone forces
-`y² = 1` directly. Case IVb (`q = 3`, `p = 3`) remains sorried: Butler's construction there is
-"analogous to Case IIb" (tex ~1785), itself sorried below (`case_II`'s `g1 = 3` branch).
+`y² = 1` directly. Case IVb (`q = 3`, `p = 3`) is **partially proved**, in lockstep with
+`case_II`'s `g1 = 3` branch (tex ~1785 itself just says "analogous to Case IIb ... I will leave
+it to the reader to verify"): the numerals (`p = 3`, `e = 2`) and the `Q₈`-shaped generator pair
+`x0, y0` on `A` are proved directly (reusing the `exists_Q8_generators_of_relIndex_two` extraction
+above `case_II`); what remains sorried is the same order-`3`-element/normality gap documented in
+`case_II`'s docstring.
 -/
 lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
     [CharP F p]
@@ -1225,8 +1537,10 @@ lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
     have hcardG : Nat.card G = 2 * g1 := by rw [hg, he1, one_mul, hgeq]
     haveI : NeZero g1 := ⟨by omega⟩
     exact ⟨mulEquiv_dihedralGroup_of x0 y0 hx0_ord hy0_2 hy0_ne_one hconj0 hyx0 hcardG⟩
-  · -- **Case IVb** (`q = 3`): forces `p = 3`; Butler's construction ("analogous to Case IIb",
-    -- tex ~1785) is left sorried, matching `case_II`'s `g1 = 3` branch below.
+  · -- **Case IVb** (`q = 3`): forces `p = 3`; "numerically identical to Case IIb" (tex ~1785).
+    -- Partially proved, in lockstep with `case_II`'s `g1 = 3` branch -- see its docstring for
+    -- exactly what remains (the same "`N_G(A)` normal in `G`" gap, tex ~1833 waves this off as
+    -- "an argument analogous to ... Case IIb ... I will leave it to the reader to verify").
     right
     have hp3 : p = 3 := by
       obtain ⟨m, hm⟩ := IsPGroup.iff_card.mp Q.isPGroup'
@@ -1235,8 +1549,30 @@ lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
       have hpdvd : p ∣ 3 := by rw [hm]; exact dvd_pow_self p hm0
       exact (Nat.prime_dvd_prime_iff_eq Fact.out (by norm_num)).mp hpdvd
     refine ⟨hp3, ?_⟩
-    -- TODO: needs the explicit `SL(2,3)`-recognition argument of Case IVb (tex ~1785, "analogous
-    -- to Case IIb"); sorried in lockstep with `case_II`'s `g1 = 3` branch.
+    classical
+    subst hp3
+    -- `p = 3 ≠ 2` pins `e := Nat.card (center SL(2,F)) = 2` directly (simpler than `case_II`'s
+    -- route there, which had to rule out `p = 2` via `q = 1`; here `p = 3` is already known).
+    haveI hF2 : NeZero (2 : F) := NeZero_two_of_char_ne_two F (by norm_num)
+    have he2 : Nat.card (center SL(2,F)) = 2 := by
+      rw [SpecialSubgroups.center_SL2_eq_Z]
+      exact SpecialSubgroups.card_Z_eq_two_of_two_ne_zero
+    have hp_ne_two : (3 : ℕ) ≠ 2 := by norm_num
+    have hA_card' : Nat.card A = 2 * g1 := by rw [hA_card, he2]
+    -- `A`'s `Q₈`-shaped generator pair (Butler tex ~1579-1581 reused, via the shared extraction
+    -- factored out above `case_II`).
+    obtain ⟨x0, y0, hx0_ord, hy0_2, hconj0, hyx0⟩ :=
+      exists_Q8_generators_of_relIndex_two G A center_le_G hA_mem hA_cyc hA_cop g1 hg1_ge
+        hA_card' hA_relIndex hp_ne_two
+    have hx0_ord4 : orderOf x0 = 4 := by rw [hx0_ord, hg1eq2]
+    have hy0_2' : y0 ^ 2 = x0 ^ 2 := by rw [hy0_2, hg1eq2]
+    have hcardG24 : Nat.card (↥G) = 24 := by rw [hg, he2, hgeq12]
+    -- TODO: same residual gap as `case_II`'s `g1 = 3` branch (see its docstring): need
+    -- `r : ↥G` with `r ^ 3 = 1`, `r * x0 * r⁻¹ = y0`, `r * y0 * r⁻¹ = x0 * y0`, which needs
+    -- `N_G(A)` shown normal in `G` -- a global "no maximal abelian class besides `A`'s own"
+    -- fact not currently exposed by this lemma's hypotheses. Once `r` is in hand,
+    -- `mulEquiv_SL2_ZMod3_of x0 y0 r hx0_ord4 hy0_2' hconj0 hyx0 hr3 hrx hry hcardG24` closes
+    -- this goal directly (`Ch7_GroupRecognition`, already PROVED, `DIVERGENCES.md` item 8).
     sorry
 
 
