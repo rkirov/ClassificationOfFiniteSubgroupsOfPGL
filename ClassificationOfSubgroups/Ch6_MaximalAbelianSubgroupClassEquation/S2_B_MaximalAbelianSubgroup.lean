@@ -726,61 +726,523 @@ theorem exists_IsCyclic_K_normalizer_eq_Q_join_K {F : Type*} [Field F] [IsAlgClo
     rw [sup_comm]
     exact hmap.symm
 
+-- ===== Helper lemmas for Theorem 2.3 (v b) =====
+
+lemma mem_normalizer_of_conj_mem_of_conj_inv_mem {G : Type*} [Group G] {H : Subgroup G} {g : G}
+    (hfwd : ∀ n ∈ H, g * n * g⁻¹ ∈ H) (hfwd' : ∀ n ∈ H, g⁻¹ * n * g⁻¹⁻¹ ∈ H) :
+    g ∈ normalizer H := by
+  rw [mem_normalizer_iff]
+  intro n
+  refine ⟨hfwd n, ?_⟩
+  intro hgn
+  have h2 := hfwd' _ hgn
+  have heq : g⁻¹ * (g * n * g⁻¹) * g⁻¹⁻¹ = n := by group
+  rwa [heq] at h2
+
+lemma normalizer_conj_smul_eq_conj_smul_normalizer {F : Type*} [Field F] (c : SL(2,F))
+    (X : Subgroup SL(2,F)) :
+    normalizer ((conj c • X : Subgroup SL(2,F)) : Set SL(2,F))
+      = conj c • normalizer (X : Set SL(2,F)) := by
+  have h1 : X.map (MulAut.conj c).toMonoidHom = conj c • X := by
+    rw [pointwise_smul_def]; rfl
+  have h2 : (normalizer (X : Set SL(2,F))).map (MulAut.conj c).toMonoidHom
+      = conj c • normalizer (X : Set SL(2,F)) := by
+    rw [pointwise_smul_def]; rfl
+  rw [← h1, ← h2]
+  exact (Subgroup.map_equiv_normalizer_eq X (MulAut.conj c)).symm
+
+/-- `L F` normalizes `S F` (Butler's `d_ω t_λ` conjugation computation): for `l = d δ * s τ ∈ L F`
+and `n = s σ ∈ S F`, `l * n * l⁻¹ = s (σ * δ⁻¹ * δ⁻¹) ∈ S F`. -/
+lemma L_le_normalizer_S {F : Type*} [Field F] [DecidableEq F] :
+    L F ≤ normalizer (S F : Set SL(2,F)) := by
+  have hfwd : ∀ l ∈ L F, ∀ n ∈ S F, l * n * l⁻¹ ∈ S F := by
+    rintro l ⟨δ, τ, rfl⟩ n ⟨σ, rfl⟩
+    refine ⟨σ * (↑δ⁻¹ : F) * (↑δ⁻¹ : F), ?_⟩
+    ext <;> simp [d, s] <;> field_simp <;> ring
+  intro l hl
+  exact mem_normalizer_of_conj_mem_of_conj_inv_mem (hfwd l hl) (hfwd l⁻¹ (inv_mem hl))
+
+/-- `p ∣ orderOf (- s σ)` for `σ ≠ 0` (char `F = p`): if `p = 2` then `-1 = 1` so `-s σ = s σ`
+has order `p`; otherwise `-1` and `s σ` commute with coprime orders `2` and `p`, so
+`orderOf (-s σ) = orderOf (-1) * orderOf (s σ) = 2p`. -/
+lemma orderOf_neg_s_dvd_of_ne_zero {F : Type*} [Field F] {p : ℕ} [hp' : Fact (Nat.Prime p)]
+    [hC : CharP F p] {σ : F} (hσ : σ ≠ 0) : p ∣ orderOf (- s σ) := by
+  by_cases hp2 : p = 2
+  · have two_eq_zero : (2 : F) = 0 := by
+      haveI : CharP F 2 := hp2 ▸ hC
+      exact CharTwo.two_eq_zero
+    have neg_one_eq_one : (-1 : SL(2,F)) = 1 :=
+      (SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero two_eq_zero).symm
+    have hneg : (- s σ : SL(2,F)) = s σ := by rw [← neg_one_mul, neg_one_eq_one, one_mul]
+    rw [hneg, order_s_eq_char σ hσ, hp2]
+  · haveI : NeZero (2 : F) := NeZero_two_of_char_ne_two F hp2
+    have horder_s : orderOf (s σ) = p := order_s_eq_char σ hσ
+    have hcomm : Commute (-1 : SL(2,F)) (s σ) := by
+      have hmem : (-1 : SL(2,F)) ∈ Subgroup.center SL(2,F) := by
+        rw [center_SL2_eq_Z]; exact neg_one_mem_Z
+      exact (Subgroup.mem_center_iff.mp hmem (s σ)).symm
+    have hcop : (orderOf (-1 : SL(2,F))).Coprime (orderOf (s σ)) := by
+      rw [orderOf_neg_one_eq_two, horder_s]
+      exact (Nat.coprime_primes Nat.prime_two hp'.out).mpr (fun heq => hp2 heq.symm)
+    have hmuleq := hcomm.orderOf_mul_eq_mul_orderOf_of_coprime hcop
+    rw [neg_one_mul] at hmuleq
+    rw [hmuleq, orderOf_neg_one_eq_two, horder_s]
+    exact dvd_mul_left p 2
+
+/-- The centralizer of a lower-triangular matrix `x = d δ * s τ ∈ L F` with distinct diagonal
+entries is contained in `L F`: for `z` commuting with `x`, comparing the `(0,1)` entries of
+`x * z` and `z * x` forces `z 0 1 = 0`. -/
+lemma centralizer_le_L_of_lower_triangular_regular {F : Type*} [Field F] [DecidableEq F]
+    {x : SL(2,F)} (hx : x ∈ L F)
+    (h_reg : (x : Matrix (Fin 2) (Fin 2) F) 0 0 ≠ (x : Matrix (Fin 2) (Fin 2) F) 1 1) :
+    centralizer {x} ≤ L F := by
+  intro z hz
+  rw [mem_centralizer_iff] at hz
+  have hxz : x * z = z * x := hz x rfl
+  have hx01 : (x : Matrix (Fin 2) (Fin 2) F) 0 1 = 0 := mem_L_iff_lower_triangular.mp hx
+  have hcoe1 : ((x * z : SL(2,F)) : Matrix (Fin 2) (Fin 2) F)
+      = (x : Matrix (Fin 2) (Fin 2) F) * (z : Matrix (Fin 2) (Fin 2) F) := rfl
+  have hcoe2 : ((z * x : SL(2,F)) : Matrix (Fin 2) (Fin 2) F)
+      = (z : Matrix (Fin 2) (Fin 2) F) * (x : Matrix (Fin 2) (Fin 2) F) := rfl
+  have hentry : (x : Matrix (Fin 2) (Fin 2) F) 0 0 * (z : Matrix (Fin 2) (Fin 2) F) 0 1
+      = (z : Matrix (Fin 2) (Fin 2) F) 0 1 * (x : Matrix (Fin 2) (Fin 2) F) 1 1 := by
+    have h01 : ((x * z : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) 0 1
+        = ((z * x : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) 0 1 := by rw [hxz]
+    rw [hcoe1, hcoe2, Matrix.mul_apply, Matrix.mul_apply, Fin.sum_univ_two, Fin.sum_univ_two,
+      hx01] at h01
+    simpa using h01
+  have hz01 : (z : Matrix (Fin 2) (Fin 2) F) 0 1 = 0 := by
+    have hne : (x : Matrix (Fin 2) (Fin 2) F) 1 1 - (x : Matrix (Fin 2) (Fin 2) F) 0 0 ≠ 0 :=
+      sub_ne_zero.mpr (Ne.symm h_reg)
+    have heq : (z : Matrix (Fin 2) (Fin 2) F) 0 1
+        * ((x : Matrix (Fin 2) (Fin 2) F) 1 1 - (x : Matrix (Fin 2) (Fin 2) F) 0 0) = 0 := by
+      rw [mul_sub]
+      linear_combination -hentry
+    exact (mul_eq_zero.mp heq).resolve_right hne
+  rw [mem_L_iff_lower_triangular, MatrixShapes.IsLowerTriangular]
+  exact hz01
+
+lemma le_normalizer_inf {G : Type*} [Group G] (H K : Subgroup G) :
+    normalizer (H : Set G) ⊓ normalizer (K : Set G) ≤ normalizer ((H ⊓ K : Subgroup G) : Set G) := by
+  intro a ha
+  rw [mem_inf, mem_normalizer_iff, mem_normalizer_iff] at ha
+  rw [mem_normalizer_iff]
+  intro n
+  simp only [mem_inf]
+  exact and_congr (ha.1 n) (ha.2 n)
+
+/-- Conjugate elements have the same order. -/
+lemma orderOf_conj {G : Type*} [Group G] (c x : G) : orderOf (c * x * c⁻¹) = orderOf x := by
+  have h := orderOf_injective (MulAut.conj c).toMonoidHom (MulEquiv.injective _) x
+  simpa [MonoidHom.coe_coe, MulAut.conj_apply] using h
+
+/-- Extracted from Steps A-D of `isCyclic_normalizer_subgroupOf_quot_of_ne_bot`: locate a
+conjugating element `c` such that the image of a nontrivial Sylow `p`-subgroup `Q` of `G` in
+`SL(2,F)` is exactly `(conj c • S F) ⊓ G`, and the normalizer of `Q` (mapped into `SL(2,F)`) lies
+inside `(conj c • L F) ⊓ G`. (The latter is obtained via `normalizer_subgroup_S_le_L` transported
+by conjugation, rather than the further `L_toUnits_hom`/quotient-cyclic machinery of Step E, which
+is not needed here.) -/
+lemma exists_conj_Sylow_eq_S_inf_and_normalizer_le_L {F : Type*} [Field F] [IsAlgClosed F]
+    [DecidableEq F] {p : ℕ} [hp' : Fact (Nat.Prime p)] [hC : CharP F p]
+    (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) :
+    ∃ c : SL(2,F), map G.subtype Q.toSubgroup = (conj c • S F) ⊓ G ∧
+      map G.subtype (normalizer (Q.toSubgroup : Set ↥G)) ≤ (conj c • L F) ⊓ G := by
+  classical
+  set Q' : Subgroup SL(2,F) := Subgroup.map G.subtype Q.toSubgroup with hQ'_def
+  have Q'_le_G : Q' ≤ G := Subgroup.map_subtype_le Q.toSubgroup
+  have hQ'_subgroupOf : Q'.subgroupOf G = Q.toSubgroup := by
+    show (Q.toSubgroup.map G.subtype).comap G.subtype = Q.toSubgroup
+    exact Subgroup.comap_map_eq_self_of_injective (Subgroup.subtype_injective G) Q.toSubgroup
+  haveI hQnt : Nontrivial (↥Q.toSubgroup) := (Subgroup.nontrivial_iff_ne_bot _).mpr h
+  haveI hQfin : Finite (↥Q.toSubgroup) := Subtype.finite
+  haveI := Q.isPGroup'.center_nontrivial
+  obtain ⟨z₀, z₀_ne_one⟩ := exists_ne (1 : Subgroup.center (↥Q.toSubgroup))
+  have z₀_ne_one' : (z₀ : ↥Q.toSubgroup) ≠ 1 := fun hc => z₀_ne_one (Subtype.ext hc)
+  have z_central : ∀ q : ↥Q.toSubgroup, q * (z₀ : ↥Q.toSubgroup) = (z₀ : ↥Q.toSubgroup) * q :=
+    fun q => Subgroup.mem_center_iff.mp z₀.2 q
+  obtain ⟨k, hk⟩ := IsPGroup.iff_orderOf.mp Q.isPGroup' (z₀ : ↥Q.toSubgroup)
+  have k_pos : 0 < k := by
+    rcases Nat.eq_zero_or_pos k with hk0 | hk0
+    · exact absurd (by rw [← orderOf_eq_one_iff, hk, hk0, pow_zero]) z₀_ne_one'
+    · exact hk0
+  set z : ↥Q.toSubgroup := (z₀ : ↥Q.toSubgroup) ^ (p ^ (k - 1)) with hz_def
+  have hksucc : p ^ (k - 1) * p = p ^ k := by rw [← pow_succ]; congr 1; omega
+  have z_pow_p : z ^ p = 1 := by
+    rw [hz_def, ← pow_mul, hksucc, ← hk, pow_orderOf_eq_one]
+  have z_ne_one : z ≠ 1 := by
+    intro hz1
+    rw [hz_def] at hz1
+    have hdvd : orderOf (z₀ : ↥Q.toSubgroup) ∣ p ^ (k - 1) := orderOf_dvd_of_pow_eq_one hz1
+    rw [hk] at hdvd
+    have hle : p ^ k ≤ p ^ (k - 1) := Nat.le_of_dvd (pow_pos hp'.out.pos (k - 1)) hdvd
+    have hlt : p ^ (k - 1) < p ^ k := Nat.pow_lt_pow_right hp'.out.one_lt (by omega)
+    omega
+  have orderOf_z : orderOf z = p := orderOf_eq_prime z_pow_p z_ne_one
+  have z_central' : ∀ q : ↥Q.toSubgroup, q * z = z * q := by
+    intro q
+    rw [hz_def]
+    exact (show Commute q (z₀ : ↥Q.toSubgroup) from z_central q).pow_right (p ^ (k - 1))
+  set y : SL(2,F) := ((Q.toSubgroup.subtype z : ↥G) : SL(2,F)) with hy_def
+  have y_in_G : y ∈ G.carrier := (Q.toSubgroup.subtype z : ↥G).2
+  have hQ'_mem : ∀ q : ↥Q.toSubgroup, ((Q.toSubgroup.subtype q : ↥G) : SL(2,F)) ∈ Q' := by
+    intro q
+    exact ⟨Q.toSubgroup.subtype q, SetLike.coe_mem q, rfl⟩
+  have y_mem_Q' : y ∈ Q' := hQ'_mem z
+  have orderOf_y : orderOf y = p := by
+    rw [hy_def]
+    exact (orderOf_injective G.subtype (Subgroup.subtype_injective G)
+      (Q.toSubgroup.subtype z)).trans
+      ((orderOf_injective Q.toSubgroup.subtype (Subgroup.subtype_injective Q.toSubgroup)
+        z).trans orderOf_z)
+  have y_not_mem_center : y ∉ center SL(2,F) := not_mem_center_of_orderOf_eq_prime orderOf_y
+  have Q'_le_centralizer_y : Q' ≤ centralizer {y} := by
+    rintro q' hq'
+    obtain ⟨q, hq_mem, rfl⟩ := hq'
+    rw [mem_centralizer_iff]
+    rintro w hw
+    simp only [Set.mem_singleton_iff] at hw
+    subst hw
+    have heq : ((Q.toSubgroup.subtype ⟨q, hq_mem⟩ : ↥G) : SL(2,F))
+        * ((Q.toSubgroup.subtype z : ↥G) : SL(2,F))
+        = ((Q.toSubgroup.subtype z : ↥G) : SL(2,F))
+        * ((Q.toSubgroup.subtype ⟨q, hq_mem⟩ : ↥G) : SL(2,F)) := by
+      have hc := congrArg (fun t : ↥Q.toSubgroup => ((Q.toSubgroup.subtype t : ↥G) : SL(2,F)))
+        (z_central' ⟨q, hq_mem⟩)
+      simpa using hc
+    simpa [hy_def] using heq.symm
+  have hy_conj_s_or_neg_s : ∃ σ : F, IsConj (s σ) y ∨ IsConj (- s σ) y := by
+    rcases SL2_isConj_d_or_isConj_s_or_isConj_neg_s_of_algClosed y with
+      (⟨δ, hδ⟩ | ⟨σ, hσ⟩ | ⟨σ, hσ⟩)
+    · exact absurd hδ (not_isConj_d_of_orderOf_eq_prime orderOf_y δ)
+    · exact ⟨σ, Or.inl hσ⟩
+    · exact ⟨σ, Or.inr hσ⟩
+  obtain ⟨σ, hy_conj⟩ := hy_conj_s_or_neg_s
+  obtain ⟨c, hc⟩ := centralizer_eq_conj_SZ_of_isConj_s_or_isConj_neg_s
+    (centralizer {y} ⊓ G) G σ y hy_conj y_in_G y_not_mem_center rfl
+  have Q'_le_conj_SZ : Q' ≤ conj c • SZ F := by
+    rw [hc]; exact Q'_le_centralizer_y
+  have Q'_le_conj_S : Q' ≤ conj c • S F := by
+    intro q' hq'
+    rw [mem_pointwise_smul_iff_inv_smul_mem]
+    have hq'_mem_SZ : (conj c)⁻¹ • q' ∈ SZ F :=
+      (mem_pointwise_smul_iff_inv_smul_mem).mp (Q'_le_conj_SZ hq')
+    obtain ⟨q, hq_mem, rfl⟩ := hq'
+    set q'' : ↥Q.toSubgroup := ⟨q, hq_mem⟩ with hq''_def
+    obtain ⟨j, hj⟩ := IsPGroup.iff_orderOf.mp Q.isPGroup' q''
+    have horder : orderOf ((conj c)⁻¹ • ((Q.toSubgroup.subtype q'' : ↥G) : SL(2,F))) = p ^ j := by
+      simp only [MulAut.smul_def]
+      exact (orderOf_injective ((MulAut.conj c)⁻¹).toMonoidHom (MulEquiv.injective _) _).trans
+        ((orderOf_injective G.subtype (Subgroup.subtype_injective G)
+          (Q.toSubgroup.subtype q'')).trans
+          ((orderOf_injective Q.toSubgroup.subtype
+            (Subgroup.subtype_injective Q.toSubgroup) q'').trans hj))
+    exact mem_S_of_mem_SZ_of_orderOf_eq_prime_pow hq'_mem_SZ horder
+  set R : Subgroup SL(2,F) := (conj c • S F) ⊓ G with hR_def
+  have Q'_le_R : Q' ≤ R := fun x hx => ⟨Q'_le_conj_S hx, Q'_le_G hx⟩
+  have isPGroup_conj_S : IsPGroup p (conj c • S F : Subgroup SL(2,F)) := by
+    have : (S F).map (MulAut.conj c).toMonoidHom = conj c • S F := by
+      rw [pointwise_smul_def]; rfl
+    rw [← this]
+    exact isPGroup_S.map _
+  have isPGroup_R : IsPGroup p R := isPGroup_conj_S.to_le inf_le_left
+  have isPGroup_P : IsPGroup p (R.subgroupOf G) := isPGroup_R.comap_subtype
+  have Q_le_P : Q.toSubgroup ≤ R.subgroupOf G := by
+    rw [← hQ'_subgroupOf]
+    intro x hx
+    rw [mem_subgroupOf] at hx ⊢
+    exact Q'_le_R hx
+  have hP_eq : R.subgroupOf G = Q.toSubgroup := Q.is_maximal' isPGroup_P Q_le_P
+  have R_le_G : R ≤ G := inf_le_right
+  have hQ'_eq_R : Q' = R := by
+    have hmap : (R.subgroupOf G).map G.subtype = Q' := by rw [hP_eq]
+    rw [Subgroup.subgroupOf_map_subtype, inf_eq_left.mpr R_le_G] at hmap
+    exact hmap.symm
+  refine ⟨c, hQ'_eq_R, ?_⟩
+  rw [← hQ'_subgroupOf, ← normalizer_inf_le_eq_normalizer_subgroupOf Q'_le_G]
+  apply inf_le_inf_right
+  have hconj_inv : (conj c⁻¹ : MulAut SL(2,F)) = (conj c)⁻¹ := map_inv conj c
+  set X : Subgroup SL(2,F) := conj c⁻¹ • Q' with hX_def
+  have hX_eq : X = S F ⊓ (conj c⁻¹ • G) := by
+    rw [hX_def, hQ'_eq_R, hR_def, smul_inf, hconj_inv, smul_smul, inv_mul_cancel, one_smul]
+  have hX_le_S : X ≤ S F := hX_eq ▸ inf_le_left
+  have hcard_Q' : 1 < Nat.card Q' := by
+    rw [hQ'_def, Subgroup.card_subtype G Q.toSubgroup]
+    exact Finite.one_lt_card_iff_nontrivial.mpr hQnt
+  have hcard_X : 1 < Nat.card X := by
+    rw [hX_def, Nat.card_congr (Subgroup.equivSMul (conj c⁻¹) Q').toEquiv.symm]
+    exact hcard_Q'
+  have hnormalizer_X : normalizer (X : Set SL(2,F)) ≤ L F :=
+    normalizer_subgroup_S_le_L hcard_X hX_le_S
+  have hQ'_eq_conj_X : Q' = conj c • X := by
+    rw [hX_def, smul_smul, hconj_inv, mul_inv_cancel, one_smul]
+  have hnormalizer_eq : normalizer (Q' : Set SL(2,F)) = conj c • normalizer (X : Set SL(2,F)) := by
+    rw [hQ'_eq_conj_X]
+    exact normalizer_conj_smul_eq_conj_smul_normalizer c X
+  rw [hnormalizer_eq]
+  intro x hx
+  rw [mem_pointwise_smul_iff_inv_smul_mem] at hx ⊢
+  exact hnormalizer_X hx
+
+
 /-
 Theorem 2.3 (v b)If |K| > |Z|, then K ∈ M.
 -/
--- TODO (Butler tex ~950-975, Thm 6.8 v-b): not attempted beyond the analysis below;
--- `isCyclic_normalizer_subgroupOf_quot_of_ne_bot` (Target 1 of this wave) was the priority
--- and consumed the available effort budget. Algebraic (non-geometric) route, avoiding
--- Butler's projective-line fixed-point argument:
---   (a) [DONE, easy] Since `IsCyclic K` and `Nat.card K > Nat.card (center SL(2,F))`, `K`
---       has a noncentral element `y` (else `map G.subtype K ≤ center SL(2,F)` would force
---       `Nat.card K ≤ Nat.card (center SL(2,F))`, via `Subgroup.card_subtype` +
---       `Nat.card_le_card_of_injective (Subgroup.inclusion ...)`, contradicting the
---       hypothesis).
---   (b) [DONE, existing lemma] `A := centralizer {y} ⊓ G ∈ MaximalAbelianSubgroupsOf G` via
---       `centralizer_inf_mem_maximalAbelianSubgroupsOf_of_noncentral` (needs
---       `[IsAlgClosed F] [DecidableEq F]`, not currently hypotheses of this theorem —
---       would need to be added, as for Target 1).
---   (c) [DONE, easy] `map G.subtype K ≤ A`: `K` is abelian (`IsCyclic.commGroup`) so every
---       element of `K` commutes with `y ∈ K`, hence lies in `centralizer {y}`; and
---       `map G.subtype K ≤ G` trivially.
---   (d) [NOT DONE — the crux] `A ≤ N_G(Q) (= Q.toSubgroup ⊔ K` via `hNG`). Butler proves this
---       via fixed points on the projective line. An algebraic substitute: reuse the
---       `isCyclic_normalizer_subgroupOf_quot_of_ne_bot` machinery above (Steps A-D in that
---       proof) to locate a conjugate `c` with `Subgroup.map G.subtype Q.toSubgroup =
---       (conj c • S F) ⊓ G` and `normalizer (map G.subtype Q.toSubgroup : Set SL(2,F)) ≤
---       conj c • L F`; this `c` is *not* currently exposed as a standalone/reusable fact
---       (it is local to that proof) — extracting it as a helper lemma
---       `exists_conj_eq_S_meet_G_and_normalizer_le` would be the first step. Given that `c`,
---       show `y` itself, being noncentral with order coprime to `p` (would need an added
---       hypothesis `Nat.Coprime (Nat.card K) p`, justified since the `K` arising from
---       `exists_IsCyclic_K_normalizer_eq_Q_join_K`'s Schur–Zassenhaus construction always
---       has this property, cf. the analogous added hypothesis discussion for Target 1), is
---       regular semisimple, i.e. `IsConj (d δ) y` for some `δ ≠ ±1` (ruled out unipotent via
---       an order argument as in `not_isConj_d_of_orderOf_eq_prime`, but the *positive*
---       direction — ruling out the `s σ`/`-s σ` branches instead — needs a fresh order
---       argument, not simply the negation of the existing lemma). Then a new small matrix
---       lemma in the style of `S4_PropertiesOfCentralizers`'s `centralizer_d_eq_D` /
---       `centralizer_s_eq_SZ` — "the centralizer of a lower-triangular matrix with distinct
---       eigenvalues is contained in `L F`" — would give `centralizer {y} ≤ conj c • L F`,
---       hence (intersecting with `G`) `A ≤ (conj c • L F) ⊓ G`, and a further argument
---       (paralleling Step E's `L_toUnits_hom`/kernel-`S F` analysis) would be needed to
---       upgrade this to `A ≤ N_G(Q)` exactly (not just into the ambient `conj c • L F`).
---   (e) Given (d), `A = A ⊓ (Q.toSubgroup ⊔ K) = (A ⊓ Q.toSubgroup) ⊔ K` (modular law, using
---       `K ≤ A`) `= K` provided `A ⊓ Q.toSubgroup = ⊥`: any nontrivial `u ∈ A ⊓ Q.toSubgroup`
---       is a nontrivial unipotent (`Q`'s elements have order `1` or `p`) commuting with the
---       noncentral, coprime-to-`p`-order `y`; the centralizer of a nontrivial unipotent is
---       `± S F`-conjugate (`centralizer_s_eq_SZ` in `S4_PropertiesOfCentralizers`), forcing
---       `y`'s order to divide `2p`, contradicting `Nat.Coprime (Nat.card K) p` together with
---       `y`'s order `> 2` (or a direct `p ∤ Nat.card K` vs. `p ∣ Nat.card (A ⊓ Q.toSubgroup)`
---       cardinality argument). This step reuses the `Commute.orderOf_mul_eq_mul_orderOf_of_coprime`-
---       style argument already developed for `mem_S_of_mem_SZ_of_orderOf_eq_prime_pow` above.
--- None of (d)/(e) is implemented; only (a)-(c) would type-check today (not committed, to
--- avoid an inconsistent partial state) and the sorry below stands for the whole theorem.
-theorem K_mem_MaximalAbelianSubgroups_of_center_lt_card_K {F : Type*} [Field F]
-  { p : ℕ } [hp' : Fact (Nat.Prime p)] (G : Subgroup SL(2,F))
-  (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) (K : Subgroup G)(hK : IsCyclic K)
-  (hNG : normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K) (h : Nat.card K > Nat.card (center SL(2,F))) :
+-- RESTATED+PROVED (Butler tex ~950-975, Thm 6.8 v-b): the algebraic (non-geometric) route
+-- sketched previously is carried out in full below, avoiding Butler's projective-line
+-- fixed-point argument. Restated with `[IsAlgClosed F] [DecidableEq F] [CharP F p] [Finite G]`
+-- (needed for `centralizer_inf_mem_maximalAbelianSubgroupsOf_of_noncentral`,
+-- `exists_conj_Sylow_eq_S_inf_and_normalizer_le_L`, and the Sylow-cardinality arguments; none
+-- were hypotheses of the original `sorry`d statement) and an added hypothesis
+-- `hcop : Nat.Coprime (Nat.card K) p` (justified since the `K` arising from
+-- `exists_IsCyclic_K_normalizer_eq_Q_join_K`'s Schur–Zassenhaus construction always has this
+-- property; this lemma is used nowhere else in the repository).
+-- Proof outline: (a) find a noncentral `y` in the image of `K` (else its cardinality would be
+-- bounded by `Nat.card (center SL(2,F))`); (b)-(c) `A := centralizer {y} ⊓ G` is a maximal
+-- abelian subgroup containing the image of `K`; (d) using
+-- `exists_conj_Sylow_eq_S_inf_and_normalizer_le_L` to locate a conjugating element `c` with
+-- `map G.subtype Q.toSubgroup = (conj c • S F) ⊓ G`, together with `L_le_normalizer_S`
+-- (transported by `c`) and the regularity of `l0 := c⁻¹ * y * c ∈ L F` (its diagonal entries
+-- are distinct, using `hcop` to rule out the unipotent/`±1`-diagonal cases via
+-- `orderOf_neg_s_dvd_of_ne_zero`), `centralizer_le_L_of_lower_triangular_regular` gives
+-- `A ≤ normalizer (map G.subtype Q.toSubgroup : Set SL(2,F))`, hence
+-- `A ≤ map G.subtype Q.toSubgroup ⊔ map G.subtype K`; (e) `A ⊓ map G.subtype Q.toSubgroup = ⊥`
+-- (a nontrivial common element would force `l0` into `SZ F`, contradicting its regularity via
+-- `centralizer_s_eq_SZ`), and a Dedekind/Frattini argument (via `Subgroup.mul_normal`, using
+-- that `Q`'s image is normal in its own join with the image of `K`) concludes
+-- `A = map G.subtype K`.
+theorem K_mem_MaximalAbelianSubgroups_of_center_lt_card_K {F : Type*} [Field F] [IsAlgClosed F]
+  [DecidableEq F] { p : ℕ } [hp' : Fact (Nat.Prime p)] [hC : CharP F p] (G : Subgroup SL(2,F))
+  [Finite G] (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) (K : Subgroup G) (hK : IsCyclic K)
+  (hNG : normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K)
+  (hKZ : Nat.card K > Nat.card (center SL(2,F)))
+  (hcop : Nat.Coprime (Nat.card K) p) :
     map G.subtype K ∈ MaximalAbelianSubgroupsOf G := by
-  sorry
+  classical
+  have hKimg_le_G : map G.subtype K ≤ G := Subgroup.map_subtype_le K
+  -- Step a: find a noncentral element y of the image of K
+  have hKnotle : ¬ (map G.subtype K ≤ center SL(2,F)) := by
+    intro hle
+    have hcardle : Nat.card (map G.subtype K) ≤ Nat.card (center SL(2,F)) :=
+      Nat.card_le_card_of_injective (Subgroup.inclusion hle) (Subgroup.inclusion_injective hle)
+    have hcardeq : Nat.card (map G.subtype K) = Nat.card K :=
+      Nat.card_congr (K.equivMapOfInjective G.subtype (Subgroup.subtype_injective G)).toEquiv.symm
+    rw [hcardeq] at hcardle
+    omega
+  rw [SetLike.le_def] at hKnotle
+  push_neg at hKnotle
+  obtain ⟨y, hy_mem, hy_not_center⟩ := hKnotle
+  have hy_in_G : y ∈ G.carrier := hKimg_le_G hy_mem
+  -- Step b: A := centralizer{y} ⊓ G ∈ MaximalAbelianSubgroupsOf G
+  have hA_mem : centralizer {y} ⊓ G ∈ MaximalAbelianSubgroupsOf G :=
+    centralizer_inf_mem_maximalAbelianSubgroupsOf_of_noncentral G y ⟨hy_in_G, hy_not_center⟩
+  set A : Subgroup SL(2,F) := centralizer {y} ⊓ G with hA_def
+  -- Step c: image of K ≤ A
+  have hKimg_le_A : map G.subtype K ≤ A := by
+    obtain ⟨k0, hk0_mem, hk0_eq⟩ := hy_mem
+    obtain ⟨g, hg⟩ := hK.exists_generator
+    rintro _ ⟨k, hk_mem, rfl⟩
+    refine ⟨mem_centralizer_iff.mpr fun w hw => ?_, hKimg_le_G ⟨k, hk_mem, rfl⟩⟩
+    simp only [Set.mem_singleton_iff] at hw
+    subst hw
+    rw [← hk0_eq]
+    obtain ⟨m, hm⟩ := Subgroup.mem_zpowers_iff.mp (hg (⟨k, hk_mem⟩ : K))
+    obtain ⟨n, hn⟩ := Subgroup.mem_zpowers_iff.mp (hg (⟨k0, hk0_mem⟩ : K))
+    have hcomm : (⟨k, hk_mem⟩ : K) * ⟨k0, hk0_mem⟩ = ⟨k0, hk0_mem⟩ * ⟨k, hk_mem⟩ := by
+      rw [← hm, ← hn, ← zpow_add, ← zpow_add, add_comm]
+    have hc := congrArg (fun t : K => (G.subtype t : SL(2,F))) hcomm
+    simpa using hc.symm
+  -- Step d: locate the Sylow-conjugation witness and show `A ≤ N_G(Q)`-image
+  obtain ⟨c, hQ'_eq, hnormalizer_le⟩ :=
+    exists_conj_Sylow_eq_S_inf_and_normalizer_le_L G Q h
+  have hQ'_le_G : map G.subtype Q.toSubgroup ≤ G := Subgroup.map_subtype_le Q.toSubgroup
+  have hQ'_subgroupOf : (map G.subtype Q.toSubgroup).subgroupOf G = Q.toSubgroup := by
+    show (Q.toSubgroup.map G.subtype).comap G.subtype = Q.toSubgroup
+    exact Subgroup.comap_map_eq_self_of_injective (Subgroup.subtype_injective G) Q.toSubgroup
+  have hK_le_normalizer : K ≤ normalizer (Q.toSubgroup : Set ↥G) := by
+    rw [hNG]; exact le_sup_right
+  have hKimg_le_normalizer : map G.subtype K ≤ map G.subtype (normalizer (Q.toSubgroup : Set ↥G)) :=
+    Subgroup.map_mono hK_le_normalizer
+  have hy_mem_conjL : y ∈ (conj c • L F) ⊓ G := hnormalizer_le (hKimg_le_normalizer hy_mem)
+  set l0 : SL(2,F) := c⁻¹ * y * c with hl0_def
+  have hy_eq : y = c * l0 * c⁻¹ := by rw [hl0_def]; group
+  have hl0_mem_L : l0 ∈ L F := by
+    have hy_mem' : y ∈ conj c • L F := hy_mem_conjL.1
+    rw [mem_pointwise_smul_iff_inv_smul_mem] at hy_mem'
+    rwa [show (conj c)⁻¹ • y = c⁻¹ * y * c from by
+      rw [MulAut.smul_def, MulAut.conj_inv_apply]] at hy_mem'
+  obtain ⟨δ', σ', hl0_eq⟩ := hl0_mem_L
+  -- orderOf y coprime to p
+  obtain ⟨k0, hk0_mem, hk0_eq⟩ := hy_mem
+  have horder_dvd : orderOf y ∣ Nat.card K := by
+    have heq1 : orderOf y = orderOf k0 := by
+      rw [← hk0_eq]
+      exact orderOf_injective G.subtype (Subgroup.subtype_injective G) k0
+    have heq2 : orderOf k0 = orderOf (⟨k0, hk0_mem⟩ : K) :=
+      orderOf_injective K.subtype (Subgroup.subtype_injective K) ⟨k0, hk0_mem⟩
+    rw [heq1, heq2]
+    exact orderOf_dvd_natCard _
+  have hcop_y : Nat.Coprime (orderOf y) p := hcop.coprime_dvd_left horder_dvd
+  -- regularity of `l0`: δ' ≠ 1 and δ' ≠ -1
+  have hδ'_ne_one : δ' ≠ 1 := by
+    rintro rfl
+    have hl0' : l0 = s σ' := by rw [← hl0_eq, d_one_eq_one, one_mul]
+    by_cases hσ' : σ' = 0
+    · apply hy_not_center
+      rw [hy_eq, hl0', hσ', s_zero_eq_one, mul_one, mul_inv_cancel]
+      exact Subgroup.one_mem _
+    · have horderyp : orderOf y = p := by
+        rw [hy_eq, hl0', orderOf_conj, order_s_eq_char σ' hσ']
+      have hp1 : p = 1 := by
+        have h1 := hcop_y.gcd_eq_one
+        rw [horderyp] at h1
+        rwa [Nat.gcd_self] at h1
+      exact hp'.out.ne_one hp1
+  have hδ'_ne_neg_one : δ' ≠ -1 := by
+    rintro rfl
+    have hl0' : l0 = - s σ' := by
+      rw [← hl0_eq]
+      show d (-1) * s σ' = - s σ'
+      rw [← neg_one_mul (s σ'), ← d_neg_one_eq_neg_one]
+    by_cases hσ' : σ' = 0
+    · apply hy_not_center
+      have hmemcenter : (-(1 : SL(2,F))) ∈ center SL(2,F) := by
+        rw [center_SL2_eq_Z]; exact neg_one_mem_Z
+      have hcomm : c * (-1 : SL(2,F)) = (-1 : SL(2,F)) * c := Subgroup.mem_center_iff.mp hmemcenter c
+      have hccc : c * (-1 : SL(2,F)) * c⁻¹ = -1 := by
+        rw [hcomm, mul_assoc, mul_inv_cancel, mul_one]
+      rw [hy_eq, hl0', hσ', s_zero_eq_one, hccc]
+      exact hmemcenter
+    · have hpdvd : p ∣ orderOf y := by
+        rw [hy_eq, hl0', orderOf_conj]
+        exact orderOf_neg_s_dvd_of_ne_zero hσ'
+      have hgcd : p ∣ Nat.gcd (orderOf y) p := Nat.dvd_gcd hpdvd dvd_rfl
+      rw [hcop_y] at hgcd
+      exact hp'.out.one_lt.ne' (Nat.dvd_one.mp hgcd)
+  have hl0_reg : (l0 : Matrix (Fin 2) (Fin 2) F) 0 0 ≠ (l0 : Matrix (Fin 2) (Fin 2) F) 1 1 := by
+    rw [← hl0_eq]
+    have h00 : (d δ' * s σ' : SL(2,F)) 0 0 = (δ' : F) := by simp [d, s]
+    have h11 : (d δ' * s σ' : SL(2,F)) 1 1 = (δ' : F)⁻¹ := by simp [d, s]
+    rw [h00, h11]
+    intro heq
+    rcases (Field.self_eq_inv_iff (δ' : F) (Units.ne_zero δ')).mp heq with h1 | h1
+    · exact hδ'_ne_one (Units.ext h1)
+    · exact hδ'_ne_neg_one (Units.ext h1)
+  have hcentralizer_l0 : centralizer {l0} ≤ L F :=
+    centralizer_le_L_of_lower_triangular_regular ⟨δ', σ', hl0_eq⟩ hl0_reg
+  -- `A ≤ (conj c • L F) ⊓ G`
+  have hA_le_conjL : A ≤ (conj c • L F) ⊓ G := by
+    rintro a ⟨ha_cent, ha_G⟩
+    refine ⟨?_, ha_G⟩
+    show a ∈ (conj c • L F : Subgroup SL(2,F))
+    rw [mem_pointwise_smul_iff_inv_smul_mem, show (conj c)⁻¹ • a = c⁻¹ * a * c from by
+      rw [MulAut.smul_def, MulAut.conj_inv_apply]]
+    apply hcentralizer_l0
+    refine mem_centralizer_iff.mpr fun w hw => ?_
+    simp only [Set.mem_singleton_iff] at hw
+    subst hw
+    have hay : a * y = y * a := (mem_centralizer_iff.mp ha_cent y rfl).symm
+    have step1 : c⁻¹ * (y * a) * c = l0 * (c⁻¹ * a * c) := by rw [hy_eq]; group
+    have step2 : c⁻¹ * (a * y) * c = (c⁻¹ * a * c) * l0 := by rw [hy_eq]; group
+    rw [← step1, ← step2, hay]
+  -- `L F` normalizes `S F`, transported by `conj c`
+  have hL_le_norm_conjS : (conj c • L F) ≤ normalizer ((conj c • S F : Subgroup SL(2,F)) : Set SL(2,F)) := by
+    rw [normalizer_conj_smul_eq_conj_smul_normalizer]
+    intro x hx
+    rw [mem_pointwise_smul_iff_inv_smul_mem] at hx ⊢
+    exact L_le_normalizer_S hx
+  have hA_le_normQ' : A ≤ normalizer ((map G.subtype Q.toSubgroup : Set SL(2,F))) := by
+    have hstep : A ≤ normalizer ((conj c • S F : Subgroup SL(2,F)) : Set SL(2,F)) ⊓ normalizer (G : Set SL(2,F)) := by
+      rintro a ha
+      obtain ⟨ha1, ha2⟩ := hA_le_conjL ha
+      exact ⟨hL_le_norm_conjS ha1, le_normalizer ha2⟩
+    refine hstep.trans ?_
+    rw [hQ'_eq]
+    exact le_normalizer_inf (conj c • S F) G
+  -- combine to get `A ≤ (image of Q) ⊔ (image of K)`
+  have hA_le_QK : A ≤ map G.subtype Q.toSubgroup ⊔ map G.subtype K := by
+    have hstep1 : A ≤ normalizer ((map G.subtype Q.toSubgroup : Set SL(2,F))) ⊓ G :=
+      fun a ha => ⟨hA_le_normQ' ha, ha.2⟩
+    rw [normalizer_inf_le_eq_normalizer_subgroupOf hQ'_le_G, hQ'_subgroupOf, hNG,
+      Subgroup.map_sup] at hstep1
+    exact hstep1
+  -- Step e: `A ⊓ (image of Q) = ⊥`
+  have hA_inf_Q'_eq_bot : A ⊓ map G.subtype Q.toSubgroup = ⊥ := by
+    rw [eq_bot_iff_forall]
+    intro u hu
+    by_contra hune
+    obtain ⟨huA, huQ'⟩ := hu
+    have huQ'' : u ∈ (conj c • S F : Subgroup SL(2,F)) ⊓ G := hQ'_eq ▸ huQ'
+    have hu_conjS : u ∈ conj c • S F := huQ''.1
+    rw [mem_pointwise_smul_iff_inv_smul_mem, show (conj c)⁻¹ • u = c⁻¹ * u * c from by
+      rw [MulAut.smul_def, MulAut.conj_inv_apply]] at hu_conjS
+    obtain ⟨τ, hτ⟩ := hu_conjS
+    have hτne : τ ≠ 0 := by
+      intro hτ0
+      apply hune
+      have h1 : c⁻¹ * u * c = 1 := by rw [← hτ, hτ0, s_zero_eq_one]
+      calc u = c * (c⁻¹ * u * c) * c⁻¹ := by group
+        _ = c * 1 * c⁻¹ := by rw [h1]
+        _ = 1 := by group
+    have huy : u * y = y * u := ((mem_centralizer_iff.mp huA.1) y rfl).symm
+    have hcomm : (s τ) * l0 = l0 * (s τ) := by
+      rw [hτ]
+      have step1 : c⁻¹ * (u * y) * c = (c⁻¹ * u * c) * l0 := by rw [hy_eq]; group
+      have step2 : c⁻¹ * (y * u) * c = l0 * (c⁻¹ * u * c) := by rw [hy_eq]; group
+      rw [← step1, ← step2, huy]
+    have hl0_mem_centralizer : l0 ∈ centralizer {s τ} := by
+      refine mem_centralizer_iff.mpr fun w hw => ?_
+      simp only [Set.mem_singleton_iff] at hw
+      subst hw
+      exact hcomm
+    rw [centralizer_s_eq_SZ hτne] at hl0_mem_centralizer
+    simp only [SZ, mem_mk, Submonoid.mem_mk, Subsemigroup.mem_mk, Set.mem_union,
+      Set.mem_setOf_eq] at hl0_mem_centralizer
+    rw [← hl0_eq] at hl0_mem_centralizer
+    rcases hl0_mem_centralizer with ⟨μ, hμ⟩ | ⟨μ, hμ⟩
+    · apply hδ'_ne_one
+      have h00 := congrArg (fun M : SL(2,F) => (M : Matrix (Fin 2) (Fin 2) F) 0 0) hμ
+      simp [d, s] at h00
+      exact Units.ext h00.symm
+    · apply hδ'_ne_neg_one
+      have h00 := congrArg (fun M : SL(2,F) => (M : Matrix (Fin 2) (Fin 2) F) 0 0) hμ
+      simp [d, s] at h00
+      exact Units.ext h00.symm
+  -- conclude `A = image of K` via the Dedekind/Frattini argument inside `Nsub`
+  set Nsub : Subgroup SL(2,F) := map G.subtype Q.toSubgroup ⊔ map G.subtype K with hNsub_def
+  have hKimg_le_normalizerQ' : map G.subtype K ≤ normalizer (map G.subtype Q.toSubgroup : Set SL(2,F)) := by
+    have heq : map G.subtype (normalizer (Q.toSubgroup : Set ↥G))
+        = normalizer (map G.subtype Q.toSubgroup : Set SL(2,F)) ⊓ G := by
+      rw [normalizer_inf_le_eq_normalizer_subgroupOf hQ'_le_G, hQ'_subgroupOf]
+    exact hKimg_le_normalizer.trans (heq ▸ inf_le_left)
+  have hQ'_le_normalizerQ' : map G.subtype Q.toSubgroup ≤ normalizer (map G.subtype Q.toSubgroup : Set SL(2,F)) :=
+    le_normalizer
+  have hNsub_le_normalizerQ' : Nsub ≤ normalizer (map G.subtype Q.toSubgroup : Set SL(2,F)) :=
+    sup_le hQ'_le_normalizerQ' hKimg_le_normalizerQ'
+  haveI hQ'_normal : ((map G.subtype Q.toSubgroup).subgroupOf Nsub).Normal :=
+    (normal_subgroupOf_iff_le_normalizer le_sup_left).mpr hNsub_le_normalizerQ'
+  have hcodisjoint := codisjoint_subgroupOf_sup (map G.subtype Q.toSubgroup) (map G.subtype K)
+  rw [← hNsub_def] at hcodisjoint
+  rw [codisjoint_iff, sup_comm] at hcodisjoint
+  have hmulnormal := Subgroup.mul_normal ((map G.subtype K).subgroupOf Nsub)
+    ((map G.subtype Q.toSubgroup).subgroupOf Nsub)
+  rw [hcodisjoint] at hmulnormal
+  have hA_le_Kimg : A ≤ map G.subtype K := by
+    intro a ha
+    have haNsub : a ∈ Nsub := hA_le_QK ha
+    have hatop : (⟨a, haNsub⟩ : ↥Nsub) ∈ (⊤ : Subgroup ↥Nsub) := mem_top _
+    rw [← SetLike.mem_coe, hmulnormal, Set.mem_mul] at hatop
+    obtain ⟨k, hk_mem, q, hq_mem, hkq⟩ := hatop
+    have hkq' : (k : SL(2,F)) * (q : SL(2,F)) = a := congrArg Subtype.val hkq
+    have hk_memKimg : (k : SL(2,F)) ∈ map G.subtype K := hk_mem
+    have hq_memQ' : (q : SL(2,F)) ∈ map G.subtype Q.toSubgroup := hq_mem
+    have hqA : (q : SL(2,F)) ∈ A := by
+      have hkA : (k : SL(2,F)) ∈ A := hKimg_le_A hk_memKimg
+      have hqeq : (q : SL(2,F)) = (k : SL(2,F))⁻¹ * a := by rw [← hkq']; group
+      rw [hqeq]
+      exact A.mul_mem (A.inv_mem hkA) ha
+    have hq_bot : (q : SL(2,F)) ∈ A ⊓ map G.subtype Q.toSubgroup := ⟨hqA, hq_memQ'⟩
+    rw [hA_inf_Q'_eq_bot, mem_bot] at hq_bot
+    rw [← hkq', hq_bot, mul_one]
+    exact hk_memKimg
+  have hA_eq_Kimg : A = map G.subtype K := le_antisymm hA_le_Kimg hKimg_le_A
+  rwa [hA_eq_Kimg] at hA_mem
