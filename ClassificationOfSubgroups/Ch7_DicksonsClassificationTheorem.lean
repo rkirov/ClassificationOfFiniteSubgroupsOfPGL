@@ -1,11 +1,13 @@
 import ClassificationOfSubgroups.Ch4_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_A_MaximalAbelianSubgroup
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S4_CaseArithmetic
 import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.GroupTheory.Complement
 import Mathlib.GroupTheory.Nilpotent
 import Mathlib.GroupTheory.PresentedGroup
 import Mathlib.GroupTheory.SpecificGroups.Alternating
 import Mathlib.GroupTheory.SpecificGroups.Dihedral
+import Mathlib.GroupTheory.SpecificGroups.Quaternion
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
 
 set_option linter.style.longLine true
@@ -291,35 +293,91 @@ theorem SL_card {q : ℕ} {F : Type*} [Field F] [Fintype F]
 def Isomorphic (G H : Type*) [Group G] [Group H] :=
   Nonempty (G ≃* H)
 
-/-
-When $s = 1$ and $t = 0$
--/
-lemma case_I {F : Type*} {p : ℕ} [Field F] [CharP F p ] (G : Subgroup SL(2,F)) [Finite G]
-  (Q : Sylow p G) (Q_ne_G : (⊤ : Subgroup G) ≠ Q.toSubgroup)
-  (hQ : IsElementaryAbelian p Q.toSubgroup) [Normal Q.toSubgroup] :
-  IsCyclic (G ⧸ Q.toSubgroup) ∧ Nat.Coprime p (Nat.card (G ⧸ Q.toSubgroup)) := by sorry
+open CaseArithmetic
 
-/-
-When $s = t = 1$
--/
-lemma case_II {F : Type*} {p : ℕ} [Field F] [CharP F p ]
-  (G : Subgroup SL(2,F)) [Finite G] (hG : Nat.Coprime p (Nat.card G)) :
-  Isomorphic G SL(2, ZMod 3) ∨ ∃ n, Odd n ∧ Isomorphic G (DihedralGroup (4*n)) := by sorry
+/-! ### The six cases of the Maximal Abelian Subgroup Class Equation (tex 1421-2160)
 
-/-
-When $s = t = 0$
--/
-lemma case_III {F : Type*} {p : ℕ} [Field F] [CharP F p ]
-  (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) :
-  Isomorphic G ((Subgroup.map G.subtype Q.toSubgroup) ⊔ (center SL(2,F)) :) := by sorry
+Each of the six lemmas below (`case_I` ... `case_VI`) corresponds to one of Butler's six cases of
+the class equation `\eqref{classeq}`, indexed by `(s,t) ∈ {(1,0),(1,1),(0,0),(0,1),(0,2),(0,3)}`
+(`CaseArithmetic.case_enumeration`, tex ~1206-1270). The class-data hypothesis `heq` in each case
+packages "`G` realizes this `(s,t)` case" via `CaseArithmetic.ClassEquation`, instantiated with
+`g := |G|/|Z|` and `q := |Q|` for the actual Sylow `p`-subgroup `Q` of `G` (tied to `G` via the
+`hg`/`hq` hypotheses), while the auxiliary integers `k` (`= |K|/|Z|` for Butler's
+`K = C_G(x) ∩ G`, `x` noncentral in `Q`) and `g₁, g₂, g₃` (`= |Aᵢ|/|Z|` for the cyclic maximal
+abelian subgroups) are only asserted to *exist* abstractly: this development has not yet threaded
+Theorem 6.8's identification of `K`/the `Aᵢ` with concrete subgroups of `G` through to this file
+(that bridge is exactly what each `case_*` proof still needs to build, on top of the pure
+arithmetic already proved in `S4_CaseArithmetic`). The extra hypotheses on `k`/`g₁, …` (`hK`,
+`hg_ge`, `hKle`, ...) are exactly those required by the corresponding `CaseArithmetic` theorem, so
+the eventual proof can invoke it directly. Each conclusion below is Butler's literal
+group-theoretic claim for that case.
 
-/-
-When $s = 0$ and $t = 1$
--/
-lemma case_IV {F : Type*} {p : ℕ} [Field F] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] :
- (p = 2 ∧ (∃ n, Odd n ∧ Isomorphic G (DihedralGroup (2*n))))
- ∨
- (p = 3) ∧ Isomorphic G (SL(2, ZMod 3)) := by sorry
+Several conclusions need "`G ⧸ Q` is cyclic of order coprime to `p`"; rather than requiring a
+`Normal Q.toSubgroup` *instance* to even state this (which would have to be assumed rather than
+concluded), we phrase it via the existence of a complement `K` to `Q` in `G` that is cyclic of
+order coprime to `p` -- this is literally Butler's `K ≅ G/Q` (e.g. tex line ~1449). -/
+
+/-- Butler Case I (tex 1421-1450): `s = 1, t = 0`. Butler shows this forces `Q` to be a *proper*
+elementary abelian normal subgroup of `G`, with `G ⧸ Q` cyclic of order coprime to `p`.
+Status: statement faithful to paper; proof pending (needs Theorem 6.8 to identify Butler's `K`
+with a concrete subgroup of `G`, then `CaseArithmetic.case_1_0`). -/
+lemma case_I {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
+    (hq : Nat.card Q.toSubgroup = q)
+    (heq : ∃ k g1, 1 ≤ k ∧ 2 ≤ g1 ∧ (1 < k → k = g1) ∧
+      ClassEquation g q k (s := 1) (t := 0) (fun _ => g1) (fun i => i.elim0)) :
+    (⊤ : Subgroup G) ≠ Q.toSubgroup ∧ IsElementaryAbelian p Q.toSubgroup ∧
+      Normal Q.toSubgroup ∧
+      ∃ K : Subgroup G, IsComplement' Q.toSubgroup K ∧ IsCyclic K ∧
+        Nat.Coprime p (Nat.card K) := by sorry
+
+/-- Butler Case II (tex 1453-1640): `s = 1, t = 1`. Forces `p ∤ |G|` (`q = 1`) and pins down
+`g₁ ∈ {2,3}`; Case IIa (`g₁ = 2`) constructs the dicyclic group of order `4n` (`n` odd) presented
+as `⟨x,y | x^n = y^2, yxy⁻¹ = x⁻¹⟩` (tex ~1550-1580) -- this is exactly mathlib's
+`QuaternionGroup n` (order `4n`, presentation `⟨a,x | a^{2n}=1, x^2=a^n, x⁻¹ax=a⁻¹⟩`, which
+matches Butler's `x ↦ a`, `y ↦ x`); Case IIb (`g₁ = 3`) constructs an explicit isomorphism with
+`SL(2,3)` (tex ~1600-1640).
+Status: statement faithful to paper; proof pending (needs Theorem 6.8 to identify Butler's `K`,
+`A₁`, `A₂` with concrete subgroups of `G`, `CaseArithmetic.case_1_1`, then the genuinely
+group-theoretic generator/relation argument of Case IIa/IIb). -/
+lemma case_II {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
+    (hq : Nat.card Q.toSubgroup = q)
+    (heq : ∃ k g1 g2, 1 ≤ k ∧ 2 ≤ g1 ∧ 2 ≤ g2 ∧ (g2 < k → k = g1) ∧
+      ClassEquation g q k (s := 1) (t := 1) (fun _ => g1) (fun _ => g2)) :
+    Isomorphic G SL(2, ZMod 3) ∨ ∃ n, Odd n ∧ Isomorphic G (QuaternionGroup n) := by sorry
+
+/-- Butler Case III (tex 1661-1670): `s = t = 0`, i.e. there are no cyclic maximal abelian
+subgroups of order coprime to `p` at all. Forces `K ≤ Z` (`k = 1`, Theorem 6.8(v)) and hence
+`g = q`, giving `G = QZ` as an internal direct product (Butler writes `G = Q × Z`).
+Status: statement faithful to paper; proof pending (needs `CaseArithmetic.case_0_0`, then the
+counting argument `|G| = |QZ|` giving the Subgroup equality). -/
+lemma case_III {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
+    (hq : Nat.card Q.toSubgroup = q)
+    (heq : ∃ k, 1 ≤ k ∧ k ≤ 1 ∧
+      ClassEquation g q k (s := 0) (t := 0) (fun i => i.elim0) (fun i => i.elim0)) :
+    Subgroup.map G.subtype Q.toSubgroup ⊔ center SL(2,F) = G ∧
+      IsComplement' (Subgroup.map G.subtype Q.toSubgroup) (center SL(2,F)) := by sorry
+
+/-- Butler Case IV (tex 1681-1745): `s = 0, t = 1`. Forces `k = 1` and `q ∈ {2,3}`. Case IVa
+(`q = 2`, so `p = 2`) constructs `G ≅ D_n` (dihedral of order `2n`, `n` odd -- note `Z` is
+trivial in characteristic `2`, so this is genuinely a dihedral, not dicyclic, group here); Case
+IVb (`q = 3`, so `p = 3`) constructs an isomorphism with `SL(2,3)` by an argument "analogous to
+Case IIb" (tex ~1785).
+Status: statement faithful to paper; proof pending (needs Theorem 6.8 to identify `A₁` with a
+concrete subgroup of `G`, `CaseArithmetic.case_0_1`, then the Case IVa/IVb generator arguments). -/
+lemma case_IV {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
+    (hq : Nat.card Q.toSubgroup = q)
+    (heq : ∃ k g1, 1 ≤ k ∧ 2 ≤ g1 ∧ 2 * g1 ≤ g ∧
+      ClassEquation g q k (s := 0) (t := 1) (fun i => i.elim0) (fun _ => g1)) :
+    (p = 2 ∧ ∃ n, Odd n ∧ Isomorphic G (DihedralGroup n)) ∨
+      (p = 3 ∧ Isomorphic G SL(2, ZMod 3)) := by sorry
 
 
 -- We first need to define the homomorphism of
@@ -408,13 +466,24 @@ noncomputable def SL2_join_d (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) (π : (Ga
   Subgroup.closure { d π }
 
 
+/-- Butler Case V (tex 1848-2113): `s = 0, t = 2`. Forces `q > 1`, `k > 1` and (via a
+Sylow-orbit/projective-line argument entirely outside the class-equation arithmetic, tex
+~1866-2071) `k ∈ {g₁, g₂}`; the remaining analysis splits on `q`: `q ≥ 4` gives Cases Va/Vb
+(`G ≅ SL(2,𝔽_q)` resp. `G ≅ ⟨SL(2,𝔽_q), d_π⟩`), while `q ≤ 3` forces `q = p = 3` and splits into
+Case Vc (`g₂ = 4`, again `⟨SL(2,𝔽_q), d_π⟩` with `q = 3`) and Case Vd (`g₂ = 5`, `G ≅ SL(2,5)` with
+`p = q = 3`, tex ~2088-2113, via the `G/Z` simple-of-order-`60` argument).
+Status: statement faithful to paper; proof pending (needs `CaseArithmetic.case_0_2` plus the
+substantial projective-line/orbit-counting argument of tex ~1866-2113, well outside pure
+class-equation arithmetic). -/
 lemma case_V {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
-  (G : Subgroup SL(2,F)) [Finite G] :
-  ∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)
-  ∨
-  ∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ, Isomorphic G (SL2_join_d p k π)
-  ∨
-  Isomorphic G SL(2, ZMod 5) := by sorry
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
+    (hq : Nat.card Q.toSubgroup = q)
+    (heq : ∃ k g1 g2, 2 ≤ g1 ∧ 2 ≤ g2 ∧ 2 * g1 ≤ g ∧ 2 * g2 ≤ g ∧
+      ClassEquation g q k (s := 0) (t := 2) (fun i => i.elim0) ![g1, g2]) :
+    (∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)) ∨
+      (∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ, Isomorphic G (SL2_join_d p k π)) ∨
+      (p = 3 ∧ Isomorphic G SL(2, ZMod 5)) := by sorry
 
 inductive Symbols
  | x
@@ -432,13 +501,25 @@ def Relations (n : ℕ) : Set (FreeGroup (Symbols)) :=
 abbrev D (n : ℕ) :=
   PresentedGroup <| Relations n
 
+/-- Butler Case VI (tex 2115-2160): `s = 0, t = 3`. Forces `q = 1` (`CaseArithmetic.case_0_3`)
+and, via a further elementary argument (tex ~2145-2160), `g₁ = 2` with
+`(g₂,g₃) ∈ {(2,n), (3,4), (3,5)}`. Case VIa (`g₂ = 2`) gives the dicyclic group of order `4n`
+(`n` even) as `QuaternionGroup n`; Case VIb (`g₂ = 3, g₃ = 4`) gives `Ŝ₄`, the representation
+group of `S₄` in which transpositions have order `4` -- Butler notes `Ŝ₄ ≅ GL(2,3)`, so this is
+`GL (Fin 2) (ZMod 3)`; Case VIc (`g₂ = 3, g₃ = 5`) gives `G ≅ SL(2,5)`, this time with `p ∤ |G|`
+(unlike the isomorphic-but-distinct Case Vd, where `p = 3 = q`).
+Status: statement faithful to paper; proof pending (needs `CaseArithmetic.case_0_3` plus the
+Sylow-conjugacy argument ruling out `g₂ = g₃ = 3` and the `S₄`-representation-group argument of
+Case VIb, tex ~2178-2201). -/
 lemma case_VI {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
-  (G : Subgroup SL(2,F)) [Finite G] :
-  ∃ n, Even n ∧ Isomorphic G (D n)
-  ∨
-  Isomorphic G (GL (Fin 2) (ZMod 5))
-  ∨
-  Isomorphic G SL(2, ZMod 5) := by sorry
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
+    (hq : Nat.card Q.toSubgroup = q)
+    (heq : ∃ k g1 g2 g3, 2 ≤ g1 ∧ 2 ≤ g2 ∧ 2 ≤ g3 ∧ (1 < k → k = g1 ∨ k = g2 ∨ k = g3) ∧
+      ClassEquation g q k (s := 0) (t := 3) (fun i => i.elim0) ![g1, g2, g3]) :
+    (∃ n, Even n ∧ Isomorphic G (QuaternionGroup n)) ∨
+      Isomorphic G (GL (Fin 2) (ZMod 3)) ∨
+      (¬ p ∣ Nat.card G ∧ Isomorphic G SL(2, ZMod 5)) := by sorry
 
 
  -- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to
@@ -446,19 +527,27 @@ lemma case_VI {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
 
 instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
 
-/- Theorem 3.6 -/
+/-- **Theorem 3.6, Class I** (tex 2213-2226, "Class I: when `p = 0` or `|G|` is relatively prime
+to `p`"). Every finite subgroup `G ≤ SL(2,F)` of order coprime to `p` (or with `p = 0`) is
+isomorphic to one of: a cyclic group; the dicyclic group `⟨x,y | x^n = y^2, yxy⁻¹ = x⁻¹⟩` of order
+`4n` for *arbitrary* `n` (mathlib's `QuaternionGroup n`, tex Class I (ii), covering both Case IIa
+`n` odd and Case VIa `n` even); `SL(2,3)`; `SL(2,5)`; or `Ŝ₄` (the representation group of `S₄`
+with transpositions of order `4`, tex Class I (v)), which Butler identifies with `GL(2,3)`.
+Note: the original statement here had `DihedralGroup n` for a file-level auto-bound `n : Type*`
+(ill-typed/vacuously-scoped), and used the *dihedral* group where `SL(2,F)` (with `p ≠ 2`, having
+a unique involution) actually only ever produces the *dicyclic*/quaternion group; both bugs are
+fixed here.
+Status: statement faithful to paper; proof pending (needs the full case-by-case matching of tex
+2237-2254, i.e. `case_I` ... `case_VI` above, plus the `Z ⊄ G ⟹ |G|` odd `⟹` Case I/III branch). -/
 -- ANCHOR: dicksons_classification_theorem_class_I
 theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
-  {p : ℕ} [CharP F p] (hp : Prime p) (G : Subgroup (SL(2,F)))  [Finite G]
-  (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p) :
-  IsCyclic G ∨
-  Isomorphic G (DihedralGroup n)
-  ∨
-  Isomorphic G SL(2, ZMod 3)
-  ∨
-  Isomorphic G SL(2, ZMod 5)
-  ∨
-  Isomorphic G (GL (Fin 2) (ZMod 3))
+    {p : ℕ} [CharP F p] (hp : Prime p) (G : Subgroup (SL(2,F))) [Finite G]
+    (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p) :
+    IsCyclic G ∨
+      (∃ n, Isomorphic G (QuaternionGroup n)) ∨
+      Isomorphic G SL(2, ZMod 3) ∨
+      Isomorphic G SL(2, ZMod 5) ∨
+      Isomorphic G (GL (Fin 2) (ZMod 3))
   := by sorry
 -- ANCHOR_END: dicksons_classification_theorem_class_I
 
@@ -471,19 +560,27 @@ lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n 
   suffices m.val ∣ n.val by exact Nat.le_of_dvd n.prop this
   exact PNat.dvd_iff.mp m_dvd_n
 
+/-- **Theorem 3.6, Class II** (tex 2227-2254, "Class II: when `|G|` is divisible by `p`"). Every
+finite subgroup `G ≤ SL(2,F)` of order divisible by `p` is isomorphic to one of: a group with an
+elementary abelian normal Sylow `p`-subgroup `Q` and cyclic quotient `G ⧸ Q` of order coprime to
+`p` (tex (vi), rendered via a complement `K` to `Q` as in `case_I`); `p = 2` and `G` a dihedral
+group of order `2n`, `n` odd (tex (vii)); `p = 3` and `G ≅ SL(2,5)` (tex (viii)); `G ≅ SL(2,𝔽_q)`
+for `q = p^k` (tex (ix)); or `G ≅ ⟨SL(2,𝔽_q), d_π⟩` for `q = p^k`, `π ∈ 𝔽_{q²} \ 𝔽_q` with
+`π² ∈ 𝔽_q` (tex (x), reusing the `SL2_join_d` construction from `case_V`).
+Note: the original statement here had `Isomorphic G Q` for item (vi) (`G` isomorphic to its own
+*Sylow subgroup*, rather than `G ⧸ Q` being cyclic of order coprime to `p`) and a garbled,
+unrelated existential for item (x); both are corrected here.
+Status: statement faithful to paper; proof pending (same dependencies as
+`dicksons_classification_theorem_class_I`). -/
 -- ANCHOR: dicksons_classification_theorem_class_II
-theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClosed F]{p : ℕ}
-  [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup (SL(2,F))) [Finite G] (hp : p ∣ Nat.card G)  :
-  ∃ Q : Subgroup SL(2,F), IsElementaryAbelian p Q ∧ Normal Q ∧ Isomorphic G Q
-  ∨
-  (p = 2 ∧ ∃ n : ℕ, Odd n ∧ Isomorphic G (DihedralGroup n))
-  ∨
-  Isomorphic G SL(2, ZMod 5)
-  ∨
-  ∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k)
-  ∨
-  ∃ k : ℕ+, ∃ x : GaloisField p (2* k), orderOf x^2 = p^(k : ℕ) ∧
-    ∃ φ : G ≃* SL(2, GaloisField p k), True
+theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup (SL(2,F))) [Finite G] (hp : p ∣ Nat.card G) :
+    (∃ Q : Subgroup G, IsElementaryAbelian p Q ∧ Normal Q ∧
+        ∃ K : Subgroup G, IsComplement' Q K ∧ IsCyclic K ∧ Nat.Coprime p (Nat.card K)) ∨
+      (p = 2 ∧ ∃ n : ℕ, Odd n ∧ Isomorphic G (DihedralGroup n)) ∨
+      (p = 3 ∧ Isomorphic G SL(2, ZMod 5)) ∨
+      (∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)) ∨
+      (∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ, Isomorphic G (SL2_join_d p k π))
   := by sorry
 -- ANCHOR_END: dicksons_classification_theorem_class_II
 
@@ -502,23 +599,30 @@ abbrev ProjectiveGeneralLinearGroup' : Type _ :=
 
 
 
+/-- The PGL₂ classification (README, "If `H` is a finite subgroup of `PGL_2(F̄_p)` ..."; this is
+Dickson's theorem for `PGL(2,F)`, obtained from `dicksons_classification_theorem_class_I/II` for
+`SL(2,F)` by passing to the quotient by the center). Every finite subgroup of
+`PGL(Fin 2, 𝔽_p-bar)` is cyclic, dihedral of some order `2n`, isomorphic to `A₄`, `S₄` or `A₅`, or
+(conjugate to) `PSL(2,𝕂)`/`PGL(2,𝕂)` for some finite field `𝕂` of characteristic `p`.
+Note: the original statement had (a) each disjunct after the first wrapped under a single
+`∃ n, _ ∨ _ ∨ ⋯` -- logically harmless since `ℕ` is inhabited, but misleadingly scoped as if `n`
+ranged over the whole tail of the disjunction rather than just the dihedral case -- and (b)
+`Equiv.Perm (Fin 5)` (i.e. `S₅`, order `120`) in place of `Equiv.Perm (Fin 4)` (`S₄`, order `24`):
+`S₅` is not one of Dickson's exceptional subgroups of `PGL₂`, only `A₄, S₄, A₅` are (see README);
+both are fixed here so that every disjunct is self-contained.
+Status: statement faithful to the README/Butler; proof pending (needs
+`dicksons_classification_theorem_class_I/II` pushed down along `SL(2,F) → PGL(2,F)`). -/
 -- ANCHOR: FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod
 theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ}
-  [Fact (Nat.Prime p)] (𝕂 : Type*) [Field 𝕂] [CharP 𝕂 p] [Finite 𝕂]
-  (G : Subgroup (PGL (Fin 2) (AlgebraicClosure (ZMod p)))) [hG : Finite G] :
-  IsCyclic G
-  ∨
-  ∃ n, Isomorphic G (DihedralGroup n)
-  ∨
-  Isomorphic G (alternatingGroup (Fin 4))
-  ∨
-  Isomorphic G (Equiv.Perm (Fin 5))
-  ∨
-  Isomorphic G (alternatingGroup (Fin 5))
-  ∨
-  Isomorphic G (PSL (Fin 2) (𝕂))
-  ∨
-  Isomorphic G (PGL (Fin 2) (𝕂)) := by
+    [Fact (Nat.Prime p)] (𝕂 : Type*) [Field 𝕂] [CharP 𝕂 p] [Finite 𝕂]
+    (G : Subgroup (PGL (Fin 2) (AlgebraicClosure (ZMod p)))) [hG : Finite G] :
+    IsCyclic G ∨
+      (∃ n, Isomorphic G (DihedralGroup n)) ∨
+      Isomorphic G (alternatingGroup (Fin 4)) ∨
+      Isomorphic G (Equiv.Perm (Fin 4)) ∨
+      Isomorphic G (alternatingGroup (Fin 5)) ∨
+      Isomorphic G (PSL (Fin 2) (𝕂)) ∨
+      Isomorphic G (PGL (Fin 2) (𝕂)) := by
     sorry
 -- ANCHOR_END: FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod
 
