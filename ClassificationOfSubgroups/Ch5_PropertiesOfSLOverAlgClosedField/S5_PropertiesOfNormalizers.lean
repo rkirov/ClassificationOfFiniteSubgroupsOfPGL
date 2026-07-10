@@ -49,7 +49,6 @@ lemma normalizer_subgroup_S_le_L [DecidableEq F] { S₀ : Subgroup (SL(2,F)) }
     have x_eq : x = !![α, β; γ, δ] := by ext <;> rfl
     have : x * s σ * x⁻¹ ∈ S F := by exact h hσ
     obtain ⟨σ' , hσ'⟩ := this
-    simp only at hσ'
     -- uses decidable equality
     rw [SpecialSubgroups.mem_L_iff_lower_triangular]
     rw [lower_triangular_iff]
@@ -189,6 +188,6 @@ lemma normalizer_subgroup_D_eq_DW { D₀ : Subgroup (SL(2,F)) }
         rw [← inv_d_eq_d_inv]
         exact Subgroup.inv_mem D₀ conj_mem_D₀
 
-lemma normalizer_D_eq_DW {F : Type*} [Field F] : (D F).normalizer = DW F := by sorry
+lemma normalizer_D_eq_DW {F : Type*} [Field F] : normalizer (D F) = DW F := by sorry
 
 #min_imports

@@ -50,11 +50,6 @@ theorem centralizer_s_eq_SZ {σ : F} (hσ : σ ≠ 0) : centralizer { s σ } = S
 lemma Field.self_eq_inv_iff (x : F) (x_ne_zero : x ≠ 0) : x = x⁻¹ ↔ x = 1 ∨ x = - 1 := by
   rw [← sq_eq_one_iff, sq, (mul_eq_one_iff_eq_inv₀ x_ne_zero)]
 
-lemma Units.val_neg_one : ((-1 : Fˣ) : F) = -1 := by simp only [Units.val_neg, val_one]
-
-lemma Units.val_eq_neg_one (x : Fˣ) : (x : F) = -1 ↔ x = (-1 : Fˣ) := by
-  rw [← Units.val_neg_one, val_inj]
-
 lemma centralizer_d_eq_D (δ : Fˣ) (δ_ne_one : δ ≠ 1) (δ_ne_neg_one : δ ≠ -1) :
   centralizer {d δ} = D F := by
   ext x
@@ -96,7 +91,8 @@ lemma centralizer_d_eq_D' (δ : Fˣ) (hd: d δ ∉ center SL(2,F)) : centralizer
 open MulAction MulAut
 
 lemma centralizer_neg_eq_centralizer {x : SL(2,F)} : centralizer {x} = centralizer {-x} := by
-  ext; constructor <;> simp [mem_centralizer_iff_commutator_eq_one]
+  ext y
+  simp only [mem_centralizer_iff, Set.mem_singleton_iff, forall_eq, neg_mul, mul_neg, neg_inj]
 
 /-
 Proposition 1.8.
@@ -112,7 +108,7 @@ lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
   constructor
   · rintro ⟨y', y'_in_cen, hy'⟩
     simp at hy' y'_in_cen ⊢
-    rw [Set.mem_centralizer_iff]
+    rw [Submonoid.mem_centralizer_iff]
     rintro m ⟨rfl⟩
     have : a * y' = y' * a := by exact y'_in_cen a rfl
     rw [← hy', ← hc]
@@ -120,7 +116,7 @@ lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
     rw [mul_assoc x a, this]
     group
   · intro hy
-    simp [Set.mem_centralizer_iff] at hy
+    simp [Submonoid.mem_centralizer_iff] at hy
     have : y = b * y * b⁻¹ := by rw [hy]; group
     simp [← hc] at this hy
     use a * x⁻¹ * y * x * a⁻¹
