@@ -1,6 +1,7 @@
 import ClassificationOfSubgroups.Ch4_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_A_MaximalAbelianSubgroup
 import Mathlib.FieldTheory.Finite.GaloisField
+import Mathlib.GroupTheory.Complement
 import Mathlib.GroupTheory.Nilpotent
 import Mathlib.GroupTheory.PresentedGroup
 import Mathlib.GroupTheory.SpecificGroups.Alternating
@@ -12,7 +13,7 @@ set_option maxHeartbeats 0
 
 open Matrix Subgroup LinearMap
 
-open scoped MatrixGroups
+open scoped MatrixGroups Pointwise
 
 
 /- Lemma 3.1 -/
@@ -32,14 +33,178 @@ lemma IsPGroup.lt_normalizer_subgroupOf {F : Type*} [Field F] {p : ℕ} [Fact (N
 
 open MaximalAbelianSubgroup
 
+-- `subgroupOf` (unconditionally, unlike `subgroupOf_sup`) distributes over `⊓`, since it is
+-- defined as `comap` of the inclusion, and `comap` always preserves `⊓`.
+lemma subgroupOf_inf_eq {L : Type*} [Group L] (A B H : Subgroup L) :
+    (A ⊓ B).subgroupOf H = A.subgroupOf H ⊓ B.subgroupOf H := by
+  rw [← comap_subtype, ← comap_subtype, ← comap_subtype, comap_inf]
 
 /- Lemma 3.2 -/
+-- Butler's Lemma (tex `caseVlemma`, lines 1306-1349) additionally assumes `Q ∩ K = {1}` and
+-- `[N_G(K) : K] = 2`; both are used essentially in the proof (the first to get
+-- `K ≅ G/Q`, the second to pin down `|Q ∩ N_G(K)| = 2`). Neither hypothesis is derivable from
+-- the statement as originally given, so they are restored here as `hQcapK` and `hNK`
+-- (using the `relIndex`-of-`subgroupOf` idiom from `S2_B_MaximalAbelianSubgroup`'s
+-- `of_index_normalizer_eq_two`). This lemma is not referenced elsewhere in the repo
+-- (checked via grep), so strengthening its hypotheses is safe.
 lemma Sylow.not_normal_subgroup_of_G {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
   [CharP F p] (G K : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G)
   (hK : K ∈ MaximalAbelianSubgroupsOf G)
-  (hQK : map G.subtype (normalizer (Q.toSubgroup : Set ↥G)) = (map G.subtype Q.toSubgroup) ⊔ K) :
+  (hQK : map G.subtype (normalizer (Q.toSubgroup : Set ↥G)) = (map G.subtype Q.toSubgroup) ⊔ K)
+  (hQcapK : (map G.subtype Q.toSubgroup) ⊓ K = ⊥)
+  (hNK : relIndex (K.subgroupOf G) (normalizer ((K.subgroupOf G : Subgroup ↥G) : Set ↥G)) = 2) :
   ¬ Normal Q.toSubgroup := by
-  sorry
+  intro hnormal
+  -- Work with the "internal" (i.e. `Subgroup ↥G`) picture throughout.
+  set K' : Subgroup ↥G := K.subgroupOf G with hK'_def
+  set Q' : Subgroup SL(2,F) := map G.subtype Q.toSubgroup with hQ'_def
+  have hK_le_G : K ≤ G := hK.right
+  have hQ'_le_G : Q' ≤ G := Subgroup.map_subtype_le Q.toSubgroup
+  -- `Q` is normal in `G`, so `N_G(Q) = G`.
+  have hNQ : normalizer (Q.toSubgroup : Set ↥G) = ⊤ := @normalizer_eq_top _ _ Q.toSubgroup hnormal
+  rw [hNQ] at hQK
+  have hGtop : map G.subtype (⊤ : Subgroup ↥G) = G := by
+    rw [← MonoidHom.range_eq_map, Subgroup.range_subtype]
+  rw [hGtop] at hQK
+  -- `hQK : G = Q' ⊔ K`; push it down to `↥G` via `subgroupOf G`.
+  have hQ'_subgroupOf : Q'.subgroupOf G = Q.toSubgroup :=
+    Subgroup.comap_map_eq_self_of_injective (G.subtype_injective) Q.toSubgroup
+  have hQK_internal : (⊤ : Subgroup ↥G) = Q.toSubgroup ⊔ K' := by
+    have := congrArg (Subgroup.subgroupOf · G) hQK
+    rwa [Subgroup.subgroupOf_self, Subgroup.subgroupOf_sup hQ'_le_G hK_le_G,
+      hQ'_subgroupOf] at this
+  have hKQ_sup : K' ⊔ Q.toSubgroup = ⊤ := by rw [sup_comm]; exact hQK_internal.symm
+  -- Similarly push the disjointness hypothesis down to `↥G`.
+  have hQK_inf : Q.toSubgroup ⊓ K' = ⊥ := by
+    have := congrArg (Subgroup.subgroupOf · G) hQcapK
+    rw [subgroupOf_inf_eq, hQ'_subgroupOf] at this
+    rwa [Subgroup.bot_subgroupOf] at this
+  have hKQ_inf : K' ⊓ Q.toSubgroup = ⊥ := by rwa [inf_comm] at hQK_inf
+  -- `K'` and `Q.toSubgroup` are complementary subgroups of `↥G`.
+  have hcomp : K'.IsComplement' Q.toSubgroup := by
+    apply isComplement'_of_disjoint_and_mul_eq_univ (disjoint_iff.mpr hKQ_inf)
+    have := Subgroup.mul_normal K' Q.toSubgroup
+    rw [hKQ_sup, Subgroup.coe_top] at this
+    exact this.symm
+  haveI : Q.toSubgroup.Normal := hnormal
+  have hquotEquiv : (↥G ⧸ Q.toSubgroup) ≃* K' := hcomp.QuotientMulEquiv
+  -- `N := N_{↥G}(K')`.
+  set N : Subgroup ↥G := normalizer (K' : Set ↥G) with hN_def
+  have hK'_le_N : K' ≤ N := K'.le_normalizer
+  -- The quotient map `↥G → ↥G ⧸ Q.toSubgroup`, restricted to `N`.
+  let φ : ↥G →* (↥G ⧸ Q.toSubgroup) := QuotientGroup.mk' Q.toSubgroup
+  let ψ : ↥N →* (↥G ⧸ Q.toSubgroup) := φ.comp N.subtype
+  have hker : ψ.ker = Q.toSubgroup.subgroupOf N := by
+    show (φ.comp N.subtype).ker = _
+    rw [← MonoidHom.comap_ker, QuotientGroup.ker_mk']
+    rfl
+  -- `K'` alone already surjects onto `↥G ⧸ Q.toSubgroup`, so a fortiori so does `N`.
+  have hQmap_bot : Q.toSubgroup.map φ = ⊥ := by
+    rw [Subgroup.map_eq_bot_iff, QuotientGroup.ker_mk']
+  have hKmap : K'.map φ = ⊤ := by
+    have hsup := congrArg (Subgroup.map φ) hKQ_sup
+    rw [Subgroup.map_sup, Subgroup.map_top_of_surjective φ (QuotientGroup.mk'_surjective _),
+      hQmap_bot, sup_bot_eq] at hsup
+    exact hsup
+  have hNmap : N.map φ = ⊤ := le_antisymm le_top
+    (hKmap ▸ Subgroup.map_mono hK'_le_N)
+  have hrange : ψ.range = ⊤ := by
+    show (φ.comp N.subtype).range = ⊤
+    rw [MonoidHom.range_comp, Subgroup.range_subtype]
+    exact hNmap
+  -- First Isomorphism Theorem: `N ⧸ ker ψ ≃* range ψ = ⊤ ≃* (↥G ⧸ Q.toSubgroup) ≃* K'`.
+  have hcard_quot : Nat.card (↥N ⧸ ψ.ker) = Nat.card K' := by
+    have h1 : Nat.card (↥N ⧸ ψ.ker) = Nat.card ψ.range :=
+      Nat.card_congr (QuotientGroup.quotientKerEquivRange ψ).toEquiv
+    rw [h1, hrange]
+    rw [Nat.card_congr (Subgroup.topEquiv (G := ↥G ⧸ Q.toSubgroup)).toEquiv]
+    exact Nat.card_congr hquotEquiv.toEquiv
+  have hcard_N_via_ker : Nat.card N = Nat.card K' * Nat.card ψ.ker := by
+    rw [Subgroup.card_eq_card_quotient_mul_card_subgroup ψ.ker, hcard_quot]
+  -- `K' ⊴ N` (it is normal in its own normalizer) with `[N : K'] = 2`.
+  have hcard_N_via_K' : Nat.card N = 2 * Nat.card K' := by
+    have h1 : Nat.card N = Nat.card (↥N ⧸ K'.subgroupOf N) * Nat.card (K'.subgroupOf N) :=
+      Subgroup.card_eq_card_quotient_mul_card_subgroup _
+    have h2 : Nat.card (K'.subgroupOf N) = Nat.card K' :=
+      Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK'_le_N).toEquiv
+    have h3 : Nat.card (↥N ⧸ K'.subgroupOf N) = K'.relIndex N := rfl
+    rw [h2, h3, hNK] at h1
+    exact h1
+  have hcard_K'_pos : 0 < Nat.card K' := Nat.card_pos
+  have hcard_ker : Nat.card ψ.ker = 2 := by
+    have heq : Nat.card K' * Nat.card ψ.ker = Nat.card K' * 2 := by
+      rw [hcard_N_via_ker] at hcard_N_via_K'
+      rw [hcard_N_via_K']; ring
+    exact mul_left_cancel₀ hcard_K'_pos.ne' heq
+  -- `ker ψ = Q.toSubgroup.subgroupOf N` has order `2`, hence is nontrivial.
+  have hker_ne_bot : ψ.ker ≠ ⊥ := by
+    intro h
+    rw [h] at hcard_ker
+    simp at hcard_ker
+  obtain ⟨x, hx_ne_one⟩ := Subgroup.ne_bot_iff_exists_ne_one.mp hker_ne_bot
+  have hx_mem : (x : ↥N) ∈ ψ.ker := x.2
+  set x0 : ↥G := ((x : ↥N) : ↥G) with hx0_def
+  have hx0_ne_one : x0 ≠ 1 := by
+    intro h
+    apply hx_ne_one
+    exact Subtype.ext (Subtype.ext h)
+  have hx0_mem_Q : x0 ∈ Q.toSubgroup := by
+    have h' : (x : ↥N) ∈ Q.toSubgroup.subgroupOf N := hker ▸ hx_mem
+    simpa [hx0_def, Subgroup.mem_subgroupOf] using h'
+  have hx0_notin_K' : x0 ∉ K' := by
+    intro hmem
+    have : x0 ∈ K' ⊓ Q.toSubgroup := ⟨hmem, hx0_mem_Q⟩
+    rw [hKQ_inf] at this
+    exact hx0_ne_one (Subgroup.mem_bot.mp this)
+  -- `x0` commutes with every element of `K'`.
+  have hx0_comm : ∀ y ∈ K', x0 * y = y * x0 := by
+    intro y hy
+    have hy_mem_N : y ∈ N := hK'_le_N hy
+    set b : ↥N := ⟨y, hy_mem_N⟩ with hb_def
+    have hb_mem_K'N : b ∈ K'.subgroupOf N := by simpa [hb_def, Subgroup.mem_subgroupOf]
+    have hconj1 : x * b * x⁻¹ ∈ K'.subgroupOf N :=
+      (Subgroup.normal_in_normalizer (H := K')).conj_mem b hb_mem_K'N x
+    have hconj2 : b * x⁻¹ * b⁻¹ ∈ ψ.ker :=
+      (MonoidHom.normal_ker ψ).conj_mem x⁻¹ (Subgroup.inv_mem _ hx_mem) b
+    have hmem1 : x * b * x⁻¹ * b⁻¹ ∈ K'.subgroupOf N :=
+      mul_mem hconj1 (Subgroup.inv_mem _ hb_mem_K'N)
+    have hmem2 : x * b * x⁻¹ * b⁻¹ ∈ ψ.ker := by
+      have : x * (b * x⁻¹ * b⁻¹) = x * b * x⁻¹ * b⁻¹ := by group
+      rw [← this]
+      exact mul_mem hx_mem hconj2
+    have hmem : x * b * x⁻¹ * b⁻¹ ∈ K'.subgroupOf N ⊓ ψ.ker := ⟨hmem1, hmem2⟩
+    have hK'N_inf_ker : K'.subgroupOf N ⊓ ψ.ker = ⊥ := by
+      rw [hker]
+      have := congrArg (Subgroup.subgroupOf · N) hKQ_inf
+      rwa [subgroupOf_inf_eq, Subgroup.bot_subgroupOf] at this
+    rw [hK'N_inf_ker] at hmem
+    have : x * b * x⁻¹ * b⁻¹ = 1 := Subgroup.mem_bot.mp hmem
+    have hcommN : x * b = b * x := by
+      have h' : x * b * x⁻¹ * b⁻¹ * b * x = 1 * b * x := by rw [this]
+      simpa [mul_assoc] using h'
+    have := congrArg (Subtype.val (p := fun a => a ∈ N)) hcommN
+    simpa [hb_def, hx0_def] using this
+  -- Hence `K' ⊔ ⟨x0⟩` is abelian, strictly containing `K'` -- contradicting maximality.
+  set k : Set ↥G := (K' : Set ↥G) ∪ {x0} with hk_def
+  have hcomm_k : ∀ a ∈ k, ∀ b ∈ k, a * b = b * a := by
+    haveI := hK.left.1
+    rintro a (ha | ha) b (hb | hb)
+    · exact setLike_mul_comm ha hb
+    · simp only [Set.mem_singleton_iff] at hb; subst hb
+      exact (hx0_comm a ha).symm
+    · simp only [Set.mem_singleton_iff] at ha; subst ha
+      exact hx0_comm b hb
+    · simp only [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
+  haveI hclosure_comm : IsMulCommutative (closure k) := Subgroup.isMulCommutative_closure hcomm_k
+  have hK'_le_closure : K' ≤ closure k := by
+    rw [← Subgroup.closure_eq K']
+    exact Subgroup.closure_mono (Set.subset_union_left)
+  have hclosure_le : closure k ≤ K' := hK.left.2 hclosure_comm hK'_le_closure
+  have hclosure_eq : closure k = K' := le_antisymm hclosure_le hK'_le_closure
+  have hx0_mem_closure : x0 ∈ closure k :=
+    subset_closure (Set.mem_union_right _ rfl)
+  rw [hclosure_eq] at hx0_mem_closure
+  exact hx0_notin_K' hx0_mem_closure
 
 /- Lemma 3.3 -/
 -- `R` is unused elsewhere in this development, so it is restructured here as a `Subfield F`
