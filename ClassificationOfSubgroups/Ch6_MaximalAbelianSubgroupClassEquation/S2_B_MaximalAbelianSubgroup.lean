@@ -297,6 +297,220 @@ theorem of_index_normalizer_eq_two {F : Type*} [Field F] [IsAlgClosed F] [Decida
     rw [Nat.coprime_comm] at hA'
     exact (Nat.Prime.coprime_iff_not_dvd Fact.out).mp hA' p_dvd_A
 
+/-
+Butler Thm 6.8(iv) at `p = 2`. The informal proof's degenerate case, "if `|A| ≤ 2` then
+`A = Z = G`" (tex ~838), is FALSE as an unqualified statement in characteristic `2`: `S2_A`'s
+comment above `eq_center_of_card_le_two` records a counterexample subgroup of `GL(2,𝔽₂)` where a
+*noncentral* unipotent involution generates an order-`2` abelian subgroup (since `Z = ⊥` in
+characteristic `2`, by `card_Z_eq_one_of_two_eq_zero`/Lemma 6.2). But Theorem 6.8(iv) itself only
+ever applies this degenerate case under its own standing hypothesis `Nat.Coprime (Nat.card A) p`;
+at `p = 2` this forces `Nat.card A` to be *odd*, and combined with `Nat.card A ≤ 2` this forces
+`Nat.card A = 1`, i.e. `A = ⊥ = Z`, sidestepping the gap entirely (the counterexample's witness
+subgroup has order `2`, which is not coprime to `2`, so it is excluded by the hypothesis).
+
+Grepping `p_ne_two` through `S2_A`/`S2_B` shows this is in fact the *only* place `p ≠ 2` is used
+anywhere in the chain leading to Theorem 6.8(iv): `relIndex_normalizer_le_two`
+(`S2_A`, the "`≤ 2`" half) and `of_index_normalizer_eq_two` (the inversion-witness half, above)
+both use `p_ne_two` exactly once, to rule out `Nat.card A ≤ 2` via
+`relIndex_eq_one_of_card_le_two`/`eq_center_of_card_le_two`; every other step (conjugating `A`
+into `D`, `N_L(Ã) = ⟨D,w⟩` via `normalizer_subgroup_D_eq_DW_of_two_lt_card`, the second
+isomorphism theorem machinery of `subgroupOf_normalizer_quot_monoidHom_ZMod_two`, and the final
+`Q ⊔ Z`-branch contradiction via `hA' : Nat.Coprime (Nat.card A) p`) is already characteristic-free
+(no `p_ne_two`, no case split on `p`). So Theorem 6.8(iv) is TRUE at `p = 2` under the coprimality
+hypothesis, with the same proof, once the degenerate `Nat.card A ≤ 2` case is patched as above.
+
+We give char-`2` analogues of the three `p_ne_two`-carrying declarations here (as `S2_A` is
+read-only): `eq_center_of_card_le_two_of_coprime_two`, `relIndex_eq_one_of_card_le_two_of_coprime_two`,
+and `of_index_normalizer_eq_two_char_two`, replacing `p_ne_two` with `[CharP F 2]` plus the
+coprimality hypothesis Theorem 6.8(iv) already assumes. (`S2_A`'s `relIndex_normalizer_le_two`,
+the "`≤ 2`" half, is not restated here since it is out of `of_index_normalizer_eq_two`'s scope and
+`S2_A` cannot be edited; the same patch applies to it verbatim, by the argument above.)
+-/
+
+/-- Char-`2` analogue of `eq_center_of_card_le_two`: under the coprimality hypothesis Theorem
+6.8(iv) already carries, `Nat.card A ≤ 2` forces `Nat.card A ≠ 2` (as `2` is not coprime to
+itself), hence `Nat.card A = 1`, i.e. `A = ⊥`; and `center SL(2,F) = ⊥` in characteristic `2`
+(`card_Z_eq_one_of_two_eq_zero`), so `A = center SL(2,F)`. This sidesteps the char-`2` gap in
+`eq_center_of_card_le_two` (see the comment above `eq_center_of_card_le_two` in `S2_A`, and the
+comment above this section): the counterexample there has order `2`, excluded here by
+`hA_cop`. -/
+lemma eq_center_of_card_le_two_of_coprime_two {F : Type*} [Field F] [CharP F 2]
+    (A G : Subgroup SL(2,F)) [hG : Finite G]
+    (_center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
+    (card_A_le_two : Nat.card A ≤ 2) (hA_cop : Nat.Coprime (Nat.card A) 2) :
+    A = center SL(2,F) := by
+  let A_finite : Finite (A : Set SL(2,F)) := Finite.Set.subset G hA.right
+  have card_A_ne_two : Nat.card A ≠ 2 := by
+    intro h
+    rw [h, Nat.Coprime, Nat.gcd_self] at hA_cop
+    norm_num at hA_cop
+  have card_A_pos : 0 < Nat.card A := Nat.card_pos
+  have card_A_eq_one : Nat.card A = 1 := by omega
+  have A_eq_bot : A = ⊥ := Subgroup.card_eq_one.mp card_A_eq_one
+  have Z_eq_bot : center SL(2,F) = ⊥ := by
+    rw [center_SL2_eq_Z]
+    exact Subgroup.card_eq_one.mp (card_Z_eq_one_of_two_eq_zero CharTwo.two_eq_zero)
+  rw [A_eq_bot, Z_eq_bot]
+
+/-- Char-`2` analogue of `relIndex_eq_one_of_card_le_two`. -/
+lemma relIndex_eq_one_of_card_le_two_of_coprime_two
+    {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] [CharP F 2]
+    (A G : Subgroup SL(2,F)) (center_le_G : center SL(2,F) ≤ G)
+    (hA : A ∈ MaximalAbelianSubgroupsOf G) [hG : Finite G]
+    (card_A_le_two : Nat.card A ≤ 2) (hA_cop : Nat.Coprime (Nat.card A) 2) :
+    relIndex (A.subgroupOf G) (normalizer ((A.subgroupOf G) : Set ↥G)) = 1 := by
+  rw [eq_center_of_card_le_two_of_coprime_two A G center_le_G hA card_A_le_two hA_cop]
+  have center_is_normal : Normal ((center SL(2,F)).subgroupOf G) := normal_subgroupOf
+  rw [relIndex, normalizer_eq_top_iff.mpr center_is_normal, ← comap_subtype, ← subgroupOf_self,
+    index_comap, Subgroup.range_subtype, Subgroup.relIndex_subgroupOf (le_refl _)]
+  have G_eq_center : G = center SL(2,F) := by
+    rw [eq_center_of_card_le_two_of_coprime_two A G center_le_G hA card_A_le_two hA_cop] at hA
+    contrapose! hA
+    exact center_not_mem_of_center_ne hA.symm
+  rw [relIndex_eq_one]
+  exact le_of_eq_of_le G_eq_center (le_refl _)
+
+/-- Char-`2` analogue of `of_index_normalizer_eq_two` (Theorem 6.8(iv-b), Butler tex ~889-897),
+with `p_ne_two` replaced by `[CharP F 2]` together with the coprimality hypothesis `hA'` that
+Theorem 6.8(iv) already assumes. Identical proof to `of_index_normalizer_eq_two` beyond the
+derivation of `two_lt_card_A` (see the comment above `eq_center_of_card_le_two_of_coprime_two`
+for why the rest of the argument is characteristic-free). -/
+theorem of_index_normalizer_eq_two_char_two {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
+  [CharP F 2] (A G : Subgroup SL(2,F))
+  [Finite G] (hA : A ∈ MaximalAbelianSubgroupsOf G) (center_le_G : center SL(2,F) ≤ G)
+  (hA' : Nat.Coprime (Nat.card A) 2)
+  (hNA : relIndex (A.subgroupOf G) (normalizer ((A.subgroupOf G) : Set ↥G)) = 2) (x : A) :
+    ∃ y ∈ ((normalizer ((A) : Set SL(2,F))) ⊓ G).carrier \ A, y * x * y⁻¹ = x⁻¹ := by
+  haveI hp2 : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  have two_lt_card_A : 2 < Nat.card A := by
+    have key : Nat.card A ≤ 2 →
+        relIndex (A.subgroupOf G) (normalizer ((A.subgroupOf G) : Set ↥G)) = 1 :=
+      fun card_A_le_two =>
+        relIndex_eq_one_of_card_le_two_of_coprime_two A G center_le_G hA card_A_le_two hA'
+    contrapose! key
+    constructor
+    · exact key
+    · rw [hNA]
+      norm_num
+  have G_ne_center : G ≠ center SL(2,F) := G_ne_center_of_two_lt_card A G hA two_lt_card_A
+
+  rcases isCyclic_and_card_coprime_charP_or_eq_Q_sup_Z_of_center_ne 2 G A hA
+      center_le_G G_ne_center with (⟨⟨c, A', Finite_A', A'_le_D, A_eq_conj_A'⟩, -⟩ | h)
+  · let G' := conj c⁻¹ • G
+    have G_eq_conj_G' : G = conj c • G' := by simp [G']
+    have hA' : A' ∈ MaximalAbelianSubgroupsOf G' := by
+      rw [mem_iff_conj_smul_mem_MaximalAbelianSubgroupsOf_conj_smul A' G' c,
+        ← A_eq_conj_A', ← G_eq_conj_G']
+      exact hA
+    rw [relIndex,
+      ← relIndex_MaximalAbelianSubgroupOf_normalizer_eq_relIndex_conj_MaxAbelianSubgroupOf
+      A_eq_conj_A' G_eq_conj_G'] at hNA
+    have two_lt_card_A' : 2 < Nat.card A' := by rwa [card_conj_eq_card A_eq_conj_A']
+    have A'_eq_G'_inf_D : A' = G' ⊓ D F := eq_G_inf_D_of_le_D A' G' A'_le_D hA'
+
+    let f := subgroupOf_normalizer_quot_monoidHom_ZMod_two
+      A' G' A'_le_D hA'.right two_lt_card_A' A'_eq_G'_inf_D
+    have Injective_f : Injective f :=
+      injective_subgroupOf_normalizer_quot_monoidHom_ZMod_two
+        A' G' A'_le_D hA'.right two_lt_card_A' A'_eq_G'_inf_D
+
+    have card_multiplicative_ZMod_two_eq_two : Nat.card (Multiplicative (ZMod 2)) = 2 := by
+      rw [Nat.card_eq_fintype_card, Fintype.card_multiplicative]; rfl
+
+    rw [index] at hNA
+    have key := ((Nat.bijective_iff_injective_and_card f).mpr
+      ⟨Injective_f, by rwa [card_multiplicative_ZMod_two_eq_two]⟩).2
+
+    dsimp [f, subgroupOf_normalizer_quot_monoidHom_ZMod_two] at key
+    rw [← comp_assoc] at key
+    -- want surjectivity of the second map on the left in the composition
+
+    have surjective : Bijective ((monoidHom_normalizer_D_quot_D A' G')) :=
+      bijective_monoidHom_normalizer_D_quot_D A' G' A'_le_D hA'.right two_lt_card_A'
+        A'_eq_G'_inf_D hNA
+
+    have normalizer_A'_inf_G'_sup_D_eq_normalizer_D :
+      ((normalizer ((A') : Set SL(2,F))) ⊓ G' ⊔ D F) = (normalizer ((D F) : Set SL(2,F))) := by
+      apply le_antisymm
+      · apply sup_le
+        · rw [A'_eq_G'_inf_D]
+
+          apply inf_le_of_left_le
+          rw [normalizer_subgroup_D_eq_DW_of_two_lt_card
+            (by rw [A'_eq_G'_inf_D] at two_lt_card_A'; exact two_lt_card_A') inf_le_right,
+            normalizer_D_eq_DW]
+        · exact le_normalizer
+      · intro x hx
+        rw [normalizer_D_eq_DW] at hx
+        simp only [DW, mem_mk, Submonoid.mem_mk, Subsemigroup.mem_mk, Set.mem_union,
+          Set.mem_setOf_eq] at hx
+        rcases hx with (⟨δ', hδ'⟩ | ⟨δ', hδ'⟩)
+        · exact mem_sup_right (mem_D_iff.mpr ⟨δ', hδ'⟩)
+        · obtain ⟨δ, key_mem, key_not_mem⟩ :=
+            exists_d_mul_w_mem_normalizer_A'_inf_G'_diff_A' A' G' A'_le_D hA'.right
+              two_lt_card_A' A'_eq_G'_inf_D hNA
+          have hcomp : (d δ * w)⁻¹ * (d δ' * w) = d (δ * δ'⁻¹) := by
+            rw [inv_of_d_mul_w, mul_assoc, ← mul_assoc w, w_mul_d_eq_d_inv_w, mul_assoc _ w,
+              w_mul_w_eq_neg_one, inv_d_eq_d_inv, ← mul_assoc, d_mul_d_eq_d_mul, mul_neg_one,
+              neg_d_eq_d_neg, d_eq_d_iff, neg_mul, neg_neg]
+          rw [← hδ', show d δ' * w = (d δ * w) * ((d δ * w)⁻¹ * (d δ' * w)) by group, hcomp]
+          exact Subgroup.mul_mem_sup key_mem (mem_D_iff.mpr ⟨δ * δ'⁻¹, rfl⟩)
+
+    suffices ∃ δ : Fˣ, (d δ * w) ∈ ((normalizer ((A') : Set SL(2,F))) ⊓ G').carrier \ A' by
+      obtain ⟨δ, mem_normalizer_A'_inf_G', not_mem_A'⟩ := this
+      use conj c • (d δ * w)
+      constructor
+      · refine ⟨?mem_normalizer_inf_G, ?not_mem_A'⟩
+        · rw [normalizer_inf_le_eq_normalizer_subgroupOf hA.right]
+          have A_eq_conj_A'' : conj c⁻¹ • A = A' := by
+            rw [A_eq_conj_A', smul_smul, ← map_mul, inv_mul_cancel, map_one, one_smul]
+          have G_eq_conj_G'' : conj c⁻¹ • G = G' := rfl
+          have hkey := mem_normalizer_iff_conj_smul_mem_conj_smul_normalizer' A A' G G' hA hA'
+            A_eq_conj_A'' G_eq_conj_G''
+          rw [mem_carrier, hkey, show (conj c⁻¹ : MulAut SL(2,F)) = (conj c)⁻¹ from map_inv conj c,
+            mem_inv_pointwise_smul_iff, ← mem_carrier,
+            normalizer_inf_le_eq_normalizer_subgroupOf hA.right] at mem_normalizer_A'_inf_G'
+          exact mem_normalizer_A'_inf_G'
+        · intro contr
+          rw [← Set.mem_inv_smul_set_iff, ← map_inv, A_eq_conj_A',
+            map_inv, coe_pointwise_smul, inv_smul_smul, SetLike.mem_coe] at contr
+          contradiction
+      · have conj_x_mem_A' : conj c⁻¹ • x.val ∈ A' := by
+          rw [← mem_inv_pointwise_smul_iff, map_inv, inv_inv, ← A_eq_conj_A']
+          exact x.prop
+        have conj_x_mem_D := A'_le_D conj_x_mem_A'
+        obtain ⟨δ', hδ'⟩ := conj_x_mem_D
+        symm at hδ'
+        rw [smul_eq_iff_eq_inv_smul, map_inv, inv_inv] at hδ'
+        simp only [smul_mul', MulAut.smul_def, conj_apply, conj_mul, hδ', mul_inv_rev, inv_inv,
+          inv_w_eq_neg_w, inv_d_eq_d_inv, neg_mul, w_mul_d_eq_d_inv_w, neg_d_mul_w,
+          InvMemClass.coe_inv]
+        group
+        simp only [Int.reduceNeg, zpow_neg, zpow_one, mul_left_inj]
+        rw [← neg_d_eq_d_neg,
+          show (c * d δ * w * d δ') * -d δ * w
+            = (c * d δ * w * d δ') * d δ * -w by simp [- neg_d_eq_d_neg],
+          ← inv_w_eq_neg_w,
+          show c * d δ * w * d δ' * d δ * w⁻¹
+            = c * d δ * w * (d δ' * d δ) * w⁻¹ by group, d_mul_d_eq_d_mul,
+          show c * d δ * w * d (δ' * δ) * w⁻¹
+            = c * d δ * (w * d (δ' * δ) * w⁻¹) by group,
+            w_mul_d_mul_inv_w_eq_inv_d,  ← d_mul_d_eq_d_mul,
+          show c * d δ * (d δ' * d δ)⁻¹
+            = c * (d δ * (d δ' * d δ)⁻¹) by group]
+        congr
+        simp
+    exact exists_d_mul_w_mem_normalizer_A'_inf_G'_diff_A' A' G' A'_le_D hA'.right two_lt_card_A'
+      A'_eq_G'_inf_D hNA
+  · exfalso
+    obtain ⟨Q, Nontrivial_Q, Finite_Q, Q_le_G, A_eq_QZ, elem_ab_Q, S, hS⟩ := h
+    have bot_lt_Q : ⊥ < Q := bot_lt_iff_ne_bot.mpr ((Subgroup.nontrivial_iff_ne_bot Q).mp Nontrivial_Q)
+    have p_dvd_Q : 2 ∣ Nat.card Q := elem_ab_Q.dvd_card bot_lt_Q
+    have Q_le_A : Q ≤ A := A_eq_QZ ▸ le_sup_left
+    have p_dvd_A : 2 ∣ Nat.card A := p_dvd_Q.trans (Subgroup.card_dvd_of_le Q_le_A)
+    rw [Nat.coprime_comm] at hA'
+    exact (Nat.Prime.coprime_iff_not_dvd Fact.out).mp hA' p_dvd_A
+
   --   use x
   --   constructor
   --   · constructor

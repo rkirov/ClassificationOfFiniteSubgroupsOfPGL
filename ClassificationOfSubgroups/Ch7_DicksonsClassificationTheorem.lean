@@ -1,7 +1,9 @@
 import ClassificationOfSubgroups.Ch4_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_A_MaximalAbelianSubgroup
+import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_B_MaximalAbelianSubgroup
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S4_CaseArithmetic
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S5_NumericClassEquation
+import ClassificationOfSubgroups.Ch7_GroupRecognition
 import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.GroupTheory.Complement
 import Mathlib.GroupTheory.Nilpotent
@@ -14,7 +16,7 @@ import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
 set_option linter.style.longLine true
 set_option maxHeartbeats 0
 
-open Matrix Subgroup LinearMap
+open Matrix Subgroup LinearMap Ch7GroupRecognition
 
 open scoped MatrixGroups Pointwise
 
@@ -306,6 +308,78 @@ def Isomorphic (G H : Type*) [Group G] [Group H] :=
 
 open CaseArithmetic
 
+/-! ### `IsElementaryAbelian` transport lemmas, and: every Sylow `p`-subgroup is elementary abelian
+
+`BridgeData.hSylow`'s Sylow-type witness `Q` (`S5_NumericClassEquation`) does not itself carry an
+`IsElementaryAbelian` fact -- only the maximal abelian subgroup `A = Q ⊔ Z` a Sylow-type class was
+built from does (`isCyclic_and_card_coprime_charP_or_eq_Q_sup_Z`, via `S2_A`'s internal
+construction) -- yet `case_I`'s own conclusion needs exactly `IsElementaryAbelian p Q.toSubgroup`
+for an *arbitrary* Sylow `p`-subgroup `Q` of `G` (not one tied to a witness maximal abelian
+subgroup). This is bridged here: `S2_B_MaximalAbelianSubgroup.exists_conj_Sylow_eq_S_inf_and_
+normalizer_le_L` shows any nontrivial Sylow `p`-subgroup's image in `SL(2,F)` equals `(conj c • S
+F) ⊓ G` for some `c`, i.e. is (isomorphic to) a subgroup of a conjugate of the shear subgroup `S
+F`, which is commutative of exponent `p` (`IsMulCommutative_S`, `order_s_eq_char`) -- hence
+elementary abelian -- unconditionally (this fact does not depend on `Q` arising from any
+particular maximal abelian subgroup). -/
+
+/-- `IsElementaryAbelian` transports along an injective `MonoidHom`. -/
+lemma IsElementaryAbelian_map_of_injective {G H : Type*} [Group G] [Group H] {p : ℕ}
+    {K : Subgroup G} (hK : IsElementaryAbelian p K) (f : G →* H) (hf : Function.Injective f) :
+    IsElementaryAbelian p (K.map f) := by
+  haveI := hK.1
+  refine ⟨inferInstance, ?_⟩
+  rintro ⟨y, hy⟩ hyne
+  obtain ⟨x, hx, rfl⟩ := hy
+  have hxne : (⟨x, hx⟩ : K) ≠ 1 := by
+    intro h
+    apply hyne
+    have hx1 : x = 1 := congrArg Subtype.val h
+    apply Subtype.ext
+    simp [hx1]
+  have hxord : orderOf x = p := (orderOf_coe (⟨x, hx⟩ : K)).trans (hK.2 ⟨x, hx⟩ hxne)
+  have hfxord : orderOf (f x) = p := (orderOf_injective f hf x).trans hxord
+  exact (orderOf_coe _).symm.trans hfxord
+
+/-- `IsElementaryAbelian` is inherited by any subgroup of an elementary abelian subgroup. -/
+lemma IsElementaryAbelian_of_le {G : Type*} [Group G] {p : ℕ} {H K : Subgroup G}
+    (hK : IsElementaryAbelian p K) (hle : H ≤ K) : IsElementaryAbelian p H := by
+  haveI := hK.1
+  refine ⟨isCommutative_of_le_isCommutative H K hle, ?_⟩
+  intro h hne
+  have hne' : (⟨(h : G), hle h.2⟩ : K) ≠ 1 := by
+    intro hcon
+    have heq : (h : G) = 1 := congrArg Subtype.val hcon
+    exact hne (Subtype.ext heq)
+  have := hK.2 ⟨(h : G), hle h.2⟩ hne'
+  rwa [orderOf_mk] at this ⊢
+
+/-- Any nontrivial Sylow `p`-subgroup of a finite `G ≤ SL(2,F)` (`p` the characteristic) is
+elementary abelian. See the module docstring above for the construction. -/
+lemma isElementaryAbelian_of_sylow {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
+    [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G)
+    (hQ : Q.toSubgroup ≠ ⊥) : IsElementaryAbelian p Q.toSubgroup := by
+  obtain ⟨c, hc, -⟩ := exists_conj_Sylow_eq_S_inf_and_normalizer_le_L G Q hQ
+  have hSelemAb : IsElementaryAbelian p (SpecialSubgroups.S F) := by
+    refine ⟨inferInstance, ?_⟩
+    rintro ⟨x, σ, hσ⟩ hne
+    subst hσ
+    have hσne : σ ≠ 0 := by
+      rintro rfl
+      exact hne (Subtype.ext SpecialMatrices.s_zero_eq_one)
+    exact (orderOf_coe _).symm.trans (SpecialMatrices.order_s_eq_char σ hσne)
+  have hconjSF : MulAut.conj c • SpecialSubgroups.S F
+      = (SpecialSubgroups.S F).map (MulAut.conj c).toMonoidHom := rfl
+  have hconjElemAb : IsElementaryAbelian p (MulAut.conj c • SpecialSubgroups.S F) := by
+    rw [hconjSF]
+    exact IsElementaryAbelian_map_of_injective hSelemAb _ (MulAut.conj c).injective
+  have hinfElemAb : IsElementaryAbelian p ((MulAut.conj c • SpecialSubgroups.S F) ⊓ G) :=
+    IsElementaryAbelian_of_le hconjElemAb inf_le_left
+  have hQmapElemAb : IsElementaryAbelian p (Q.toSubgroup.map G.subtype) := hc ▸ hinfElemAb
+  have hsubgroupOf : (Q.toSubgroup.map G.subtype).subgroupOf G = Q.toSubgroup :=
+    Subgroup.comap_map_eq_self_of_injective (Subgroup.subtype_injective G) Q.toSubgroup
+  rw [← hsubgroupOf]
+  exact IsElementaryAbelian.subgroupOf (Q.toSubgroup.map G.subtype) G hQmapElemAb
+
 /-! ### The six cases of the Maximal Abelian Subgroup Class Equation (tex 1421-2160)
 
 Each of the six lemmas below (`case_I` ... `case_VI`) corresponds to one of Butler's six cases of
@@ -523,19 +597,26 @@ of `G` (else, extending `A₁.subgroupOf G` to a genuine `S : Sylow 2 G`, Lemma 
 `A₁.subgroupOf G < normalizer (A₁.subgroupOf G)` inside `S`, contradicting `A₁`'s normalizer
 index `1`, i.e. `A₁.subgroupOf G = normalizer (A₁.subgroupOf G : Set ↥G)`); hence the `2`-part of
 `Nat.card G` is exactly `4`, and since `Nat.card G = e g = 2 (2 g2) = 4 g2`, `g2` is odd. Taking
-`x` a generator of `A₂` (order `2 g2`, `IsCyclic.exists_ofOrder_eq_natCard`) and, via
-`of_index_normalizer_eq_two`, an inverting `y ∈ N_G(A₂) \ A₂` with `y x y⁻¹ = x⁻¹`: `y²`
-centralizes `A₂` (`y² x y⁻² = y x⁻¹ y⁻¹ = x`) hence (maximality of `A₂`) `y² ∈ A₂`; since `y`
-inverts `A₂` pointwise, `y (y²) y⁻¹ = (y²)⁻¹`, but also `= y²` (commuting with itself), so
-`(y²)² = 1`; `y² ∈ A₂` has odd order (`A₂` cyclic of odd order `2g2 / gcd(2,2g2)`... concretely
-`orderOf (y²) ∣ 2 g2` and `∣ 2`, and since `A₂`'s odd-order part... -- see in-proof comment for
-the precise argument used instead: `y²`, `y ∉ A₂` and `[N_G(A₂):A₂] = 2` combine with `A₁` being
-the *only* other maximal abelian class (`|𝒞₁| = 1`) to force `y ∈ A₁` (Butler tex ~1512), giving
-`orderOf y ∣ 4`; the direct order-`4`/order-`2` count is what pins down `y² = x^{g2}`. This
-precise step is reproduced following Butler's own argument (not re-derived from scratch) since
-it is the one genuinely SL(2,F)-specific input. `mulEquiv_quaternionGroup_of` (from
+`g0` a generator of `A₂` (order `2 g2`, `IsCyclic.exists_generator`) and, via
+`of_index_normalizer_eq_two`, an inverting `y ∈ N_G(A₂) \ A₂` with `y g0 y⁻¹ = g0⁻¹`: since `A₂` is
+cyclic generated by `g0`, `y` in fact inverts *every* element of `A₂`, not just `g0`; in
+particular `y²` centralizes `A₂` pointwise (`y (y a) y⁻¹ = y a⁻¹ y⁻¹ = a` for `a ∈ A₂` -- see
+`hinvert`/`hy2_comm` in-proof), so (maximality of `A₂`, via the same closure/`Maximal` argument as
+Lemma 3.2 above) `y² ∈ A₂`. Being an element of `A₂` itself, `y` also inverts `y²`, giving
+`y (y²) y⁻¹ = (y²)⁻¹`; but conjugating a power of `y` by `y` fixes it, `y (y²) y⁻¹ = y²`; so
+`(y²)² = 1`. This rules out `y² = 1` (else `y` itself would be an involution, but `SL(2,F)`'s
+*unique* involution `-1` (`p ≠ 2`, `SpecialSubgroups.exists_unique_orderOf_eq_two`) already lies in
+`center SL(2,F) ≤ A₂` -- `center_le` -- while `y ∉ A₂`, a contradiction), so `y²` is *the* order-`2`
+element of the cyclic group `A₂` (order `2 g2`, `g2` odd): writing `y² = g0 ^ n` for the unique
+`n < orderOf g0 = 2 g2` (`IsOfFinOrder.mem_zpowers_iff_mem_range_orderOf`), `(y²)² = 1` forces
+`g2 ∣ n`, and `y² ≠ 1` forces `¬ (2 g2 ∣ n)`; writing `n = g2 t`, this pins down `t = 1`, i.e.
+`y² = g0 ^ g2`. This closes the gap left by the original module plan (which additionally invoked
+"`A₂` normal and `A₁` the *only* other maximal abelian class forces `y ∈ A₁`", a global structural
+fact about the noncenter decomposition not otherwise threaded through to this lemma's hypotheses)
+with a self-contained cyclic-group argument instead. `mulEquiv_quaternionGroup_of` (from
 `Ch7_GroupRecognition`, imported below) then gives `G ≃* QuaternionGroup g2` directly, since
 `Nat.card G = 4 * g2`.
+PROVED for Case IIa.
 
 Case IIb (`g1 = 3`) is left sorried: Butler's construction there is a genuinely separate,
 substantial argument (an explicit `G ⧸ N ≅ ℤ/3` action on the three conjugates of `A₂`, tex
@@ -674,24 +755,198 @@ lemma case_II {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
         Nat.prime_two.factorization_pos_of_dvd hg2ne hdvd2
       omega
     refine ⟨g2, hodd, ?_⟩
-    -- TODO: the remaining step needs Butler's identification `y² = x^{g2}` (tex ~1508-1520):
-    -- `y` (the `Theorem 6.8(iv)` inverter of `A₂`'s generator, obtained below) satisfies
-    -- `y² ∈ A₂` (it centralizes `A₂`: `y² x y⁻² = y x⁻¹ y⁻¹ = x`, so `⟨A₂, y²⟩` is abelian,
-    -- hence `⊆ A₂` by `A₂`'s maximality); pinning `y²` down to the *specific* element `x^{g2}`
-    -- (the unique involution `-1`, via `SpecialSubgroups`/`exists_unique_orderOf_eq_two`, `p ≠ 2`)
-    -- needs `y ∈ A₁` (since `A₂` is normal -- `|𝒞₂| = 1` -- and `y ∉ A₂`, `y` must lie in the
-    -- *other* maximal abelian class `A₁`, using that every element of `G` lies in *some* maximal
-    -- abelian subgroup and there are only the two classes `A₁`, `A₂` here), giving
-    -- `orderOf y ∣ Nat.card A₁ = 4`, and since only elements of order `≤ 2` are central
-    -- (`orderOf y ≠ 1, 2` as `y ∉ A₂ ⊇ center`), `orderOf y = 4`; combined with `y² ∈ A₂`
-    -- (order `2g2`) having order dividing `4/gcd(...)`, `y²` is forced to be *the* order-`2`
-    -- element of `A₂`, namely `x^{g2}`. The "every element lies in a maximal abelian subgroup,
-    -- and there are only these two classes" facts are global structural statements about `G`
-    -- (Theorem 6.x's noncenter decomposition, `S3_NoncenterClassEquation`/`S5`) not threaded
-    -- through to this lemma's hypotheses (unlike `A₁`/`A₂` themselves); doing so is a
-    -- substantially larger restatement than the witnesses already added, so this final step is
-    -- left as a sorry rather than attempted with fabricated hypotheses.
-    sorry
+    classical
+    -- Butler's identification `y² = x^{g2}` (tex ~1508-1520), *without* needing the "only two
+    -- classes" global fact used in the original sketch: `y` (the `Theorem 6.8(iv)` inverter of
+    -- `A₂`'s generator `g0`, obtained below) inverts *every* element of the cyclic group `A₂`
+    -- (not just the generator), so `y²` centralizes `A₂`, hence lies in `A₂` by `A₂`'s
+    -- maximality; `y²` then satisfies `(y²)² = 1` (it commutes with itself, but `y` inverts it as
+    -- an element of `A₂`) and `y² ≠ 1` (else `y` itself would be an involution, contradicting the
+    -- *uniqueness* of `SL(2,F)`'s involution `-1` -- `exists_unique_orderOf_eq_two`, `p ≠ 2` --
+    -- since `-1 ∈ center SL(2,F) ≤ A₂` while `y ∉ A₂`); so `y²` is *the* order-`2` element of the
+    -- cyclic group `A₂` (order `2 g2`, `g2` odd), i.e. `g0 ^ g2`.
+    haveI hF2 : NeZero (2 : F) := ⟨by
+      intro h2
+      have hCharP2 : CharP F 2 := CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero h2
+      exact hp_ne_two (CharP.eq F (‹CharP F p› : CharP F p) hCharP2)⟩
+    haveI hA2_fin : Finite A2 :=
+      (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hA2_mem.right).to_subtype
+    -- A generator `g0` of the cyclic group `A2`, with `orderOf (g0 : SL(2,F)) = 2 * g2`.
+    obtain ⟨g0, hg0_gen⟩ := hA2_cyc.exists_generator
+    have horder_g0 : orderOf g0 = Nat.card A2 := orderOf_eq_card_of_forall_mem_zpowers hg0_gen
+    have horder_g0SL : orderOf (g0 : SL(2,F)) = 2 * g2 := by
+      rw [orderOf_coe, horder_g0, hA2_card, he2]
+    haveI hg0_finord : IsOfFinOrder g0 := orderOf_pos_iff.mp (horder_g0 ▸ Nat.card_pos)
+    -- Theorem 6.8(iv): an inverting element `y ∈ N_G(A2) \ A2`.
+    obtain ⟨y, hy_mem, hy_conj⟩ :=
+      of_index_normalizer_eq_two hp_ne_two A2 G hA2_mem center_le_G hA2_cop hA2_relIndex g0
+    simp only [Set.mem_sdiff, SetLike.mem_coe, Subgroup.mem_carrier, Subgroup.mem_inf] at hy_mem
+    obtain ⟨⟨hy_mem_norm, hy_mem_G⟩, hy_notin_A2⟩ := hy_mem
+    -- `y` inverts every element of `A2` (it inverts the generator `g0`).
+    have hinvert : ∀ a : SL(2,F), a ∈ A2 → y * a * y⁻¹ = a⁻¹ := by
+      intro a ha
+      obtain ⟨n, hn⟩ := hg0_gen ⟨a, ha⟩
+      have hn' : (g0 : SL(2,F)) ^ n = a := by
+        have := congrArg (Subtype.val) hn
+        simpa using this
+      have hconj_pow : y * (g0 : SL(2,F)) ^ n * y⁻¹ = ((g0 : SL(2,F)) ^ n)⁻¹ := by
+        have h1 := map_zpow (MulAut.conj y).toMonoidHom (g0 : SL(2,F)) n
+        simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h1
+        rw [h1, hy_conj, Subgroup.coe_inv, _root_.inv_zpow]
+      rwa [hn'] at hconj_pow
+    -- `y²` commutes with every element of `A2`.
+    have hy2_comm : ∀ a : SL(2,F), a ∈ A2 → y ^ 2 * a = a * y ^ 2 := by
+      intro a ha
+      have h1 : y * a = a⁻¹ * y := by
+        have h := hinvert a ha
+        have h2 : y * a * y⁻¹ * y = a⁻¹ * y := by rw [h]
+        simpa [mul_assoc] using h2
+      have h2 : y * a⁻¹ = a * y := by
+        have h := hinvert a⁻¹ (Subgroup.inv_mem A2 ha)
+        rw [inv_inv] at h
+        have h3 : y * a⁻¹ * y⁻¹ * y = a * y := by rw [h]
+        simpa [mul_assoc] using h3
+      calc y ^ 2 * a = y * y * a := by rw [pow_two]
+        _ = y * (y * a) := by rw [mul_assoc]
+        _ = y * (a⁻¹ * y) := by rw [h1]
+        _ = y * a⁻¹ * y := by rw [mul_assoc]
+        _ = (a * y) * y := by rw [h2]
+        _ = a * (y * y) := by rw [mul_assoc]
+        _ = a * y ^ 2 := by rw [pow_two]
+    -- Maximality of `A2` (as an internal subgroup of `↥G`) forces `y² ∈ A2`.
+    have hy2_mem_G : y ^ 2 ∈ G := Subgroup.pow_mem G hy_mem_G 2
+    set A2' : Subgroup ↥G := A2.subgroupOf G with hA2'_def
+    set y2' : ↥G := ⟨y ^ 2, hy2_mem_G⟩ with hy2'_def
+    have hy2_mem_A2 : y ^ 2 ∈ A2 := by
+      set k : Set ↥G := (A2' : Set ↥G) ∪ {y2'} with hk_def
+      have hcomm_k : ∀ a ∈ k, ∀ b ∈ k, a * b = b * a := by
+        haveI := hA2_mem.left.1
+        rintro a (ha | ha) b (hb | hb)
+        · exact setLike_mul_comm ha hb
+        · simp only [Set.mem_singleton_iff] at hb; subst hb
+          apply Subtype.ext
+          have ha' : (a : SL(2,F)) ∈ A2 := by
+            rw [SetLike.mem_coe, hA2'_def, Subgroup.mem_subgroupOf] at ha; exact ha
+          simpa [hy2'_def] using (hy2_comm a ha').symm
+        · simp only [Set.mem_singleton_iff] at ha; subst ha
+          apply Subtype.ext
+          have hb' : (b : SL(2,F)) ∈ A2 := by
+            rw [SetLike.mem_coe, hA2'_def, Subgroup.mem_subgroupOf] at hb; exact hb
+          simpa [hy2'_def] using hy2_comm b hb'
+        · simp only [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
+      haveI hclosure_comm : IsMulCommutative (closure k) :=
+        Subgroup.isMulCommutative_closure hcomm_k
+      have hA2'_le_closure : A2' ≤ closure k := by
+        rw [← Subgroup.closure_eq A2']
+        exact Subgroup.closure_mono (Set.subset_union_left)
+      have hclosure_le : closure k ≤ A2' := hA2_mem.left.2 hclosure_comm hA2'_le_closure
+      have hy2'_mem_closure : y2' ∈ closure k := subset_closure (Set.mem_union_right _ rfl)
+      have hy2'_mem_A2' : y2' ∈ A2' := hclosure_le hy2'_mem_closure
+      rwa [hA2'_def, Subgroup.mem_subgroupOf] at hy2'_mem_A2'
+    -- `(y²)² = 1`: `y` both fixes `y²` (conjugation by a power of itself) and inverts it
+    -- (as an element of `A2`).
+    have h1 : y * y ^ 2 * y⁻¹ = (y ^ 2)⁻¹ := hinvert (y ^ 2) hy2_mem_A2
+    have h2 : y * y ^ 2 * y⁻¹ = y ^ 2 := by group
+    have hz0_inv : (y ^ 2)⁻¹ = y ^ 2 := h1.symm.trans h2
+    have hz0sq : y ^ 2 * y ^ 2 = 1 := by
+      calc y ^ 2 * y ^ 2 = y ^ 2 * (y ^ 2)⁻¹ := by rw [hz0_inv]
+        _ = 1 := mul_inv_cancel _
+    -- `y² ≠ 1`, else `y` would be an involution -- but `SL(2,F)`'s unique involution `-1`
+    -- already lies in `A2 ⊇ center SL(2,F)`, while `y ∉ A2`.
+    have hy2_ne_one : y ^ 2 ≠ 1 := by
+      intro hy2eq1
+      have hy_ne_one : y ≠ 1 := by
+        intro hy1
+        apply hy_notin_A2
+        rw [hy1]
+        exact Subgroup.one_mem A2
+      have hdvd : orderOf y ∣ 2 := orderOf_dvd_of_pow_eq_one hy2eq1
+      have hord_ne_one : orderOf y ≠ 1 := by
+        rw [Ne, orderOf_eq_one_iff]; exact hy_ne_one
+      have hy_ord2 : orderOf y = 2 := by
+        rcases Nat.prime_two.eq_one_or_self_of_dvd _ hdvd with h | h
+        · exact absurd h hord_ne_one
+        · exact h
+      have hy_eq_negone : y = -1 :=
+        SpecialSubgroups.exists_unique_orderOf_eq_two.unique hy_ord2
+          SpecialSubgroups.orderOf_neg_one_eq_two
+      apply hy_notin_A2
+      rw [hy_eq_negone]
+      have hcenle : center SL(2,F) ≤ A2 := center_le G A2 hA2_mem center_le_G
+      apply hcenle
+      rw [SpecialSubgroups.center_SL2_eq_Z]
+      exact SpecialSubgroups.neg_one_mem_Z
+    -- Hence `y²` is *the* order-`2` element of `A2`.
+    have hz0sq' : (y ^ 2) ^ 2 = 1 := by
+      have hexp : (y ^ 2) ^ 2 = y ^ 2 * y ^ 2 := by group
+      rw [hexp]; exact hz0sq
+    have horder_z0 : orderOf (y ^ 2) = 2 := by
+      have hdvd : orderOf (y ^ 2) ∣ 2 := orderOf_dvd_of_pow_eq_one hz0sq'
+      have hne1 : orderOf (y ^ 2) ≠ 1 := by rw [Ne, orderOf_eq_one_iff]; exact hy2_ne_one
+      rcases Nat.prime_two.eq_one_or_self_of_dvd _ hdvd with h | h
+      · exact absurd h hne1
+      · exact h
+    -- Write `y² = g0 ^ n` for some `n < orderOf g0 = 2 * g2`, and pin `n = g2` down using
+    -- `y² ≠ 1` and `(y²)² = 1`.
+    have hz0mem : (⟨y ^ 2, hy2_mem_A2⟩ : A2) ∈ Subgroup.zpowers g0 := hg0_gen _
+    rw [hg0_finord.mem_zpowers_iff_mem_range_orderOf] at hz0mem
+    simp only [Finset.mem_image, Finset.mem_range] at hz0mem
+    obtain ⟨n, hn_lt, hn_eq⟩ := hz0mem
+    have hn_eq' : (g0 : SL(2,F)) ^ n = y ^ 2 := by
+      have := congrArg (Subtype.val) hn_eq
+      simpa using this
+    have horder_g0_eq : orderOf g0 = 2 * g2 := by rw [horder_g0, hA2_card, he2]
+    rw [horder_g0_eq] at hn_lt
+    have hn2 : (g0 : SL(2,F)) ^ (n * 2) = 1 := by
+      rw [pow_mul, hn_eq']; exact hz0sq'
+    have hdvd1 : orderOf (g0 : SL(2,F)) ∣ n * 2 := orderOf_dvd_of_pow_eq_one hn2
+    rw [horder_g0SL] at hdvd1
+    have hg2_dvd_n : g2 ∣ n := by
+      have h1 : g2 * 2 ∣ n * 2 := by rwa [mul_comm 2 g2] at hdvd1
+      exact (Nat.mul_dvd_mul_iff_right (by norm_num : (0:ℕ) < 2)).mp h1
+    obtain ⟨t, ht⟩ := hg2_dvd_n
+    have hn_ne : ¬ (2 * g2) ∣ n := by
+      intro hdvd
+      apply hy2_ne_one
+      have hdvd' : orderOf (g0 : SL(2,F)) ∣ n := by rw [horder_g0SL]; exact hdvd
+      rw [← hn_eq']
+      exact orderOf_dvd_iff_pow_eq_one.mp hdvd'
+    have ht2 : ¬ 2 ∣ t := by
+      intro h2t
+      apply hn_ne
+      rw [ht]
+      obtain ⟨j, hj⟩ := h2t
+      exact ⟨j, by rw [hj]; ring⟩
+    have ht_lt : t < 2 := by
+      by_contra hcon
+      push Not at hcon
+      have hge : 2 * g2 ≤ g2 * t := by
+        calc 2 * g2 = g2 * 2 := by ring
+          _ ≤ g2 * t := Nat.mul_le_mul_left g2 hcon
+      rw [← ht] at hge
+      omega
+    have ht_eq : t = 1 := by omega
+    have hn_eq_g2 : n = g2 := by rw [ht, ht_eq, mul_one]
+    have hy2eq : y ^ 2 = (g0 : SL(2,F)) ^ g2 := by rw [← hn_eq_g2]; exact hn_eq'.symm
+    -- Assemble `mulEquiv_quaternionGroup_of`'s hypotheses and conclude.
+    haveI : NeZero g2 := ⟨hg2pos.ne'⟩
+    set x0 : ↥G := ⟨(g0 : SL(2,F)), hA2_mem.right g0.2⟩ with hx0_def
+    set y0 : ↥G := ⟨y, hy_mem_G⟩ with hy0_def
+    have hx0_ord : orderOf x0 = 2 * g2 := by
+      have h := orderOf_injective G.subtype (Subgroup.subtype_injective G) x0
+      rw [← h]; exact horder_g0SL
+    have hy0_2 : y0 ^ 2 = x0 ^ g2 := Subtype.ext hy2eq
+    have hconj0 : y0 * x0 * y0⁻¹ = x0⁻¹ := Subtype.ext hy_conj
+    have hyx0 : y0 ∉ Subgroup.zpowers x0 := by
+      intro hmem
+      obtain ⟨k, hk⟩ := hmem
+      apply hy_notin_A2
+      have hk' : (g0 : SL(2,F)) ^ k = y := by
+        have := congrArg (Subtype.val) hk
+        simpa using this
+      rw [← hk']
+      exact Subgroup.zpow_mem A2 g0.2 k
+    exact ⟨mulEquiv_quaternionGroup_of x0 y0 hx0_ord hy0_2 hconj0 hyx0 hcardG4g2⟩
   · -- **Case IIb** (`g1 = 3`): left sorried -- see docstring.
     left
     sorry
