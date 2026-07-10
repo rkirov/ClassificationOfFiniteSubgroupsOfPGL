@@ -21,9 +21,17 @@ The plan (Butler ~1107-1150):
   `card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet`) in terms
   of `Nat.card G`, `Nat.card A` and `[N_G(A) : A] ∈ {1, 2}` (Theorem 6.8(iv),
   `relIndex_normalizer_le_two`, proved in `S2_A` for `p ≠ 2`).
-* For the (unique, if it exists) Sylow-type class, the analogous statement is recorded using
-  `normalizer_Sylow_join_center_eq_normalizer_Sylow` and
-  `exists_IsCyclic_K_normalizer_eq_Q_join_K` (`S2_B`/`S3`).
+* For the (unique, if it exists) Sylow-type class, the analogous statement
+  (`card_union_conjClasses_sylow_class`) is now also fully proved: the key extra step -- not
+  anticipated by the original module plan -- is
+  `normalizer_join_eq_normalizer_of_isPGroup_of_central_of_coprime`, which shows
+  `N_G(Q ⊔ Z) = N_G(Q)` via a Sylow-uniqueness/characteristic-subgroup argument
+  (`Sylow.characteristic_of_normal`) rather than by directly transporting the *set-union* fact
+  `normalizer_Sylow_join_center_eq_normalizer_Sylow` (which is about `Q ∪ Z` as a plain set,
+  not the subgroup join `Q ⊔ Z`, and so does not transport directly).
+  `card_union_conjClasses_sylow_class` is stated with three extra hypotheses (`Q ≠ ⊥`, `K ≤ G`,
+  `Disjoint (Q.subgroupOf G) (K.subgroupOf G)`) beyond the original module plan's sketch; see its
+  docstring for why each is needed and why each holds in the intended application.
 
 Full closure into a single instance of `CaseArithmetic.ClassEquation` is NOT attempted here;
 `main_bridge` at the end states the target shape and is left as an honestly-documented
@@ -346,39 +354,317 @@ theorem card_union_conjClasses_coprime_class_rat {G A : Subgroup SL(2,F)} [Finit
 
 end CoprimeClassCard
 
-/-! ### 5. Cardinality of the Sylow-type conjugacy class (Butler ~1150-1180, second half)
-
-STRETCH: the direct analogue of `card_union_conjClasses_coprime_class` for the (unique, by
-`isSylowType_conj_of_isSylowType`) Sylow-type class. -/
+/-! ### 5. Cardinality of the Sylow-type conjugacy class (Butler ~1150-1180, second half) -/
 
 section SylowClassCard
 
-variable {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
-variable {p : ℕ} [Fact (Nat.Prime p)] [CharP F p]
+/-! #### 5a. Generic subgroup-theoretic helper lemmas (not specific to `SL(2,F)`) -/
+
+/-- If `K.Normal` and `H, K` are disjoint, `|H ⊔ K| = |H| ⋅ |K|`: the underlying set of `H ⊔ K`
+is `H * K` (`Subgroup.mul_normal`), and the multiplication map `H × K → H * K` is a bijection
+(injective since `H ⊓ K = ⊥`, by construction surjective onto `H * K`). -/
+theorem card_sup_eq_of_disjoint_of_normal {L : Type*} [Group L] [Finite L]
+    {H K : Subgroup L} [K.Normal] (hd : Disjoint H K) :
+    Nat.card (H ⊔ K : Subgroup L) = Nat.card H * Nat.card K := by
+  have hset : ((H ⊔ K : Subgroup L) : Set L) = (H : Set L) * (K : Set L) := Subgroup.mul_normal H K
+  have hinj : Function.Injective (fun g : H × K => (g.1 : L) * g.2) :=
+    Subgroup.mul_injective_of_disjoint hd
+  have hrange : Set.range (fun g : H × K => (g.1 : L) * g.2) = ((H ⊔ K : Subgroup L) : Set L) := by
+    rw [hset]
+    ext x
+    constructor
+    · rintro ⟨⟨h, k⟩, rfl⟩
+      exact Set.mul_mem_mul h.2 k.2
+    · intro hx
+      rw [Set.mem_mul] at hx
+      obtain ⟨h, hh, k, hk, rfl⟩ := hx
+      exact ⟨(⟨h, hh⟩, ⟨k, hk⟩), rfl⟩
+  calc Nat.card (H ⊔ K : Subgroup L)
+      = Nat.card (((H ⊔ K : Subgroup L) : Set L)) := (Nat.card_coe_set_eq _).symm
+    _ = Nat.card (Set.range (fun g : H × K => (g.1 : L) * g.2)) := by rw [hrange]
+    _ = Nat.card (H × K) := Nat.card_congr (Equiv.ofInjective _ hinj).symm
+    _ = Nat.card H * Nat.card K := Nat.card_prod H K
+
+/-- Same conclusion as `card_sup_eq_of_disjoint_of_normal`, but with the (weaker, and here more
+convenient) hypothesis `H ≤ normalizer K` in place of `K.Normal`: the underlying set of `H ⊔ K` is
+still `H * K` (`Subgroup.coe_mul_of_left_le_normalizer_right`), and the rest of the argument is
+identical. -/
+theorem card_sup_eq_of_disjoint_of_le_normalizer {L : Type*} [Group L] [Finite L]
+    {H K : Subgroup L} (hle : H ≤ normalizer (K : Set L)) (hd : Disjoint H K) :
+    Nat.card (H ⊔ K : Subgroup L) = Nat.card H * Nat.card K := by
+  have hset : ((H ⊔ K : Subgroup L) : Set L) = (H : Set L) * (K : Set L) :=
+    coe_mul_of_left_le_normalizer_right H K hle
+  have hinj : Function.Injective (fun g : H × K => (g.1 : L) * g.2) :=
+    Subgroup.mul_injective_of_disjoint hd
+  have hrange : Set.range (fun g : H × K => (g.1 : L) * g.2) = ((H ⊔ K : Subgroup L) : Set L) := by
+    rw [hset]
+    ext x
+    constructor
+    · rintro ⟨⟨h, k⟩, rfl⟩
+      exact Set.mul_mem_mul h.2 k.2
+    · intro hx
+      rw [Set.mem_mul] at hx
+      obtain ⟨h, hh, k, hk, rfl⟩ := hx
+      exact ⟨(⟨h, hh⟩, ⟨k, hk⟩), rfl⟩
+  calc Nat.card (H ⊔ K : Subgroup L)
+      = Nat.card (((H ⊔ K : Subgroup L) : Set L)) := (Nat.card_coe_set_eq _).symm
+    _ = Nat.card (Set.range (fun g : H × K => (g.1 : L) * g.2)) := by rw [hrange]
+    _ = Nat.card (H × K) := Nat.card_congr (Equiv.ofInjective _ hinj).symm
+    _ = Nat.card H * Nat.card K := Nat.card_prod H K
+
+/-- If `N_L(Q) = Q ⊔ K` and `Q, K` are disjoint, then `|N_L(Q)| = |Q| ⋅ |K|`
+(`K ≤ Q ⊔ K = N_L(Q)` gives the hypothesis of `card_sup_eq_of_disjoint_of_le_normalizer`). -/
+theorem card_normalizer_join_eq_of_disjoint_of_le {L : Type*} [Group L] [Finite L]
+    {Qg Kg : Subgroup L} (hNG : normalizer (Qg : Set L) = Qg ⊔ Kg)
+    (hQK : Disjoint Qg Kg) :
+    Nat.card (normalizer (Qg : Set L)) = Nat.card Qg * Nat.card Kg := by
+  have hle : Kg ≤ normalizer (Qg : Set L) := hNG ▸ le_sup_right
+  have hcard := card_sup_eq_of_disjoint_of_le_normalizer hle hQK.symm
+  rw [sup_comm] at hcard
+  rw [hNG, hcard, mul_comm]
 
 /--
-STRETCH (not proved): the analogue of `card_union_conjClasses_coprime_class` for a Sylow-type
-maximal abelian subgroup `A = Q ⊔ Z`. The intended proof: `N_G(A) = N_G(Q)`
-(`normalizer_noncentral_eq` + `normalizer_Sylow_join_center_eq_normalizer_Sylow`) and (Theorem
-6.8(v-a), `exists_IsCyclic_K_normalizer_eq_Q_join_K`) `N_G(Q) = Q ⊔ K` for a cyclic `K` with
-`Q ⊓ K = ⊥` (Schur–Zassenhaus complement), so `|N_G(A)| = |Q| \cdot |K|`
-(`IsComplement'.card_mul`/Lagrange); feeding this into the same three `S3` bijections used in
-`card_union_conjClasses_coprime_class`
+The normalizer of a "Sylow-type" join `Q ⊔ Zc` (`Q` a nontrivial finite `p`-group, `Zc` central
+and of order coprime to `p`) equals the normalizer of `Q` alone. Proof: `Zc` is central hence
+normal, and (since it centralizes everything) `Q ⊔ Zc ≤ normalizer Q`, giving one inclusion
+(`normalizer_le_normalizer_sup_normal` gives the other, easy, inclusion for free). For the hard
+inclusion, `Q` is normal in `Ag := Q ⊔ Zc` (again since `Zc` is central) and, since `[Ag : Q] =
+|Zc|` is coprime to `p` (`IsPGroup.toSylow`), `Q` -- viewed inside `Ag` -- is *the* Sylow
+`p`-subgroup of `Ag`; being normal, it is then *characteristic* in `Ag`
+(`Sylow.characteristic_of_normal`), i.e. fixed (setwise) by every automorphism of `Ag`, in
+particular by the restriction of `conj y` to `Ag` for any `y` normalizing `Ag`. This forces
+`y` to normalize `Q` too. -/
+theorem normalizer_join_eq_normalizer_of_isPGroup_of_central_of_coprime
+    {L : Type*} [Group L] [Finite L] {p : ℕ} [hp : Fact (Nat.Prime p)]
+    {Q Zc : Subgroup L} (hQp : IsPGroup p Q) (hQnontriv : Q ≠ ⊥)
+    (hZcentral : Zc ≤ center L)
+    (hcop : Nat.Coprime (Nat.card Q) (Nat.card Zc)) :
+    normalizer ((Q ⊔ Zc : Subgroup L) : Set L) = normalizer (Q : Set L) := by
+  haveI hZnormal : Zc.Normal := instNormalLeCenter Zc hZcentral
+  apply le_antisymm _ normalizer_le_normalizer_sup_normal
+  -- hard direction
+  set Ag : Subgroup L := Q ⊔ Zc with hAg_def
+  have hQ_le_Ag : Q ≤ Ag := le_sup_left
+  have hAg_le_normQ : Ag ≤ normalizer (Q : Set L) := by
+    apply sup_le le_normalizer
+    intro z hz
+    rw [mem_normalizer_iff]
+    intro q
+    have hcomm : q * z = z * q := (mem_center_iff.mp (hZcentral hz)) q
+    have heq : z * q * z⁻¹ = q := by rw [← hcomm, mul_inv_cancel_right]
+    rw [heq]
+  haveI hQnormal : (Q.subgroupOf Ag).Normal :=
+    (normal_subgroupOf_iff_le_normalizer hQ_le_Ag).mpr hAg_le_normQ
+  have hdisj : Disjoint Q Zc := Subgroup.disjoint_of_coprime_natCard hcop
+  have hcardAg : Nat.card Ag = Nat.card Q * Nat.card Zc :=
+    card_sup_eq_of_disjoint_of_normal hdisj
+  set Qr : Subgroup Ag := Q.subgroupOf Ag with hQr_def
+  have hcard_Qr : Nat.card Qr = Nat.card Q :=
+    Nat.card_congr (subgroupOfEquivOfLe hQ_le_Ag).toEquiv
+  have hQr_pgroup : IsPGroup p Qr := hQp.comap_subtype
+  have hQr_index : Qr.index = Nat.card Zc := by
+    have hL := Subgroup.card_mul_index Qr
+    rw [hcard_Qr] at hL
+    have hL' : Nat.card Q * Qr.index = Nat.card Q * Nat.card Zc := by rw [hL, hcardAg]
+    exact Nat.eq_of_mul_eq_mul_left Nat.card_pos hL'
+  have hpQ : p ∣ Nat.card Q := by
+    obtain ⟨n, hn⟩ := IsPGroup.iff_card.mp hQp
+    rcases Nat.eq_zero_or_pos n with hn0 | hn0
+    · exfalso; apply hQnontriv
+      rw [← Subgroup.card_eq_one]
+      rw [hn, hn0, pow_zero]
+    · rw [hn]; exact dvd_pow_self p hn0.ne'
+  have hQr_not_dvd_index : ¬ p ∣ Qr.index := by
+    rw [hQr_index]
+    intro hpdvd
+    have hp1 : p ∣ 1 := hcop ▸ Nat.dvd_gcd (hcard_Qr ▸ hpQ) hpdvd
+    have h1p := hp.out.one_lt
+    have := Nat.le_of_dvd Nat.one_pos hp1
+    omega
+  set SQ : Sylow p Ag := hQr_pgroup.toSylow hQr_not_dvd_index with hSQ_def
+  have hSQ_coe : (SQ : Subgroup Ag) = Qr := IsPGroup.toSylow_coe hQr_pgroup hQr_not_dvd_index
+  haveI hSQ_normal : SQ.Normal := by
+    show (SQ : Subgroup Ag).Normal
+    rw [hSQ_coe]; exact hQnormal
+  haveI hfinSylow : Finite (Sylow p Ag) :=
+    Finite.of_injective (fun S : Sylow p Ag => (S.toSubgroup : Set Ag))
+      (fun _S _T hST => Sylow.ext (SetLike.coe_injective hST))
+  haveI := Sylow.characteristic_of_normal SQ hSQ_normal
+  -- now conclude
+  intro y hy
+  rw [mem_normalizer_iff_map_conj_eq] at hy
+  rw [mem_normalizer_iff_map_conj_eq]
+  have hy' : Ag.map (MulAut.conj y) = Ag := hy
+  set f : L →* L := (MulAut.conj y).toMonoidHom with hf_def
+  have hfinj : Function.Injective f := (MulAut.conj y).injective
+  have hQmap_le_Ag : Q.map f ≤ Ag := hy' ▸ Subgroup.map_mono hQ_le_Ag
+  have hcard_Qmap : Nat.card (Q.map f) = Nat.card Q :=
+    (Nat.card_congr (Q.equivMapOfInjective f hfinj).toEquiv).symm
+  -- generic fact: any p-subgroup `R ≤ Ag` with the same cardinality as `Q` has index coprime `p`.
+  have not_dvd_index_of_card_eq : ∀ R : Subgroup L, R ≤ Ag → Nat.card R = Nat.card Q →
+      ¬ p ∣ (R.subgroupOf Ag).index := by
+    intro R hR_le hR_card hpdvd
+    have hcard_Rr : Nat.card (R.subgroupOf Ag) = Nat.card Q := by
+      rw [Nat.card_congr (subgroupOfEquivOfLe hR_le).toEquiv]; exact hR_card
+    have hL := Subgroup.card_mul_index (R.subgroupOf Ag)
+    rw [hcard_Rr] at hL
+    have hL' : Nat.card Q * (R.subgroupOf Ag).index = Nat.card Q * Nat.card Zc := by
+      rw [hL, hcardAg]
+    have hindex_eq : (R.subgroupOf Ag).index = Nat.card Zc :=
+      Nat.eq_of_mul_eq_mul_left Nat.card_pos hL'
+    rw [hindex_eq] at hpdvd
+    have hp1 : p ∣ 1 := hcop ▸ Nat.dvd_gcd (hcard_Qr ▸ hpQ) hpdvd
+    have h1p := hp.out.one_lt
+    have := Nat.le_of_dvd Nat.one_pos hp1
+    omega
+  have hQmap_pgroup : IsPGroup p (Q.map f) := hQp.map f
+  set Q'r : Subgroup Ag := (Q.map f).subgroupOf Ag with hQ'r_def
+  have hQ'r_pgroup : IsPGroup p Q'r := hQmap_pgroup.comap_subtype
+  have hQ'r_not_dvd_index : ¬ p ∣ Q'r.index :=
+    not_dvd_index_of_card_eq (Q.map f) hQmap_le_Ag hcard_Qmap
+  set SQ' : Sylow p Ag := hQ'r_pgroup.toSylow hQ'r_not_dvd_index with hSQ'_def
+  have hSQ'_coe : (SQ' : Subgroup Ag) = Q'r := IsPGroup.toSylow_coe hQ'r_pgroup hQ'r_not_dvd_index
+  obtain ⟨g, hg⟩ := MulAction.exists_smul_eq (α := Sylow p Ag) Ag SQ SQ'
+  rw [Sylow.smul_eq_of_normal] at hg
+  have hQrQ'r : Qr = Q'r := by rw [← hSQ_coe, ← hSQ'_coe, hg]
+  have hkey : Q = Q.map f := by
+    have := congrArg (Subgroup.map Ag.subtype) hQrQ'r
+    rwa [hQr_def, hQ'r_def, map_subgroupOf_eq_of_le hQ_le_Ag,
+      map_subgroupOf_eq_of_le hQmap_le_Ag] at this
+  exact hkey.symm
+
+/-! #### 5b. The `SL(2,F)`-specific cardinality identity -/
+
+variable {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
+variable {p : ℕ} [hp' : Fact (Nat.Prime p)] [CharP F p]
+
+omit [IsAlgClosed F] [DecidableEq F] in
+/-- `Nat.card (Z F)` is coprime to `p` (it is `1` if `p = 2` -- since then `-1 = 1` -- and `2`
+otherwise, and `2 ≠ p` for an odd prime `p`). -/
+theorem coprime_card_Z_prime : Nat.Coprime (Nat.card (Z F)) p := by
+  have hp : Nat.Prime p := Fact.out
+  by_cases hp2 : p = 2
+  · have h2 : (2 : F) = 0 := by
+      have hcast : ((p : ℕ) : F) = 0 := CharP.cast_eq_zero F p
+      rw [hp2] at hcast; exact_mod_cast hcast
+    rw [card_Z_eq_one_of_two_eq_zero h2]
+    simp
+  · haveI hNeZero : NeZero (2 : F) := by
+      constructor
+      intro h2
+      apply hp2
+      have hcast2 : ((2 : ℕ) : F) = (0 : F) := by exact_mod_cast h2
+      have hdvd : p ∣ 2 := (CharP.cast_eq_zero_iff F p 2).mp hcast2
+      exact (Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp hdvd
+    rw [card_Z_eq_two_of_two_ne_zero]
+    exact (Nat.coprime_primes Nat.prime_two hp).mpr (Ne.symm hp2)
+
+/--
+The analogue of `card_union_conjClasses_coprime_class` for a Sylow-type maximal abelian subgroup
+`A = Q ⊔ Z`. This is `card_union_conjClasses_sylow_class` from the original module docstring,
+**restated** with three extra hypotheses that turn out to be genuinely needed (not just routine
+bookkeeping) for the numeric identity to hold, and which all hold in the intended application
+(Theorem 6.8(v-a)/(v-b), `exists_IsCyclic_K_normalizer_eq_Q_join_K`):
+* `hQnontriv : Q ≠ ⊥` -- already part of `IsSylowType`'s witness data;
+* `hK_le_G : K ≤ G` -- `K ≤ N_G(Q) ≤ G` always;
+* `hQK : Disjoint (Q.subgroupOf G) (K.subgroupOf G)` -- `K` is the *complement* to `Q` produced by
+  the Schur–Zassenhaus argument underlying `exists_IsCyclic_K_normalizer_eq_Q_join_K`
+  (`Subgroup.exists_left_complement'_of_coprime`), which is disjoint from `Q` by construction (an
+  `IsComplement'` witness), even though this disjointness is not currently surfaced in that
+  lemma's stated conclusion.
+
+Without `hQK`, `|Q ⊔ K|` need not be `|Q| ⋅ |K|` (e.g. if `Q ⊓ K ≠ ⊥`), so the stated identity can
+fail; without `hK_le_G`, `Nat.card (K.subgroupOf G)` need not equal `Nat.card K`; without
+`hQnontriv`, `p` need not divide `Nat.card Q`, breaking the Sylow-uniqueness argument in
+`normalizer_join_eq_normalizer_of_isPGroup_of_central_of_coprime` below.
+
+Proof: `N_G(A) = N_G(Q)` (`normalizer_join_eq_normalizer_of_isPGroup_of_central_of_coprime`,
+transporting `A = Q ⊔ Z F` through `Subgroup.subgroupOf G` via `Subgroup.subgroupOf_sup`, with `Z
+F`'s image central by direct computation and of order coprime to `p` by `coprime_card_Z_prime`);
+combined with `hNG : N_G(Q) = Q ⊔ K` and the disjointness/inclusion hypotheses
+(`card_normalizer_join_eq_of_disjoint_of_le`), `|N_G(A)| = |Q| ⋅ |K|`; feeding this into the same
+three `S3` bijections used in `card_union_conjClasses_coprime_class`
 (`card_ConjClassOf_eq_index_normalizer`, `card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet`,
-`card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet`) gives the
-stated identity. What is missing to complete this is transporting
-`normalizer_Sylow_join_center_eq_normalizer_Sylow` (an ambient-`SL(2,F)`-normalizer statement)
-through `Subgroup.subgroupOf G` to the in-`G` normalizer that `card_ConjClassOf_eq_index_normalizer`
-is stated in terms of; this is routine but not yet formalized. -/
+`card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet`) together with
+Lagrange (`Subgroup.card_mul_index`) gives the stated identity. -/
 theorem card_union_conjClasses_sylow_class {G A Q K : Subgroup SL(2,F)} [Finite G]
     (center_le_G : center SL(2,F) ≤ G) (hA : A ∈ MaximalAbelianSubgroupsOf G)
-    (S : Sylow p G) (hS : Q.subgroupOf G = S) (hAeq : A = Q ⊔ Z F) (hK : IsCyclic K)
-    (hNG : normalizer (Q.subgroupOf G : Set ↥G) = Q.subgroupOf G ⊔ K.subgroupOf G) :
+    (S : Sylow p G) (hS : Q.subgroupOf G = S) (hAeq : A = Q ⊔ Z F)
+    (hQnontriv : Q ≠ ⊥) (_hK : IsCyclic K) (hK_le_G : K ≤ G)
+    (hNG : normalizer (Q.subgroupOf G : Set ↥G) = Q.subgroupOf G ⊔ K.subgroupOf G)
+    (hQK : Disjoint (Q.subgroupOf G) (K.subgroupOf G)) :
     Nat.card (union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G
         (⟨noncenter A, noncenter_mem_noncenter_MaximalAbelianSubgroupsOf G ⟨A, hA⟩⟩))
       * (Nat.card Q * Nat.card K)
       = Nat.card (noncenter A : Set SL(2,F)) * Nat.card G := by
-  sorry
+  haveI hAfin : Finite A := Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hA.right
+  have hZF_le_G : Z F ≤ G := center_SL2_eq_Z F ▸ center_le_G
+  have hQ_le_G : Q ≤ G := le_sup_left.trans (hAeq ▸ hA.right)
+  set Qg : Subgroup ↥G := Q.subgroupOf G with hQg_def
+  set Zg : Subgroup ↥G := (Z F).subgroupOf G with hZg_def
+  set Kg : Subgroup ↥G := K.subgroupOf G with hKg_def
+  set Ag : Subgroup ↥G := A.subgroupOf G with hAg_def
+  have hAg_eq : Ag = Qg ⊔ Zg := by
+    rw [hAg_def, hAeq, Subgroup.subgroupOf_sup hQ_le_G hZF_le_G]
+  have hQg_pgroup : IsPGroup p Qg := hS ▸ S.isPGroup'
+  have hQg_nontriv : Qg ≠ ⊥ := by
+    intro hbot
+    apply hQnontriv
+    have hcard_Qg : Nat.card Qg = Nat.card Q :=
+      Nat.card_congr (subgroupOfEquivOfLe hQ_le_G).toEquiv
+    rw [hbot] at hcard_Qg
+    simp only [Subgroup.card_bot] at hcard_Qg
+    exact (Subgroup.card_eq_one).mp hcard_Qg.symm
+  have hZg_central : Zg ≤ center (↥G) := by
+    intro z hz
+    rw [hZg_def, mem_subgroupOf] at hz
+    rw [mem_center_iff]
+    intro g
+    have hz' : (z : SL(2,F)) ∈ center SL(2,F) := by
+      rw [center_SL2_eq_Z]; exact hz
+    apply Subtype.ext
+    simp only [Subgroup.coe_mul]
+    exact mem_center_iff.mp hz' (g : SL(2,F))
+  have hcard_Zg : Nat.card Zg = Nat.card (Z F) :=
+    Nat.card_congr (subgroupOfEquivOfLe hZF_le_G).toEquiv
+  have hcop_ZP : Nat.Coprime (Nat.card Zg) p := hcard_Zg ▸ coprime_card_Z_prime
+  have hcop : Nat.Coprime (Nat.card Qg) (Nat.card Zg) := by
+    obtain ⟨n, hn⟩ := IsPGroup.iff_card.mp hQg_pgroup
+    rw [hn]
+    exact (Nat.Coprime.pow_right n hcop_ZP).symm
+  have hnormalizer_eq : normalizer (Ag : Set ↥G) = normalizer (Qg : Set ↥G) := by
+    rw [hAg_eq]
+    exact normalizer_join_eq_normalizer_of_isPGroup_of_central_of_coprime
+      hQg_pgroup hQg_nontriv hZg_central hcop
+  have hcard_normalizer : Nat.card (normalizer (Ag : Set ↥G)) = Nat.card Qg * Nat.card Kg := by
+    rw [hnormalizer_eq]
+    exact card_normalizer_join_eq_of_disjoint_of_le hNG hQK
+  have hcard_Qg_eq : Nat.card Qg = Nat.card Q :=
+    Nat.card_congr (subgroupOfEquivOfLe hQ_le_G).toEquiv
+  have hcard_Kg_eq : Nat.card Kg = Nat.card K :=
+    Nat.card_congr (subgroupOfEquivOfLe hK_le_G).toEquiv
+  have hcard_normalizer' : Nat.card (normalizer (Ag : Set ↥G)) = Nat.card Q * Nat.card K := by
+    rw [hcard_normalizer, hcard_Qg_eq, hcard_Kg_eq]
+  have hLagrange : Nat.card (normalizer (Ag : Set ↥G)) * index (normalizer (Ag : Set ↥G))
+      = Nat.card G := Subgroup.card_mul_index _
+  rw [hcard_normalizer'] at hLagrange
+  set Astar : noncenter_MaximalAbelianSubgroupsOf G :=
+    ⟨noncenter A, noncenter_mem_noncenter_MaximalAbelianSubgroupsOf G ⟨A, hA⟩⟩ with hAstar_def
+  have h1 : Nat.card (union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G Astar)
+      = Nat.card (noncenter A : Set SL(2,F)) * card_noncenter_ConjClassOf G Astar :=
+    card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet
+      G center_le_G Astar
+  have h2 : card_noncenter_ConjClassOf G Astar = Nat.card (ConjClassOf G ⟨A, hA⟩) :=
+    (card_noncenter_ConjClassOfSet_eq_card_ConjClassOfSet G ⟨A, hA⟩).symm
+  have h3 : Nat.card (ConjClassOf G ⟨A, hA⟩) = index (normalizer (Ag : Set ↥G)) :=
+    card_ConjClassOf_eq_index_normalizer G ⟨A, hA⟩
+  calc Nat.card (union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G Astar)
+        * (Nat.card Q * Nat.card K)
+      = (Nat.card (noncenter A : Set SL(2,F)) * index (normalizer (Ag : Set ↥G)))
+          * (Nat.card Q * Nat.card K) := by rw [h1, h2, h3]
+    _ = Nat.card (noncenter A : Set SL(2,F))
+          * (Nat.card Q * Nat.card K * index (normalizer (Ag : Set ↥G))) := by ring
+    _ = Nat.card (noncenter A : Set SL(2,F)) * Nat.card G := by rw [hLagrange]
 
 end SylowClassCard
 
