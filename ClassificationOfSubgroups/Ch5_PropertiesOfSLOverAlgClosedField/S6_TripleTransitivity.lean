@@ -318,17 +318,40 @@ example: @triptrans_on (SL(2,F)) _ (Projectivization F V) (MyMulAct hV) := by
   -/
   have bas_choice (p' : V): (coord hV) ((Φ.val).mulVec ((finDimVectorspaceEquiv 2 hV) p')) = Fintype.linearCombination F vBasis (Φ.val.mulVec (vBasis.repr p')):= by
      -- b' is the Basis, which is imlicitly used by f1 and f2:
-    have hli : LinearIndependent F ![f1 hV ![1,0], f1 hV ![0,1]] := by
-      rw [LinearIndependent.pair_iff]
-      intro s t
-      rw [← LinearMap.map_smul_of_tower, ← LinearMap.map_smul_of_tower, ← map_add]
-      simp
-    have hspa : ⊤ ≤ Submodule.span F (Set.range ![f1 hV ![1,0], f1 hV ![0,1]]) := by
-      rw [top_le_iff]
-      exact LinearIndependent.span_eq_top_of_card_eq_finrank hli (Eq.symm (Module.finrank_eq_of_rank_eq hV))
-    let b':= Module.Basis.mk hli hspa
-    have f2_repr (v : V) : f2 hV v = b'.repr v := by sorry
-    have f1_comb : f1 hV = Fintype.linearCombination F b' := by sorry
+    -- Choose b' as the basis directly induced by the (coord hV) equivalence, so that its
+    -- `repr`/reconstruction are *definitionally* f2/f1 (up to the equiv-vs-linear-map coercions).
+    let b' := Module.Basis.ofEquivFun (coord hV).symm
+    have f2_repr (v : V) : f2 hV v = b'.repr v := by
+      funext i
+      exact (Module.Basis.ofEquivFun_repr_apply (coord hV).symm v i).symm
+    have f1_comb : f1 hV = Fintype.linearCombination F b' := by
+      apply LinearMap.ext
+      intro x
+      have hef : b'.equivFun = (coord hV).symm := Module.Basis.equivFun_ofEquivFun (coord hV).symm
+      have hcoord : b'.equivFun.symm x = (coord hV) x := by
+        rw [hef]; rfl
+      show (coord hV) x = Fintype.linearCombination F b' x
+      rw [← hcoord, Module.Basis.equivFun_symm_apply, Fintype.linearCombination_apply]
+    -- TODO: the goal at this point is (definitionally, using f1_comb/f2_repr above)
+    --   Fintype.linearCombination F b' (Φ.val.mulVec (b'.repr p'))
+    --     = Fintype.linearCombination F vBasis (Φ.val.mulVec (vBasis.repr p'))
+    -- i.e. "reconstructing Φ.val via the basis b' underlying coord/f1/f2 agrees with
+    -- reconstructing it via vBasis", i.e. mulVV hV Φ = φ as linear maps on V.
+    -- This is NOT provable from context: `Φ.val := LinearMap.toMatrix vBasis vBasis φ` is
+    -- only guaranteed to reconstruct φ when decoded through the SAME basis vBasis
+    -- (that is exactly `LinearMap.toMatrix_mulVec_repr`); decoding the very same matrix
+    -- through the unrelated, `Classical.choice`-produced basis b' coming from
+    -- `finDimVectorspaceEquiv`/`coord` (fixed once for V before P1..Q3 are ever chosen)
+    -- gives, in general, an entirely different linear map (reconstruct-via-b' M is the
+    -- conjugate of φ by the b'/vBasis change-of-basis automorphism, and there is nothing
+    -- forcing φ to commute with that automorphism). Concretely: V ≅ F², vBasis =
+    -- {(1,1),(1,-1)}, φ fixing (1,1) and doubling (1,-1) gives Φ.val = diag(1,2); decoding
+    -- that through the standard basis sends (1,1) ↦ (1,2) ≠ (1,1) = φ(1,1). So `bas_choice`
+    -- as stated requires Φ to be built from a basis tied to `coord` (e.g. b') rather than
+    -- from `vBasis`, which would require reworking `π`/`φ`/`Φ`/`h_pi_1,2,3` (defined above,
+    -- outside this `have`'s scope) to use b'-coordinates instead of vBasis-coordinates.
+    -- Left as `sorry`; verified via `trace_state` that the residual goal exactly matches the
+    -- (false-in-general) claim above.
     sorry
 
   -- the following two "haves" are needed in two of the following analogeus three cases:

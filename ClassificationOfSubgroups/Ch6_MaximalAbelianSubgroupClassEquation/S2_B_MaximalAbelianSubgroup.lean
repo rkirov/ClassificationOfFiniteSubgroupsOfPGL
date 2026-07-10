@@ -9,15 +9,105 @@ open scoped MatrixGroups
 
 #check normalizer_inf_le_eq_normalizer_subgroupOf
 
+-- Restated with the hypothesis that `A'` has index 2 in `N(A') ⊓ G'`, matching the
+-- "[N_G(A) : A] = 2" situation of Butler Thm 6.8(iv-b) (tex ~889-891): the original
+-- statement (with no index hypothesis at all) is false, since e.g. `A' = G' ⊓ D F = G'`
+-- gives `N(A') ⊓ G' = G' = A'`, an empty difference. This lemma is not otherwise used in
+-- the file; the main theorem `of_index_normalizer_eq_two` reproves the needed nonemptiness
+-- directly via `monoidHom_normalizer_D_quot_D`.
 lemma Nonempty_normalizer_A'_inf_G_diff_A' {F : Type*} [Field F] (A' G' : Subgroup SL(2,F))
-  (hA' : A' ∈ MaximalAbelianSubgroupsOf G') (A'_le_D : A' ≤ D F) :
+  (hA' : A' ∈ MaximalAbelianSubgroupsOf G') (A'_le_D : A' ≤ D F)
+  (hNA' : relIndex A' ((normalizer ((A') : Set SL(2,F))) ⊓ G') = 2) :
     Set.Nonempty (((normalizer ((A') : Set SL(2,F))) ⊓ G').carrier \ A') := by
   by_contra! h
   rw [Set.diff_eq_empty] at h
-  have : (normalizer ((A') : Set SL(2,F))) ⊓ G' ≤ D F := by
-    rw [normalizer_subgroup_D_eq_DW_of_two_lt_card sorry sorry]
-    sorry
-  sorry
+  have := relIndex_eq_one.mpr h
+  rw [hNA'] at this
+  norm_num at this
+-- Extracted as a standalone lemma (rather than inlined into `of_index_normalizer_eq_two`) so
+-- that the `MulEquiv`/`aesop` bookkeeping below type-checks in a lean local context: inlined
+-- into the big theorem (with `f`, `key`, `Injective_f`, etc. all in scope) the final `aesop`
+-- call was hitting `isDefEq` heartbeat timeouts purely due to the size of the ambient context,
+-- even though the very same proof succeeds instantly in isolation.
+lemma bijective_monoidHom_normalizer_D_quot_D {F : Type*} [Field F] [IsAlgClosed F]
+    (A' G' : Subgroup SL(2,F)) (A'_le_D : A' ≤ D F) (A'_le_G' : A' ≤ G')
+    (two_lt_card_A' : 2 < Nat.card A') (A'_eq_G'_inf_D : A' = G' ⊓ D F)
+    (hNA' : Nat.card (normalizer ((A'.subgroupOf G') : Set ↥G')
+        ⧸ (A'.subgroupOf G').subgroupOf (normalizer ((A'.subgroupOf G') : Set ↥G'))) = 2) :
+    Bijective (monoidHom_normalizer_D_quot_D A' G') := by
+  haveI : Finite (↥(normalizer ((D F) : Set SL(2,F)))
+      ⧸ (D F).subgroupOf (normalizer ((D F) : Set SL(2,F)))) :=
+    Nat.finite_of_card_ne_zero (by rw [card_normalizer_D_quot_D_eq_two]; norm_num)
+  -- reconstruct the chain of `MulEquiv`s used to build `f` in
+  -- `subgroupOf_normalizer_quot_monoidHom_ZMod_two`, to transport the known
+  -- cardinality (`2`) of `f`'s domain across to the domain of
+  -- `monoidHom_normalizer_D_quot_D A' G'`.
+  let φ1 := normalizer_quot_mulEquiv_quot_of A' G' A'_le_D A'_le_G' two_lt_card_A'
+    A'_eq_G'_inf_D
+  let φ2 := QuotientGroup.quotientInfEquivProdNormalQuotient
+    (H := (((normalizer ((A') : Set SL(2,F))) ⊓ G').subgroupOf
+      (normalizer ((D F) : Set SL(2,F)))))
+    (N := (D F).subgroupOf (normalizer ((D F) : Set SL(2,F))))
+  let φ3eq := (MulEquiv.subgroupCongr
+    (G := (normalizer ((D F) : Set SL(2,F))))
+    (H := ((normalizer ((A') : Set SL(2,F))) ⊓ G').subgroupOf
+      (normalizer ((D F) : Set SL(2,F))) ⊔ (D F).subgroupOf
+        (normalizer ((D F) : Set SL(2,F))))
+    (K := ((normalizer ((A') : Set SL(2,F))) ⊓ G' ⊔ D F).subgroupOf
+      (normalizer ((D F) : Set SL(2,F))))
+    (by rw [subgroupOf_sup
+    (by rw [normalizer_D_eq_DW, normalizer_subgroup_D_eq_DW_of_two_lt_card two_lt_card_A'
+          A'_le_D]
+        exact inf_le_left)
+    (le_normalizer)])).symm
+  let φ3 := QuotientGroup.congr _ _ φ3eq
+    (show Subgroup.map φ3eq.toMonoidHom (((D F).subgroupOf
+        (normalizer ((D F) : Set SL(2,F)))).subgroupOf
+       (((normalizer ((A') : Set SL(2,F))) ⊓ G' ⊔ D F).subgroupOf
+         (normalizer ((D F) : Set SL(2,F)))))
+    = ((D F).subgroupOf (normalizer ((D F) : Set SL(2,F)))).subgroupOf
+        (((normalizer ((A') : Set SL(2,F))) ⊓ G').subgroupOf
+          (normalizer ((D F) : Set SL(2,F))) ⊔ (D F).subgroupOf
+            (normalizer ((D F) : Set SL(2,F)))) by
+    dsimp [φ3eq]
+    ext x; constructor
+    · intro hx
+      rw [mem_map] at hx
+      obtain ⟨y, y_mem_subgroupOf, hy⟩ := hx
+      rw [← hy]
+      rw [mem_subgroupOf, mem_subgroupOf] at y_mem_subgroupOf ⊢
+      simp [y_mem_subgroupOf]
+    · intro hx
+      rw [mem_map]
+      use ⟨
+        x.val,
+        by
+        rw [mem_subgroupOf, mem_subgroupOf] at hx
+        rw [mem_subgroupOf]
+        suffices D F ≤ (normalizer ((A') : Set SL(2,F))) ⊓ G' ⊔ D F by
+          apply this hx
+        apply le_sup_right
+        ⟩
+      constructor
+      · rw [mem_subgroupOf, mem_subgroupOf] at hx ⊢
+        simp [hx]
+      · aesop)
+  let L := φ1.trans (φ2.trans φ3.symm)
+  have hcard : Nat.card (((normalizer ((A') : Set SL(2,F))) ⊓ G' ⊔ D F).subgroupOf
+      (normalizer ((D F) : Set SL(2,F)))
+      ⧸ ((D F).subgroupOf (normalizer ((D F) : Set SL(2,F)))).subgroupOf
+        (((normalizer ((A') : Set SL(2,F))) ⊓ G' ⊔ D F).subgroupOf
+          (normalizer ((D F) : Set SL(2,F))))) = 2 := by
+    rw [← Nat.card_congr L.toEquiv, hNA']
+  refine (Nat.bijective_iff_injective_and_card _).mpr ⟨?_, ?_⟩
+  · dsimp [monoidHom_normalizer_D_quot_D]
+    rw [← MonoidHom.ker_eq_bot_iff, eq_bot_iff]
+    intro x hx
+    obtain ⟨x', hx'⟩ := Quotient.exists_rep x
+    simp [MonoidHom.mem_ker, ← hx', QuotientGroup.eq_one_iff] at hx
+    simpa [mem_bot, ← hx', mem_subgroupOf]
+  · rw [hcard, card_normalizer_D_quot_D_eq_two]
+
 /-
 Theorem 2.3 (iv b) Furthermore, if [NG (A) : A] = 2,
 then there is an element y of NG (A)\A such that, yxy⁻¹ = x⁻¹  for all x ∈ A.
@@ -76,8 +166,9 @@ theorem of_index_normalizer_eq_two {F : Type*} [Field F] [IsAlgClosed F] [Decida
     rw [← comp_assoc] at key
     -- want surjectivity of the second map on the left in the composition
 
-    have surjective : Bijective ((monoidHom_normalizer_D_quot_D A' G')) := by
-      sorry
+    have surjective : Bijective ((monoidHom_normalizer_D_quot_D A' G')) :=
+      bijective_monoidHom_normalizer_D_quot_D A' G' A'_le_D hA'.right two_lt_card_A'
+        A'_eq_G'_inf_D hNA
 
 
 
@@ -90,7 +181,8 @@ theorem of_index_normalizer_eq_two {F : Type*} [Field F] [IsAlgClosed F] [Decida
           apply inf_le_of_left_le
           -- for a suitable characteristic this should follow easily,
           -- or should generalise the result for the case when card D₀ ≤ 2
-          rw [normalizer_subgroup_D_eq_DW_of_two_lt_card (by sorry) inf_le_right,
+          rw [normalizer_subgroup_D_eq_DW_of_two_lt_card
+            (by rw [A'_eq_G'_inf_D] at two_lt_card_A'; exact two_lt_card_A') inf_le_right,
             normalizer_D_eq_DW]
         · exact le_normalizer
       · sorry

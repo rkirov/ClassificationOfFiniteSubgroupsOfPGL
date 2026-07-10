@@ -1,5 +1,6 @@
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_A_MaximalAbelianSubgroup
 import Mathlib.Data.Setoid.Partition
+import Mathlib.Data.Set.Card.Arithmetic
 
 set_option linter.style.longLine true
 set_option autoImplicit false
@@ -988,35 +989,84 @@ noncomputable instance {F : Type*} [Field F] {G : Subgroup SL(2,F)} [Finite G] :
   Fintype (Quotient (lift_MaximalAbelianSubgroupsOf G)) := by infer_instance
 
 
-#check Finset.card_disjiUnion
+/--
+The "big unions" `C(A)^*` attached to two inequivalent noncentral maximal abelian subgroups
+are disjoint: if a conjugate of `A` and a conjugate of `B` shared an element, those two
+conjugates would themselves be equal noncentral maximal abelian subgroups (by
+`noncenter_ConjClassOf_disjoint_of_ne`), forcing `A ≈ B`.
+-/
+lemma union_conjClasses_noncenter_pairwise_disjoint_of_not_equiv {F : Type*} [Field F]
+  [DecidableEq F] [IsAlgClosed F] (G : Subgroup SL(2,F)) [Finite G]
+  (center_le_G : center SL(2,F) ≤ G)
+  (A B : noncenter_MaximalAbelianSubgroupsOf G) (hAB : ¬ A ≈ B) :
+    Disjoint (union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G A)
+      (union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G B) := by
+  rw [Set.disjoint_left]
+  intro z hzA hzB
+  dsimp [union_conjClasses_noncenter_MaximalAbelianSubgroupsOf] at hzA hzB
+  rw [Set.mem_iUnion₂] at hzA hzB
+  obtain ⟨g₁, hg₁, hzA⟩ := hzA
+  obtain ⟨g₂, hg₂, hzB⟩ := hzB
+  apply hAB
+  have hB1mem : conj g₁ • A.val ∈ noncenter_MaximalAbelianSubgroupsOf G :=
+    conj_smul_mem_noncenter_MaximalAbelianSubgroupsOf G A g₁ hg₁
+  have hB2mem : conj g₂ • B.val ∈ noncenter_MaximalAbelianSubgroupsOf G :=
+    conj_smul_mem_noncenter_MaximalAbelianSubgroupsOf G B g₂ hg₂
+  have hB12 : (⟨conj g₁ • A.val, hB1mem⟩ : noncenter_MaximalAbelianSubgroupsOf G)
+      = ⟨conj g₂ • B.val, hB2mem⟩ := by
+    by_contra hne
+    exact (Set.disjoint_left.mp
+      (noncenter_ConjClassOf_disjoint_of_ne G center_le_G _ _ hne) hzA) hzB
+  have heq : conj g₁ • A.val = conj g₂ • B.val := Subtype.ext_iff.mp hB12
+  refine ⟨g₂⁻¹ * g₁, G.mul_mem (G.inv_mem hg₂) hg₁, ?_⟩
+  rw [_root_.map_mul, mul_smul, heq, ← mul_smul, ← _root_.map_mul, inv_mul_cancel, map_one,
+    one_smul]
 
-#check Finset.sum_partition
-
-#check Finset.prod_image_of_disjoint
 /-
 Theorem 2.4 iv)
 $|G \setminus Z| = \sum_{[A] \in \mathfrak{M} / \sim } |[A*]| |[C(A)*]|$
+
+Note: the sum is stated directly in terms of `Nat.card (lift_union_conj_noncenter_...)`,
+which (by `card_noncenter_C_eq_noncenter_MaximalAbelianSubgroup_mul_noncenter_ConjClassOfSet`)
+already equals `|A_i^*| ⬝ |C_i^*|`; this matches Butler's formula without an extra factor.
+We also add the `[DecidableEq F] [IsAlgClosed F]` hypotheses that every supporting lemma in this
+file (the partition of `G \ Z` into noncentral maximal abelian subgroups) already requires.
 -/
-theorem card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer {F : Type*} [Field F]
+theorem card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer {F : Type*}
+  [Field F] [DecidableEq F] [IsAlgClosed F]
   (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G) :
     Nat.card (G.carrier \ (center SL(2,F)).carrier : Set SL(2,F))
       = ∑ lift_A : Quotient (lift_noncenter_MaximalAbelianSubgroupsOf G),
-    lift_card_noncenter G lift_A
-      * Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G lift_A) := by
-
-  -- need to use disjiUnion again
-  -- have := Finset.card_disjiUnion
-
-
-
-
-
-
-
-
-
-  sorry
-
+    Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G lift_A) := by
+  simp only [Nat.card_coe_set_eq]
+  have hpieces_finite : ∀ A : noncenter_MaximalAbelianSubgroupsOf G,
+      (union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G A).Finite := by
+    intro A
+    have hsub : union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G A ⊆
+        G.carrier \ (center SL(2,F) : Set SL(2,F)) := by
+      rw [union_noncenter_C_eq_G_diff_center G]
+      exact Set.subset_iUnion (union_conjClasses_noncenter_MaximalAbelianSubgroupsOf G) A
+    exact (Set.toFinite (G.carrier : Set SL(2,F))).subset (hsub.trans Set.diff_subset)
+  have hlift_pieces_finite : ∀ q : Quotient (lift_noncenter_MaximalAbelianSubgroupsOf G),
+      (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G q).Finite := by
+    intro q
+    induction q using Quotient.inductionOn with
+    | h A => exact hpieces_finite A
+  have hlift_pairwise : Pairwise (Disjoint on
+      lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G) := by
+    intro q₁ q₂ hne
+    induction q₁ using Quotient.inductionOn with
+    | h A =>
+      induction q₂ using Quotient.inductionOn with
+      | h B =>
+        simp only [Function.onFun]
+        apply union_conjClasses_noncenter_pairwise_disjoint_of_not_equiv G center_le_G
+        intro hAB
+        exact hne (Quotient.eq.mpr hAB)
+  have key := Set.ncard_iUnion_of_finite hlift_pieces_finite hlift_pairwise
+  rw [← union_lift_union_conj_noncenter_MaximalAbelianSubgroupsOf_eq_G_diff_center G,
+    finsum_eq_sum_of_fintype] at key
+  exact key
 
 -- todo: probably somewhere in mathlib, but I can't find it.
 lemma center_conj {G : Type*} [Group G] (x : G) (y: G) :
@@ -1062,7 +1112,101 @@ lemma normalizer_Sylow_join_center_eq_normalizer_Sylow {F : Type*} [Field F] {p 
 [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) :
   normalizer (map G.subtype Q.toSubgroup ⊔ center SL(2,F) : Set SL(2,F)) =
     normalizer (map G.subtype Q.toSubgroup : Set SL(2,F)) := by
-  sorry
+  have hp : Nat.Prime p := Fact.out
+  set H := map G.subtype Q.toSubgroup with hHdef
+  have hIsPH : IsPGroup p H := Q.isPGroup'.map G.subtype
+  -- Note: `⊔` in the statement is elaborated at the level of `Set SL(2,F)`, i.e. it is
+  -- ordinary set union of the underlying carriers, not the subgroup join.
+  have hnegone_center : (-1 : SL(2,F)) ∈ center SL(2,F) := by
+    rw [center_SL2_eq_Z F]; exact neg_one_mem_Z
+  have hcentral : ∀ y : SL(2,F), y * (-1 : SL(2,F)) * y⁻¹ = -1 := by
+    intro y
+    rw [mem_center_iff.mp hnegone_center y, mul_inv_cancel_right]
+  by_cases hp2 : p = 2
+  · -- In characteristic 2, `-I = I`, so the center of `SL(2,F)` is absorbed into `H`.
+    have h2 : (2 : F) = 0 := by
+      have hcast : ((p : ℕ) : F) = 0 := CharP.cast_eq_zero F p
+      rw [hp2] at hcast
+      exact_mod_cast hcast
+    have hnegone_eq_one : (-1 : SL(2,F)) = 1 :=
+      (SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero h2).symm
+    have hSetEq : (H ⊔ center SL(2,F) : Set SL(2,F)) = (H : Set SL(2,F)) := by
+      ext x
+      simp only [Set.sup_eq_union, Set.mem_union, SetLike.mem_coe]
+      constructor
+      · rintro (hx | hx)
+        · exact hx
+        · rw [center_SL2_eq_Z F, mem_Z_iff] at hx
+          rcases hx with rfl | rfl
+          · exact H.one_mem
+          · rw [hnegone_eq_one]; exact H.one_mem
+      · intro hx; exact Or.inl hx
+    rw [hSetEq]
+  · -- `p` is odd, so `-1 ∉ H` and adjoining the center only ever adds the single point `-1`.
+    have hNeZero : NeZero (2 : F) := by
+      constructor
+      intro h2
+      apply hp2
+      have hcast2 : ((2 : ℕ) : F) = (0 : F) := by exact_mod_cast h2
+      have hdvd : p ∣ 2 := (CharP.cast_eq_zero_iff F p 2).mp hcast2
+      exact (Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp hdvd
+    have hnegone_not_mem_H : (-1 : SL(2,F)) ∉ H := by
+      intro hmem
+      obtain ⟨k, hk⟩ := (IsPGroup.iff_orderOf.mp hIsPH) (⟨-1, hmem⟩ : H)
+      rw [orderOf_mk, orderOf_neg_one_eq_two] at hk
+      rcases Nat.eq_zero_or_pos k with hk0 | hk0
+      · rw [hk0, pow_zero] at hk
+        exact absurd hk (by norm_num)
+      · have hpk : p ∣ p ^ k := dvd_pow_self p hk0.ne'
+        rw [← hk] at hpk
+        exact hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp hpk)
+    ext y
+    rw [mem_set_normalizer_iff, mem_normalizer_iff]
+    have hconj_eq_iff : ∀ a b : SL(2,F), y * a * y⁻¹ = y * b * y⁻¹ ↔ a = b := by
+      intro a b
+      constructor
+      · intro h; exact mul_left_cancel (mul_right_cancel h)
+      · intro h; rw [h]
+    have hyn_eq_negone_iff : ∀ n : SL(2,F), y * n * y⁻¹ = -1 ↔ n = -1 := by
+      intro n; rw [← hcentral y, hconj_eq_iff, hcentral y]
+    have hyn_eq_one_iff : ∀ n : SL(2,F), y * n * y⁻¹ = 1 ↔ n = 1 := by
+      intro n
+      have h1' : y * (1 : SL(2,F)) * y⁻¹ = 1 := by group
+      rw [← h1', hconj_eq_iff, h1']
+    constructor
+    · intro hy n
+      have key := hy n
+      simp only [Set.sup_eq_union, Set.mem_union, SetLike.mem_coe, center_SL2_eq_Z F,
+        mem_Z_iff] at key
+      constructor
+      · intro hn
+        rcases key.mp (Or.inl hn) with h1 | h1 | h1
+        · exact h1
+        · rw [h1]; exact H.one_mem
+        · exfalso
+          apply hnegone_not_mem_H
+          rw [← (hyn_eq_negone_iff n).mp h1]
+          exact hn
+      · intro hc
+        rcases key.mpr (Or.inl hc) with h1 | h1 | h1
+        · exact h1
+        · rw [h1]; exact H.one_mem
+        · exfalso
+          apply hnegone_not_mem_H
+          rw [h1] at hc
+          rw [hcentral y] at hc
+          exact hc
+    · intro hy n
+      simp only [Set.sup_eq_union, Set.mem_union, SetLike.mem_coe, center_SL2_eq_Z F, mem_Z_iff]
+      constructor
+      · rintro (hn | rfl | rfl)
+        · exact Or.inl ((hy n).mp hn)
+        · exact Or.inr (Or.inl (by group))
+        · exact Or.inr (Or.inr (hcentral y))
+      · rintro (hc | h1 | h1)
+        · exact Or.inl ((hy n).mpr hc)
+        · exact Or.inr (Or.inl ((hyn_eq_one_iff n).mp h1))
+        · exact Or.inr (Or.inr ((hyn_eq_negone_iff n).mp h1))
 
 
 

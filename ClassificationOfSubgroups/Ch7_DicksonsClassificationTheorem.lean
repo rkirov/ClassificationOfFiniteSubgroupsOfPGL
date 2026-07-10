@@ -1,6 +1,7 @@
 import ClassificationOfSubgroups.Ch4_PGLIsoPSLOverAlgClosedField.ProjectiveGeneralLinearGroup
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_A_MaximalAbelianSubgroup
 import Mathlib.FieldTheory.Finite.GaloisField
+import Mathlib.GroupTheory.Nilpotent
 import Mathlib.GroupTheory.PresentedGroup
 import Mathlib.GroupTheory.SpecificGroups.Alternating
 import Mathlib.GroupTheory.SpecificGroups.Dihedral
@@ -15,9 +16,19 @@ open scoped MatrixGroups
 
 
 /- Lemma 3.1 -/
-lemma IsPGroup.not_le_normalizer {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
-  [CharP F p] (G : Subgroup SL(2,F)) (H K : Subgroup G) (hK : IsPGroup p K )
-  (H_lt_K : H < K) : ¬ H ≤ Subgroup.normalizer (K : Set ↥G) := by sorry
+-- The original statement here was false: `H < K` gives `H ≤ K ≤ normalizer K`
+-- (`Subgroup.le_normalizer`), directly contradicting `¬ H ≤ normalizer K`.
+-- Restated to match Butler's actual Lemma 3.1 (`case2q`, tex ~line 1277): a proper
+-- subgroup of a finite `p`-group `K` is strictly contained in its normalizer inside `K`.
+lemma IsPGroup.lt_normalizer_subgroupOf {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
+  [CharP F p] (G : Subgroup SL(2,F)) (H K : Subgroup ↥G) [Finite ↥K] (hK : IsPGroup p ↥K)
+  (H_lt_K : H < K) :
+    H.subgroupOf K < normalizer ((H.subgroupOf K : Subgroup ↥K) : Set ↥K) := by
+  have hnc : NormalizerCondition ↥K := Group.normalizerCondition_of_isNilpotent (G := ↥K)
+    (h := hK.isNilpotent)
+  have hne : H.subgroupOf K ≠ ⊤ :=
+    fun heq => H_lt_K.ne (le_antisymm H_lt_K.le (Subgroup.subgroupOf_eq_top.mp heq))
+  exact hnc _ (lt_top_iff_ne_top.mpr hne)
 
 open MaximalAbelianSubgroup
 
@@ -31,12 +42,16 @@ lemma Sylow.not_normal_subgroup_of_G {F : Type*} [Field F] {p : ℕ} [Fact (Nat.
   sorry
 
 /- Lemma 3.3 -/
-def R (F : Type*) [Field F] (p : ℕ) [Fact (Nat.Prime p)] [CharP F p](k : ℕ+) :=
-  { x : F | x^p^(k : ℕ) - x = 0 }
-
+-- `R` is unused elsewhere in this development, so it is restructured here as a `Subfield F`
+-- (rather than a bare `Set F`): the fixed field of the `k`-th iterated Frobenius, i.e. the
+-- equalizer of `x ↦ x ^ p ^ k` and `id`. This is definitionally the set
+-- `{x : F | x ^ p ^ k - x = 0}` (via `sub_eq_zero`), and packaging it as a `Subfield` gets
+-- the `Field` instance for free from `Subfield.toField`.
+def R (F : Type*) [Field F] (p : ℕ) [Fact (Nat.Prime p)] [CharP F p] (k : ℕ+) : Subfield F :=
+  RingHom.eqLocusField (iterateFrobenius F p (k : ℕ)) (RingHom.id F)
 
 instance field_R {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
-  [CharP F p] {k : ℕ+} : Field (R F p k) := by sorry
+  [CharP F p] {k : ℕ+} : Field (R F p k) := Subfield.toField (R F p k)
 
 /- Lemma 3.4 -/
 noncomputable instance Fintype_GL {F : Type*} {n : ℕ} [Field F] [Fintype F] :
@@ -50,9 +65,43 @@ theorem GL_card {q : ℕ} {F : Type*} [Field F] [Fintype F] (hq : Fintype.card F
   simp [hq]
 
 -- Matrix.card_SL_field seems to be missing from mathlib
-lemma card_SL_field {𝔽 : Type*} [Field 𝔽] [Fintype 𝔽] (n : ℕ):
+-- NOTE: as originally stated (no hypothesis on `n`) this is false at `n = 0` whenever
+-- `Fintype.card 𝔽 > 2`: `GL (Fin 0) 𝔽` and `SL (Fin 0) 𝔽` both have cardinality `1`, but
+-- `1 / (Fintype.card 𝔽 - 1) = 0 ≠ 1` by `ℕ`-division. Restated with `n ≠ 0` (the only
+-- caller, `SL_card` below, uses `n = 2`).
+lemma card_SL_field {𝔽 : Type*} [Field 𝔽] [Fintype 𝔽] (n : ℕ) (hn : n ≠ 0) :
   Nat.card (SL (Fin n) 𝔽) = Nat.card (GL (Fin n) 𝔽) / (Fintype.card 𝔽 - 1) := by
-  sorry
+  haveI : Nonempty (Fin n) := ⟨⟨0, Nat.pos_of_ne_zero hn⟩⟩
+  have hsurj : Function.Surjective (GeneralLinearGroup.det : GL (Fin n) 𝔽 →* 𝔽ˣ) :=
+    GeneralLinearGroup.det_surjective
+  -- `SL (Fin n) 𝔽` is in bijection with `ker (det : GL (Fin n) 𝔽 →* 𝔽ˣ)`.
+  have hequiv : Nat.card (SL (Fin n) 𝔽)
+      = Nat.card (MonoidHom.ker (GeneralLinearGroup.det : GL (Fin n) 𝔽 →* 𝔽ˣ)) := by
+    apply Nat.card_congr
+    exact
+    { toFun := fun A => ⟨(A : GL (Fin n) 𝔽), by
+          rw [MonoidHom.mem_ker]; exact SpecialLinearGroup.coeToGL_det A⟩
+      invFun := fun B => ⟨(B.1 : Matrix (Fin n) (Fin n) 𝔽), by
+          have h : GeneralLinearGroup.det (B.1 : GL (Fin n) 𝔽) = 1 := B.2
+          have h2 := congrArg Units.val h
+          simpa [GeneralLinearGroup.val_det_apply] using h2⟩
+      left_inv := fun A => by
+          apply Subtype.ext; rfl
+      right_inv := fun B => by
+          apply Subtype.ext; apply Units.ext; rfl }
+  have hcard : Nat.card (GL (Fin n) 𝔽) =
+      Nat.card (MonoidHom.ker (GeneralLinearGroup.det : GL (Fin n) 𝔽 →* 𝔽ˣ))
+        * (Fintype.card 𝔽 - 1) := by
+    rw [Subgroup.card_eq_card_quotient_mul_card_subgroup
+      (MonoidHom.ker (GeneralLinearGroup.det : GL (Fin n) 𝔽 →* 𝔽ˣ)),
+      Nat.card_congr (QuotientGroup.quotientKerEquivRange
+        (GeneralLinearGroup.det : GL (Fin n) 𝔽 →* 𝔽ˣ)).toEquiv,
+      MonoidHom.range_eq_top.mpr hsurj, Subgroup.card_top, Nat.card_units,
+      Nat.card_eq_fintype_card, mul_comm]
+  have hpos : 0 < Fintype.card 𝔽 - 1 := by
+    have := Fintype.one_lt_card (α := 𝔽); omega
+  rw [hequiv]
+  exact (Nat.div_eq_of_eq_mul_left hpos hcard).symm
 
 noncomputable instance Fintype_SL {F : Type*} {n : ℕ} [Field F] [Fintype F] :
     Fintype (SL (Fin n) F) := by
@@ -61,7 +110,7 @@ noncomputable instance Fintype_SL {F : Type*} {n : ℕ} [Field F] [Fintype F] :
 theorem SL_card {q : ℕ} {F : Type*} [Field F] [Fintype F]
     (hq : Fintype.card F = q) (hqone: q > 1): Fintype.card SL(2, F) = (q ^ 2 - 1) * q := by
   rw [← Nat.card_eq_fintype_card]
-  rw [card_SL_field]
+  rw [card_SL_field 2 (by norm_num)]
   simp [hq]
   rw [GL_card hq]
   have : q ^ 2 - q = q * (q - 1) := by
