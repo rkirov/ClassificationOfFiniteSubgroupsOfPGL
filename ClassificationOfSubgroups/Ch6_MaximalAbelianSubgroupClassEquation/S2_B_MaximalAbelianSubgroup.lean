@@ -9,10 +9,10 @@ open scoped MatrixGroups
 #check normalizer_inf_le_eq_normalizer_subgroupOf
 
 lemma Nonempty_normalizer_A'_inf_G_diff_A' {F : Type*} [Field F] (A' G' : Subgroup SL(2,F)) (hA' : A' ∈ MaximalAbelianSubgroupsOf G')
-  (A'_le_D : A' ≤ D F) : Set.Nonempty ((A'.normalizer ⊓ G').carrier \ A') := by
+  (A'_le_D : A' ≤ D F) : Set.Nonempty (((normalizer (A' : Set SL(2,F))) ⊓ G').carrier \ A') := by
   by_contra! h
   rw [Set.diff_eq_empty] at h
-  have : A'.normalizer ⊓ G' ≤ D F := by
+  have : (normalizer (A' : Set SL(2,F))) ⊓ G' ≤ D F := by
     rw [normalizer_subgroup_D_eq_DW sorry sorry]
     sorry
   sorry
@@ -24,8 +24,8 @@ theorem of_index_normalizer_eq_two {F : Type*} [Field F] [IsAlgClosed F] [Decida
   {p : ℕ} [Fact (Nat.Prime p)] [CharP F p] (p_ne_two : p ≠ 2) (A G : Subgroup SL(2,F))
   [Finite G] (hA : A ∈ MaximalAbelianSubgroupsOf G) (center_le_G : center SL(2,F) ≤ G)
   (hA' : Nat.Coprime (Nat.card A) p)
-  (hNA : relIndex (A.subgroupOf G) (A.subgroupOf G).normalizer = 2) (x : A) :
-    ∃ y ∈ (A.normalizer ⊓ G).carrier \ A, y * x * y⁻¹ = x⁻¹ := by
+  (hNA : relIndex (A.subgroupOf G) (normalizer (A.subgroupOf G : Set ↥G)) = 2) (x : A) :
+    ∃ y ∈ ((normalizer (A : Set SL(2,F))) ⊓ G).carrier \ A, y * x * y⁻¹ = x⁻¹ := by
   have two_lt_card_A : 2 < Nat.card A := by
     have key := card_normalizer_inf_G_eq_one_of_card_le_two p_ne_two A G center_le_G hA
     contrapose! key
@@ -76,7 +76,7 @@ theorem of_index_normalizer_eq_two {F : Type*} [Field F] [IsAlgClosed F] [Decida
 
 
     have normalizer_A'_inf_G'_sup_D_eq_normalizer_D :
-      (A'.normalizer ⊓ G' ⊔ D F) = (D F).normalizer := by
+      ((normalizer (A' : Set SL(2,F))) ⊓ G' ⊔ D F) = (normalizer (D F : Set SL(2,F))) := by
       apply le_antisymm
       · apply sup_le
         · rw [A'_eq_G'_inf_D]
@@ -89,7 +89,7 @@ theorem of_index_normalizer_eq_two {F : Type*} [Field F] [IsAlgClosed F] [Decida
         · exact le_normalizer
       · sorry
 
-    suffices ∃ δ : Fˣ, (d δ * w) ∈ (A'.normalizer ⊓ G').carrier \ A' by
+    suffices ∃ δ : Fˣ, (d δ * w) ∈ ((normalizer (A' : Set SL(2,F))) ⊓ G').carrier \ A' by
       obtain ⟨δ, mem_normalizer_A'_inf_G', not_mem_A'⟩ := this
       use conj c • (d δ * w)
       constructor
@@ -140,7 +140,7 @@ theorem of_index_normalizer_eq_two {F : Type*} [Field F] [IsAlgClosed F] [Decida
 
   --       -- rw [pointwise_smul_def, map_map]
 
-  --       -- relationship between conj c • A.normalizer vs (conj c • A).normalizer
+  --       -- relationship between conj c • (normalizer (A : Set SL(2,F))) vs (conj c • A).normalizer
   --       sorry
   --     · intro contr
   --       rw [SetLike.mem_coe, ← mem_inv_pointwise_smul_iff,
@@ -160,7 +160,7 @@ theorem exists_IsCyclic_K_normalizer_eq_Q_join_K {F : Type*} [Field F] { p : ℕ
   (G : Subgroup SL(2,F))
   (Q : Sylow p G)
   (h : Q.toSubgroup ≠ ⊥) :
-  ∃ K : Subgroup G, IsCyclic K ∧ normalizer Q.toSubgroup = Q.toSubgroup ⊔ K := by
+  ∃ K : Subgroup G, IsCyclic K ∧ normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K := by
   sorry
 
 /-
@@ -168,7 +168,7 @@ Theorem 2.3 (v b)If |K| > |Z|, then K ∈ M.
 -/
 theorem K_mem_MaximalAbelianSubgroups_of_center_lt_card_K {F : Type*} [Field F] { p : ℕ } [hp' : Fact (Nat.Prime p)] (G : Subgroup SL(2,F))
   (Q : Sylow p G) (h : Q.toSubgroup ≠ ⊥) (K : Subgroup G)(hK : IsCyclic K)
-  (hNG : normalizer Q.toSubgroup = Q.toSubgroup ⊔ K) (h : Nat.card K > Nat.card (center SL(2,F))) :
+  (hNG : normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K) (h : Nat.card K > Nat.card (center SL(2,F))) :
   map G.subtype K ∈ MaximalAbelianSubgroupsOf G := by
   sorry
 
