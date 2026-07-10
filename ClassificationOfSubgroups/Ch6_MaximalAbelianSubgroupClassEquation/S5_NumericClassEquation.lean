@@ -923,14 +923,83 @@ variable {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
 variable {p : ℕ} [Fact (Nat.Prime p)] [CharP F p]
 
 /--
+**Witness-carrying companion to `main_bridge`.** `main_bridge` only exports the *numerals*
+`g, q, k, s, t, gs, gt` of Butler's class equation; but Butler's own case-by-case proofs (Ch7,
+`case_I` ... `case_VI`) need the actual *subgroups* those numerals count -- the per-class
+representatives `As i`/`At i` for the two families of coprime-type conjugacy classes, and (when
+a Sylow-type class exists, i.e. `q ≠ 1`) the actual Sylow `p`-subgroup and Schur–Zassenhaus
+complement realizing `q`/`k` -- so that facts like `IsCyclic`/`Normal`/coprimality can be attached
+to a concrete subgroup rather than a bare number. `exists_bridgeData` below produces exactly this
+data; `main_bridge` is recovered from it by discarding the witnesses (projecting to the numerals).
+
+The Sylow/complement data is guarded by the disjunction `hSylow : (q = 1 ∧ k = 1) ∨ (...)` rather
+than being unconditionally present, matching *exactly* `main_bridge`'s own case split on whether
+a Sylow-type conjugacy class exists (`Sfin.card = 0` vs. `= 1`, see its construction below): in
+the `q = 1` branch there is no witness Sylow subgroup to attach `k` to -- Butler's numeral `k` is
+a free, contentless placeholder there, since `(q-1)/(qk) = 0` regardless of `k` once `q = 1` -- so
+we honestly assert only the numeric `q = 1 ∧ k = 1` (exactly what `main_bridge` proves in that
+branch) rather than fabricating a spurious witness subgroup for it (e.g. asserting `IsCyclic K`
+for `K := ⊤`/`G` itself would beg the very question -- "is `G` cyclic when `p ∤ |G|`?" -- that
+Butler's Case Ia is trying to prove; see `Ch7`'s `case_I` docstring for why this is not otherwise
+available). In the `q ≠ 1` branch, `Q, K : Subgroup SL(2,F)` are genuine subgroups of `G`
+(`Q ≤ G`, `K ≤ G`) with `Q.subgroupOf G` equal to the toSubgroup of an actual `S : Sylow p G`
+(matching the shape Ch7's `case_I` expects for its own `Q : Sylow p G` parameter) and `K` cyclic,
+disjoint from `Q`, with `N_G(Q) = Q ⊔ K` and `Nat.card K = Nat.card (center SL(2,F)) * k` exactly
+(not just up to divisibility, unlike `sylow_class_data`'s bare conclusion). -/
+structure BridgeData (p : ℕ) (F : Type*) [Field F] [IsAlgClosed F] [DecidableEq F]
+    [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup SL(2,F)) where
+  /-- `g := Nat.card G / Nat.card (center SL(2,F))`. -/
+  g : ℕ
+  /-- `q := Nat.card Q` for the (unique, if it exists) Sylow-type witness `Q`; `1` if none. -/
+  q : ℕ
+  /-- `k := Nat.card K / Nat.card (center SL(2,F))` for the Sylow-type witness `K`; `1` if none. -/
+  k : ℕ
+  /-- number of coprime-type conjugacy classes with normalizer index `1`. -/
+  s : ℕ
+  /-- number of coprime-type conjugacy classes with normalizer index `2`. -/
+  t : ℕ
+  /-- `gs i := Nat.card (As i) / Nat.card (center SL(2,F))`. -/
+  gs : Fin s → ℕ
+  /-- `gt i := Nat.card (At i) / Nat.card (center SL(2,F))`. -/
+  gt : Fin t → ℕ
+  /-- the `s` representative cyclic maximal abelian subgroups of normalizer index `1`. -/
+  As : Fin s → Subgroup SL(2,F)
+  /-- the `t` representative cyclic maximal abelian subgroups of normalizer index `2`. -/
+  At : Fin t → Subgroup SL(2,F)
+  hAs_mem : ∀ i, As i ∈ MaximalAbelianSubgroupsOf G
+  hAt_mem : ∀ i, At i ∈ MaximalAbelianSubgroupsOf G
+  hAs_card : ∀ i, Nat.card (As i) = Nat.card (center SL(2,F)) * gs i
+  hAt_card : ∀ i, Nat.card (At i) = Nat.card (center SL(2,F)) * gt i
+  hAs_relIndex : ∀ i, relIndex ((As i).subgroupOf G)
+      (normalizer (((As i).subgroupOf G) : Set ↥G)) = 1
+  hAt_relIndex : ∀ i, relIndex ((At i).subgroupOf G)
+      (normalizer (((At i).subgroupOf G) : Set ↥G)) = 2
+  hg : Nat.card G = Nat.card (center SL(2,F)) * g
+  /-- either there is no Sylow-type class (`q = k = 1`, a contentless placeholder), or `Q, K`
+  are genuine witness subgroups of `G` realizing `q, k` exactly. -/
+  hSylow : (q = 1 ∧ k = 1) ∨
+    (∃ (Q K : Subgroup SL(2,F)) (S : Sylow p G), Q ≤ G ∧ Q.subgroupOf G = S.toSubgroup ∧
+      Q.subgroupOf G ≠ ⊥ ∧ Nat.card Q = q ∧ K ≤ G ∧ IsCyclic K ∧
+      normalizer (Q.subgroupOf G : Set ↥G) = Q.subgroupOf G ⊔ K.subgroupOf G ∧
+      Disjoint (Q.subgroupOf G) (K.subgroupOf G) ∧
+      Nat.card K = Nat.card (center SL(2,F)) * k)
+  hg_pos : 1 ≤ g
+  hq_pos : 1 ≤ q
+  hk_pos : 1 ≤ k
+  hgs_ge : ∀ i, 2 ≤ gs i
+  hgt_ge : ∀ i, 2 ≤ gt i
+  heq : CaseArithmetic.ClassEquation g q k gs gt
+
+/--
 RESTATED+PROVED (justification: the original statement needed `hp2 : p ≠ 2` for the
 `{1,2}`-dichotomy of `relIndex_normalizer_le_two`, Butler handling `p = 2` separately in Ch7):
 from a finite `G ≤ SL(2,F)` containing the center and strictly larger than it, produce Butler's
 numeric data `g, q, k` and the two families of cyclic-class sizes `gs : Fin s → ℕ`,
 `gt : Fin t → ℕ` (`s` = number of coprime-type conjugacy classes with `[N_G(Aᵢ):Aᵢ] = 1`, `t` =
-number with `[N_G(Aᵢ):Aᵢ] = 2`), together with a proof of `CaseArithmetic.ClassEquation g q k gs
-gt`. Feeding this directly into `CaseArithmetic.case_enumeration` recovers Butler's 6-case split
-(tex ~1206-1270).
+number with `[N_G(Aᵢ):Aᵢ] = 2`), *together with the actual witness subgroups realizing them*
+(`BridgeData`, see its docstring), and a proof of `CaseArithmetic.ClassEquation g q k gs gt`.
+Feeding the numerals into `CaseArithmetic.case_enumeration` recovers Butler's 6-case split (tex
+~1206-1270); `main_bridge` below is the numerals-only corollary.
 
 Construction: `e := Nat.card (center SL(2,F))` divides `Nat.card G` and every maximal abelian
 subgroup's cardinality (Lagrange, `center_le`); `g := Nat.card G / e`. Every noncentral maximal
@@ -939,18 +1008,28 @@ classified, via a chosen representative and `isCoprimeType_or_isSylowType`, as c
 (`Cfin`) or Sylow-type (`Sfin`, of cardinality `≤ 1` by `isSylowType_conj_of_isSylowType`); `Cfin`
 is further split by normalizer-index (`relIndex_normalizer_le_two` gives the `{1,2}`-dichotomy)
 into `S1fin`/`S2fin` of cardinalities `s`/`t`, reindexed via `Finset.equivFin` to give
-`gs`/`gt := Nat.card Aᵢ / e`. If `Sfin` is empty, `q := 1, k := 1`; otherwise (`Sfin = {cls₀}`)
-`Q, K` come from `sylow_class_data`, `q := Nat.card Q`, `k := Nat.card K / e`. The equation is
-assembled by dividing `S3.card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer`
-through by `Nat.card G`, using `card_noncenter_add_card_center_eq_card'` for the `1/g` term,
+`As`/`At` (the chosen class representatives) and `gs`/`gt := Nat.card Aᵢ / e`. If `Sfin` is empty,
+`q := 1, k := 1` (`hSylow`'s left disjunct, no witness needed); otherwise (`Sfin = {cls₀}`) `Q, K`
+come from `sylow_class_data`, `q := Nat.card Q`, `k := Nat.card K / e` (`hSylow`'s right
+disjunct). The equation is assembled by dividing
+`S3.card_noncenter_fin_subgroup_eq_sum_card_noncenter_mul_index_normalizer` through by
+`Nat.card G`, using `card_noncenter_add_card_center_eq_card'` for the `1/g` term,
 `card_union_conjClasses_coprime_class_rat` for each `S1fin`/`S2fin` term, and
 `card_union_conjClasses_sylow_class_rat` together with `card_eq_card_Q_mul_card_Z_of_isSylowType`
-for the (at most one) Sylow term. -/
-theorem main_bridge (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
+for the (at most one) Sylow term.
+
+Stated as `Nonempty (BridgeData p F G)` rather than a bare `BridgeData p F G` term: the
+construction below repeatedly destructures existentials (`IsSylowType`, `sylow_class_data`,
+`Finset.card_eq_one`, ...) whose witnesses are genuine data (subgroups, `Sylow` structures), and
+Lean's recursor for `Exists`/`Or` can only eliminate into `Prop` (`Exists.casesOn`/`Or.casesOn`
+"large elimination" is disallowed) -- so those `obtain`/`rcases` steps require a `Prop`-valued
+goal to typecheck. `Nonempty` is itself a `Prop`, so keeping the goal `Nonempty (BridgeData p F
+G)` throughout keeps every such step legal; the actual `BridgeData` *term* is assembled at the
+very end from the (by then already-destructured, ordinary local) witnesses and wrapped in
+`Nonempty.intro`. -/
+theorem exists_bridgeData (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
     (center_le_G : center SL(2,F) ≤ G) (hG_ne : G ≠ center SL(2,F)) :
-    ∃ (g q k s t : ℕ) (gs : Fin s → ℕ) (gt : Fin t → ℕ),
-      1 ≤ g ∧ 1 ≤ q ∧ 1 ≤ k ∧ (∀ i, 2 ≤ gs i) ∧ (∀ i, 2 ≤ gt i) ∧
-      CaseArithmetic.ClassEquation g q k gs gt := by
+    Nonempty (BridgeData p F G) := by
   classical
   -- ### `e`, `g`
   set e : ℕ := Nat.card (center SL(2,F)) with he_def
@@ -1087,6 +1166,21 @@ theorem main_bridge (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
   let gt : Fin t → ℕ := fun i => Nat.card (A ((eS2.symm i).val)) / e
   have hgs_ge2 : ∀ i, 2 ≤ gs i := fun i => hge2 _
   have hgt_ge2 : ∀ i, 2 ≤ gt i := fun i => hge2 _
+  -- ### the witness subgroups `As i`/`At i` (for `BridgeData`) and their basic properties
+  let As : Fin s → Subgroup SL(2,F) := fun i => A ((eS1.symm i).val)
+  let At : Fin t → Subgroup SL(2,F) := fun i => A ((eS2.symm i).val)
+  have hAs_mem : ∀ i, As i ∈ MaximalAbelianSubgroupsOf G := fun i => hA_mem _
+  have hAt_mem : ∀ i, At i ∈ MaximalAbelianSubgroupsOf G := fun i => hA_mem _
+  have hAs_card : ∀ i, Nat.card (As i) = e * gs i := fun i =>
+    (Nat.mul_div_cancel' (hdvd_e ((eS1.symm i).val))).symm
+  have hAt_card : ∀ i, Nat.card (At i) = e * gt i := fun i =>
+    (Nat.mul_div_cancel' (hdvd_e ((eS2.symm i).val))).symm
+  have hAs_relIndex : ∀ i, relIndex ((As i).subgroupOf G)
+      (normalizer (((As i).subgroupOf G) : Set ↥G)) = 1 := fun i =>
+    (Finset.mem_filter.mp (eS1.symm i).property).2
+  have hAt_relIndex : ∀ i, relIndex ((At i).subgroupOf G)
+      (normalizer (((At i).subgroupOf G) : Set ↥G)) = 2 := fun i =>
+    (Finset.mem_filter.mp (eS2.symm i).property).2
   -- ### the value, as a rational number, of each coprime-type class's contribution
   have hCterm : ∀ cls : ι, IsCoprimeType p (A cls) →
       (Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G cls) : ℚ) / (Nat.card G : ℚ)
@@ -1253,16 +1347,22 @@ theorem main_bridge (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
             / (Nat.card G : ℚ)) := by
     linarith [hcombined]
   -- ### case split: does a Sylow-type class exist?
-  have hSfin01 : Sfin.card = 0 ∨ Sfin.card = 1 := by omega
-  rcases hSfin01 with hS0 | hS1
+  -- (`by_cases`, not `rcases`/`cases` on a bare `∨`, since the goal `BridgeData p F G` is not a
+  -- `Prop`: `Or.casesOn` cannot eliminate into non-`Prop` sorts, but `Decidable.rec` -- underlying
+  -- `by_cases` on the decidable proposition `Sfin.card = 0` -- can.)
+  by_cases hS0 : Sfin.card = 0
   · -- no Sylow-type class: `q := 1`, `k := 1`
     have hSfin_empty : Sfin = (∅ : Finset ι) := Finset.card_eq_zero.mp hS0
-    refine ⟨g, 1, 1, s, t, gs, gt, hgpos, le_refl 1, le_refl 1, hgs_ge2, hgt_ge2, ?_⟩
-    unfold CaseArithmetic.ClassEquation
-    rw [hSfin_empty, Finset.sum_empty, add_zero] at hmaster
-    rw [he_div_g] at hmaster
-    simpa using hmaster
+    have heq : CaseArithmetic.ClassEquation g 1 1 gs gt := by
+      unfold CaseArithmetic.ClassEquation
+      rw [hSfin_empty, Finset.sum_empty, add_zero] at hmaster
+      rw [he_div_g] at hmaster
+      simpa using hmaster
+    exact ⟨⟨g, 1, 1, s, t, gs, gt, As, At, hAs_mem, hAt_mem, hAs_card, hAt_card,
+      hAs_relIndex, hAt_relIndex, hg_eq, Or.inl ⟨rfl, rfl⟩, hgpos, le_refl 1, le_refl 1,
+      hgs_ge2, hgt_ge2, heq⟩⟩
   · -- the unique Sylow-type class `cls0`
+    have hS1 : Sfin.card = 1 := by omega
     obtain ⟨cls0, hSfin_eq⟩ := Finset.card_eq_one.mp hS1
     have hcls0_Sylow : IsSylowType p G (A cls0) := by
       have hmem : cls0 ∈ Sfin := by rw [hSfin_eq]; exact Finset.mem_singleton_self cls0
@@ -1292,44 +1392,66 @@ theorem main_bridge (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
       rcases Nat.eq_zero_or_pos k with h0 | h0
       · exfalso; rw [h0, mul_zero] at hk_eq; omega
       · exact h0
-    refine ⟨g, q, k, s, t, gs, gt, hgpos, hqpos, hkpos, hgs_ge2, hgt_ge2, ?_⟩
-    unfold CaseArithmetic.ClassEquation
-    -- compute the (unique) Sylow class's contribution
-    have hAmem0 : A cls0 ∈ MaximalAbelianSubgroupsOf G := hA_mem cls0
-    have hSylowrat := card_union_conjClasses_sylow_class_rat (A := A cls0) (Q := Q) (K := K)
-      center_le_G hAmem0 S hQ_subgroupOf hAeq hQw_ne_bot hK_cyc hK_le_G hNG hQK
-    have hAstar_eq0 : (⟨noncenter (A cls0),
-          noncenter_mem_noncenter_MaximalAbelianSubgroupsOf G ⟨A cls0, hAmem0⟩⟩
-        : noncenter_MaximalAbelianSubgroupsOf G) = cls0.out := Subtype.ext (hA_eq cls0)
-    rw [hAstar_eq0, ← hf_eq cls0] at hSylowrat
-    have hcardA0 : Nat.card (A cls0) = Nat.card Q * Nat.card (Z F) :=
-      card_eq_card_Q_mul_card_Z_of_isSylowType center_le_G S hQ_subgroupOf hQ_le_G hAeq
-    have hcard_ZF : Nat.card (Z F) = e := by rw [← center_SL2_eq_Z]
-    have hnc0 := card_noncenter_add_card_center_eq_card hAmem0 center_le_G
-    have hqpos' : (0 : ℚ) < (q : ℚ) := by exact_mod_cast hqpos
-    have hkpos' : (0 : ℚ) < (k : ℚ) := by exact_mod_cast hkpos
-    have hepos' : (0 : ℚ) < (e : ℚ) := by exact_mod_cast hepos
-    have hGpos' : (0 : ℚ) < (Nat.card G : ℚ) := by exact_mod_cast hGpos
-    have hnc0_eq : (Nat.card (noncenter (A cls0) : Set SL(2,F)) : ℚ) = (e : ℚ) * ((q : ℚ) - 1) := by
-      have hnat_eq : Nat.card (noncenter (A cls0) : Set SL(2,F)) + e
-          = Nat.card Q * Nat.card (Z F) := by rw [hcardA0] at hnc0; exact hnc0
-      rw [hcard_ZF] at hnat_eq
-      have hQeq' : (Nat.card (noncenter (A cls0) : Set SL(2,F)) : ℚ) + (e : ℚ)
-          = (q : ℚ) * (e : ℚ) := by exact_mod_cast hnat_eq
-      linarith
-    have hK_ne : (Nat.card K : ℚ) = (e : ℚ) * (k : ℚ) := by exact_mod_cast hk_eq
-    have hfinal : (Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G cls0) : ℚ)
-        / (Nat.card G : ℚ) = ((q : ℚ) - 1) / ((q : ℚ) * (k : ℚ)) := by
-      rw [hSylowrat, hnc0_eq, hK_ne, show (Nat.card Q : ℚ) = (q : ℚ) from rfl]
-      field_simp
-    have hSfin_singleton_sum : (∑ cls ∈ Sfin,
-          (Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G cls) : ℚ)
-            / (Nat.card G : ℚ))
-        = ((q : ℚ) - 1) / ((q : ℚ) * (k : ℚ)) := by
-      rw [hSfin_eq, Finset.sum_singleton, hfinal]
-    -- assemble
-    rw [hSfin_singleton_sum, he_div_g] at hmaster
-    linarith [hmaster]
+    have hQsg_ne_bot : Q.subgroupOf G ≠ ⊥ := by rw [hQ_subgroupOf]; exact hSne
+    have heq2 : CaseArithmetic.ClassEquation g q k gs gt := by
+      unfold CaseArithmetic.ClassEquation
+      -- compute the (unique) Sylow class's contribution
+      have hAmem0 : A cls0 ∈ MaximalAbelianSubgroupsOf G := hA_mem cls0
+      have hSylowrat := card_union_conjClasses_sylow_class_rat (A := A cls0) (Q := Q) (K := K)
+        center_le_G hAmem0 S hQ_subgroupOf hAeq hQw_ne_bot hK_cyc hK_le_G hNG hQK
+      have hAstar_eq0 : (⟨noncenter (A cls0),
+            noncenter_mem_noncenter_MaximalAbelianSubgroupsOf G ⟨A cls0, hAmem0⟩⟩
+          : noncenter_MaximalAbelianSubgroupsOf G) = cls0.out := Subtype.ext (hA_eq cls0)
+      rw [hAstar_eq0, ← hf_eq cls0] at hSylowrat
+      have hcardA0 : Nat.card (A cls0) = Nat.card Q * Nat.card (Z F) :=
+        card_eq_card_Q_mul_card_Z_of_isSylowType center_le_G S hQ_subgroupOf hQ_le_G hAeq
+      have hcard_ZF : Nat.card (Z F) = e := by rw [← center_SL2_eq_Z]
+      have hnc0 := card_noncenter_add_card_center_eq_card hAmem0 center_le_G
+      have hqpos' : (0 : ℚ) < (q : ℚ) := by exact_mod_cast hqpos
+      have hkpos' : (0 : ℚ) < (k : ℚ) := by exact_mod_cast hkpos
+      have hepos' : (0 : ℚ) < (e : ℚ) := by exact_mod_cast hepos
+      have hGpos' : (0 : ℚ) < (Nat.card G : ℚ) := by exact_mod_cast hGpos
+      have hnc0_eq : (Nat.card (noncenter (A cls0) : Set SL(2,F)) : ℚ)
+          = (e : ℚ) * ((q : ℚ) - 1) := by
+        have hnat_eq : Nat.card (noncenter (A cls0) : Set SL(2,F)) + e
+            = Nat.card Q * Nat.card (Z F) := by rw [hcardA0] at hnc0; exact hnc0
+        rw [hcard_ZF] at hnat_eq
+        have hQeq' : (Nat.card (noncenter (A cls0) : Set SL(2,F)) : ℚ) + (e : ℚ)
+            = (q : ℚ) * (e : ℚ) := by exact_mod_cast hnat_eq
+        linarith
+      have hK_ne : (Nat.card K : ℚ) = (e : ℚ) * (k : ℚ) := by exact_mod_cast hk_eq
+      have hfinal : (Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G cls0) : ℚ)
+          / (Nat.card G : ℚ) = ((q : ℚ) - 1) / ((q : ℚ) * (k : ℚ)) := by
+        rw [hSylowrat, hnc0_eq, hK_ne, show (Nat.card Q : ℚ) = (q : ℚ) from rfl]
+        field_simp
+      have hSfin_singleton_sum : (∑ cls ∈ Sfin,
+            (Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G cls) : ℚ)
+              / (Nat.card G : ℚ))
+          = ((q : ℚ) - 1) / ((q : ℚ) * (k : ℚ)) := by
+        rw [hSfin_eq, Finset.sum_singleton, hfinal]
+      -- assemble
+      rw [hSfin_singleton_sum, he_div_g] at hmaster
+      linarith [hmaster]
+    exact ⟨⟨g, q, k, s, t, gs, gt, As, At, hAs_mem, hAt_mem, hAs_card, hAt_card,
+      hAs_relIndex, hAt_relIndex, hg_eq,
+      Or.inr ⟨Q, K, S, hQ_le_G, hQ_subgroupOf, hQsg_ne_bot, hq_def.symm, hK_le_G, hK_cyc,
+        hNG, hQK, hk_eq⟩,
+      hgpos, hqpos, hkpos, hgs_ge2, hgt_ge2, heq2⟩⟩
+
+/--
+RESTATED+PROVED (justification: as above, `hp2 : p ≠ 2` is needed for the `{1,2}`-dichotomy of
+`relIndex_normalizer_le_two`, Butler handling `p = 2` separately in Ch7): the numerals-only
+corollary of `exists_bridgeData`, discarding its witness subgroups. This is the statement used by
+`CaseArithmetic.case_enumeration` to recover Butler's 6-case split (tex ~1206-1270); see
+`exists_bridgeData` for the construction and for the witness subgroups themselves. -/
+theorem main_bridge (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
+    (center_le_G : center SL(2,F) ≤ G) (hG_ne : G ≠ center SL(2,F)) :
+    ∃ (g q k s t : ℕ) (gs : Fin s → ℕ) (gt : Fin t → ℕ),
+      1 ≤ g ∧ 1 ≤ q ∧ 1 ≤ k ∧ (∀ i, 2 ≤ gs i) ∧ (∀ i, 2 ≤ gt i) ∧
+      CaseArithmetic.ClassEquation g q k gs gt := by
+  obtain ⟨d⟩ := exists_bridgeData G hp2 center_le_G hG_ne
+  exact ⟨d.g, d.q, d.k, d.s, d.t, d.gs, d.gt, d.hg_pos, d.hq_pos, d.hk_pos, d.hgs_ge, d.hgt_ge,
+    d.heq⟩
 
 end MainBridge
 

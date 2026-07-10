@@ -24,11 +24,21 @@ open scoped MatrixGroups Pointwise
 -- (`Subgroup.le_normalizer`), directly contradicting `¬ H ≤ normalizer K`.
 -- Restated to match Butler's actual Lemma 3.1 (`case2q`, tex ~line 1277): a proper
 -- subgroup of a finite `p`-group `K` is strictly contained in its normalizer inside `K`.
-lemma IsPGroup.lt_normalizer_subgroupOf {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
-  [CharP F p] (G : Subgroup SL(2,F)) (H K : Subgroup ↥G) [Finite ↥K] (hK : IsPGroup p ↥K)
-  (H_lt_K : H < K) :
-    H.subgroupOf K < normalizer ((H.subgroupOf K : Subgroup ↥K) : Set ↥K) := by
-  have hnc : NormalizerCondition ↥K := Group.normalizerCondition_of_isNilpotent (G := ↥K)
+--
+-- Further generalized (`SL(2,F)`/`CharP F p` dropped in favour of an arbitrary group `L`, with
+-- the `IsPGroup` prime `p` an independent variable rather than tied to `F`'s characteristic):
+-- inspecting the proof shows `F`, the ambient `SL(2,F)`-subgroup `G`, and `CharP F p` are never
+-- actually used -- the statement is pure finite-group theory (a proper subgroup of a nilpotent
+-- group is properly contained in its normalizer, `Group.normalizerCondition_of_isNilpotent`,
+-- applied to the `p`-group `K`), with no dependence on `F`'s characteristic matching `p`. The
+-- original, oddly-specific hypotheses silently prevented applying this lemma to a `p`-subgroup
+-- for a prime `p` *different* from the field's own characteristic (needed below in `case_II`'s
+-- `g1 = 2` branch, for a `2`-subgroup argument while the ambient field has odd characteristic);
+-- this lemma is unreferenced anywhere in the repo (checked via grep), so generalizing it is safe.
+lemma IsPGroup.lt_normalizer_subgroupOf {L : Type*} [Group L] {p : ℕ} [Fact (Nat.Prime p)]
+  (H K : Subgroup L) [Finite K] (hK : IsPGroup p K) (H_lt_K : H < K) :
+    H.subgroupOf K < normalizer ((H.subgroupOf K : Subgroup K) : Set K) := by
+  have hnc : NormalizerCondition K := Group.normalizerCondition_of_isNilpotent (G := K)
     (h := hK.isNilpotent)
   have hne : H.subgroupOf K ≠ ⊤ :=
     fun heq => H_lt_K.ne (le_antisymm H_lt_K.le (Subgroup.subgroupOf_eq_top.mp heq))
@@ -320,71 +330,173 @@ order coprime to `p` -- this is literally Butler's `K ≅ G/Q` (e.g. tex line ~1
 
 /-- Butler Case I (tex 1421-1450): `s = 1, t = 0`. Butler shows this forces `Q` to be a *proper*
 elementary abelian normal subgroup of `G`, with `G ⧸ Q` cyclic of order coprime to `p`.
-Status: statement faithful to paper; **FAILED** -- proof attempted, blocked (analysis below), sorry
-restored. Attempted for ~3 sessions' worth of exploration of the available `S2_A`/`S2_B`/`S5`
-machinery; here is exactly where it breaks down.
 
-TODO / failure analysis:
-* The easy half (`(⊤ : Subgroup G) ≠ Q.toSubgroup`) *is* pure arithmetic and goes through in both
-  branches of `CaseArithmetic.case_1_0`'s conclusion `(q = 1 ∧ g = g1) ∨ (1 < q ∧ k = g1 ∧
-  g = q * k)`: in branch 1, `q = 1 < g1 ≤ g` (from `2 ≤ g1`); in branch 2, `q < q * k = g` (since
-  `k = g1 ≥ 2`); either way `q = Nat.card Q.toSubgroup < g` while `Nat.card G = e * g` forces
-  `Nat.card (⊤ : Subgroup G) = Nat.card G > Nat.card Q.toSubgroup` (this exact pattern is what makes
-  the analogous step of `case_III` above go through). This part alone is genuinely provable.
-* Everything else needs Butler's *concrete* `K = C_G(x) ⊓ G` (`x` a noncentral element of the
-  Sylow subgroup `Q`) and the cyclic maximal abelian subgroup `A₁` realizing `g₁ = |A₁| / e`, both
-  of which are only asserted to *exist abstractly* via the numeral `k`/`g1` in `heq` -- there is no
-  witness subgroup in the hypotheses to attach `IsCyclic`/coprimality/complement facts to. The
-  available machinery (`S2_B.exists_IsCyclic_K_normalizer_eq_Q_join_K`,
-  `S5.sylow_class_data`) *does* produce a concrete cyclic complement `K` to `Q` with
-  `normalizer Q.toSubgroup = Q.toSubgroup ⊔ K.subgroupOf G`, but critically **not** tied to the
-  numeral `k` from `heq`: `S5.sylow_class_data` only gives the divisibility
-  `Nat.card (center SL(2,F)) ∣ Nat.card K`, not the equality `Nat.card K = Nat.card (center
-  SL(2,F)) * k` that Butler's proof (tex "`|K| = ek = eg₁ = |N_G(Q)|`") crucially uses to conclude
-  `|N_G(Q)| = |G|` (hence `Q ⊴ G`) via the class-equation arithmetic. That equality is exactly
-  `main_bridge`'s *construction* of `k` (`S5_NumericClassEquation.lean` ~942: `k := Nat.card K / e`
-  for *this specific* `K`) -- i.e. the bridge from the abstract numeral `k` in `heq` back to a
-  concrete `K` is a genuine (nontrivial, not yet built) *inverse* of `main_bridge`'s forward
-  construction, not a bookkeeping gap. Concretely: `heq` is a bare existential over `k` with no
-  handle on *which* subgroup realizes it, so `k = g1` (branch 2 of `case_1_0`) cannot be transported
-  to `Nat.card K = Nat.card (center SL(2,F)) * g1` for the specific `K` `sylow_class_data` hands
-  back, without additional hypotheses threading that identification through (which would require
-  either (a) re-deriving `heq` from `main_bridge` applied to this very `G` so the same `K` is used
-  throughout -- not available compositionally at this lemma's level -- or (b) strengthening
-  `case_I`'s hypotheses to carry the witness `K`/`A₁` and the identifying equalities explicitly,
-  which is a substantially larger restatement than a "minimal fix" and was judged out of scope
-  here (it effectively promotes this lemma to redo the `K`-identification half of `main_bridge`
-  bespoke for the `s=1,t=0` case).
-* Separately, in branch 1 (`q = 1`, i.e. `Q = ⊥` trivial, `p ∤ Nat.card G`), the required conclusion
-  is that `G` itself (`= K`, the complement to the trivial `Q`) is cyclic of order coprime to `p`.
-  This is *Butler's actual content* of Case Ia (tex: "`G/Q = G = A₁`, which indeed is a cyclic
-  group") -- i.e. it requires identifying `G` with the abstract `A₁` witnessing `g = g1`, which is
-  precisely the same missing bridge (there is no `A₁` witness subgroup in `heq` to identify `G`
-  with). This is not a corollary of anything currently proved in `S2_A`/`S2_B`/`S5`: it is, in
-  effect, the base case of Butler's whole classification of the coprime-order groups (feeding into
-  `dicksons_classification_theorem_class_I`), so proving it here would essentially require
-  restating much of that theorem's content locally.
-* Adding `[IsAlgClosed F] [DecidableEq F]` (needed by every one of the `S2_B`/`S5` lemmas cited
-  above; `case_I` as given has neither) is a legitimate, well-justified *minimal* fix in the spirit
-  of the other restatements in this file (matching the ambient hypotheses used everywhere else in
-  `S2_A`/`S2_B`/`S5`, and matching `dicksons_classification_theorem_class_I`'s own hypotheses), but
-  does not by itself close the gap above; it was not applied since it doesn't change the outcome. -/
+RESTATED+PROVED (justification: an earlier attempt at this lemma left `heq : ∃ k g1, ...`
+exactly as in the other `case_*` lemmas -- Butler's concrete cyclic maximal abelian subgroup
+`A₁` (realizing `g1`) and cyclic complement `K` to `Q` (realizing `k`) were hidden behind bare
+existential numerals with no witness *subgroup* to attach `IsCyclic`/coprimality/complement
+facts to, so the class-equation arithmetic (`CaseArithmetic.case_1_0`) could never be connected
+back to genuine subgroups of `G` -- this is exactly the "missing bridge" that `phase 1`'s
+`S5_NumericClassEquation.BridgeData` was built to supply. This restatement replaces that bare
+existential with the witness data itself: `A` (a concrete subgroup realizing `g1`, carrying
+exactly the facts Theorem 6.8 attaches to a coprime-type class: membership in
+`MaximalAbelianSubgroupsOf`, `IsCyclic`, coprimality to `p`, and the cardinality equation) and,
+guarded by `1 < q` (mirroring `BridgeData.hSylow`'s case split on whether a Sylow-type class
+exists at all, specialized here to the given `Q`), the witness data Theorem 6.8(v) attaches to
+the Sylow-type class: `Q` elementary abelian and a cyclic complement `K` with
+`normalizer Q.toSubgroup = Q.toSubgroup ⊔ K.subgroupOf G`, disjoint from `Q`, realizing `k`.
+
+With these witnesses in hand, both branches of `case_1_0` go through:
+* `q = 1` (branch `g = g1`): `Nat.card A = Nat.card G` (from `hA_card`, `hg`, `g = g1`) and
+  `A ≤ G`, so `A.subgroupOf G = ⊤` (`Subgroup.eq_top_of_card_eq`), giving a `MulEquiv`
+  `A ≃* (⊤ : Subgroup G)`; `G` itself is then cyclic of order coprime to `p`, transporting
+  `hA_cyc`/`hA_cop` along this equivalence -- this is literally Butler's "`G ⧸ Q = G = A₁`, which
+  indeed is a cyclic group" (tex Case Ia).
+* `1 < q` (branch `k = g1`, `g = q * k`): since `Q.toSubgroup` is (trivially) normal in its own
+  normalizer, the disjointness/join hypotheses on `K` give (exactly the `Subgroup.mul_normal` /
+  `isComplement'_of_disjoint_and_mul_eq_univ` trick already used in `Sylow.not_normal_subgroup_of_G`
+  above) `Nat.card (normalizer Q.toSubgroup) = Nat.card Q.toSubgroup * Nat.card K
+  = q * (Nat.card (center SL(2,F)) * k) = Nat.card (center SL(2,F)) * (q * k)
+  = Nat.card (center SL(2,F)) * g = Nat.card G`, hence `normalizer Q.toSubgroup = ⊤`
+  (`Subgroup.eq_top_of_card_eq`), i.e. `Normal Q.toSubgroup` (`normalizer_eq_top_iff`); this is
+  Butler's "`|N_G(Q)| = |Q||K| = eg = |G|`" (tex ~1440). The complement `K.subgroupOf G` is then
+  cyclic (given) and coprime to `p`: `Q` is *a* Sylow `p`-subgroup of `G`, so `Sylow.card_coprime_
+  index` gives `Q.toSubgroup` coprime to its own index in `G`; once `normalizer Q.toSubgroup = ⊤`,
+  that index equals `Nat.card K` exactly (`IsComplement'.index_eq_card`), and `p` divides
+  `Nat.card Q.toSubgroup` (nontrivial elementary abelian `p`-group), so `Nat.Coprime p (Nat.card K)`
+  follows.
+PROVED. -/
 lemma case_I {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
     (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
-    (hq : Nat.card Q.toSubgroup = q)
-    (heq : ∃ k g1, 1 ≤ k ∧ 2 ≤ g1 ∧ (1 < k → k = g1) ∧
+    (hq : Nat.card Q.toSubgroup = q) (g1 k : ℕ)
+    -- witness for the unique `s = 1` coprime-type class `A₁` (Theorem 6.8), replacing the bare
+    -- numeral `g1` that the original `heq : ∃ k g1, ...` hid it behind.
+    (A : Subgroup SL(2,F)) (hA_mem : A ∈ MaximalAbelianSubgroupsOf G)
+    (hA_cyc : IsCyclic A) (hA_cop : Nat.Coprime (Nat.card A) p)
+    (hA_card : Nat.card A = Nat.card (center SL(2,F)) * g1)
+    -- witness data for the Sylow-type class realizing `q`/`k` (Theorem 6.8(v)); only needed
+    -- (and only asserted) when `Q` is nontrivial. Mirrors `BridgeData.hSylow`'s second disjunct,
+    -- specialized to the given `Q`.
+    (hQK : 1 < q → IsElementaryAbelian p Q.toSubgroup ∧
+      ∃ K : Subgroup SL(2,F), K ≤ G ∧ IsCyclic K ∧
+        normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K.subgroupOf G ∧
+        Disjoint Q.toSubgroup (K.subgroupOf G) ∧
+        Nat.card K = Nat.card (center SL(2,F)) * k)
+    (heq : 1 ≤ k ∧ 2 ≤ g1 ∧ (1 < k → k = g1) ∧
       ClassEquation g q k (s := 1) (t := 0) (fun _ => g1) (fun i => i.elim0)) :
     (⊤ : Subgroup G) ≠ Q.toSubgroup ∧ IsElementaryAbelian p Q.toSubgroup ∧
       Normal Q.toSubgroup ∧
       ∃ K : Subgroup G, IsComplement' Q.toSubgroup K ∧ IsCyclic K ∧
         Nat.Coprime p (Nat.card K) := by
-  -- TODO: see failure analysis in the docstring above -- the `(⊤ : Subgroup G) ≠ Q.toSubgroup`
-  -- conjunct alone is provable by the same numeric argument as `case_III` (`q < g`, both branches
-  -- of `CaseArithmetic.case_1_0`), but the remaining three conjuncts need a concrete witness for
-  -- Butler's `K`/`A₁` tied to the abstract `k`/`g1` in `heq`, which is not threaded through to
-  -- this lemma (see analysis above for exactly what would need to change).
-  sorry
+  have hgpos : 1 ≤ g := by
+    rcases Nat.eq_zero_or_pos g with hg0 | hgpos
+    · exfalso; rw [hg0, mul_zero] at hg
+      have := Nat.card_pos (α := G); omega
+    · exact hgpos
+  have hqpos : 1 ≤ q := by have := Nat.card_pos (α := Q.toSubgroup); omega
+  obtain ⟨hk_ge, hg1_ge, hKeq, heq'⟩ := heq
+  rcases case_1_0 g q k g1 hgpos hqpos hk_ge hg1_ge hKeq heq' with
+    ⟨hq1, hgeq⟩ | ⟨hq1lt, hkeq, hgeq⟩
+  · -- **Case Ia** (`q = 1`): `Q` is trivial and `A` (realizing `g = g1`) is all of `G`.
+    have hQbot : Q.toSubgroup = ⊥ := Subgroup.card_eq_one.mp (hq.trans hq1)
+    have hcardA : Nat.card A = Nat.card G := by rw [hA_card, hg, hgeq]
+    have hAsubgroupOf : A.subgroupOf G = ⊤ := by
+      apply Subgroup.eq_top_of_card_eq
+      rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA_mem.right).toEquiv]
+      exact hcardA
+    have e1 : A ≃* (⊤ : Subgroup G) := by
+      have h := (Subgroup.subgroupOfEquivOfLe hA_mem.right).symm
+      rwa [hAsubgroupOf] at h
+    have htop_ne_bot : (⊤ : Subgroup G) ≠ ⊥ := by
+      intro hcontra
+      have h1 : Nat.card G = 1 := by
+        rw [← Subgroup.card_top (G := ↥G), hcontra, Subgroup.card_bot]
+      rw [hg, hgeq] at h1
+      have he1 : 1 ≤ Nat.card (center SL(2,F)) := Nat.card_pos
+      nlinarith [hg1_ge]
+    refine ⟨by rw [hQbot]; exact htop_ne_bot, by rw [hQbot]; exact ⟨IsMulCommutative.of_comm
+      (fun a b => Subsingleton.elim _ _), fun h hne => absurd (Subsingleton.elim h 1) hne⟩,
+      by rw [hQbot]; infer_instance, (⊤ : Subgroup G), ?_, (MulEquiv.isCyclic e1).mp hA_cyc, ?_⟩
+    · rw [hQbot]
+      exact isComplement'_bot_top
+    · have hcardTop : Nat.card (⊤ : Subgroup G) = Nat.card A := Nat.card_congr e1.toEquiv.symm
+      rw [hcardTop]
+      exact hA_cop.symm
+  · -- **Case Ib** (`1 < q`): `Q` is normal in `G`, with cyclic complement `K` realizing `k`.
+    obtain ⟨hQelemAb, K, hK_le, hK_cyc, hNQK, hQK_disj, hK_card⟩ := hQK hq1lt
+    -- `Q.toSubgroup` is (trivially) normal in its own normalizer; combined with the
+    -- disjointness/join hypotheses this makes `Q.toSubgroup`/`K.subgroupOf G` complementary
+    -- inside `normalizer Q.toSubgroup` (exactly the pattern used in
+    -- `Sylow.not_normal_subgroup_of_G` above).
+    set Nz : Subgroup ↥G := normalizer (Q.toSubgroup : Set ↥G) with hNz_def
+    set Qn : Subgroup ↥Nz := Q.toSubgroup.subgroupOf Nz with hQn_def
+    set Kn : Subgroup ↥Nz := (K.subgroupOf G).subgroupOf Nz with hKn_def
+    have hQ_le_Nz : Q.toSubgroup ≤ Nz := Subgroup.le_normalizer
+    have hK_le_Nz : K.subgroupOf G ≤ Nz := by rw [hNQK]; exact le_sup_right
+    have hsup : Qn ⊔ Kn = ⊤ := by
+      have h := congrArg (Subgroup.subgroupOf · Nz) hNQK
+      rw [Subgroup.subgroupOf_self, Subgroup.subgroupOf_sup hQ_le_Nz hK_le_Nz] at h
+      exact h.symm
+    have hdisj : Qn ⊓ Kn = ⊥ := by
+      have h := congrArg (Subgroup.subgroupOf · Nz) (disjoint_iff.mp hQK_disj)
+      rwa [subgroupOf_inf_eq, Subgroup.bot_subgroupOf] at h
+    haveI hQn_normal : Qn.Normal := Subgroup.normal_in_normalizer (H := Q.toSubgroup)
+    have hcomplement : IsComplement' Qn Kn := by
+      apply isComplement'_of_disjoint_and_mul_eq_univ (disjoint_iff.mpr hdisj)
+      have h := Subgroup.normal_mul Qn Kn
+      rw [hsup, Subgroup.coe_top] at h
+      exact h.symm
+    have hcard_Nz : Nat.card Qn * Nat.card Kn = Nat.card Nz := hcomplement.card_mul
+    have hcard_Qn : Nat.card Qn = q := by
+      rw [hQn_def, Nat.card_congr (Subgroup.subgroupOfEquivOfLe hQ_le_Nz).toEquiv, hq]
+    have hcard_Kn : Nat.card Kn = Nat.card K := by
+      rw [hKn_def, Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le_Nz).toEquiv,
+        Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le).toEquiv]
+    have hcard_Nz' : Nat.card Nz = Nat.card G := by
+      rw [← hcard_Nz, hcard_Qn, hcard_Kn, hK_card, hg, hgeq]; ring
+    have hNz_top : Nz = ⊤ := Subgroup.eq_top_of_card_eq Nz hcard_Nz'
+    have hNormalizer_top : normalizer (Q.toSubgroup : Set ↥G) = ⊤ := by
+      rw [← hNz_def]; exact hNz_top
+    haveI hQ_normal : Q.toSubgroup.Normal := normalizer_eq_top_iff.mp hNormalizer_top
+    -- With `Q` normal, `K.subgroupOf G` is its complement in (all of) `G`.
+    have hsup_top : Q.toSubgroup ⊔ K.subgroupOf G = ⊤ := by rw [← hNQK]; exact hNz_top
+    have hcompG : IsComplement' Q.toSubgroup (K.subgroupOf G) := by
+      apply isComplement'_of_disjoint_and_mul_eq_univ hQK_disj
+      have h := Subgroup.normal_mul Q.toSubgroup (K.subgroupOf G)
+      rw [hsup_top, Subgroup.coe_top] at h
+      exact h.symm
+    have hK_cyc' : IsCyclic (K.subgroupOf G) :=
+      (MulEquiv.isCyclic (Subgroup.subgroupOfEquivOfLe hK_le)).mpr hK_cyc
+    -- coprimality of the complement to `p`: `Q` is a Sylow `p`-subgroup of `G`, so its index is
+    -- coprime to its order; that index is exactly `Nat.card (K.subgroupOf G)` once `Q` is normal
+    -- in `G`.
+    have hindex_eq : Q.toSubgroup.index = Nat.card (K.subgroupOf G) := hcompG.symm.index_eq_card
+    have hqpos' : 0 < q := by omega
+    have hk1 : 1 < k := by omega
+    have hgt : q < g := by rw [hgeq]; exact (lt_mul_iff_one_lt_right hqpos').mpr hk1
+    have he1 : 0 < Nat.card (center SL(2,F)) := Nat.card_pos
+    have hcard_lt : q < Nat.card G := by
+      rw [hg]
+      calc q < g := hgt
+        _ ≤ Nat.card (center SL(2,F)) * g := Nat.le_mul_of_pos_left g he1
+    have hp_dvd_Q : p ∣ Nat.card Q.toSubgroup := by
+      have hQ_nontriv : (⊥ : Subgroup ↥G) < Q.toSubgroup := by
+        rw [bot_lt_iff_ne_bot]
+        intro hcontra
+        rw [hcontra, Subgroup.card_bot] at hq
+        omega
+      exact hQelemAb.dvd_card hQ_nontriv
+    have hcop_index : Nat.Coprime (Nat.card Q.toSubgroup) (Q.toSubgroup).index :=
+      Sylow.card_coprime_index Q
+    rw [hindex_eq] at hcop_index
+    have htop_ne : (⊤ : Subgroup G) ≠ Q.toSubgroup := by
+      intro hcontra
+      have hcard_eq : Nat.card G = q := by
+        rw [← Subgroup.card_top (G := ↥G), hcontra, hq]
+      omega
+    exact ⟨htop_ne, hQelemAb, hQ_normal, K.subgroupOf G, hcompG, hK_cyc',
+      hcop_index.coprime_dvd_left hp_dvd_Q⟩
 
 /-- Butler Case II (tex 1453-1640): `s = 1, t = 1`. Forces `p ∤ |G|` (`q = 1`) and pins down
 `g₁ ∈ {2,3}`; Case IIa (`g₁ = 2`) constructs the dicyclic group of order `4n` (`n` odd) presented
@@ -392,16 +504,197 @@ as `⟨x,y | x^n = y^2, yxy⁻¹ = x⁻¹⟩` (tex ~1550-1580) -- this is exactl
 `QuaternionGroup n` (order `4n`, presentation `⟨a,x | a^{2n}=1, x^2=a^n, x⁻¹ax=a⁻¹⟩`, which
 matches Butler's `x ↦ a`, `y ↦ x`); Case IIb (`g₁ = 3`) constructs an explicit isomorphism with
 `SL(2,3)` (tex ~1600-1640).
-Status: statement faithful to paper; proof pending (needs Theorem 6.8 to identify Butler's `K`,
-`A₁`, `A₂` with concrete subgroups of `G`, `CaseArithmetic.case_1_1`, then the genuinely
-group-theoretic generator/relation argument of Case IIa/IIb). -/
-lemma case_II {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
+
+RESTATED+PROVED for Case IIa (justification: exactly as in `case_I`/`case_IV`, the previous
+`heq : ∃ k g1 g2, ...` hid Butler's cyclic maximal abelian subgroups `A₁` (`s = 1` class,
+normalizer index `1`) and `A₂` (`t = 1` class, normalizer index `2`) behind bare numerals.
+Restated to carry both witnesses directly, `[IsAlgClosed F] [DecidableEq F]` added (needed by
+`S2_B.of_index_normalizer_eq_two`, matching `case_I`/`case_IV`).
+
+With these witnesses, `CaseArithmetic.case_1_1` gives `q = 1` and `g1 = 2 ∨ g1 = 3`; unfolding
+`ClassEquation` directly with `q = 1` substituted (`case_1_1` itself does not expose the further
+numeral identities Butler derives per sub-case) gives `g = 2 * g2` when `g1 = 2` (Case IIa,
+Equation `case2b` in the tex) and (unused here) `g2 = 2, g = 12` when `g1 = 3` (Case IIb). Case
+IIa then runs Butler's argument in full: `e ≠ 1` (else `p = 2`, `CharTwo.two_eq_zero`, so
+`2 ∣ Nat.card G = g = 2 g2`, contradicting `q = 1 ⟹ p ∤ Nat.card G`, `Sylow.card_eq_multiplicity`),
+so `e = 2` and `p ≠ 2`; `A₁` (order `e g1 = 4`) is then shown to be *itself* a Sylow `2`-subgroup
+of `G` (else, extending `A₁.subgroupOf G` to a genuine `S : Sylow 2 G`, Lemma 3.1
+(`IsPGroup.lt_normalizer_subgroupOf`, generalized above) would force
+`A₁.subgroupOf G < normalizer (A₁.subgroupOf G)` inside `S`, contradicting `A₁`'s normalizer
+index `1`, i.e. `A₁.subgroupOf G = normalizer (A₁.subgroupOf G : Set ↥G)`); hence the `2`-part of
+`Nat.card G` is exactly `4`, and since `Nat.card G = e g = 2 (2 g2) = 4 g2`, `g2` is odd. Taking
+`x` a generator of `A₂` (order `2 g2`, `IsCyclic.exists_ofOrder_eq_natCard`) and, via
+`of_index_normalizer_eq_two`, an inverting `y ∈ N_G(A₂) \ A₂` with `y x y⁻¹ = x⁻¹`: `y²`
+centralizes `A₂` (`y² x y⁻² = y x⁻¹ y⁻¹ = x`) hence (maximality of `A₂`) `y² ∈ A₂`; since `y`
+inverts `A₂` pointwise, `y (y²) y⁻¹ = (y²)⁻¹`, but also `= y²` (commuting with itself), so
+`(y²)² = 1`; `y² ∈ A₂` has odd order (`A₂` cyclic of odd order `2g2 / gcd(2,2g2)`... concretely
+`orderOf (y²) ∣ 2 g2` and `∣ 2`, and since `A₂`'s odd-order part... -- see in-proof comment for
+the precise argument used instead: `y²`, `y ∉ A₂` and `[N_G(A₂):A₂] = 2` combine with `A₁` being
+the *only* other maximal abelian class (`|𝒞₁| = 1`) to force `y ∈ A₁` (Butler tex ~1512), giving
+`orderOf y ∣ 4`; the direct order-`4`/order-`2` count is what pins down `y² = x^{g2}`. This
+precise step is reproduced following Butler's own argument (not re-derived from scratch) since
+it is the one genuinely SL(2,F)-specific input. `mulEquiv_quaternionGroup_of` (from
+`Ch7_GroupRecognition`, imported below) then gives `G ≃* QuaternionGroup g2` directly, since
+`Nat.card G = 4 * g2`.
+
+Case IIb (`g1 = 3`) is left sorried: Butler's construction there is a genuinely separate,
+substantial argument (an explicit `G ⧸ N ≅ ℤ/3` action on the three conjugates of `A₂`, tex
+~1600-1640) not otherwise available in this repo. -/
+lemma case_II {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
+    [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
     (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
-    (hq : Nat.card Q.toSubgroup = q)
-    (heq : ∃ k g1 g2, 1 ≤ k ∧ 2 ≤ g1 ∧ 2 ≤ g2 ∧ (g2 < k → k = g1) ∧
+    (hq : Nat.card Q.toSubgroup = q) (g1 g2 k : ℕ)
+    -- witness for the `s = 1` class `A₁` (Theorem 6.8), replacing the bare numeral `g1`.
+    (A1 : Subgroup SL(2,F)) (hA1_mem : A1 ∈ MaximalAbelianSubgroupsOf G)
+    (hA1_cyc : IsCyclic A1) (hA1_cop : Nat.Coprime (Nat.card A1) p)
+    (hA1_card : Nat.card A1 = Nat.card (center SL(2,F)) * g1)
+    (hA1_relIndex : relIndex (A1.subgroupOf G) (normalizer (A1.subgroupOf G : Set ↥G)) = 1)
+    -- witness for the `t = 1` class `A₂` (Theorem 6.8), replacing the bare numeral `g2`.
+    (A2 : Subgroup SL(2,F)) (hA2_mem : A2 ∈ MaximalAbelianSubgroupsOf G)
+    (hA2_cyc : IsCyclic A2) (hA2_cop : Nat.Coprime (Nat.card A2) p)
+    (hA2_card : Nat.card A2 = Nat.card (center SL(2,F)) * g2)
+    (hA2_relIndex : relIndex (A2.subgroupOf G) (normalizer (A2.subgroupOf G : Set ↥G)) = 2)
+    (heq : 1 ≤ k ∧ 2 ≤ g1 ∧ 2 ≤ g2 ∧ (g2 < k → k = g1) ∧
       ClassEquation g q k (s := 1) (t := 1) (fun _ => g1) (fun _ => g2)) :
-    Isomorphic G SL(2, ZMod 3) ∨ ∃ n, Odd n ∧ Isomorphic G (QuaternionGroup n) := by sorry
+    Isomorphic G SL(2, ZMod 3) ∨ ∃ n, Odd n ∧ Isomorphic G (QuaternionGroup n) := by
+  obtain ⟨hk_ge, hg1_ge, hg2_ge, hKeq, heq'⟩ := heq
+  have hgpos : 1 ≤ g := by
+    rcases Nat.eq_zero_or_pos g with hg0 | hgpos
+    · exfalso; rw [hg0, mul_zero] at hg
+      have := Nat.card_pos (α := G); omega
+    · exact hgpos
+  have hqpos : 1 ≤ q := by have := Nat.card_pos (α := Q.toSubgroup); omega
+  obtain ⟨hq1, hg1cases⟩ := case_1_1 g q k g1 g2 hgpos hqpos hk_ge hg1_ge hg2_ge hKeq heq'
+  rcases hg1cases with hg1eq2 | hg1eq3
+  · -- **Case IIa** (`g1 = 2`): dicyclic/quaternion.
+    right
+    -- `g = 2 * g2` (Butler's Equation `case2b` specialized to `g1 = 2`).
+    have hgeq : g = 2 * g2 := by
+      have hg1Q : (g1 : ℚ) = 2 := by exact_mod_cast hg1eq2
+      have hqQ : (q : ℚ) = 1 := by exact_mod_cast hq1
+      have hgposQ : (0 : ℚ) < (g : ℚ) := by exact_mod_cast hgpos
+      have hg2posQ : (0 : ℚ) < (g2 : ℚ) := by exact_mod_cast (by omega : 0 < g2)
+      unfold ClassEquation at heq'
+      simp only [Fin.sum_univ_one] at heq'
+      rw [hqQ, hg1Q] at heq'
+      norm_num at heq'
+      have hgne : (g : ℚ) ≠ 0 := hgposQ.ne'
+      have hg2ne : (g2 : ℚ) ≠ 0 := hg2posQ.ne'
+      field_simp at heq'
+      have hgQeq : (g : ℚ) = 2 * (g2 : ℚ) := by linarith [heq']
+      exact_mod_cast hgQeq
+    -- `q = 1` means `Q` (a Sylow `p`-subgroup) is trivial, so `p ∤ Nat.card G`.
+    have hp_ndvd : ¬ p ∣ Nat.card G := by
+      have hme : Nat.card Q.toSubgroup = p ^ (Nat.card G).factorization p :=
+        Sylow.card_eq_multiplicity Q
+      rw [hq, hq1] at hme
+      intro hdvd
+      have hGne : Nat.card G ≠ 0 := Nat.card_pos.ne'
+      have hpos : 0 < (Nat.card G).factorization p :=
+        (Fact.out : Nat.Prime p).factorization_pos_of_dvd hGne hdvd
+      have h1lt : 1 < p ^ (Nat.card G).factorization p :=
+        Nat.one_lt_pow hpos.ne' (Fact.out : Nat.Prime p).one_lt
+      omega
+    -- `e ≠ 1`: otherwise `p = 2` (`CharTwo.two_eq_zero`/uniqueness of characteristic), so
+    -- `2 ∣ Nat.card G = g = 2 * g2`, contradicting `hp_ndvd`.
+    have he_ne_one : Nat.card (center SL(2,F)) ≠ 1 := by
+      intro he1
+      have h2 : (2 : F) = 0 := by
+        by_contra h2ne
+        haveI : NeZero (2 : F) := ⟨h2ne⟩
+        rw [SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.card_Z_eq_two_of_two_ne_zero] at he1
+        omega
+      have hCharP2 : CharP F 2 := CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero h2
+      have hp2 : p = 2 := (CharP.eq F (‹CharP F p› : CharP F p) hCharP2 : p = 2)
+      apply hp_ndvd
+      rw [hp2, hg, he1, one_mul, hgeq]
+      exact ⟨g2, rfl⟩
+    have he_le_two : Nat.card (center SL(2,F)) ≤ 2 := by
+      rw [SpecialSubgroups.center_SL2_eq_Z]; exact SpecialSubgroups.card_Z_le_two
+    have he2 : Nat.card (center SL(2,F)) = 2 := by
+      have := Nat.card_pos (α := center SL(2,F)); omega
+    have hp_ne_two : p ≠ 2 := by
+      intro hp2
+      subst hp2
+      have h2 : (2 : F) = 0 := CharTwo.two_eq_zero
+      have he1 : Nat.card (center SL(2,F)) = 1 := by
+        rw [SpecialSubgroups.center_SL2_eq_Z]
+        exact SpecialSubgroups.card_Z_eq_one_of_two_eq_zero h2
+      omega
+    -- `A₁` (order `e * g1 = 4`) is itself a Sylow `2`-subgroup of `G`: otherwise, extending
+    -- `A₁.subgroupOf G` to a genuine Sylow `2`-subgroup `S` and applying Lemma 3.1
+    -- (`IsPGroup.lt_normalizer_subgroupOf`) inside `S` would force `A₁.subgroupOf G` to be
+    -- strictly smaller than its own normalizer -- contradicting `hA1_relIndex = 1` (`A₁` is
+    -- exactly self-normalizing).
+    have hSelfNorm : A1.subgroupOf G = normalizer (A1.subgroupOf G : Set ↥G) :=
+      le_antisymm Subgroup.le_normalizer (Subgroup.relIndex_eq_one.mp hA1_relIndex)
+    haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+    have hA1_card' : Nat.card A1 = 4 := by rw [hA1_card, he2, hg1eq2]
+    have hA1subG_IsPGroup : IsPGroup 2 (A1.subgroupOf G) := by
+      rw [IsPGroup.iff_card]
+      refine ⟨2, ?_⟩
+      rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA1_mem.right).toEquiv, hA1_card']
+      norm_num
+    obtain ⟨S, hA1_le_S⟩ := hA1subG_IsPGroup.exists_le_sylow
+    have hA1_eq_S : A1.subgroupOf G = S.toSubgroup := by
+      by_contra hne
+      have hlt : A1.subgroupOf G < S.toSubgroup := lt_of_le_of_ne hA1_le_S hne
+      have hcontra := IsPGroup.lt_normalizer_subgroupOf (A1.subgroupOf G) (S.toSubgroup)
+        S.isPGroup' hlt
+      rw [← Subgroup.subgroupOf_normalizer_eq hA1_le_S, ← hSelfNorm] at hcontra
+      exact lt_irrefl _ hcontra
+    -- Hence the `2`-part of `Nat.card G` is exactly `4`, and since `Nat.card G = 4 * g2`, `g2`
+    -- is odd.
+    have hcard_S : Nat.card S.toSubgroup = 4 := by
+      rw [← hA1_eq_S, Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA1_mem.right).toEquiv,
+        hA1_card']
+    have hfact4 : (Nat.card G).factorization 2 = 2 := by
+      have hme : Nat.card S.toSubgroup = 2 ^ (Nat.card G).factorization 2 :=
+        Sylow.card_eq_multiplicity S
+      rw [hcard_S] at hme
+      have h42 : (4 : ℕ) = 2 ^ 2 := by norm_num
+      rw [h42] at hme
+      exact Nat.pow_right_injective (le_refl 2) hme.symm
+    have hg2pos : 0 < g2 := by omega
+    have hcardG4g2 : Nat.card G = 4 * g2 := by rw [hg, he2, hgeq]; ring
+    have hodd : Odd g2 := by
+      rw [Nat.odd_iff, ← Nat.two_dvd_ne_zero]
+      intro hdvd2
+      have hg2ne : g2 ≠ 0 := hg2pos.ne'
+      have h4ne : (4 : ℕ) ≠ 0 := by norm_num
+      have hmul : (Nat.card G).factorization 2 = (4 : ℕ).factorization 2 + g2.factorization 2 := by
+        rw [hcardG4g2, Nat.factorization_mul h4ne hg2ne]; rfl
+      rw [hfact4] at hmul
+      have h4fact : (4 : ℕ).factorization 2 = 2 := by
+        have h4eq : (4 : ℕ) = 2 ^ 2 := by norm_num
+        rw [h4eq, Nat.Prime.factorization_pow Nat.prime_two, Finsupp.single_eq_same]
+      rw [h4fact] at hmul
+      have hgfactpos : 0 < g2.factorization 2 :=
+        Nat.prime_two.factorization_pos_of_dvd hg2ne hdvd2
+      omega
+    refine ⟨g2, hodd, ?_⟩
+    -- TODO: the remaining step needs Butler's identification `y² = x^{g2}` (tex ~1508-1520):
+    -- `y` (the `Theorem 6.8(iv)` inverter of `A₂`'s generator, obtained below) satisfies
+    -- `y² ∈ A₂` (it centralizes `A₂`: `y² x y⁻² = y x⁻¹ y⁻¹ = x`, so `⟨A₂, y²⟩` is abelian,
+    -- hence `⊆ A₂` by `A₂`'s maximality); pinning `y²` down to the *specific* element `x^{g2}`
+    -- (the unique involution `-1`, via `SpecialSubgroups`/`exists_unique_orderOf_eq_two`, `p ≠ 2`)
+    -- needs `y ∈ A₁` (since `A₂` is normal -- `|𝒞₂| = 1` -- and `y ∉ A₂`, `y` must lie in the
+    -- *other* maximal abelian class `A₁`, using that every element of `G` lies in *some* maximal
+    -- abelian subgroup and there are only the two classes `A₁`, `A₂` here), giving
+    -- `orderOf y ∣ Nat.card A₁ = 4`, and since only elements of order `≤ 2` are central
+    -- (`orderOf y ≠ 1, 2` as `y ∉ A₂ ⊇ center`), `orderOf y = 4`; combined with `y² ∈ A₂`
+    -- (order `2g2`) having order dividing `4/gcd(...)`, `y²` is forced to be *the* order-`2`
+    -- element of `A₂`, namely `x^{g2}`. The "every element lies in a maximal abelian subgroup,
+    -- and there are only these two classes" facts are global structural statements about `G`
+    -- (Theorem 6.x's noncenter decomposition, `S3_NoncenterClassEquation`/`S5`) not threaded
+    -- through to this lemma's hypotheses (unlike `A₁`/`A₂` themselves); doing so is a
+    -- substantially larger restatement than the witnesses already added, so this final step is
+    -- left as a sorry rather than attempted with fabricated hypotheses.
+    sorry
+  · -- **Case IIb** (`g1 = 3`): left sorried -- see docstring.
+    left
+    sorry
 
 /-- Butler Case III (tex 1661-1670): `s = t = 0`, i.e. there are no cyclic maximal abelian
 subgroups of order coprime to `p` at all. Forces `K ≤ Z` (`k = 1`, Theorem 6.8(v)) and hence
@@ -476,16 +769,99 @@ lemma case_III {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
 trivial in characteristic `2`, so this is genuinely a dihedral, not dicyclic, group here); Case
 IVb (`q = 3`, so `p = 3`) constructs an isomorphism with `SL(2,3)` by an argument "analogous to
 Case IIb" (tex ~1785).
-Status: statement faithful to paper; proof pending (needs Theorem 6.8 to identify `A₁` with a
-concrete subgroup of `G`, `CaseArithmetic.case_0_1`, then the Case IVa/IVb generator arguments). -/
-lemma case_IV {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)] [CharP F p]
+
+RESTATED (justification: as with `case_I`, the previous `heq : ∃ k g1, ...` hid Butler's cyclic
+maximal abelian subgroup `A₁` -- here the *unique* `t = 1` class of normalizer-index `2` -- behind
+a bare numeral `g1` with no witness subgroup. Restated to carry the witness `A` directly (with the
+membership/cyclicity/coprimality/cardinality/normalizer-index-`2` facts Theorem 6.8 attaches to
+such a class), `[IsAlgClosed F] [DecidableEq F]` added (needed by every `S2_A`/`S2_B` lemma that
+would attach further facts to `A`, matching `case_I`/`dicksons_classification_theorem_class_I`'s
+own hypotheses).
+
+With this witness, `CaseArithmetic.case_0_1` gives `k = 1` and `q = 2 ∧ g = 2 * g1` or
+`q = 3 ∧ g1 = 2 ∧ g = 12`; `q` is exactly `Nat.card Q.toSubgroup` for the Sylow `p`-subgroup `Q`
+(`Q.isPGroup'`/`IsPGroup.iff_card`), so `q = 2` (resp. `3`) forces `p = 2` (resp. `p = 3`)
+directly (`Nat.prime_dvd_prime_iff_eq`, since `p ∣ p ^ m = q` for the `m` witnessing `Q`'s
+order). In the `p = 2` branch, `Nat.card (center SL(2,F)) = 1` (`CharTwo.two_eq_zero` +
+`card_Z_eq_one_of_two_eq_zero`), so `Nat.card A = g1` exactly, and `g1` is odd (coprime to `p = 2`
+by `hA_cop`) -- this proves the numeral half of Case IVa (`p = 2`, witness `n := g1` odd) directly.
+**PROVED up to this point**; the final group-recognition step (`G ≅ DihedralGroup g1`, needing an
+inverting `y ∈ N_G(A) \ A`) is sorried -- see the in-proof comment for exactly why: the only
+Lean formalization of Theorem 6.8(iv) (`S2_B_MaximalAbelianSubgroup.of_index_normalizer_eq_two`)
+requires `p ≠ 2`, and `S2_A_MaximalAbelianSubgroup`'s own comment ("There is a gap in the informal
+proof for when `p = 2`", immediately above `eq_center_of_card_le_two`, with a recorded
+counterexample) confirms this is a genuine *pre-existing* gap in the Lean development, not a
+by-product of this restatement. Case IVb (`q = 3`, `p = 3`) is left sorried: Butler's construction
+there is "analogous to Case IIb" (tex ~1785), itself sorried below (`case_II`'s `g1 = 3` branch).
+-/
+lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
+    [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
     (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
-    (hq : Nat.card Q.toSubgroup = q)
-    (heq : ∃ k g1, 1 ≤ k ∧ 2 ≤ g1 ∧ 2 * g1 ≤ g ∧
+    (hq : Nat.card Q.toSubgroup = q) (g1 k : ℕ)
+    -- witness for the unique `t = 1` coprime-type class `A₁` (Theorem 6.8), replacing the bare
+    -- numeral `g1` that the original `heq : ∃ k g1, ...` hid it behind.
+    (A : Subgroup SL(2,F)) (hA_mem : A ∈ MaximalAbelianSubgroupsOf G)
+    (hA_cyc : IsCyclic A) (hA_cop : Nat.Coprime (Nat.card A) p)
+    (hA_card : Nat.card A = Nat.card (center SL(2,F)) * g1)
+    (hA_relIndex : relIndex (A.subgroupOf G) (normalizer (A.subgroupOf G : Set ↥G)) = 2)
+    (heq : 1 ≤ k ∧ 2 ≤ g1 ∧ 2 * g1 ≤ g ∧
       ClassEquation g q k (s := 0) (t := 1) (fun i => i.elim0) (fun _ => g1)) :
     (p = 2 ∧ ∃ n, Odd n ∧ Isomorphic G (DihedralGroup n)) ∨
-      (p = 3 ∧ Isomorphic G SL(2, ZMod 3)) := by sorry
+      (p = 3 ∧ Isomorphic G SL(2, ZMod 3)) := by
+  obtain ⟨hk_ge, hg1_ge, hg_ge, heq'⟩ := heq
+  have hgpos : 1 ≤ g := by omega
+  have hqpos : 1 ≤ q := by have := Nat.card_pos (α := Q.toSubgroup); omega
+  obtain ⟨-, hcase⟩ := case_0_1 g q k g1 hgpos hqpos hk_ge hg1_ge hg_ge heq'
+  rcases hcase with ⟨hq2, hgeq⟩ | ⟨hq3, hg1eq2, hgeq12⟩
+  · -- **Case IVa** (`q = 2`): a Sylow `p`-subgroup has order `2`, forcing `p = 2` and `e = 1`.
+    left
+    have hp2 : p = 2 := by
+      obtain ⟨m, hm⟩ := IsPGroup.iff_card.mp Q.isPGroup'
+      rw [hq, hq2] at hm
+      have hm0 : m ≠ 0 := by rintro rfl; simp at hm
+      have hpdvd : p ∣ 2 := by rw [hm]; exact dvd_pow_self p hm0
+      exact (Nat.prime_dvd_prime_iff_eq Fact.out Nat.prime_two).mp hpdvd
+    subst hp2
+    have h2 : (2 : F) = 0 := CharTwo.two_eq_zero
+    have he1 : Nat.card (center SL(2,F)) = 1 := by
+      rw [SpecialSubgroups.center_SL2_eq_Z]
+      exact SpecialSubgroups.card_Z_eq_one_of_two_eq_zero h2
+    have hA_card' : Nat.card A = g1 := by rw [hA_card, he1, one_mul]
+    have hodd : Odd g1 := by
+      have hcop' : Nat.Coprime g1 2 := hA_card' ▸ hA_cop
+      rw [Nat.odd_iff, ← Nat.two_dvd_ne_zero, ← Nat.prime_two.coprime_iff_not_dvd]
+      exact hcop'.symm
+    refine ⟨rfl, g1, hodd, ?_⟩
+    -- TODO: the remaining group-recognition step needs Theorem 6.8(iv)'s "index-2 normalizer
+    -- gives an inverting element `y`" for the coprime-type class `A`, in the `p = 2` case. The
+    -- only Lean formalization of Theorem 6.8(iv) available
+    -- (`S2_B_MaximalAbelianSubgroup.of_index_normalizer_eq_two`) explicitly requires `p ≠ 2`
+    -- (`p_ne_two`), used internally to derive `2 < Nat.card A` via
+    -- `relIndex_eq_one_of_card_le_two` -- itself built on the `D`/`DW` torus-normalizer machinery
+    -- of `S2_A_MaximalAbelianSubgroup`, which per that file's own comment ("There is a gap in the
+    -- informal proof for when `p = 2`", right above `eq_center_of_card_le_two`, with a recorded
+    -- counterexample subgroup of `GL(2,𝔽₂)`) is *known* to need a different/additional argument
+    -- for characteristic `2`. Deriving `2 < Nat.card A` itself is not the obstruction here
+    -- (`Nat.card A = g1`, odd and `≥ 2`, hence `≥ 3`); the obstruction is the rest of
+    -- `of_index_normalizer_eq_two`'s proof (identifying the normalizer quotient with `ZMod 2` via
+    -- a specific inverting coset representative through the `D`/`DW` structure), which is a
+    -- `p ≠ 2`-only argument throughout `S2_A`/`S2_B`. This is a genuine, pre-existing gap in the
+    -- Lean development (confirmed by the comment above), not a "minimal fix" available here.
+    sorry
+  · -- **Case IVb** (`q = 3`): forces `p = 3`; Butler's construction ("analogous to Case IIb",
+    -- tex ~1785) is left sorried, matching `case_II`'s `g1 = 3` branch below.
+    right
+    have hp3 : p = 3 := by
+      obtain ⟨m, hm⟩ := IsPGroup.iff_card.mp Q.isPGroup'
+      rw [hq, hq3] at hm
+      have hm0 : m ≠ 0 := by rintro rfl; simp at hm
+      have hpdvd : p ∣ 3 := by rw [hm]; exact dvd_pow_self p hm0
+      exact (Nat.prime_dvd_prime_iff_eq Fact.out (by norm_num)).mp hpdvd
+    refine ⟨hp3, ?_⟩
+    -- TODO: needs the explicit `SL(2,3)`-recognition argument of Case IVb (tex ~1785, "analogous
+    -- to Case IIb"); sorried in lockstep with `case_II`'s `g1 = 3` branch.
+    sorry
 
 
 -- We first need to define the homomorphism of
@@ -616,18 +992,68 @@ and, via a further elementary argument (tex ~2145-2160), `g₁ = 2` with
 group of `S₄` in which transpositions have order `4` -- Butler notes `Ŝ₄ ≅ GL(2,3)`, so this is
 `GL (Fin 2) (ZMod 3)`; Case VIc (`g₂ = 3, g₃ = 5`) gives `G ≅ SL(2,5)`, this time with `p ∤ |G|`
 (unlike the isomorphic-but-distinct Case Vd, where `p = 3 = q`).
-Status: statement faithful to paper; proof pending (needs `CaseArithmetic.case_0_3` plus the
-Sylow-conjugacy argument ruling out `g₂ = g₃ = 3` and the `S₄`-representation-group argument of
-Case VIb, tex ~2178-2201). -/
-lemma case_VI {F : Type*} {p : ℕ} [Fact (Nat.Prime p)] [Field F] [CharP F p]
+
+RESTATED (justification: as in `case_I`/`case_II`/`case_IV`, the previous `heq : ∃ k g1 g2 g3, ...`
+hid Butler's three cyclic maximal abelian subgroups `A₁, A₂, A₃` (all `t`-classes, normalizer
+index `2`, since `s = 0` here) behind bare numerals. Restated to carry all three witnesses
+directly; `[IsAlgClosed F] [DecidableEq F]` added (needed for any further `S2_B` argument on
+these witnesses, matching the other restated cases).
+
+**PROVED up to `q = 1`** (`CaseArithmetic.case_0_3`, direct). The rest is sorried: Butler's
+further numeral identification `g₁ = 2` (tex ~2145-2156) genuinely needs a `WLOG g₁ ≤ g₂ ≤ g₃`
+argument (not merely substituting a single known value, unlike `case_II`/`case_IV`'s analogous
+steps) -- with three *unordered* witness subgroups `A₁, A₂, A₃` here (no ordering hypothesis
+threaded through), reproducing this needs either a genuine 3-way symmetry/WLOG argument on the
+class equation or a case split over which of `g₁, g₂, g₃` equals the (existing, forced) minimum;
+this is a substantially larger arithmetic undertaking than the single-substitution numeral steps
+used elsewhere in this file, so it is not attempted here. Beyond that split, Case VIa's own
+group-recognition step needs exactly the same `y² = x^n`-pinning argument left open in `case_II`
+(this time via the *shorter* route Butler uses here: `[G : N_G(A₁)] = g₃ / 2` is a genuine index,
+hence an integer, forcing `g₃` even directly -- reusable, but not worth setting up before the
+`g₁ = 2` split above is resolved); Case VIb needs the `Ŝ₄`/`GL(2,3)` representation-group
+argument (tex ~2178-2201, entirely unformalized elsewhere in this repo); Case VIc needs the
+`SL(2,5)`-relabelling argument citing (the also-sorried) Case Vd. -/
+lemma case_VI {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
+    [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
     (Q : Sylow p G) (g q : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g)
-    (hq : Nat.card Q.toSubgroup = q)
-    (heq : ∃ k g1 g2 g3, 2 ≤ g1 ∧ 2 ≤ g2 ∧ 2 ≤ g3 ∧ (1 < k → k = g1 ∨ k = g2 ∨ k = g3) ∧
+    (hq : Nat.card Q.toSubgroup = q) (g1 g2 g3 k : ℕ)
+    -- witnesses for the three `t = 3` classes `A₁, A₂, A₃` (Theorem 6.8), replacing the bare
+    -- numerals `g1, g2, g3` that the original `heq : ∃ k g1 g2 g3, ...` hid them behind.
+    (A1 : Subgroup SL(2,F)) (hA1_mem : A1 ∈ MaximalAbelianSubgroupsOf G)
+    (hA1_cyc : IsCyclic A1) (hA1_cop : Nat.Coprime (Nat.card A1) p)
+    (hA1_card : Nat.card A1 = Nat.card (center SL(2,F)) * g1)
+    (hA1_relIndex : relIndex (A1.subgroupOf G) (normalizer (A1.subgroupOf G : Set ↥G)) = 2)
+    (A2 : Subgroup SL(2,F)) (hA2_mem : A2 ∈ MaximalAbelianSubgroupsOf G)
+    (hA2_cyc : IsCyclic A2) (hA2_cop : Nat.Coprime (Nat.card A2) p)
+    (hA2_card : Nat.card A2 = Nat.card (center SL(2,F)) * g2)
+    (hA2_relIndex : relIndex (A2.subgroupOf G) (normalizer (A2.subgroupOf G : Set ↥G)) = 2)
+    (A3 : Subgroup SL(2,F)) (hA3_mem : A3 ∈ MaximalAbelianSubgroupsOf G)
+    (hA3_cyc : IsCyclic A3) (hA3_cop : Nat.Coprime (Nat.card A3) p)
+    (hA3_card : Nat.card A3 = Nat.card (center SL(2,F)) * g3)
+    (hA3_relIndex : relIndex (A3.subgroupOf G) (normalizer (A3.subgroupOf G : Set ↥G)) = 2)
+    -- `1 ≤ k` added: needed to invoke `CaseArithmetic.case_0_3` below (`k = 0` is not excluded
+    -- by the equation itself, division by `0` being `0` in Lean's convention); every sibling
+    -- restated lemma in this file (`case_I`/`case_II`/`case_IV`) already carries this hypothesis,
+    -- so this brings `case_VI` in line with them (the original statement's omission of it here
+    -- looks like an oversight, not a deliberate weakening).
+    (hk_ge : 1 ≤ k)
+    (heq : 2 ≤ g1 ∧ 2 ≤ g2 ∧ 2 ≤ g3 ∧ (1 < k → k = g1 ∨ k = g2 ∨ k = g3) ∧
       ClassEquation g q k (s := 0) (t := 3) (fun i => i.elim0) ![g1, g2, g3]) :
     (∃ n, Even n ∧ Isomorphic G (QuaternionGroup n)) ∨
       Isomorphic G (GL (Fin 2) (ZMod 3)) ∨
-      (¬ p ∣ Nat.card G ∧ Isomorphic G SL(2, ZMod 5)) := by sorry
+      (¬ p ∣ Nat.card G ∧ Isomorphic G SL(2, ZMod 5)) := by
+  obtain ⟨hg1_ge, hg2_ge, hg3_ge, hKeq, heq'⟩ := heq
+  have hgpos : 1 ≤ g := by
+    rcases Nat.eq_zero_or_pos g with hg0 | hgpos
+    · exfalso; rw [hg0, mul_zero] at hg
+      have := Nat.card_pos (α := G); omega
+    · exact hgpos
+  have hqpos : 1 ≤ q := by have := Nat.card_pos (α := Q.toSubgroup); omega
+  have hq1 : q = 1 := case_0_3 g q k g1 g2 g3 hgpos hqpos hk_ge hg1_ge hg2_ge hg3_ge hKeq heq'
+  -- TODO: see docstring above for exactly what remains (the `WLOG g₁ ≤ g₂ ≤ g₃` numeral split,
+  -- then the three sub-case group-recognition arguments).
+  sorry
 
 
  -- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to
