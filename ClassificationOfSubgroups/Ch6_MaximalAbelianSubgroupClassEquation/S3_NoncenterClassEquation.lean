@@ -808,7 +808,7 @@ def G_to_ConjClassOf_lift  {F : Type*} [Field F] (G : Subgroup SL(2,F))
   (by
   intro ⟨c, c_mem_G⟩ ⟨c', c'_mem_G⟩ h
   symm at h
-  rw [QuotientGroup.leftRel_apply, mem_normalizer_iff] at h
+  rw [← Quotient.eq_iff_equiv, Quotient.eq, QuotientGroup.leftRel_apply, mem_normalizer_iff] at h
   simp [G_to_ConjClassOf]
   rw [conj_eq_iff_eq_conj_inv, smul_smul, ← map_mul]
   ext x; constructor
@@ -841,10 +841,8 @@ lemma Bijective_G_to_ConjClassOf_lift {F : Type*} [Field F] (G : Subgroup SL(2,F
     rw [Subtype.coe_eq_iff] at hxy
     obtain ⟨⟨c, c_mem_G, hc⟩, h⟩ := hxy
     simp_rw [← hc] at h
-    rw [Quot.eq]
     sorry
-  · dsimp [G_to_ConjClassOf_lift]
-    rw [Quot.surjective_lift]
+  · apply (Quot.surjective_lift _).mpr
     intro ⟨conj_A, c, c_mem_G, conj_A_eq⟩
     use ⟨c, c_mem_G⟩
     simp [G_to_ConjClassOf, ← conj_A_eq]
@@ -968,37 +966,25 @@ lemma center_conj {G : Type*} [Group G] (x : G) (y: G) :
 Oddly it doesn't need any assumption about A being maximal or abelian.
 -/
 lemma normalizer_noncentral_eq {F : Type*} [Field F] (A G : Subgroup SL(2,F)) [Finite G]:
-  normalizer (A.subgroupOf G : Set ↥G) = setNormalizer (noncenter (A.subgroupOf G)) := by
+  normalizer (A.subgroupOf G : Set ↥G) = normalizer (noncenter (A.subgroupOf G)) := by
   ext x
+  simp only [mem_normalizer_iff, SetLike.mem_coe]
   constructor
-  . intro h
-    rw [mem_normalizer_iff] at h
-    simp [setNormalizer]
-    intro a ha
-    specialize h ⟨a, ha⟩
-    simp [Subgroup.mem_noncenter]
-    rw [h]
-    suffices ⟨a, ha⟩ ∈ center ↥G ↔ x * ⟨a, ha⟩ * x⁻¹ ∈ center ↥G by
-      apply not_iff_not.mpr at this
-      rw [this]
-    rw [← center_conj]
-  . intro h
-    rw [mem_normalizer_iff]
-    simp [setNormalizer] at h
-    intro a
-    specialize h a a.prop
-    simp [Subgroup.mem_noncenter] at h
-    by_cases hc: a ∈ center ↥G
-    . have : x * a * x⁻¹ = a := by
-        rw [mem_center_iff] at hc
-        specialize hc x
-        rw [hc]
-        group
-      rw [this]
-    . simp [hc] at h
-      rw [not_iff_not.mpr (center_conj a x)] at hc
-      simp [hc] at h
-      exact h
+  · intro h a
+    rw [Subgroup.mem_noncenter, Subgroup.mem_noncenter, h a, center_conj a x]
+  · intro h n
+    by_cases hn : n ∈ center (↥G)
+    · have hx : x * n * x⁻¹ = n := by
+        rw [mem_center_iff] at hn
+        rw [hn x]; group
+      rw [hx]
+    · have hcn : x * n * x⁻¹ ∉ center (↥G) := fun hc => hn ((center_conj n x).mpr hc)
+      have key := h n
+      rw [Subgroup.mem_noncenter, Subgroup.mem_noncenter] at key
+      constructor
+      · intro hnK; exact (key.mp ⟨hnK, hn⟩).1
+      · intro hcK; exact (key.mpr ⟨hcK, hcn⟩).1
+
 
 /- Lemma Let `Q` be a `p`-Sylow subgroup of `G` then $N_G(Q \sqcup Z) = N_G(Q)$-/
 lemma normalizer_Sylow_join_center_eq_normalizer_Sylow {F : Type*} [Field F] {p : ℕ}
