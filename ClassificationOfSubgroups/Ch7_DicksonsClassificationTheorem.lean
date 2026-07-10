@@ -1383,6 +1383,365 @@ group of `S₄` in which transpositions lift to order-`4` elements (tex 2200) --
 `⟨x, y | x⁴ = y³ = (xy)²⟩`. See the module note above and `DIVERGENCES.md` item 3. -/
 abbrev BinaryOctahedralGroup := PresentedGroup BinaryOctahedralRelations
 
+/-- **Arithmetic + group-recognition core for Case VI**, factored out of `case_VI` so the
+`WLOG g₁ ≤ g₂ ≤ g₃` argument (tex ~2142-2161) only has to build the *ordered* witness data once
+per branch (of the six orderings of `(A₁,g₁), (A₂,g₂), (A₃,g₃)`) and delegate here, rather than
+duplicating this whole argument six times.
+
+Takes the class-equation data already specialized to `q = 1` (`hsum`, i.e. Butler's Equation
+`\eqref{case6b}` `1/(2g_a) + 1/(2g_b) + 1/(2g_c) = 1/g + 1/2`) together with an *assumed* ordering
+`ga ≤ gb ≤ gc`, and:
+* (pure arithmetic, tex ~2142-2148) forces `ga = 2` (else all three terms are `≤ 1/6`, but their
+  sum must exceed `1/2` since `1/g > 0`) and then `gb ∈ {2,3}` (else `2/(2gb) ≤ 1/8` forces the
+  remaining sum `≤ 1/4`, contradicting it exceeding `1/4`);
+* **Case VIa** (`gb = 2`, tex ~2163-2171, so `ga = gb = 2`): derives `g = 2 gc` and, mirroring
+  `case_II`'s Case IIa block (`Aa` playing `case_II`'s `A₁`, `Ac` its `A₂`) but *without* needing
+  `case_II`'s Sylow-2/oddness detour (only used there to pin `g₂`'s *parity*, which here is
+  established independently -- the `y² = x^{gc}`-pinning argument itself never actually needed
+  that oddness): `p ≠ 2` (else `Nat.card (center SL(2,F)) = 1` makes `Nat.card G = g = 2gc` even,
+  contradicting `p ∤ Nat.card G` at `p = 2`), `Nat.card (center SL(2,F)) = 2`, `Even gc` (Butler's
+  own `[G : N_G(A_a)] = g/4 = gc/2` integrality argument, tex ~2163-2165), and finally the
+  dicyclic presentation via `mulEquiv_quaternionGroup_of`;
+* **Cases VIb/VIc** (`gb = 3`, forcing `gc ∈ {3,4,5}` by the same style of bound) are sorried:
+  `gc = 3` needs Butler's Sylow-conjugacy elimination (tex ~2149-2157, showing this numerical
+  solution is *vacuous* -- the two order-`3` classes `A_b, A_c` would have to be conjugate,
+  contradicting `t = 3`) which is genuinely group-theoretic, not pure arithmetic, and is not
+  attempted here; `gc = 4` needs the `Ŝ₄`/`BinaryOctahedralGroup` representation-group argument
+  (tex ~2173-2201); `gc = 5` needs the `SL(2,5)`-relabelling argument citing (the also-sorried)
+  Case Vd (tex ~2202-2205). -/
+private lemma case_VI_core {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
+    [Fact (Nat.Prime p)] [CharP F p]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (g : ℕ) (hg : Nat.card G = Nat.card (center SL(2,F)) * g) (hgpos : 1 ≤ g)
+    (hp_ndvd : ¬ p ∣ Nat.card G)
+    (ga gb gc : ℕ) (hab : ga ≤ gb) (hbc : gb ≤ gc)
+    (hga_ge : 2 ≤ ga) (hgb_ge : 2 ≤ gb) (hgc_ge : 2 ≤ gc)
+    (Aa : Subgroup SL(2,F)) (hAa_mem : Aa ∈ MaximalAbelianSubgroupsOf G)
+    (hAa_cop : Nat.Coprime (Nat.card Aa) p)
+    (hAa_card : Nat.card Aa = Nat.card (center SL(2,F)) * ga)
+    (hAa_relIndex : relIndex (Aa.subgroupOf G) (normalizer (Aa.subgroupOf G : Set ↥G)) = 2)
+    (Ac : Subgroup SL(2,F)) (hAc_mem : Ac ∈ MaximalAbelianSubgroupsOf G)
+    (hAc_cyc : IsCyclic Ac) (hAc_cop : Nat.Coprime (Nat.card Ac) p)
+    (hAc_card : Nat.card Ac = Nat.card (center SL(2,F)) * gc)
+    (hAc_relIndex : relIndex (Ac.subgroupOf G) (normalizer (Ac.subgroupOf G : Set ↥G)) = 2)
+    (hsum : (1 : ℚ) = 1 / g + ((ga : ℚ) - 1) / (2 * ga) + ((gb : ℚ) - 1) / (2 * gb)
+      + ((gc : ℚ) - 1) / (2 * gc)) :
+    (∃ n, Even n ∧ Isomorphic G (QuaternionGroup n)) ∨
+      Isomorphic G BinaryOctahedralGroup ∨
+      (¬ p ∣ Nat.card G ∧ Isomorphic G SL(2, ZMod 5)) := by
+  have hgQpos : (0 : ℚ) < (g : ℚ) := by exact_mod_cast hgpos
+  have hgaQpos : (0 : ℚ) < (ga : ℚ) := by exact_mod_cast (by omega : 0 < ga)
+  have hgbQpos : (0 : ℚ) < (gb : ℚ) := by exact_mod_cast (by omega : 0 < gb)
+  have hgcQpos : (0 : ℚ) < (gc : ℚ) := by exact_mod_cast (by omega : 0 < gc)
+  have e1 : ((ga : ℚ) - 1) / (2 * ga) = 1 / 2 - 1 / (2 * ga) := one_sub_inv_two_self hgaQpos.ne'
+  have e2 : ((gb : ℚ) - 1) / (2 * gb) = 1 / 2 - 1 / (2 * gb) := one_sub_inv_two_self hgbQpos.ne'
+  have e3 : ((gc : ℚ) - 1) / (2 * gc) = 1 / 2 - 1 / (2 * gc) := one_sub_inv_two_self hgcQpos.ne'
+  rw [e1, e2, e3] at hsum
+  have hkey : 1 / (2 * (ga : ℚ)) + 1 / (2 * gb) + 1 / (2 * gc) = 1 / g + 1 / 2 := by linarith
+  -- `ga = 2` (tex ~2142-2145): otherwise `ga, gb, gc ≥ 3`, and the three terms sum to `≤ 1/2`.
+  have hga_lt3 : ga < 3 := by
+    by_contra hcon
+    push_neg at hcon
+    have hb3 : 3 ≤ gb := le_trans hcon hab
+    have hc3 : 3 ≤ gc := le_trans hb3 hbc
+    have ba : (1 : ℚ) / (2 * ga) ≤ 1 / 6 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+      have : (3 : ℚ) ≤ (ga : ℚ) := by exact_mod_cast hcon
+      linarith
+    have bb : (1 : ℚ) / (2 * gb) ≤ 1 / 6 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+      have : (3 : ℚ) ≤ (gb : ℚ) := by exact_mod_cast hb3
+      linarith
+    have bc : (1 : ℚ) / (2 * gc) ≤ 1 / 6 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+      have : (3 : ℚ) ≤ (gc : ℚ) := by exact_mod_cast hc3
+      linarith
+    have hgpos' : (0 : ℚ) < 1 / g := by positivity
+    linarith
+  have hga_eq2 : ga = 2 := by omega
+  have hgaQ2 : (ga : ℚ) = 2 := by exact_mod_cast hga_eq2
+  rw [hgaQ2] at hkey
+  have h4 : (1 : ℚ) / (2 * 2) = 1 / 4 := by norm_num
+  rw [h4] at hkey
+  have hkey2 : 1 / (2 * (gb : ℚ)) + 1 / (2 * gc) = 1 / g + 1 / 4 := by linarith
+  -- `gb ∈ {2,3}` (tex ~2146-2149): otherwise `gb, gc ≥ 4`, and the two remaining terms sum to
+  -- `≤ 1/4`.
+  have hgb_lt4 : gb < 4 := by
+    by_contra hcon
+    push_neg at hcon
+    have hc4 : 4 ≤ gc := le_trans hcon hbc
+    have bb : (1 : ℚ) / (2 * gb) ≤ 1 / 8 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+      have : (4 : ℚ) ≤ (gb : ℚ) := by exact_mod_cast hcon
+      linarith
+    have bc : (1 : ℚ) / (2 * gc) ≤ 1 / 8 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+      have : (4 : ℚ) ≤ (gc : ℚ) := by exact_mod_cast hc4
+      linarith
+    have hgpos' : (0 : ℚ) < 1 / g := by positivity
+    linarith
+  have hgb_23 : gb = 2 ∨ gb = 3 := by omega
+  rcases hgb_23 with hgb2 | hgb3
+  · -- **Case VIa** (`ga = 2, gb = 2`, tex ~2163-2171).
+    left
+    have hgbQ2 : (gb : ℚ) = 2 := by exact_mod_cast hgb2
+    rw [hgbQ2, h4] at hkey2
+    have hcore : (1 : ℚ) / (2 * gc) = 1 / g := by linarith
+    have hgeqQ : (g : ℚ) = 2 * gc := by
+      rw [div_eq_div_iff (by positivity) hgQpos.ne'] at hcore
+      linarith
+    have hgeq : g = 2 * gc := by exact_mod_cast hgeqQ
+    -- `Even gc`: `[G : N_G(A_a)]` is a genuine index, hence a natural number, forcing `gc` even
+    -- (tex ~2163-2165, `[G:N_G(A_1)] = g_3/2`).
+    set Aa' : Subgroup ↥G := Aa.subgroupOf G with hAa'_def
+    set Nz : Subgroup ↥G := normalizer (Aa' : Set ↥G) with hNz_def
+    have hAa'_le_Nz : Aa' ≤ Nz := Subgroup.le_normalizer
+    have hcard_Nz : Nat.card Nz = 2 * Nat.card Aa' := by
+      have h1 : Nat.card Nz
+          = Nat.card (↥Nz ⧸ Aa'.subgroupOf Nz) * Nat.card (Aa'.subgroupOf Nz) :=
+        Subgroup.card_eq_card_quotient_mul_card_subgroup _
+      have h2 : Nat.card (Aa'.subgroupOf Nz) = Nat.card Aa' :=
+        Nat.card_congr (Subgroup.subgroupOfEquivOfLe hAa'_le_Nz).toEquiv
+      have h3 : Nat.card (↥Nz ⧸ Aa'.subgroupOf Nz) = Aa'.relIndex Nz := rfl
+      rw [h2, h3, hAa_relIndex] at h1
+      exact h1
+    have hcard_Aa' : Nat.card Aa' = Nat.card Aa :=
+      Nat.card_congr (Subgroup.subgroupOfEquivOfLe hAa_mem.right).toEquiv
+    have hcard_idx : Nat.card G = Nat.card (↥G ⧸ Nz) * Nat.card Nz :=
+      Subgroup.card_eq_card_quotient_mul_card_subgroup Nz
+    have hepos : 0 < Nat.card (center SL(2,F)) := Nat.card_pos
+    have heq4e : Nat.card G = Nat.card (↥G ⧸ Nz) * (4 * Nat.card (center SL(2,F))) := by
+      rw [hcard_idx, hcard_Nz, hcard_Aa', hAa_card, hga_eq2]; ring
+    have hg4idx : g = 4 * Nat.card (↥G ⧸ Nz) := by
+      have h1 : Nat.card (center SL(2,F)) * g
+          = Nat.card (center SL(2,F)) * (4 * Nat.card (↥G ⧸ Nz)) := by
+        rw [← hg, heq4e]; ring
+      exact mul_left_cancel₀ hepos.ne' h1
+    have hEvengc : Even gc := ⟨Nat.card (↥G ⧸ Nz), by omega⟩
+    -- `p ≠ 2`: else `Nat.card (center SL(2,F)) = 1`, so `Nat.card G = g = 2gc` is even,
+    -- contradicting `p ∤ Nat.card G` at `p = 2`.
+    have hp_ne_two : p ≠ 2 := by
+      intro hp2
+      subst hp2
+      have h2 : (2 : F) = 0 := CharTwo.two_eq_zero
+      have he1 : Nat.card (center SL(2,F)) = 1 := by
+        rw [SpecialSubgroups.center_SL2_eq_Z]
+        exact SpecialSubgroups.card_Z_eq_one_of_two_eq_zero h2
+      apply hp_ndvd
+      rw [hg, he1, one_mul, hgeq]
+      exact ⟨gc, rfl⟩
+    have he_le_two : Nat.card (center SL(2,F)) ≤ 2 := by
+      rw [SpecialSubgroups.center_SL2_eq_Z]; exact SpecialSubgroups.card_Z_le_two
+    have he_ne_one : Nat.card (center SL(2,F)) ≠ 1 := by
+      intro he1
+      have h2 : (2 : F) = 0 := by
+        by_contra h2ne
+        haveI : NeZero (2 : F) := ⟨h2ne⟩
+        rw [SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.card_Z_eq_two_of_two_ne_zero] at he1
+        omega
+      have hCharP2 : CharP F 2 := CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero h2
+      exact hp_ne_two (CharP.eq F (‹CharP F p› : CharP F p) hCharP2)
+    have he2 : Nat.card (center SL(2,F)) = 2 := by
+      have := Nat.card_pos (α := center SL(2,F)); omega
+    classical
+    -- The rest mirrors `case_II`'s Case IIa block verbatim (`Ac`/`gc` in the role of `A₂`/`g₂`),
+    -- deriving Butler's `y² = x^{gc}` identification (tex ~1508-1520/2166-2169) via the same
+    -- self-contained cyclic-group argument (maximality of `Ac` forces `y² ∈ Ac`; `y` both fixes
+    -- and inverts `y²`, forcing `(y²)² = 1`; uniqueness of `SL(2,F)`'s involution `-1` rules out
+    -- `y² = 1`; so `y²` is *the* order-`2` element of the cyclic group `Ac`).
+    haveI hF2 : NeZero (2 : F) := ⟨by
+      intro h2
+      have hCharP2 : CharP F 2 := CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero h2
+      exact hp_ne_two (CharP.eq F (‹CharP F p› : CharP F p) hCharP2)⟩
+    haveI hAc_fin : Finite Ac :=
+      (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hAc_mem.right).to_subtype
+    obtain ⟨g0, hg0_gen⟩ := hAc_cyc.exists_generator
+    have horder_g0 : orderOf g0 = Nat.card Ac := orderOf_eq_card_of_forall_mem_zpowers hg0_gen
+    have horder_g0SL : orderOf (g0 : SL(2,F)) = 2 * gc := by
+      rw [orderOf_coe, horder_g0, hAc_card, he2]
+    haveI hg0_finord : IsOfFinOrder g0 := orderOf_pos_iff.mp (horder_g0 ▸ Nat.card_pos)
+    obtain ⟨y, hy_mem, hy_conj⟩ :=
+      of_index_normalizer_eq_two hp_ne_two Ac G hAc_mem center_le_G hAc_cop hAc_relIndex g0
+    simp only [Set.mem_sdiff, SetLike.mem_coe, Subgroup.mem_carrier, Subgroup.mem_inf] at hy_mem
+    obtain ⟨⟨hy_mem_norm, hy_mem_G⟩, hy_notin_Ac⟩ := hy_mem
+    have hinvert : ∀ a : SL(2,F), a ∈ Ac → y * a * y⁻¹ = a⁻¹ := by
+      intro a ha
+      obtain ⟨n, hn⟩ := hg0_gen ⟨a, ha⟩
+      have hn' : (g0 : SL(2,F)) ^ n = a := by
+        have := congrArg (Subtype.val) hn
+        simpa using this
+      have hconj_pow : y * (g0 : SL(2,F)) ^ n * y⁻¹ = ((g0 : SL(2,F)) ^ n)⁻¹ := by
+        have h1 := map_zpow (MulAut.conj y).toMonoidHom (g0 : SL(2,F)) n
+        simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h1
+        rw [h1, hy_conj, Subgroup.coe_inv, _root_.inv_zpow]
+      rwa [hn'] at hconj_pow
+    have hy2_comm : ∀ a : SL(2,F), a ∈ Ac → y ^ 2 * a = a * y ^ 2 := by
+      intro a ha
+      have h1 : y * a = a⁻¹ * y := by
+        have h := hinvert a ha
+        have h2 : y * a * y⁻¹ * y = a⁻¹ * y := by rw [h]
+        simpa [mul_assoc] using h2
+      have h2 : y * a⁻¹ = a * y := by
+        have h := hinvert a⁻¹ (Subgroup.inv_mem Ac ha)
+        rw [inv_inv] at h
+        have h3 : y * a⁻¹ * y⁻¹ * y = a * y := by rw [h]
+        simpa [mul_assoc] using h3
+      calc y ^ 2 * a = y * y * a := by rw [pow_two]
+        _ = y * (y * a) := by rw [mul_assoc]
+        _ = y * (a⁻¹ * y) := by rw [h1]
+        _ = y * a⁻¹ * y := by rw [mul_assoc]
+        _ = (a * y) * y := by rw [h2]
+        _ = a * (y * y) := by rw [mul_assoc]
+        _ = a * y ^ 2 := by rw [pow_two]
+    have hy2_mem_G : y ^ 2 ∈ G := Subgroup.pow_mem G hy_mem_G 2
+    set Ac' : Subgroup ↥G := Ac.subgroupOf G with hAc'_def
+    set y2' : ↥G := ⟨y ^ 2, hy2_mem_G⟩ with hy2'_def
+    have hy2_mem_Ac : y ^ 2 ∈ Ac := by
+      set kset : Set ↥G := (Ac' : Set ↥G) ∪ {y2'} with hkset_def
+      have hcomm_k : ∀ a ∈ kset, ∀ b ∈ kset, a * b = b * a := by
+        haveI := hAc_mem.left.1
+        rintro a (ha | ha) b (hb | hb)
+        · exact setLike_mul_comm ha hb
+        · simp only [Set.mem_singleton_iff] at hb; subst hb
+          apply Subtype.ext
+          have ha' : (a : SL(2,F)) ∈ Ac := by
+            rw [SetLike.mem_coe, hAc'_def, Subgroup.mem_subgroupOf] at ha; exact ha
+          simpa [hy2'_def] using (hy2_comm a ha').symm
+        · simp only [Set.mem_singleton_iff] at ha; subst ha
+          apply Subtype.ext
+          have hb' : (b : SL(2,F)) ∈ Ac := by
+            rw [SetLike.mem_coe, hAc'_def, Subgroup.mem_subgroupOf] at hb; exact hb
+          simpa [hy2'_def] using hy2_comm b hb'
+        · simp only [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
+      haveI hclosure_comm : IsMulCommutative (closure kset) :=
+        Subgroup.isMulCommutative_closure hcomm_k
+      have hAc'_le_closure : Ac' ≤ closure kset := by
+        rw [← Subgroup.closure_eq Ac']
+        exact Subgroup.closure_mono (Set.subset_union_left)
+      have hclosure_le : closure kset ≤ Ac' := hAc_mem.left.2 hclosure_comm hAc'_le_closure
+      have hy2'_mem_closure : y2' ∈ closure kset := subset_closure (Set.mem_union_right _ rfl)
+      have hy2'_mem_Ac' : y2' ∈ Ac' := hclosure_le hy2'_mem_closure
+      rwa [hAc'_def, Subgroup.mem_subgroupOf] at hy2'_mem_Ac'
+    have h1 : y * y ^ 2 * y⁻¹ = (y ^ 2)⁻¹ := hinvert (y ^ 2) hy2_mem_Ac
+    have h2 : y * y ^ 2 * y⁻¹ = y ^ 2 := by group
+    have hz0_inv : (y ^ 2)⁻¹ = y ^ 2 := h1.symm.trans h2
+    have hz0sq : y ^ 2 * y ^ 2 = 1 := by
+      calc y ^ 2 * y ^ 2 = y ^ 2 * (y ^ 2)⁻¹ := by rw [hz0_inv]
+        _ = 1 := mul_inv_cancel _
+    have hy2_ne_one : y ^ 2 ≠ 1 := by
+      intro hy2eq1
+      have hy_ne_one : y ≠ 1 := by
+        intro hy1
+        apply hy_notin_Ac
+        rw [hy1]
+        exact Subgroup.one_mem Ac
+      have hdvd : orderOf y ∣ 2 := orderOf_dvd_of_pow_eq_one hy2eq1
+      have hord_ne_one : orderOf y ≠ 1 := by
+        rw [Ne, orderOf_eq_one_iff]; exact hy_ne_one
+      have hy_ord2 : orderOf y = 2 := by
+        rcases Nat.prime_two.eq_one_or_self_of_dvd _ hdvd with h | h
+        · exact absurd h hord_ne_one
+        · exact h
+      have hy_eq_negone : y = -1 :=
+        SpecialSubgroups.exists_unique_orderOf_eq_two.unique hy_ord2
+          SpecialSubgroups.orderOf_neg_one_eq_two
+      apply hy_notin_Ac
+      rw [hy_eq_negone]
+      have hcenle : center SL(2,F) ≤ Ac := center_le G Ac hAc_mem center_le_G
+      apply hcenle
+      rw [SpecialSubgroups.center_SL2_eq_Z]
+      exact SpecialSubgroups.neg_one_mem_Z
+    have hz0sq' : (y ^ 2) ^ 2 = 1 := by
+      have hexp : (y ^ 2) ^ 2 = y ^ 2 * y ^ 2 := by group
+      rw [hexp]; exact hz0sq
+    have hz0mem : (⟨y ^ 2, hy2_mem_Ac⟩ : Ac) ∈ Subgroup.zpowers g0 := hg0_gen _
+    rw [hg0_finord.mem_zpowers_iff_mem_range_orderOf] at hz0mem
+    simp only [Finset.mem_image, Finset.mem_range] at hz0mem
+    obtain ⟨n, hn_lt, hn_eq⟩ := hz0mem
+    have hn_eq' : (g0 : SL(2,F)) ^ n = y ^ 2 := by
+      have := congrArg (Subtype.val) hn_eq
+      simpa using this
+    have horder_g0_eq : orderOf g0 = 2 * gc := by rw [horder_g0, hAc_card, he2]
+    rw [horder_g0_eq] at hn_lt
+    have hn2 : (g0 : SL(2,F)) ^ (n * 2) = 1 := by
+      rw [pow_mul, hn_eq']; exact hz0sq'
+    have hdvd1 : orderOf (g0 : SL(2,F)) ∣ n * 2 := orderOf_dvd_of_pow_eq_one hn2
+    rw [horder_g0SL] at hdvd1
+    have hgc_dvd_n : gc ∣ n := by
+      have h1 : gc * 2 ∣ n * 2 := by rwa [mul_comm 2 gc] at hdvd1
+      exact (Nat.mul_dvd_mul_iff_right (by norm_num : (0 : ℕ) < 2)).mp h1
+    obtain ⟨t, ht⟩ := hgc_dvd_n
+    have hn_ne : ¬ (2 * gc) ∣ n := by
+      intro hdvd
+      apply hy2_ne_one
+      have hdvd' : orderOf (g0 : SL(2,F)) ∣ n := by rw [horder_g0SL]; exact hdvd
+      rw [← hn_eq']
+      exact orderOf_dvd_iff_pow_eq_one.mp hdvd'
+    have ht2 : ¬ 2 ∣ t := by
+      intro h2t
+      apply hn_ne
+      rw [ht]
+      obtain ⟨j, hj⟩ := h2t
+      exact ⟨j, by rw [hj]; ring⟩
+    have ht_lt : t < 2 := by
+      by_contra hcon
+      push_neg at hcon
+      have hge : 2 * gc ≤ gc * t := by
+        calc 2 * gc = gc * 2 := by ring
+          _ ≤ gc * t := Nat.mul_le_mul_left gc hcon
+      rw [← ht] at hge
+      omega
+    have ht_eq : t = 1 := by omega
+    have hn_eq_gc : n = gc := by rw [ht, ht_eq, mul_one]
+    have hy2eq : y ^ 2 = (g0 : SL(2,F)) ^ gc := by rw [← hn_eq_gc]; exact hn_eq'.symm
+    haveI : NeZero gc := ⟨by omega⟩
+    set x0 : ↥G := ⟨(g0 : SL(2,F)), hAc_mem.right g0.2⟩ with hx0_def
+    set y0 : ↥G := ⟨y, hy_mem_G⟩ with hy0_def
+    have hx0_ord : orderOf x0 = 2 * gc := by
+      have h := orderOf_injective G.subtype (Subgroup.subtype_injective G) x0
+      rw [← h]; exact horder_g0SL
+    have hy0_2 : y0 ^ 2 = x0 ^ gc := Subtype.ext hy2eq
+    have hconj0 : y0 * x0 * y0⁻¹ = x0⁻¹ := Subtype.ext hy_conj
+    have hyx0 : y0 ∉ Subgroup.zpowers x0 := by
+      intro hmem
+      obtain ⟨kk, hk⟩ := hmem
+      apply hy_notin_Ac
+      have hk' : (g0 : SL(2,F)) ^ kk = y := by
+        have := congrArg (Subtype.val) hk
+        simpa using this
+      rw [← hk']
+      exact Subgroup.zpow_mem Ac g0.2 kk
+    have hcardG4gc : Nat.card G = 4 * gc := by rw [hg, he2, hgeq]; ring
+    exact ⟨gc, hEvengc, ⟨mulEquiv_quaternionGroup_of x0 y0 hx0_ord hy0_2 hconj0 hyx0 hcardG4gc⟩⟩
+  · -- **Cases VIb/VIc** (`ga = 2, gb = 3`): the arithmetic pins `gc ∈ {3,4,5}`, but beyond that
+    -- Butler eliminates `gc = 3` via a Sylow-conjugacy argument showing the two order-`3` classes
+    -- `A_b`, `A_c` are forced to be conjugate (tex ~2149-2157), contradicting `t = 3` -- genuinely
+    -- group-theoretic, not pure arithmetic, and not attempted here. `gc = 4` (Case VIb, `Ŝ₄`) and
+    -- `gc = 5` (Case VIc, `SL(2,5)`) are separate substantial arguments (tex ~2173-2205), also not
+    -- attempted here. See the docstring above.
+    have hgbQ3 : (gb : ℚ) = 3 := by exact_mod_cast hgb3
+    have h6 : (1 : ℚ) / (2 * 3) = 1 / 6 := by norm_num
+    rw [hgbQ3, h6] at hkey2
+    have hgc_ge3 : 3 ≤ gc := by omega
+    have hgc_lt6 : gc < 6 := by
+      by_contra hcon
+      push_neg at hcon
+      have bc : (1 : ℚ) / (2 * gc) ≤ 1 / 12 := by
+        rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+        have : (6 : ℚ) ≤ (gc : ℚ) := by exact_mod_cast hcon
+        linarith
+      have hgpos' : (0 : ℚ) < 1 / g := by positivity
+      linarith
+    have hgc_345 : gc = 3 ∨ gc = 4 ∨ gc = 5 := by omega
+    rcases hgc_345 with hgc3 | hgc4 | hgc5
+    · -- TODO: `(ga,gb,gc) = (2,3,3)` needs Butler's Sylow-conjugacy elimination showing this
+      -- numerical solution is vacuous (tex ~2149-2157); not attempted here.
+      sorry
+    · -- TODO: Case VIb, `Ŝ₄`/`BinaryOctahedralGroup` representation-group argument (tex ~2173-2201).
+      sorry
+    · -- TODO: Case VIc, `SL(2,5)` relabelling from Case Vd (tex ~2202-2205, itself sorried).
+      sorry
+
 /-- Butler Case VI (tex 2115-2160): `s = 0, t = 3`. Forces `q = 1` (`CaseArithmetic.case_0_3`)
 and, via a further elementary argument (tex ~2145-2156), `g₁ = 2` with
 `(g₂,g₃) ∈ {(2,n), (3,4), (3,5)}`. Case VIa (`g₂ = 2`) gives the dicyclic group of order `4n`
@@ -1398,21 +1757,16 @@ index `2`, since `s = 0` here) behind bare numerals. Restated to carry all three
 directly; `[IsAlgClosed F] [DecidableEq F]` added (needed for any further `S2_B` argument on
 these witnesses, matching the other restated cases).
 
-**PROVED up to `q = 1`** (`CaseArithmetic.case_0_3`, direct). The rest is sorried: Butler's
-further numeral identification `g₁ = 2` (tex ~2145-2156) genuinely needs a `WLOG g₁ ≤ g₂ ≤ g₃`
-argument (not merely substituting a single known value, unlike `case_II`/`case_IV`'s analogous
-steps) -- with three *unordered* witness subgroups `A₁, A₂, A₃` here (no ordering hypothesis
-threaded through), reproducing this needs either a genuine 3-way symmetry/WLOG argument on the
-class equation or a case split over which of `g₁, g₂, g₃` equals the (existing, forced) minimum;
-this is a substantially larger arithmetic undertaking than the single-substitution numeral steps
-used elsewhere in this file, so it is not attempted here. Beyond that split, Case VIa's own
-group-recognition step needs exactly the same `y² = x^n`-pinning argument left open in `case_II`
-(this time via the *shorter* route Butler uses here: `[G : N_G(A₁)] = g₃ / 2` is a genuine index,
-hence an integer, forcing `g₃` even directly -- reusable, but not worth setting up before the
-`g₁ = 2` split above is resolved); Case VIb needs the `Ŝ₄`/`BinaryOctahedralGroup`
-representation-group argument (tex ~2178-2201, entirely unformalized elsewhere in this repo);
-Case VIc needs the
-`SL(2,5)`-relabelling argument citing (the also-sorried) Case Vd. -/
+**PROVED up to and including Case VIa** (`ga = gb = 2`, the `(2,2,n)` numeral family, `n` forced
+even): `CaseArithmetic.case_0_3` gives `q = 1` directly; the further `g₁ = 2` numeral split (tex
+~2145-2156) needs a genuine `WLOG g₁ ≤ g₂ ≤ g₃` argument (the three witness subgroups `A₁, A₂, A₃`
+carry no built-in ordering), so the six orderings of `(A₁,g₁), (A₂,g₂), (A₃,g₃)` are enumerated
+explicitly below (`rcases le_total` three times, one per pairwise comparison) and each delegates
+to `case_VI_core` above, which does the rest of the arithmetic and (for Case VIa) the full
+group-recognition argument. **Cases VIb/VIc remain sorried** inside `case_VI_core`: see its own
+docstring for exactly what is missing (Butler's Sylow-conjugacy elimination of the `(2,3,3)`
+numerical solution, the `Ŝ₄` representation-group argument, and the `SL(2,5)`-relabelling
+argument respectively). -/
 lemma case_VI {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
     [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -1451,9 +1805,59 @@ lemma case_VI {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
     · exact hgpos
   have hqpos : 1 ≤ q := by have := Nat.card_pos (α := Q.toSubgroup); omega
   have hq1 : q = 1 := case_0_3 g q k g1 g2 g3 hgpos hqpos hk_ge hg1_ge hg2_ge hg3_ge hKeq heq'
-  -- TODO: see docstring above for exactly what remains (the `WLOG g₁ ≤ g₂ ≤ g₃` numeral split,
-  -- then the three sub-case group-recognition arguments).
-  sorry
+  subst hq1
+  -- `p ∤ Nat.card G` (`q = 1` means the Sylow `p`-subgroup is trivial).
+  have hp_ndvd : ¬ p ∣ Nat.card G := by
+    have hme : Nat.card Q.toSubgroup = p ^ (Nat.card G).factorization p :=
+      Sylow.card_eq_multiplicity Q
+    rw [hq] at hme
+    intro hdvd
+    have hGne : Nat.card G ≠ 0 := Nat.card_pos.ne'
+    have hpos : 0 < (Nat.card G).factorization p :=
+      (Fact.out : Nat.Prime p).factorization_pos_of_dvd hGne hdvd
+    have h1lt : 1 < p ^ (Nat.card G).factorization p :=
+      Nat.one_lt_pow hpos.ne' (Fact.out : Nat.Prime p).one_lt
+    omega
+  -- the class equation, with `q = 1` substituted (Butler's Equation `\eqref{case6b}`).
+  have hsum0 : (1 : ℚ) = 1 / g + ((g1 : ℚ) - 1) / (2 * g1) + ((g2 : ℚ) - 1) / (2 * g2)
+      + ((g3 : ℚ) - 1) / (2 * g3) := by
+    have heqq := heq'
+    unfold ClassEquation at heqq
+    simp only [Finset.univ_eq_empty, Finset.sum_empty, Fin.sum_univ_three,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two,
+      Matrix.tail_cons, Nat.cast_one, sub_self, zero_div, add_zero, one_mul] at heqq
+    linarith [heqq]
+  -- **WLOG `g₁ ≤ g₂ ≤ g₃`** (tex ~2142): six branches, one per ordering of the three witnesses
+  -- `(A₁,g₁), (A₂,g₂), (A₃,g₃)`, each delegating to `case_VI_core`.
+  rcases le_total g1 g2 with h12 | h12
+  · rcases le_total g2 g3 with h23 | h23
+    · -- `g1 ≤ g2 ≤ g3`
+      exact case_VI_core G center_le_G g hg hgpos hp_ndvd g1 g2 g3 h12 h23
+        hg1_ge hg2_ge hg3_ge A1 hA1_mem hA1_cop hA1_card hA1_relIndex
+        A3 hA3_mem hA3_cyc hA3_cop hA3_card hA3_relIndex (by linarith [hsum0])
+    · rcases le_total g1 g3 with h13 | h13
+      · -- `g1 ≤ g3 ≤ g2`
+        exact case_VI_core G center_le_G g hg hgpos hp_ndvd g1 g3 g2 h13 h23
+          hg1_ge hg3_ge hg2_ge A1 hA1_mem hA1_cop hA1_card hA1_relIndex
+          A2 hA2_mem hA2_cyc hA2_cop hA2_card hA2_relIndex (by linarith [hsum0])
+      · -- `g3 ≤ g1 ≤ g2`
+        exact case_VI_core G center_le_G g hg hgpos hp_ndvd g3 g1 g2 h13 h12
+          hg3_ge hg1_ge hg2_ge A3 hA3_mem hA3_cop hA3_card hA3_relIndex
+          A2 hA2_mem hA2_cyc hA2_cop hA2_card hA2_relIndex (by linarith [hsum0])
+  · rcases le_total g1 g3 with h13 | h13
+    · -- `g2 ≤ g1 ≤ g3`
+      exact case_VI_core G center_le_G g hg hgpos hp_ndvd g2 g1 g3 h12 h13
+        hg2_ge hg1_ge hg3_ge A2 hA2_mem hA2_cop hA2_card hA2_relIndex
+        A3 hA3_mem hA3_cyc hA3_cop hA3_card hA3_relIndex (by linarith [hsum0])
+    · rcases le_total g2 g3 with h23 | h23
+      · -- `g2 ≤ g3 ≤ g1`
+        exact case_VI_core G center_le_G g hg hgpos hp_ndvd g2 g3 g1 h23 h13
+          hg2_ge hg3_ge hg1_ge A2 hA2_mem hA2_cop hA2_card hA2_relIndex
+          A1 hA1_mem hA1_cyc hA1_cop hA1_card hA1_relIndex (by linarith [hsum0])
+      · -- `g3 ≤ g2 ≤ g1`
+        exact case_VI_core G center_le_G g hg hgpos hp_ndvd g3 g2 g1 h23 h12
+          hg3_ge hg2_ge hg1_ge A3 hA3_mem hA3_cop hA3_card hA3_relIndex
+          A1 hA1_mem hA1_cyc hA1_cop hA1_card hA1_relIndex (by linarith [hsum0])
 
 
  -- (v) Ŝ₄ , the representation group of S4 in which the transpositions correspond to

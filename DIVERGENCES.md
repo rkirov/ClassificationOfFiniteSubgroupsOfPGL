@@ -85,6 +85,36 @@ here and in the corresponding docstrings.
    `DihedralGroup` for the dicyclic cases (impossible in SL(2,F), p ≠ 2, which
    has a unique involution); fixed.
 
+   **Extension — `SL(2,3)` recognition (Case IIb, tex ~1512-1653, `g₁ = 3`; Case IVb,
+   tex ~1785, "analogous to Case IIb")**: `mulEquiv_SL2_ZMod3_of` proves, from Butler's
+   presentation `⟨x,y,r | x²=y², yxy⁻¹=x⁻¹, r³=1, rxr⁻¹=y, ryr⁻¹=xy⟩` plus
+   `Nat.card G = 24`, that `G ≃* SL(2, ZMod 3)`. Butler pins down the isomorphism by
+   direct inspection: he exhibits explicit matrices `a,b,c ∈ SL(2,3)` satisfying the
+   same relations and asserts the map `x ↦ a, y ↦ b, r ↦ c` is an isomorphism "since `G`
+   and `SL(2,3)` have the same order and their generators satisfy the corresponding
+   relations" (tex ~1642-1653) — a coset-enumeration-style argument not directly
+   formalizable without substantial extra work (bounding the order of the abstractly
+   presented group `⟨x,y,r | …⟩` from above by `24`). The formalization instead uses a
+   **semidirect-product gluing** route: (a) `⟨x,y⟩` is recognized as (embeds as, without
+   yet knowing its cardinality) a copy of `Q₈` via a variant of `mulEquiv_quaternionGroup_of`
+   that stops at injectivity onto the *range* (`quaternionGroup_hom_injective`); (b) this
+   range `N` is shown normal of order `8`, complemented by the order-`3` subgroup `⟨r⟩`
+   (`Nat.card G = 24 = 8·3`, coprimality), giving `G ≃* N ⋊ ⟨r⟩` via mathlib's
+   `SemidirectProduct.mulEquivSubgroup`; (c) applying (a)-(b) *identically* to
+   `SL(2, ZMod 3)` itself (with Butler's own matrices `a,b,c⁻¹` as witnesses — note `c⁻¹`,
+   not `c`: with the `r x r⁻¹ = y` convention it is `c⁻¹` that conjugates `a ↦ b`, a
+   presentation-level swap, not a mathematical divergence) gives a matching semidirect
+   decomposition of `SL(2,3)`; (d) the two decompositions are glued via
+   `SemidirectProduct.congr`, matching `⟨x,y⟩ ≃* Q₈ ≃* ⟨a,b⟩` and `⟨r⟩ ≃* ⟨c⁻¹⟩`
+   generator-to-generator, with the one nontrivial compatibility check (conjugation
+   actions agree after transport) reduced to a finite `3`-way case split on `⟨r⟩`'s
+   `3` elements (closed by direct computation, using a derived `r²`-conjugation formula,
+   `rsq_conj_formula`, for the third case). All `SL(2,3)`-side algebraic facts (matrix
+   orders, relations, `|SL(2,3)| = 24`) are verified by `decide`. This lemma is proved but
+   **not yet wired into `Ch7_DicksonsClassificationTheorem.lean`**'s `case_II`/`case_IV`
+   sorries (out of scope for this file; `Ch7_GroupRecognition.lean` was the exclusive
+   target), so those two residual sorries are unchanged by this addition.
+
 9. **`dicksons_classification_theorem_class_I`'s dispatch** (tex 2213-2226/2237-2254).
    Its body now genuinely obtains `BridgeData` (`center_le_G`/`hp2 : p ≠ 2` added as
    narrowing hypotheses, see the theorem's own docstring) and dispatches on
