@@ -17,7 +17,7 @@ open scoped MatrixGroups
 /- Lemma 3.1 -/
 lemma IsPGroup.not_le_normalizer {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
   [CharP F p] (G : Subgroup SL(2,F)) (H K : Subgroup G) (hK : IsPGroup p K )
-  (H_lt_K : H < K) : ¬ H ≤ Subgroup.normalizer K := by sorry
+  (H_lt_K : H < K) : ¬ H ≤ Subgroup.normalizer (K : Set ↥G) := by sorry
 
 open MaximalAbelianSubgroup
 
@@ -26,7 +26,7 @@ open MaximalAbelianSubgroup
 lemma Sylow.not_normal_subgroup_of_G {F : Type*} [Field F] {p : ℕ} [Fact (Nat.Prime p)]
   [CharP F p] (G K : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G)
   (hK : K ∈ MaximalAbelianSubgroupsOf G)
-  (hQK : map G.subtype (normalizer Q.toSubgroup) = (map G.subtype Q.toSubgroup) ⊔ K) :
+  (hQK : map G.subtype (normalizer (Q.toSubgroup : Set ↥G)) = (map G.subtype Q.toSubgroup) ⊔ K) :
   ¬ Normal Q.toSubgroup := by
   sorry
 
@@ -127,50 +127,48 @@ lemma GaloisField.polynomial_ne_zero : GaloisField.polynomial p n ≠ 0 := by
   exact FiniteField.X_pow_card_pow_sub_X_ne_zero (ZMod p) n.ne_zero hp.out.one_lt
 
 lemma GaloisField.splits_of_dvd (hn : n ∣ m) :
-    Splits (algebraMap (ZMod p) (GaloisField p m)) (GaloisField.polynomial p n) := by
-  have hsk : Splits (algebraMap (ZMod p) (GaloisField p m)) (GaloisField.polynomial p m) :=
-    IsSplittingField.splits (GaloisField p m) (GaloisField.polynomial p m)
-  have hsk' : Splits (algebraMap (ZMod p) (GaloisField p m)) (X ^ (p ^ m.val - 1) - 1) := by
-    refine splits_of_splits_of_dvd _ polynomial_ne_zero hsk ⟨X, ?_⟩
+    Splits ((GaloisField.polynomial p n).map (algebraMap (ZMod p) (GaloisField p m))) := by
+  have hinj : Function.Injective (algebraMap (ZMod p) (GaloisField p m)) :=
+    (algebraMap (ZMod p) (GaloisField p m)).injective
+  have hsk : Splits ((GaloisField.polynomial p m).map (algebraMap (ZMod p) (GaloisField p m))) := by
+    haveI : Fintype (GaloisField p m) := Fintype.ofFinite _
+    have hcard : Fintype.card (GaloisField p m) = p ^ (m : ℕ) := by
+      rw [Fintype.card_eq_nat_card]; exact GaloisField.card p m m.pos.ne'
+    have h := IsSplittingField.splits (L := GaloisField p m)
+      (X ^ Fintype.card (GaloisField p m) - X : (ZMod p)[X])
+    rwa [hcard] at h
+  have hdvd_m : (X ^ (p ^ m.val - 1) - 1 : (ZMod p)[X]) ∣ GaloisField.polynomial p m := by
+    refine ⟨X, ?_⟩
     suffices (X : (ZMod p)[X]) ^ p ^ m.val = X ^ (p ^ m.val - 1 + 1) by
       simpa [GaloisField.polynomial, sub_mul, ← pow_succ]
     rw [tsub_add_cancel_of_le]
     exact Nat.pow_pos (Nat.Prime.pos Fact.out)
+  have hsk' : Splits ((X ^ (p ^ m.val - 1) - 1 : (ZMod p)[X]).map
+      (algebraMap (ZMod p) (GaloisField p m))) :=
+    Splits.of_dvd hsk ((Polynomial.map_ne_zero_iff hinj).mpr polynomial_ne_zero)
+      (Polynomial.map_dvd _ hdvd_m)
   obtain ⟨k, rfl⟩ := hn
   have hd : (p ^ n.val - 1) ∣ (p ^ (n.val * k) - 1) := by
     refine Nat.pow_sub_one_dvd_pow_sub_one p ?_
-    apply dvd_mul_right
-    -- nat_pow_one_sub_dvd_pow_mul_sub_one p ↑n ↑k
+    exact dvd_mul_right _ _
   have hdx : (X : (ZMod p)[X]) ^ (p ^ n.val - 1) - 1 ∣ X ^ (p ^ (n.val * k) - 1) - 1 := by
-    let  Y : (ZMod p)[X] := X ^ (p ^ n.val - 1)
-    obtain ⟨m, hm⟩ := hd
-    simp_rw [hm, pow_mul]
-    suffices Y - 1 ∣ Y^m -1 by
-      simp [Y] at this
-      exact this
-    exact sub_one_dvd_pow_sub_one Y m
-  have hs' : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (X ^ (p ^ n.val - 1) - 1) := by
-    -- if g | f and f splits then g splits
-    refine splits_of_splits_of_dvd _ ?_ hsk' hdx
+    obtain ⟨j, hj⟩ := hd
+    simp_rw [hj, pow_mul]
+    exact sub_one_dvd_pow_sub_one _ j
+  have hbig_ne : (X ^ (p ^ (n.val * k) - 1) - 1 : (ZMod p)[X]) ≠ 0 := by
     refine Monic.ne_zero_of_ne (zero_ne_one' (ZMod p)) ?_
     refine monic_X_pow_sub ?_
     simp [hp.out.one_lt]
-  have hs : Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (GaloisField.polynomial p n) := by
-    rw [GaloisField.polynomial]
-    suffices Splits (algebraMap (ZMod p) (GaloisField p (n * k))) (X * (X ^ (p ^ n.val - 1) - 1)) by
-      convert this using 1
-      simp only [mul_sub, mul_one, sub_left_inj]
-      nth_rewrite 2 [← pow_one X]
-      rw [← pow_add, Nat.one_add, Nat.sub_one, Nat.succ_pred]
-      exact Ne.symm (NeZero.ne' (p ^ n.val))
-    -- product of X * (X^(p^n - 1) - 1) splits if each term in the product splits
-    rw [splits_mul_iff]
-    exact ⟨splits_X _, hs'⟩
-    exact X_ne_zero
-    refine Monic.ne_zero_of_ne (zero_ne_one' (ZMod p)) ?_
-    refine monic_X_pow_sub ?_
-    simp [hp.out.one_lt]
-  exact hs
+  have hs' : Splits ((X ^ (p ^ n.val - 1) - 1 : (ZMod p)[X]).map
+      (algebraMap (ZMod p) (GaloisField p (n * k)))) :=
+    Splits.of_dvd hsk' ((Polynomial.map_ne_zero_iff hinj).mpr hbig_ne) (Polynomial.map_dvd _ hdx)
+  have hexp : p ^ n.val - 1 + 1 = p ^ n.val :=
+    tsub_add_cancel_of_le (Nat.pow_pos (Nat.Prime.pos Fact.out))
+  have hfact : GaloisField.polynomial p n = X * (X ^ (p ^ n.val - 1) - 1) := by
+    rw [GaloisField.polynomial, mul_sub, mul_one, ← pow_succ', hexp]
+  rw [hfact, Polynomial.map_mul, Polynomial.map_X]
+  exact Splits.mul Splits.X hs'
+
 
 
 noncomputable
