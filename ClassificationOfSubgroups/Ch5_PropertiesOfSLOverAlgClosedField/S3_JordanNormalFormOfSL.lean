@@ -117,8 +117,8 @@ lemma SpecialLinearGroup.fin_two_diagonal_iff (x : SL(2,F)) :
   · rintro ⟨hβ, hγ⟩
     rcases get_entries x with ⟨α, β, γ, δ, hα, -, -, hδ, -⟩
     have det_eq_mul_diagonal := det_eq_mul_diag_of_lower_triangular x hβ
-    have α_is_unit : IsUnit α := isUnit_of_mul_eq_one α δ (hα ▸ hδ ▸ det_eq_mul_diagonal)
-    have δ_is_unit : IsUnit δ := isUnit_of_mul_eq_one_right α δ (hα ▸ hδ ▸ det_eq_mul_diagonal)
+    have α_is_unit : IsUnit α := IsUnit.of_mul_eq_one δ (hα ▸ hδ ▸ det_eq_mul_diagonal)
+    have δ_is_unit : IsUnit δ := IsUnit.of_mul_eq_one_right α (hα ▸ hδ ▸ det_eq_mul_diagonal)
     have δ_ne_zero : x.1 1 1 ≠ 0 := by exact IsUnit.ne_zero <| hδ.symm ▸ δ_is_unit
     use α_is_unit.unit
     rw [mul_eq_one_iff_eq_inv₀ δ_ne_zero] at det_eq_mul_diagonal
@@ -138,7 +138,7 @@ lemma SpecialLinearGroup.fin_two_antidiagonal_iff (x : SL(2,F)) :
   · rintro ⟨hα, hδ⟩
     have det_eq_one : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by rw [SpecialLinearGroup.det_coe]
     rw [det_fin_two, hα, hδ, zero_mul, zero_sub, ← neg_mul, neg_mul_comm] at det_eq_one
-    have β_is_unit : IsUnit (x 0 1) := by exact isUnit_of_mul_eq_one (x 0 1) (-x 1 0) det_eq_one
+    have β_is_unit : IsUnit (x 0 1) := by exact IsUnit.of_mul_eq_one (-x 1 0) det_eq_one
     rw [← neg_mul_comm] at det_eq_one
     have neg_β_inv_eq : -(x 0 1)⁻¹ = x 1 0 := by
       rw [neg_inv]
@@ -313,7 +313,7 @@ theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [I
   -- so the inverse of a is equal to d
   have d_eq_inv_a : d = a⁻¹ := Eq.symm (DivisionMonoid.inv_eq_of_mul a d had)
   -- Therefore a is a unit
-  have a_is_unit : IsUnit a := by exact isUnit_of_mul_eq_one a d had
+  have a_is_unit : IsUnit a := by exact IsUnit.of_mul_eq_one d had
   -- Furthermore, a is nonzero
   have a_ne_zero : a ≠ 0 := by exact left_ne_zero_of_mul_eq_one had
   have det_eq_one' : det !![a, 0; 0, d] = 1 := by simp [d_eq_inv_a]; rw [mul_inv_cancel₀ a_ne_zero]

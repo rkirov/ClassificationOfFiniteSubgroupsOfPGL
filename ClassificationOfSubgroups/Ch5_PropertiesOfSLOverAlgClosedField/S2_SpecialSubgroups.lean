@@ -220,7 +220,7 @@ lemma mem_L_iff_lower_triangular [DecidableEq F] {x : SL(2,F)} :
     rintro ⟨a, c, d, hx⟩
     have had : det (x : Matrix (Fin 2) (Fin 2) F) = 1 := by simp
     simp [← hx] at had
-    have a_is_unit : IsUnit a := isUnit_of_mul_eq_one a d had
+    have a_is_unit : IsUnit a := IsUnit.of_mul_eq_one d had
     have a_inv_eq_d : a⁻¹ = d := DivisionMonoid.inv_eq_of_mul a d had
     use a_is_unit.unit, c * a_is_unit.unit
     simp [SpecialMatrices.d, SpecialMatrices.s]
