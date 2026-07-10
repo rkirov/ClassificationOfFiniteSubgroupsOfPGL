@@ -98,7 +98,7 @@ lemma centralizer_neg_eq_centralizer {x : SL(2,F)} : centralizer {x} = centraliz
 Proposition 1.8.
 Let a and b be conjugate elements in a group G. Then ∃ x ∈ G such that x C_G(a) x⁻¹ = C_G (b).
 -/
-lemma conjugate_centralizers_of_IsConj  (a b : G) (hab : IsConj a b) :
+lemma conjugate_centralizers_of_isConj  (a b : G) (hab : IsConj a b) :
   ∃ x : G, conj x • (centralizer { a }) = centralizer { b } := by
   rw [isConj_iff] at hab
   obtain ⟨x, hc⟩ := hab
@@ -141,11 +141,11 @@ lemma MulAut.conj_smul_symm {G : Type*} [Group G] (H K : Subgroup G) (c : G)
 Corollary 1.9.
 The centraliser of an element x in L is abelian unless x belongs to the centre of L.
 -/
-lemma IsMulCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](x : SL(2,F))
+lemma isMulCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableEq F](x : SL(2,F))
   (hx : x ∉ center SL(2,F)) : IsMulCommutative (centralizer { x }) := by
-  rcases SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed x with
+  rcases SL2_isConj_d_or_isConj_s_or_isConj_neg_s_of_algClosed x with
     (⟨δ, x_IsConj_d⟩ | ⟨σ, x_IsConj_s⟩ | ⟨σ, x_IsConj_neg_s⟩ )
-  · obtain ⟨x, centralizer_x_eq⟩ := conjugate_centralizers_of_IsConj (d δ) x x_IsConj_d
+  · obtain ⟨x, centralizer_x_eq⟩ := conjugate_centralizers_of_isConj (d δ) x x_IsConj_d
     have δ_ne_one : δ ≠ 1 := by
       rintro rfl
       simp at x_IsConj_d
@@ -158,7 +158,7 @@ lemma IsMulCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableE
       simp at hx
     rw [← centralizer_x_eq, centralizer_d_eq_D _ δ_ne_one δ_ne_neg_one]
     exact map_isMulCommutative _ _
-  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (s σ) x x_IsConj_s
+  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_isConj (s σ) x x_IsConj_s
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
       simp at x_IsConj_s
@@ -166,7 +166,7 @@ lemma IsMulCommutative_centralizer_of_not_mem_center [IsAlgClosed F] [DecidableE
       simp at hx
     rw [← centralizer_S_eq, centralizer_s_eq_SZ σ_ne_zero]
     exact map_isMulCommutative _ _
-  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_IsConj (-s σ) x x_IsConj_neg_s
+  · obtain ⟨x, centralizer_S_eq⟩ := conjugate_centralizers_of_isConj (-s σ) x x_IsConj_neg_s
     have σ_ne_zero : σ ≠ 0 := by
       rintro rfl
       simp at x_IsConj_neg_s

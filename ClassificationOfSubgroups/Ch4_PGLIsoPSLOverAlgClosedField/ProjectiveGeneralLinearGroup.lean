@@ -147,8 +147,9 @@ lemma center_SL_le_ker (n : Type*) [Fintype n] [DecidableEq n]
   · intro x x_mem_center
     rw [SpecialLinearGroup.mem_center_iff] at x_mem_center
     obtain ⟨ω, hω, h⟩ := x_mem_center
-    simp [MonoidHom.mem_ker, SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL]
-    rw [GeneralLinearGroup.mem_center_general_linear_group_iff]
+    simp only [SL_monoidHom_PGL, GL_monoidHom_PGL, SL_monoidHom_GL, MonoidHom.mem_ker,
+      MonoidHom.coe_comp, QuotientGroup.coe_mk', Function.comp_apply, QuotientGroup.eq_one_iff,
+      GeneralLinearGroup.mem_center_general_linear_group_iff]
     have IsUnit_ω : IsUnit ω := IsUnit.of_pow_eq_one hω Fintype.card_ne_zero
     use IsUnit_ω.unit
     ext
@@ -172,8 +173,8 @@ lemma exists_SL_eq_scaled_GL_of_IsAlgClosed {n F : Type*} [hn₁ : Fintype n] [D
     Nat.card_ne_zero.mpr ⟨inferInstance, inferInstance⟩;
   have deg_P_ne_zero : degree P ≠ 0 := by
     rw [Polynomial.degree_X_pow_sub_C]
-    exact Nat.cast_ne_zero.mpr nat_card_ne_zero
-    exact Nat.card_pos
+    · exact Nat.cast_ne_zero.mpr nat_card_ne_zero
+    · exact Nat.card_pos
   obtain ⟨α, hα⟩ := @IsAlgClosed.exists_root F _ _ P deg_P_ne_zero
   have c_ne_zero : α ≠ 0 := by
     rintro rfl
@@ -196,9 +197,8 @@ open Function
 
 lemma lift_scalar_matrix_eq_one {n F : Type*} [hn₁ : Fintype n] [DecidableEq n]
   [Field F] [IsAlgClosed F] (c : Fˣ) : GL_monoidHom_PGL n F (c • 1)  = 1 := by
-  simp [GL_monoidHom_PGL]
-  rw [GeneralLinearGroup.mem_center_general_linear_group_iff]
-  use c
+  simp [GL_monoidHom_PGL, GeneralLinearGroup.mem_center_general_linear_group_iff]
+
 
 instance (n R : Type*) [Fintype n] [DecidableEq n] [CommRing R] :
   IsScalarTower Rˣ (GL n R) (GL n R) := by
@@ -220,9 +220,10 @@ theorem Injective_PSL_monoidHom_PGL  (n F : Type*) [hn₁ : Fintype n] [Decidabl
   rw [GeneralLinearGroup.mem_center_general_linear_group_iff] at psl_in_ker
   obtain ⟨ω, hω⟩ := psl_in_ker
   have ω_eq_root_of_unity : det S.val = 1 := SpecialLinearGroup.det_coe S
-  simp [GeneralLinearGroup.ext_iff, SpecialLinearGroup.toGL] at hω
+  simp only [SpecialLinearGroup.toGL, SpecialLinearGroup.coe_inv, MonoidHom.coe_mk, OneHom.coe_mk,
+    GeneralLinearGroup.ext_iff, Units.val_smul, Units.val_one, Matrix.smul_apply] at hω
   have S_eq_omega_smul_one : (S : Matrix n n F) = ω • 1 := Eq.symm (Matrix.ext hω)
-  simp [S_eq_omega_smul_one] at ω_eq_root_of_unity
+  simp only [S_eq_omega_smul_one, det_smul_of_tower, det_one] at ω_eq_root_of_unity
   simp only [← hS, mem_bot, QuotientGroup.eq_one_iff]
   refine SpecialLinearGroup.mem_center_iff.mpr ?_
   use ω
@@ -234,7 +235,7 @@ theorem SpecialLinearGroup.toGL_inj {n : Type*} [DecidableEq n] [Fintype n] {R :
   [CommRing R] : Injective (@SpecialLinearGroup.toGL n _ _ R _) := by
   refine (injective_iff_map_eq_one SpecialLinearGroup.toGL).mpr ?_
   intro x hx
-  simp [GeneralLinearGroup.ext_iff] at hx
+  simp only [GeneralLinearGroup.ext_iff, SpecialLinearGroup.coe_GL_coe_matrix, Units.val_one] at hx
   ext i j
   exact hx i j
 
@@ -245,7 +246,7 @@ theorem ker_SL_monoidHom_PGL_eq_center (n F : Type*) [hn₁ : Fintype n] [Decida
   ext x
   constructor
   · intro hx
-    simp [mem_center_iff] at hx ⊢
+    simp only [mem_comap, mem_center_iff] at hx ⊢
     intro y
     specialize hx y.toGL
     rw [← MonoidHom.map_mul, ← MonoidHom.map_mul] at hx
@@ -254,11 +255,10 @@ theorem ker_SL_monoidHom_PGL_eq_center (n F : Type*) [hn₁ : Fintype n] [Decida
   · intro hx
     rw [SpecialLinearGroup.mem_center_iff] at hx
     obtain ⟨r, -, hr⟩ := hx
-    simp [mem_center_iff]
+    simp only [mem_comap, mem_center_iff]
     intro y
     ext i j
-    simp [← hr]
-    exact CommMonoid.mul_comm (y i j) r
+    simpa [← hr] using CommMonoid.mul_comm (y i j) r
 
 theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [DecidableEq n]
   [Field F] [IsAlgClosed F] : Surjective (PSL_monoidHom_PGL n F) := by
@@ -271,7 +271,7 @@ theorem Surjective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidabl
       GeneralLinearGroup.mem_center_general_linear_group_iff]
     use c⁻¹
     suffices c⁻¹ • 1 * G = S by
-      simp [← h]
+      simp only [← h, Units.smul_inv]
       ext
       simp
     rw [← h, smul_mul_assoc, one_mul, inv_smul_eq_iff]
@@ -287,8 +287,10 @@ theorem Bijective_PSL_monoidHom_PGL (n F : Type*) [hn₁ : Fintype n] [Decidable
 
 -- We define the isomorphism between
 -- the projective general linear group and the projective special linear group
-noncomputable def PGL_iso_PSL (n F : Type*) [Fintype n] [DecidableEq n] [Field F]
-  [IsAlgClosed F] : PSL n F ≃* PGL n F :=
-    MulEquiv.ofBijective (PSL_monoidHom_PGL n F) (Bijective_PSL_monoidHom_PGL n F)
+-- ANCHOR: PGL_mulEquiv_PSL
+noncomputable def PGL_mulEquiv_PSL (n F : Type*) [Fintype n]
+  [DecidableEq n] [Field F] [IsAlgClosed F] : PSL n F ≃* PGL n F :=
+  MulEquiv.ofBijective (PSL_monoidHom_PGL n F) (Bijective_PSL_monoidHom_PGL n F)
+-- ANCHOR_END: PGL_mulEquiv_PSL
 
 end Isomorphism

@@ -17,8 +17,10 @@ structure ElementaryAbelian (p : ℕ) (G : Type*) [Group G] extends Subgroup G w
   orderOf_eq : ∀ h : toSubgroup, h ≠ 1 → orderOf h = p
 
 
+-- ANCHOR: IsElementaryAbelian
 def IsElementaryAbelian {G : Type*} [Group G] (p : ℕ) (H : Subgroup G) : Prop :=
   IsMulCommutative H ∧ ∀ h : H, h ≠ 1 → orderOf h = p
+-- ANCHOR_END: IsElementaryAbelian
 
 namespace IsElementaryAbelian
 

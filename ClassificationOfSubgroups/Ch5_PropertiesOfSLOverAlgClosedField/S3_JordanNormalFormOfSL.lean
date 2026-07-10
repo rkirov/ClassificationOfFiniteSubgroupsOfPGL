@@ -283,19 +283,15 @@ lemma IsConj_coe {M N : Matrix (Fin 2) (Fin 2) F} (hM : det M = 1) (hN : det N =
   rw [SpecialLinearGroup.coe_mul, SpecialLinearGroup.coe_mul, hC]
 
 
-/-
-Lemma 1.5.
-Each element of SL(2,F) is conjugate to either
-`D δ` for some `δ ∈ Fˣ`, or to  `± s σ` for some `σ ∈ F` if
-`F` is algebraically closed.
+/--
+If `F` is algebraically closed then *every* element of SL(2,F) is conjugate to either
+`d δ` for some `δ ∈ Fˣ`, or to  `± s σ` for some `σ ∈ F`.
 -/
-theorem SL2_IsConj_d_or_IsConj_s_or_IsConj_neg_s_of_AlgClosed [DecidableEq F] [IsAlgClosed F]
+-- ANCHOR: SL2_isConj_d_or_isConj_s_or_isConj_neg_s_of_algClosed
+theorem SL2_isConj_d_or_isConj_s_or_isConj_neg_s_of_algClosed [DecidableEq F] [IsAlgClosed F]
   (S : SL(2, F)) :
-  (∃ δ : Fˣ, IsConj (d δ) S)
-  ∨
-  (∃ σ : F, IsConj (s σ) S)
-  ∨
-  (∃ σ : F, IsConj (- s σ) S) := by
+    (∃ δ : Fˣ, IsConj (d δ) S) ∨ (∃ σ : F, IsConj (s σ) S) ∨ (∃ σ : F, IsConj (- s σ) S) := by
+-- ANCHOR_END: SL2_isConj_d_or_isConj_s_or_isConj_neg_s_of_algClosed
   -- S is conjugate to an upper triangular matrix
   have S_IsConj_upper_triangular :=
     isTriangularizable_of_algClosed (S : Matrix (Fin 2) (Fin 2) F)
