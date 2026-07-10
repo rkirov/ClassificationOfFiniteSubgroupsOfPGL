@@ -1040,14 +1040,17 @@ directly (`Nat.prime_dvd_prime_iff_eq`, since `p ∣ p ^ m = q` for the `m` witn
 order). In the `p = 2` branch, `Nat.card (center SL(2,F)) = 1` (`CharTwo.two_eq_zero` +
 `card_Z_eq_one_of_two_eq_zero`), so `Nat.card A = g1` exactly, and `g1` is odd (coprime to `p = 2`
 by `hA_cop`) -- this proves the numeral half of Case IVa (`p = 2`, witness `n := g1` odd) directly.
-**PROVED up to this point**; the final group-recognition step (`G ≅ DihedralGroup g1`, needing an
-inverting `y ∈ N_G(A) \ A`) is sorried -- see the in-proof comment for exactly why: the only
-Lean formalization of Theorem 6.8(iv) (`S2_B_MaximalAbelianSubgroup.of_index_normalizer_eq_two`)
-requires `p ≠ 2`, and `S2_A_MaximalAbelianSubgroup`'s own comment ("There is a gap in the informal
-proof for when `p = 2`", immediately above `eq_center_of_card_le_two`, with a recorded
-counterexample) confirms this is a genuine *pre-existing* gap in the Lean development, not a
-by-product of this restatement. Case IVb (`q = 3`, `p = 3`) is left sorried: Butler's construction
-there is "analogous to Case IIb" (tex ~1785), itself sorried below (`case_II`'s `g1 = 3` branch).
+
+**Case IVa now PROVED in full** (`DIVERGENCES.md` item 1, unblocked): the final group-recognition
+step (`G ≅ DihedralGroup g1`) needs an inverting `y ∈ N_G(A) \ A`, Theorem 6.8(iv) at `p = 2`; this
+is now available as `S2_B_MaximalAbelianSubgroup.of_index_normalizer_eq_two_char_two` (`[CharP F 2]`
+in place of the odd-characteristic `p_ne_two`). Butler's argument that `y` is an involution
+(tex 1706-1718) is run exactly as in `case_II`'s Case IIa (`y` inverts all of the cyclic group `A`,
+so `y²` centralizes `A`, hence `y² ∈ A` by maximality, and `y` inverting `y² ∈ A` while fixing it
+under conjugation by itself forces `(y²)² = 1`) but concludes more simply: since `A` has *odd*
+order `g1` here (no even-order "unique involution" subtlety as in `case_II`), Lagrange alone forces
+`y² = 1` directly. Case IVb (`q = 3`, `p = 3`) remains sorried: Butler's construction there is
+"analogous to Case IIb" (tex ~1785), itself sorried below (`case_II`'s `g1 = 3` branch).
 -/
 lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
     [CharP F p]
@@ -1088,22 +1091,140 @@ lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
       rw [Nat.odd_iff, ← Nat.two_dvd_ne_zero, ← Nat.prime_two.coprime_iff_not_dvd]
       exact hcop'.symm
     refine ⟨rfl, g1, hodd, ?_⟩
-    -- TODO: the remaining group-recognition step needs Theorem 6.8(iv)'s "index-2 normalizer
-    -- gives an inverting element `y`" for the coprime-type class `A`, in the `p = 2` case. The
-    -- only Lean formalization of Theorem 6.8(iv) available
-    -- (`S2_B_MaximalAbelianSubgroup.of_index_normalizer_eq_two`) explicitly requires `p ≠ 2`
-    -- (`p_ne_two`), used internally to derive `2 < Nat.card A` via
-    -- `relIndex_eq_one_of_card_le_two` -- itself built on the `D`/`DW` torus-normalizer machinery
-    -- of `S2_A_MaximalAbelianSubgroup`, which per that file's own comment ("There is a gap in the
-    -- informal proof for when `p = 2`", right above `eq_center_of_card_le_two`, with a recorded
-    -- counterexample subgroup of `GL(2,𝔽₂)`) is *known* to need a different/additional argument
-    -- for characteristic `2`. Deriving `2 < Nat.card A` itself is not the obstruction here
-    -- (`Nat.card A = g1`, odd and `≥ 2`, hence `≥ 3`); the obstruction is the rest of
-    -- `of_index_normalizer_eq_two`'s proof (identifying the normalizer quotient with `ZMod 2` via
-    -- a specific inverting coset representative through the `D`/`DW` structure), which is a
-    -- `p ≠ 2`-only argument throughout `S2_A`/`S2_B`. This is a genuine, pre-existing gap in the
-    -- Lean development (confirmed by the comment above), not a "minimal fix" available here.
-    sorry
+    -- **Char-2 wiring** (`DIVERGENCES.md` item 1, now unblocked): Theorem 6.8(iv)'s "index-2
+    -- normalizer gives an inverting element" is now available at `p = 2` too, via
+    -- `S2_B_MaximalAbelianSubgroup.of_index_normalizer_eq_two_char_two` (`[CharP F 2]` in place
+    -- of `p_ne_two`, which we have here since `p` has just been `subst`ed to `2`). Butler's own
+    -- argument that this inverting element is an involution (tex 1706-1718) is in fact *simpler*
+    -- in characteristic `2` than the analogous step in `case_II`'s odd-characteristic Case IIa:
+    -- no appeal to `SL(2,F)`'s unique involution is needed. As there, `y` (obtained below)
+    -- inverts every element of the cyclic group `A` (not just the generator `g0`), so `y²`
+    -- centralizes `A`, hence `y² ∈ A` by `A`'s maximality; `y` (as an element of `A`) then also
+    -- inverts `y²`, while conjugating a power of `y` by `y` fixes it, forcing `(y²)² = 1`. Since
+    -- `A` has *odd* order `g1` (just shown), Lagrange applied to `y² ∈ A` forces `y² = 1`
+    -- directly (`orderOf (y² : A)` divides both `2` and the odd `Nat.card A = g1`, hence `= 1`).
+    haveI hA_fin : Finite A :=
+      (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hA_mem.right).to_subtype
+    obtain ⟨g0, hg0_gen⟩ := hA_cyc.exists_generator
+    have horder_g0 : orderOf g0 = Nat.card A := orderOf_eq_card_of_forall_mem_zpowers hg0_gen
+    have horder_g0SL : orderOf (g0 : SL(2,F)) = g1 := by rw [orderOf_coe, horder_g0, hA_card']
+    obtain ⟨y, hy_mem, hy_conj⟩ :=
+      of_index_normalizer_eq_two_char_two A G hA_mem center_le_G hA_cop hA_relIndex g0
+    simp only [Set.mem_sdiff, SetLike.mem_coe, Subgroup.mem_carrier, Subgroup.mem_inf] at hy_mem
+    obtain ⟨⟨hy_mem_norm, hy_mem_G⟩, hy_notin_A⟩ := hy_mem
+    -- `y` inverts every element of `A` (it inverts the generator `g0`).
+    have hinvert : ∀ a : SL(2,F), a ∈ A → y * a * y⁻¹ = a⁻¹ := by
+      intro a ha
+      obtain ⟨n, hn⟩ := hg0_gen ⟨a, ha⟩
+      have hn' : (g0 : SL(2,F)) ^ n = a := by
+        have := congrArg (Subtype.val) hn
+        simpa using this
+      have hconj_pow : y * (g0 : SL(2,F)) ^ n * y⁻¹ = ((g0 : SL(2,F)) ^ n)⁻¹ := by
+        have h1 := map_zpow (MulAut.conj y).toMonoidHom (g0 : SL(2,F)) n
+        simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h1
+        rw [h1, hy_conj, Subgroup.coe_inv, _root_.inv_zpow]
+      rwa [hn'] at hconj_pow
+    -- `y²` commutes with every element of `A`.
+    have hy2_comm : ∀ a : SL(2,F), a ∈ A → y ^ 2 * a = a * y ^ 2 := by
+      intro a ha
+      have h1 : y * a = a⁻¹ * y := by
+        have h := hinvert a ha
+        have h2 : y * a * y⁻¹ * y = a⁻¹ * y := by rw [h]
+        simpa [mul_assoc] using h2
+      have h2 : y * a⁻¹ = a * y := by
+        have h := hinvert a⁻¹ (Subgroup.inv_mem A ha)
+        rw [inv_inv] at h
+        have h3 : y * a⁻¹ * y⁻¹ * y = a * y := by rw [h]
+        simpa [mul_assoc] using h3
+      calc y ^ 2 * a = y * y * a := by rw [pow_two]
+        _ = y * (y * a) := by rw [mul_assoc]
+        _ = y * (a⁻¹ * y) := by rw [h1]
+        _ = y * a⁻¹ * y := by rw [mul_assoc]
+        _ = (a * y) * y := by rw [h2]
+        _ = a * (y * y) := by rw [mul_assoc]
+        _ = a * y ^ 2 := by rw [pow_two]
+    -- Maximality of `A` (as an internal subgroup of `↥G`) forces `y² ∈ A`.
+    have hy2_mem_G : y ^ 2 ∈ G := Subgroup.pow_mem G hy_mem_G 2
+    set A' : Subgroup ↥G := A.subgroupOf G with hA'_def
+    set y2' : ↥G := ⟨y ^ 2, hy2_mem_G⟩ with hy2'_def
+    have hy2_mem_A : y ^ 2 ∈ A := by
+      set kset : Set ↥G := (A' : Set ↥G) ∪ {y2'} with hkset_def
+      have hcomm_k : ∀ a ∈ kset, ∀ b ∈ kset, a * b = b * a := by
+        haveI := hA_mem.left.1
+        rintro a (ha | ha) b (hb | hb)
+        · exact setLike_mul_comm ha hb
+        · simp only [Set.mem_singleton_iff] at hb; subst hb
+          apply Subtype.ext
+          have ha' : (a : SL(2,F)) ∈ A := by
+            rw [SetLike.mem_coe, hA'_def, Subgroup.mem_subgroupOf] at ha; exact ha
+          simpa [hy2'_def] using (hy2_comm a ha').symm
+        · simp only [Set.mem_singleton_iff] at ha; subst ha
+          apply Subtype.ext
+          have hb' : (b : SL(2,F)) ∈ A := by
+            rw [SetLike.mem_coe, hA'_def, Subgroup.mem_subgroupOf] at hb; exact hb
+          simpa [hy2'_def] using hy2_comm b hb'
+        · simp only [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
+      haveI hclosure_comm : IsMulCommutative (closure kset) :=
+        Subgroup.isMulCommutative_closure hcomm_k
+      have hA'_le_closure : A' ≤ closure kset := by
+        rw [← Subgroup.closure_eq A']
+        exact Subgroup.closure_mono (Set.subset_union_left)
+      have hclosure_le : closure kset ≤ A' := hA_mem.left.2 hclosure_comm hA'_le_closure
+      have hy2'_mem_closure : y2' ∈ closure kset := subset_closure (Set.mem_union_right _ rfl)
+      have hy2'_mem_A' : y2' ∈ A' := hclosure_le hy2'_mem_closure
+      rwa [hA'_def, Subgroup.mem_subgroupOf] at hy2'_mem_A'
+    -- `(y²)² = 1`: `y` both fixes `y²` (conjugation by a power of itself) and inverts it
+    -- (as an element of `A`).
+    have h1 : y * y ^ 2 * y⁻¹ = (y ^ 2)⁻¹ := hinvert (y ^ 2) hy2_mem_A
+    have h2 : y * y ^ 2 * y⁻¹ = y ^ 2 := by group
+    have hz0_inv : (y ^ 2)⁻¹ = y ^ 2 := h1.symm.trans h2
+    have hz0sq : y ^ 2 * y ^ 2 = 1 := by
+      calc y ^ 2 * y ^ 2 = y ^ 2 * (y ^ 2)⁻¹ := by rw [hz0_inv]
+        _ = 1 := mul_inv_cancel _
+    have hz0sq' : (y ^ 2) ^ 2 = 1 := by
+      have hexp : (y ^ 2) ^ 2 = y ^ 2 * y ^ 2 := by group
+      rw [hexp]; exact hz0sq
+    -- `A` has *odd* order `g1`; Lagrange forces the order-dividing-`2` element `y² ∈ A` to be `1`.
+    have hy2_eq_one : y ^ 2 = 1 := by
+      have hordA : orderOf (⟨y ^ 2, hy2_mem_A⟩ : A) ∣ Nat.card A := orderOf_dvd_natCard _
+      have hord2 : orderOf (⟨y ^ 2, hy2_mem_A⟩ : A) ∣ 2 := by
+        rw [← orderOf_coe]
+        exact orderOf_dvd_of_pow_eq_one hz0sq'
+      have hcop2 : Nat.Coprime (Nat.card A) 2 := hA_card' ▸ hA_cop
+      have hordone : orderOf (⟨y ^ 2, hy2_mem_A⟩ : A) = 1 := by
+        rcases Nat.prime_two.eq_one_or_self_of_dvd _ hord2 with h | h
+        · exact h
+        · exfalso
+          rw [h] at hordA
+          exact (Nat.prime_two.coprime_iff_not_dvd.mp hcop2.symm) hordA
+      have := orderOf_eq_one_iff.mp hordone
+      have hval := congrArg (Subtype.val) this
+      simpa using hval
+    -- Assemble `mulEquiv_dihedralGroup_of`'s hypotheses and conclude.
+    set x0 : ↥G := ⟨(g0 : SL(2,F)), hA_mem.right g0.2⟩ with hx0_def
+    set y0 : ↥G := ⟨y, hy_mem_G⟩ with hy0_def
+    have hx0_ord : orderOf x0 = g1 := by
+      have h := orderOf_injective G.subtype (Subgroup.subtype_injective G) x0
+      rw [← h]; exact horder_g0SL
+    have hy0_2 : y0 ^ 2 = 1 := Subtype.ext hy2_eq_one
+    have hy0_ne_one : y0 ≠ 1 := by
+      intro h
+      apply hy_notin_A
+      have hyval : y = 1 := congrArg Subtype.val h
+      rw [hyval]; exact Subgroup.one_mem A
+    have hconj0 : y0 * x0 * y0⁻¹ = x0⁻¹ := Subtype.ext hy_conj
+    have hyx0 : y0 ∉ Subgroup.zpowers x0 := by
+      intro hmem
+      obtain ⟨kk, hk⟩ := hmem
+      apply hy_notin_A
+      have hk' : (g0 : SL(2,F)) ^ kk = y := by
+        have := congrArg (Subtype.val) hk
+        simpa using this
+      rw [← hk']
+      exact Subgroup.zpow_mem A g0.2 kk
+    have hcardG : Nat.card G = 2 * g1 := by rw [hg, he1, one_mul, hgeq]
+    haveI : NeZero g1 := ⟨by omega⟩
+    exact ⟨mulEquiv_dihedralGroup_of x0 y0 hx0_ord hy0_2 hy0_ne_one hconj0 hyx0 hcardG⟩
   · -- **Case IVb** (`q = 3`): forces `p = 3`; Butler's construction ("analogous to Case IIb",
     -- tex ~1785) is left sorried, matching `case_II`'s `g1 = 3` branch below.
     right
@@ -1240,12 +1361,35 @@ def Relations (n : ℕ) : Set (FreeGroup (Symbols)) :=
 abbrev D (n : ℕ) :=
   PresentedGroup <| Relations n
 
+/-! ### Binary octahedral group `2O` = Butler's `Ŝ₄` (DIVERGENCES.md item 3)
+
+Butler's `Ŝ₄` (tex 2121-2125, 2200) is *the* representation group of `S₄` in which
+transpositions lift to elements of order `4` -- citing Suzuki, `S₄` has exactly two double
+covers, and this property picks out the **binary octahedral group `2O`** (order `48`), *not*
+`GL(2,3)` (the other cover, in which transpositions lift to order-`2` elements, i.e. `GL(2,3)`
+has non-central involutions and hence cannot embed in `SL(2,F)` for `p ≠ 2`, which has a
+*unique* involution). An earlier draft of this file wrongly rendered `Ŝ₄` as
+`GL (Fin 2) (ZMod 3)`; this is corrected here by presenting `2O` directly as the `⟨4,3,2⟩`
+binary polyhedral (von Dyck) group `⟨x, y | x⁴ = y³ = (xy)²⟩` (the common central element
+`x⁴ = y³ = (xy)²` is the order-`2` element `-1`; modulo it, this is the `(2,3,4)` triangle-group
+presentation of the rotation group of the octahedron, `≅ S₄`, order `24`, so the binary cover
+has order `48`, matching `Ŝ₄`). See `DIVERGENCES.md` item 3. -/
+def BinaryOctahedralRelations : Set (FreeGroup Symbols) :=
+  { .of x ^ 4 * ((.of y) ^ 3)⁻¹ } ∪
+  { .of x ^ 4 * ((.of x * .of y) ^ 2)⁻¹ }
+
+/-- The **binary octahedral group** `2O` (order `48`), i.e. Butler's `Ŝ₄` -- the representation
+group of `S₄` in which transpositions lift to order-`4` elements (tex 2200) -- presented as
+`⟨x, y | x⁴ = y³ = (xy)²⟩`. See the module note above and `DIVERGENCES.md` item 3. -/
+abbrev BinaryOctahedralGroup := PresentedGroup BinaryOctahedralRelations
+
 /-- Butler Case VI (tex 2115-2160): `s = 0, t = 3`. Forces `q = 1` (`CaseArithmetic.case_0_3`)
-and, via a further elementary argument (tex ~2145-2160), `g₁ = 2` with
+and, via a further elementary argument (tex ~2145-2156), `g₁ = 2` with
 `(g₂,g₃) ∈ {(2,n), (3,4), (3,5)}`. Case VIa (`g₂ = 2`) gives the dicyclic group of order `4n`
 (`n` even) as `QuaternionGroup n`; Case VIb (`g₂ = 3, g₃ = 4`) gives `Ŝ₄`, the representation
-group of `S₄` in which transpositions have order `4` -- Butler notes `Ŝ₄ ≅ GL(2,3)`, so this is
-`GL (Fin 2) (ZMod 3)`; Case VIc (`g₂ = 3, g₃ = 5`) gives `G ≅ SL(2,5)`, this time with `p ∤ |G|`
+group of `S₄` in which transpositions have order `4`, i.e. the **binary octahedral group**
+`BinaryOctahedralGroup` (*not* `GL(2,3)` -- see the module note above and `DIVERGENCES.md`
+item 3); Case VIc (`g₂ = 3, g₃ = 5`) gives `G ≅ SL(2,5)`, this time with `p ∤ |G|`
 (unlike the isomorphic-but-distinct Case Vd, where `p = 3 = q`).
 
 RESTATED (justification: as in `case_I`/`case_II`/`case_IV`, the previous `heq : ∃ k g1 g2 g3, ...`
@@ -1265,8 +1409,9 @@ used elsewhere in this file, so it is not attempted here. Beyond that split, Cas
 group-recognition step needs exactly the same `y² = x^n`-pinning argument left open in `case_II`
 (this time via the *shorter* route Butler uses here: `[G : N_G(A₁)] = g₃ / 2` is a genuine index,
 hence an integer, forcing `g₃` even directly -- reusable, but not worth setting up before the
-`g₁ = 2` split above is resolved); Case VIb needs the `Ŝ₄`/`GL(2,3)` representation-group
-argument (tex ~2178-2201, entirely unformalized elsewhere in this repo); Case VIc needs the
+`g₁ = 2` split above is resolved); Case VIb needs the `Ŝ₄`/`BinaryOctahedralGroup`
+representation-group argument (tex ~2178-2201, entirely unformalized elsewhere in this repo);
+Case VIc needs the
 `SL(2,5)`-relabelling argument citing (the also-sorried) Case Vd. -/
 lemma case_VI {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
     [CharP F p]
@@ -1296,7 +1441,7 @@ lemma case_VI {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
     (heq : 2 ≤ g1 ∧ 2 ≤ g2 ∧ 2 ≤ g3 ∧ (1 < k → k = g1 ∨ k = g2 ∨ k = g3) ∧
       ClassEquation g q k (s := 0) (t := 3) (fun i => i.elim0) ![g1, g2, g3]) :
     (∃ n, Even n ∧ Isomorphic G (QuaternionGroup n)) ∨
-      Isomorphic G (GL (Fin 2) (ZMod 3)) ∨
+      Isomorphic G BinaryOctahedralGroup ∨
       (¬ p ∣ Nat.card G ∧ Isomorphic G SL(2, ZMod 5)) := by
   obtain ⟨hg1_ge, hg2_ge, hg3_ge, hKeq, heq'⟩ := heq
   have hgpos : 1 ≤ g := by
@@ -1316,31 +1461,237 @@ lemma case_VI {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
 
 instance five_prime : Fact (Nat.Prime 5) := { out := by decide }
 
+/-- Auxiliary for threading `BridgeData` into `case_IV`/`case_V`'s own `2 * g1 ≤ g`-style numeral
+hypotheses (Butler's implicit "the number of conjugates of `A` is a positive integer", not carried
+by `BridgeData` directly): a coprime-type class `A` with normalizer index `2` has
+`2 * Nat.card A ≤ Nat.card G`, via Lagrange applied to `A ≤ N_G(A) ≤ G` (`[N_G(A):A] = 2` gives
+`Nat.card (N_G(A)) = 2 * Nat.card A`; mirrors the `hcard_N_via_K'` computation inside `case_I`
+above). -/
+lemma two_card_le_of_relIndex_normalizer_eq_two {F : Type*} [Field F]
+    (G A : Subgroup SL(2,F)) [Finite G] (hA_le : A ≤ G)
+    (hrelIndex : relIndex (A.subgroupOf G) (normalizer ((A.subgroupOf G) : Set ↥G)) = 2) :
+    2 * Nat.card A ≤ Nat.card G := by
+  set A' : Subgroup ↥G := A.subgroupOf G with hA'_def
+  set N : Subgroup ↥G := normalizer (A' : Set ↥G) with hN_def
+  have hA'_le_N : A' ≤ N := Subgroup.le_normalizer
+  have hcard_N : Nat.card N = 2 * Nat.card A' := by
+    have h1 : Nat.card N = Nat.card (↥N ⧸ A'.subgroupOf N) * Nat.card (A'.subgroupOf N) :=
+      Subgroup.card_eq_card_quotient_mul_card_subgroup _
+    have h2 : Nat.card (A'.subgroupOf N) = Nat.card A' :=
+      Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA'_le_N).toEquiv
+    have h3 : Nat.card (↥N ⧸ A'.subgroupOf N) = A'.relIndex N := rfl
+    rw [h2, h3, hrelIndex] at h1
+    exact h1
+  have hA'_card : Nat.card A' = Nat.card A :=
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA_le).toEquiv
+  have hNdvd : Nat.card N ∣ Nat.card G := Subgroup.card_subgroup_dvd_card N
+  have hNle : Nat.card N ≤ Nat.card G := Nat.le_of_dvd Nat.card_pos hNdvd
+  rw [hA'_card] at hcard_N
+  omega
+
 /-- **Theorem 3.6, Class I** (tex 2213-2226, "Class I: when `p = 0` or `|G|` is relatively prime
 to `p`"). Every finite subgroup `G ≤ SL(2,F)` of order coprime to `p` (or with `p = 0`) is
 isomorphic to one of: a cyclic group; the dicyclic group `⟨x,y | x^n = y^2, yxy⁻¹ = x⁻¹⟩` of order
 `4n` for *arbitrary* `n` (mathlib's `QuaternionGroup n`, tex Class I (ii), covering both Case IIa
 `n` odd and Case VIa `n` even); `SL(2,3)`; `SL(2,5)`; or `Ŝ₄` (the representation group of `S₄`
-with transpositions of order `4`, tex Class I (v)), which Butler identifies with `GL(2,3)`.
+with transpositions of order `4`, tex Class I (v)), i.e. the **binary octahedral group**
+`BinaryOctahedralGroup` (*not* `GL(2,3)` -- see the module note above `BinaryOctahedralGroup`
+and `DIVERGENCES.md` item 3: `GL(2,3)` is the *other* double cover of `S₄`, with order-`2`
+transposition lifts and non-central involutions, so it cannot embed in `SL(2,F)` for `p ≠ 2`).
 Note: the original statement here had `DihedralGroup n` for a file-level auto-bound `n : Type*`
 (ill-typed/vacuously-scoped), and used the *dihedral* group where `SL(2,F)` (with `p ≠ 2`, having
 a unique involution) actually only ever produces the *dicyclic*/quaternion group; both bugs are
-fixed here.
-Status: statement faithful to paper; proof pending (needs the full case-by-case matching of tex
-2237-2254, i.e. `case_I` ... `case_VI` above, plus the `Z ⊄ G ⟹ |G|` odd `⟹` Case I/III branch). -/
+fixed here. A subsequent draft then used `GL (Fin 2) (ZMod 3)` for `Ŝ₄`; also fixed, see above.
+Status: statement faithful to paper; **dispatch structure implemented** (`center_le_G` and
+`hp2 : p ≠ 2` added as narrowing hypotheses to invoke `S5_NumericClassEquation.exists_bridgeData`
+and dispatch on `CaseArithmetic.case_enumeration`'s six `(s,t)` branches into `case_I` ... `case_VI`
+above); the `G = center SL(2,F)` case (where `exists_bridgeData` does not apply) is handled
+directly (`center SL(2,F)` is cyclic, `S2_SpecialSubgroups.IsCyclic_Z`). Remaining gaps are
+exactly the per-branch pieces documented at each `sorry` inside the proof, plus two *global*
+items intentionally left out of scope here (see `DIVERGENCES.md`): the `Z ⊄ G ⟹ |G|` odd `⟹`
+Case I/III reduction (this theorem's `hp'` disjunct `p = 0 ∨ Nat.Coprime (Nat.card G) p` does not
+itself guarantee `center SL(2,F) ≤ G`, which every case lemma above requires), and the char-`2`
+finale (`hp2 : p ≠ 2` rules out the `p = 2` branch of Dickson's classification entirely, matching
+`case_IV`'s own residual `p = 2` gap). -/
 -- ANCHOR: dicksons_classification_theorem_class_I
 theorem dicksons_classification_theorem_class_I {F : Type*} [Field F] [IsAlgClosed F]
-    {p : ℕ} [CharP F p] (hp : Prime p) (G : Subgroup (SL(2,F))) [Finite G]
-    (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p) :
+    [DecidableEq F] {p : ℕ} [CharP F p] (hp : Prime p) (G : Subgroup (SL(2,F))) [Finite G]
+    (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p)
+    -- Narrowing hypotheses (see the docstring above and `DIVERGENCES.md`): `center_le_G` is
+    -- needed by every `case_*` lemma above, and `hp2` is needed by `exists_bridgeData` (its own
+    -- `p = 2` gap traces back to `case_IV`'s char-`2` branch, `DIVERGENCES.md` item 1).
+    (center_le_G : center SL(2,F) ≤ G) (hp2 : p ≠ 2) :
     IsCyclic G ∨
       (∃ n, Isomorphic G (QuaternionGroup n)) ∨
       Isomorphic G SL(2, ZMod 3) ∨
       Isomorphic G SL(2, ZMod 5) ∨
-      Isomorphic G (GL (Fin 2) (ZMod 3))
-  := by sorry
+      Isomorphic G BinaryOctahedralGroup := by
+  haveI : Fact (Nat.Prime p) := ⟨hp.nat_prime⟩
+  by_cases hG_ne : G = center SL(2,F)
+  · -- `G` is exactly `center SL(2,F)`, hence cyclic (`IsCyclic_Z`).
+    subst hG_ne
+    left
+    rw [SpecialSubgroups.center_SL2_eq_Z]
+    exact SpecialSubgroups.IsCyclic_Z
+  · obtain ⟨d⟩ := NumericClassEquation.exists_bridgeData G hp2 center_le_G hG_ne
+    -- Destructure `d`'s fields into plain local variables (rather than keeping `d` opaque): this
+    -- is what lets `subst` later turn each `case_enumeration` branch's `d.s = _`/`d.t = _` fact
+    -- into a genuine retyping of `gs`/`gt`/`As`/`At` etc. along `Fin d.s`/`Fin d.t`, avoiding a
+    -- manual `Fin.cast`/`HEq` juggling exercise for the "Fin-shape alignment".
+    obtain ⟨g, q, k, s, t, gs, gt, As, At, hAs_mem, hAt_mem, hAs_card, hAt_card, hAs_relIndex,
+      hAt_relIndex, hAs_cyclic, hAt_cyclic, hAs_coprime, hAt_coprime, hg, hSylow, hg_pos, hq_pos,
+      hk_pos, hgs_ge, hgt_ge, heq⟩ := d
+    -- `p ∤ Nat.card G` throughout (that is exactly this theorem's hypothesis `hp'`, `p` prime so
+    -- `p ≠ 0`): every Sylow `p`-subgroup of `G` is therefore trivial, forcing `q = k = 1` via
+    -- `hSylow` (its "genuine Sylow-type witness" disjunct would otherwise exhibit a *nontrivial*
+    -- Sylow `p`-subgroup, contradicting triviality).
+    have hp_ne0 : p ≠ 0 := hp.nat_prime.pos.ne'
+    have hcop : Nat.Coprime (Nat.card G) p := hp'.resolve_left hp_ne0
+    have hpndvd : ¬ p ∣ Nat.card G := hp.nat_prime.coprime_iff_not_dvd.mp hcop.symm
+    have hqk1 : q = 1 ∧ k = 1 := by
+      rcases hSylow with h | ⟨Q0, K0, S0, -, hQ0eqS0, hQ0ne, -, -, -, -, -, -⟩
+      · exact h
+      · exfalso
+        have hme : Nat.card S0.toSubgroup = p ^ (Nat.card G).factorization p :=
+          Sylow.card_eq_multiplicity S0
+        rw [Nat.factorization_eq_zero_of_not_dvd hpndvd, pow_zero] at hme
+        exact hQ0ne (hQ0eqS0.trans (Subgroup.card_eq_one.mp hme))
+    obtain ⟨hq1, hk1⟩ := hqk1
+    -- A single (arbitrary) Sylow `p`-subgroup `Q` of `G`, needed by every `case_*` lemma; it is
+    -- likewise trivial (`Nat.card Q.toSubgroup = 1 = q`), by the same computation.
+    obtain ⟨Q⟩ := (inferInstance : Nonempty (Sylow p G))
+    have hqQ : Nat.card Q.toSubgroup = q := by
+      have hme : Nat.card Q.toSubgroup = p ^ (Nat.card G).factorization p :=
+        Sylow.card_eq_multiplicity Q
+      rw [Nat.factorization_eq_zero_of_not_dvd hpndvd, pow_zero] at hme
+      rw [hme, hq1]
+    -- Dispatch on the six `(s,t)` branches of `CaseArithmetic.case_enumeration`.
+    rcases case_enumeration g q k hg_pos hq_pos hk_pos gs gt hgs_ge hgt_ge heq with
+      hst | hst | hst | hst | hst | hst
+    · -- `(s,t) = (1,0)`: `case_I`. `q = 1` throughout, so `case_I`'s `1 < q` Sylow-witness
+      -- bundle is vacuous, and (post-hoc) `Q.toSubgroup = ⊥` makes its cyclic complement `K`
+      -- all of `G`, giving `IsCyclic G` directly.
+      obtain ⟨hs, ht⟩ := hst
+      subst hs; subst ht
+      have hgs_eq : gs = fun _ : Fin 1 => gs 0 :=
+        funext fun i => congrArg gs (Subsingleton.elim i 0)
+      have hgt_eq : gt = fun i : Fin 0 => i.elim0 := funext fun i => i.elim0
+      rw [hgs_eq, hgt_eq] at heq
+      have hQK : 1 < q → IsElementaryAbelian p Q.toSubgroup ∧
+          ∃ K : Subgroup SL(2,F), K ≤ G ∧ IsCyclic K ∧
+            normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K.subgroupOf G ∧
+            Disjoint Q.toSubgroup (K.subgroupOf G) ∧
+            Nat.card K = Nat.card (center SL(2,F)) * k := fun h => absurd h (by omega)
+      have hkbundle : (1 < k → k = gs 0) := fun h => absurd h (by omega)
+      obtain ⟨-, -, -, K, hcompl, hKcyc, -⟩ :=
+        case_I G center_le_G Q g q hg hqQ (gs 0) k (As 0) (hAs_mem 0) (hAs_cyclic 0)
+          (hAs_coprime 0) (hAs_card 0) hQK ⟨hk_pos, hgs_ge 0, hkbundle, heq⟩
+      left
+      have hQbot : Q.toSubgroup = ⊥ := Subgroup.card_eq_one.mp (hqQ.trans hq1)
+      have hcm := hcompl.card_mul
+      rw [hQbot, Subgroup.card_bot, one_mul] at hcm
+      have hKtop : K = ⊤ := Subgroup.eq_top_of_card_eq K hcm
+      have hKcyc' : IsCyclic (⊤ : Subgroup ↥G) := hKtop ▸ hKcyc
+      exact (MulEquiv.isCyclic Subgroup.topEquiv).mp hKcyc'
+    · -- `(s,t) = (1,1)`: `case_II`. Its conclusion is already a sub-disjunction of this
+      -- theorem's goal.
+      obtain ⟨hs, ht⟩ := hst
+      subst hs; subst ht
+      have hgs_eq : gs = fun _ : Fin 1 => gs 0 :=
+        funext fun i => congrArg gs (Subsingleton.elim i 0)
+      have hgt_eq : gt = fun _ : Fin 1 => gt 0 :=
+        funext fun i => congrArg gt (Subsingleton.elim i 0)
+      rw [hgs_eq, hgt_eq] at heq
+      have hKbundle : (gt 0 < k → k = gs 0) := fun h => absurd h (by have := hgt_ge 0; omega)
+      rcases case_II G center_le_G Q g q hg hqQ (gs 0) (gt 0) k (As 0) (hAs_mem 0) (hAs_cyclic 0)
+          (hAs_coprime 0) (hAs_card 0) (hAs_relIndex 0) (At 0) (hAt_mem 0) (hAt_cyclic 0)
+          (hAt_coprime 0) (hAt_card 0) (hAt_relIndex 0)
+          ⟨hk_pos, hgs_ge 0, hgt_ge 0, hKbundle, heq⟩ with hiso | ⟨n, -, hiso⟩
+      · exact Or.inr (Or.inr (Or.inl hiso))
+      · exact Or.inr (Or.inl ⟨n, hiso⟩)
+    · -- `(s,t) = (0,0)`: `case_III`. Its (proved) conclusion, combined with `q = 1`
+      -- (`Q.toSubgroup = ⊥`), forces `G = center SL(2,F)` -- contradicting `hG_ne`. So this
+      -- branch cannot actually occur within `dicksons_classification_theorem_class_I`'s context.
+      obtain ⟨hs, ht⟩ := hst
+      subst hs; subst ht
+      have hgs_eq : gs = fun i : Fin 0 => i.elim0 := funext fun i => i.elim0
+      have hgt_eq : gt = fun i : Fin 0 => i.elim0 := funext fun i => i.elim0
+      rw [hgs_eq, hgt_eq] at heq
+      exfalso
+      obtain ⟨hmapsup, -⟩ := case_III G center_le_G Q g q hg hqQ ⟨k, hk_pos, le_of_eq hk1, heq⟩
+      have hQbot : Q.toSubgroup = ⊥ := Subgroup.card_eq_one.mp (hqQ.trans hq1)
+      rw [hQbot, Subgroup.map_bot, bot_sup_eq] at hmapsup
+      exact hG_ne hmapsup.symm
+    · -- `(s,t) = (0,1)`: `case_IV`. Butler's own arithmetic (`case_0_1`) forces `q ∈ {2,3}`,
+      -- contradicting `q = 1`. So (as with Case III) this branch cannot actually occur here --
+      -- it is exactly Butler's Class II (`p ∣ |G|`), not Class I.
+      obtain ⟨hs, ht⟩ := hst
+      subst hs; subst ht
+      have hgs_eq : gs = fun i : Fin 0 => i.elim0 := funext fun i => i.elim0
+      have hgt_eq : gt = fun _ : Fin 1 => gt 0 :=
+        funext fun i => congrArg gt (Subsingleton.elim i 0)
+      rw [hgs_eq, hgt_eq] at heq
+      exfalso
+      have h2card : 2 * Nat.card (At 0) ≤ Nat.card G :=
+        two_card_le_of_relIndex_normalizer_eq_two G (At 0) (hAt_mem 0).right (hAt_relIndex 0)
+      rw [hAt_card 0, hg] at h2card
+      have he : 0 < Nat.card (center SL(2,F)) := Nat.card_pos
+      have hg_ge : 2 * (gt 0) ≤ g := by
+        have hrw : 2 * (Nat.card (center SL(2,F)) * gt 0)
+            = Nat.card (center SL(2,F)) * (2 * gt 0) := by ring
+        rw [hrw] at h2card
+        exact le_of_mul_le_mul_left h2card he
+      obtain ⟨-, hcase⟩ := case_0_1 g q k (gt 0) hg_pos hq_pos hk_pos (hgt_ge 0) hg_ge heq
+      rcases hcase with ⟨hq2, -⟩ | ⟨hq3, -, -⟩ <;> omega
+    · -- `(s,t) = (0,2)`: `case_V`. Butler's own arithmetic (`case_0_2`) forces `1 < q`,
+      -- contradicting `q = 1`; again this branch cannot actually occur here (Butler's Class II).
+      obtain ⟨hs, ht⟩ := hst
+      subst hs; subst ht
+      have hgs_eq : gs = fun i : Fin 0 => i.elim0 := funext fun i => i.elim0
+      have hgt_eq : gt = ![gt 0, gt 1] := by funext i; fin_cases i <;> simp
+      rw [hgs_eq, hgt_eq] at heq
+      exfalso
+      have he : 0 < Nat.card (center SL(2,F)) := Nat.card_pos
+      have h2card0 : 2 * Nat.card (At 0) ≤ Nat.card G :=
+        two_card_le_of_relIndex_normalizer_eq_two G (At 0) (hAt_mem 0).right (hAt_relIndex 0)
+      have h2card1 : 2 * Nat.card (At 1) ≤ Nat.card G :=
+        two_card_le_of_relIndex_normalizer_eq_two G (At 1) (hAt_mem 1).right (hAt_relIndex 1)
+      rw [hAt_card 0, hg] at h2card0
+      rw [hAt_card 1, hg] at h2card1
+      have hg_ge1 : 2 * (gt 0) ≤ g := by
+        have hrw : 2 * (Nat.card (center SL(2,F)) * gt 0)
+            = Nat.card (center SL(2,F)) * (2 * gt 0) := by ring
+        rw [hrw] at h2card0
+        exact le_of_mul_le_mul_left h2card0 he
+      have hg_ge2 : 2 * (gt 1) ≤ g := by
+        have hrw : 2 * (Nat.card (center SL(2,F)) * gt 1)
+            = Nat.card (center SL(2,F)) * (2 * gt 1) := by ring
+        rw [hrw] at h2card1
+        exact le_of_mul_le_mul_left h2card1 he
+      obtain ⟨hq_gt1, -⟩ := case_0_2 g q k (gt 0) (gt 1) hg_pos hq_pos hk_pos (hgt_ge 0) (hgt_ge 1)
+        hg_ge1 hg_ge2 heq
+      omega
+    · -- `(s,t) = (0,3)`: `case_VI`. `q = 1` is consistent with Butler's own `case_0_3` here (it
+      -- is *his* Class I/VI branch too), so this genuinely dispatches to `case_VI` -- whose own
+      -- residual `sorry` (the `g₁ = 2` `WLOG` split, tex ~2145-2156) is therefore inherited here.
+      obtain ⟨hs, ht⟩ := hst
+      subst hs; subst ht
+      have hgs_eq : gs = fun i : Fin 0 => i.elim0 := funext fun i => i.elim0
+      have hgt_eq : gt = ![gt 0, gt 1, gt 2] := by funext i; fin_cases i <;> simp
+      rw [hgs_eq, hgt_eq] at heq
+      have hKbundle : (1 < k → k = gt 0 ∨ k = gt 1 ∨ k = gt 2) := fun h => absurd h (by omega)
+      rcases case_VI G center_le_G Q g q hg hqQ (gt 0) (gt 1) (gt 2) k
+          (At 0) (hAt_mem 0) (hAt_cyclic 0) (hAt_coprime 0) (hAt_card 0) (hAt_relIndex 0)
+          (At 1) (hAt_mem 1) (hAt_cyclic 1) (hAt_coprime 1) (hAt_card 1) (hAt_relIndex 1)
+          (At 2) (hAt_mem 2) (hAt_cyclic 2) (hAt_coprime 2) (hAt_card 2) (hAt_relIndex 2)
+          hk_pos ⟨hgt_ge 0, hgt_ge 1, hgt_ge 2, hKbundle, heq⟩ with ⟨n, -, hiso⟩ | hiso | ⟨-, hiso⟩
+      · exact Or.inr (Or.inl ⟨n, hiso⟩)
+      · exact Or.inr (Or.inr (Or.inr (Or.inr hiso)))
+      · exact Or.inr (Or.inr (Or.inr (Or.inl hiso)))
 -- ANCHOR_END: dicksons_classification_theorem_class_I
 
--- Ŝ₄ is isomorphic to GL₂(F₃)
+-- Ŝ₄ is the binary octahedral group `BinaryOctahedralGroup` (*not* `GL(2,3)`); see the module
+-- note above `BinaryOctahedralGroup` and `DIVERGENCES.md` item 3.
 
 lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n : ℕ+}
   (m_dvd_n : m ∣ n) :  Nat.card (GaloisField p m.val) ∣ Nat.card (GaloisField p n.val) := by

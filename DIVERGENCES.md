@@ -17,6 +17,12 @@ here and in the corresponding docstrings.
    `S2_B: of_index_normalizer_eq_two_char_two` (+ the two char-2 helper analogues),
    sorry-free. The `p ≠ 2` variants remain for the odd-characteristic route; the
    original gap-note applies only to the over-general Lean helper, not to the paper.
+   **`Ch7: case_IV` now unblocked**: Case IVa (`p = 2`, dihedral) previously stopped
+   short of the final group-recognition step because it needed exactly this char-2
+   inverting-element fact; it is now wired in (`of_index_normalizer_eq_two_char_two`),
+   and Case IVa is PROVED in full (Case IVb, `p = 3`, remains sorried separately —
+   it needs the unrelated "analogous to Case IIb" `SL(2,3)`-construction, itself
+   sorried in `case_II`'s `g1 = 3` branch).
 
 2. **Case (0,3) arithmetic** (tex 2115-2160; `S4_CaseArithmetic.case_0_3`).
    Butler's displayed equation for Case VI does **not** determine `k` (the `(q-1)`
@@ -30,9 +36,15 @@ here and in the corresponding docstrings.
    S₄ has exactly two such covers. A formalization draft incorrectly rendered this
    as `GL (Fin 2) (ZMod 3)` — which is the *other* cover (transpositions lift to
    involutions; it has non-central involutions, so it cannot embed in SL(2,F) for
-   p ≠ 2). **Fix pending**: replace with a presented binary octahedral group
-   ⟨a, b | a⁴ = b³ = (ab)²⟩ (or the equivalent unique-involution double-cover
-   characterization). This is a formalization erratum, not Butler's.
+   p ≠ 2). **FIXED**: `Ch7_DicksonsClassificationTheorem.lean` now defines
+   `BinaryOctahedralGroup` as the presented group `⟨x, y | x⁴ = y³ = (xy)²⟩`
+   (the `⟨4,3,2⟩` binary polyhedral/von Dyck presentation of `2O`, order 48) and
+   uses it in place of `GL (Fin 2) (ZMod 3)` in `case_VI`'s Case VIb disjunct and
+   in `dicksons_classification_theorem_class_I`'s final disjunct. The *proofs* of
+   those disjuncts (identifying an actual `G` with `BinaryOctahedralGroup`) remain
+   sorried — this fix is statement-level only (matching item 3's original scope:
+   picking the *correct type* for the disjunct), not a new recognition lemma.
+   This is a formalization erratum, not Butler's.
 
 ## Proof-route divergences (statements faithful, proofs different)
 
@@ -72,6 +84,33 @@ here and in the corresponding docstrings.
    and `QuaternionGroup n` respectively — note earlier drafts wrongly used
    `DihedralGroup` for the dicyclic cases (impossible in SL(2,F), p ≠ 2, which
    has a unique involution); fixed.
+
+9. **`dicksons_classification_theorem_class_I`'s dispatch** (tex 2213-2226/2237-2254).
+   Its body now genuinely obtains `BridgeData` (`center_le_G`/`hp2 : p ≠ 2` added as
+   narrowing hypotheses, see the theorem's own docstring) and dispatches on
+   `CaseArithmetic.case_enumeration`'s six `(s,t)` branches into `case_I` ... `case_VI`.
+   A structural observation not in Butler's own exposition (he only ever states Class I
+   in terms of `p ∤ |G|` directly, not via the class-equation case split) considerably
+   simplifies the dispatch: `p ∤ |G|` forces every Sylow `p`-subgroup of `G` trivial,
+   hence `q = k = 1` throughout `BridgeData` (via `hSylow`), which in turn makes
+   Butler's own per-case arithmetic (`case_0_1`, `case_0_2`) *contradict* `q = 1` in
+   the `(0,1)`/`(0,2)` branches (`case_IV`/`case_V`, i.e. his Class II) — so those
+   branches are dispatched by deriving `False`, not by calling `case_IV`/`case_V` at
+   all (a new auxiliary lemma, `two_card_le_of_relIndex_normalizer_eq_two`, supplies
+   the `2*g1 ≤ g`-style numeral fact `case_0_1`/`case_0_2` need, which is not itself a
+   `BridgeData` field). The `(0,0)` branch (`case_III`, his Class III) is similarly
+   shown impossible (would force `G = center SL(2,F)`, excluded by construction). The
+   `(1,0)` (`case_I`) and `(1,1)` (`case_II`) branches call the corresponding lemma
+   for real, post-processing `case_I`'s structural conclusion (`Q` trivial ⟹ its
+   cyclic complement is all of `G`) into `IsCyclic G`. The `(0,3)` branch (`case_VI`)
+   is consistent with `q = 1` (it is Butler's own Class I (vi)) and is dispatched for
+   real, inheriting `case_VI`'s own residual `sorry` (the `g₁ = 2` `WLOG` split).
+   Sorry-debt of `dicksons_classification_theorem_class_I` is therefore exactly:
+   `case_II`'s `g1 = 3` branch and `case_VI`'s own gap (both pre-existing, unchanged).
+   Left out of scope (per the task instructions, separate pending items): the
+   `Z ⊄ G ⟹ |G|` odd `⟹` Class I/III reduction (this theorem's own `hp'` disjunct does
+   not imply `center_le_G`) and the char-2 finale (`hp2 : p ≠ 2` excludes `p = 2`
+   entirely, tracking `case_IV`'s Case IVb-independent residual gap, item 1 above).
 
 ## Repaired Lean statement drafts (not Butler errors)
 

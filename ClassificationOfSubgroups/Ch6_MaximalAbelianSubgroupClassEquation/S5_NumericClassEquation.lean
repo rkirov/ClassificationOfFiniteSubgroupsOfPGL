@@ -974,6 +974,15 @@ structure BridgeData (p : ℕ) (F : Type*) [Field F] [IsAlgClosed F] [DecidableE
       (normalizer (((As i).subgroupOf G) : Set ↥G)) = 1
   hAt_relIndex : ∀ i, relIndex ((At i).subgroupOf G)
       (normalizer (((At i).subgroupOf G) : Set ↥G)) = 2
+  /-- the `As i` are of *coprime type* (Theorem 6.8(iii)): in particular cyclic. Needed by Ch7's
+  case dispatch, which must know each coprime-type representative is genuinely cyclic. -/
+  hAs_cyclic : ∀ i, IsCyclic (As i)
+  /-- same as `hAs_cyclic`, for the `At i` family. -/
+  hAt_cyclic : ∀ i, IsCyclic (At i)
+  /-- the `As i` have order coprime to `p` (the other half of *coprime type*, Theorem 6.8(iii)). -/
+  hAs_coprime : ∀ i, Nat.Coprime (Nat.card (As i)) p
+  /-- same as `hAs_coprime`, for the `At i` family. -/
+  hAt_coprime : ∀ i, Nat.Coprime (Nat.card (At i)) p
   hg : Nat.card G = Nat.card (center SL(2,F)) * g
   /-- either there is no Sylow-type class (`q = k = 1`, a contentless placeholder), or `Q, K`
   are genuine witness subgroups of `G` realizing `q, k` exactly. -/
@@ -1181,6 +1190,17 @@ theorem exists_bridgeData (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
   have hAt_relIndex : ∀ i, relIndex ((At i).subgroupOf G)
       (normalizer (((At i).subgroupOf G) : Set ↥G)) = 2 := fun i =>
     (Finset.mem_filter.mp (eS2.symm i).property).2
+  -- ### `As i`/`At i` are of coprime type (`S1fin ⊆ Cfin`, `S2fin ⊆ Cfin`)
+  have hAs_cop : ∀ i, IsCoprimeType p (As i) := fun i => by
+    have hmemC : (eS1.symm i).val ∈ Cfin := (Finset.filter_subset _ _) (eS1.symm i).property
+    simpa [Cfin, Finset.mem_filter] using hmemC
+  have hAt_cop : ∀ i, IsCoprimeType p (At i) := fun i => by
+    have hmemC : (eS2.symm i).val ∈ Cfin := (Finset.filter_subset _ _) (eS2.symm i).property
+    simpa [Cfin, Finset.mem_filter] using hmemC
+  have hAs_cyclic : ∀ i, IsCyclic (As i) := fun i => (hAs_cop i).1
+  have hAt_cyclic : ∀ i, IsCyclic (At i) := fun i => (hAt_cop i).1
+  have hAs_coprime : ∀ i, Nat.Coprime (Nat.card (As i)) p := fun i => (hAs_cop i).2
+  have hAt_coprime : ∀ i, Nat.Coprime (Nat.card (At i)) p := fun i => (hAt_cop i).2
   -- ### the value, as a rational number, of each coprime-type class's contribution
   have hCterm : ∀ cls : ι, IsCoprimeType p (A cls) →
       (Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G cls) : ℚ) / (Nat.card G : ℚ)
@@ -1359,7 +1379,8 @@ theorem exists_bridgeData (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
       rw [he_div_g] at hmaster
       simpa using hmaster
     exact ⟨⟨g, 1, 1, s, t, gs, gt, As, At, hAs_mem, hAt_mem, hAs_card, hAt_card,
-      hAs_relIndex, hAt_relIndex, hg_eq, Or.inl ⟨rfl, rfl⟩, hgpos, le_refl 1, le_refl 1,
+      hAs_relIndex, hAt_relIndex, hAs_cyclic, hAt_cyclic, hAs_coprime, hAt_coprime,
+      hg_eq, Or.inl ⟨rfl, rfl⟩, hgpos, le_refl 1, le_refl 1,
       hgs_ge2, hgt_ge2, heq⟩⟩
   · -- the unique Sylow-type class `cls0`
     have hS1 : Sfin.card = 1 := by omega
@@ -1433,7 +1454,8 @@ theorem exists_bridgeData (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
       rw [hSfin_singleton_sum, he_div_g] at hmaster
       linarith [hmaster]
     exact ⟨⟨g, q, k, s, t, gs, gt, As, At, hAs_mem, hAt_mem, hAs_card, hAt_card,
-      hAs_relIndex, hAt_relIndex, hg_eq,
+      hAs_relIndex, hAt_relIndex, hAs_cyclic, hAt_cyclic, hAs_coprime, hAt_coprime,
+      hg_eq,
       Or.inr ⟨Q, K, S, hQ_le_G, hQ_subgroupOf, hQsg_ne_bot, hq_def.symm, hK_le_G, hK_cyc,
         hNG, hQK, hk_eq⟩,
       hgpos, hqpos, hkpos, hgs_ge2, hgt_ge2, heq2⟩⟩
