@@ -922,6 +922,26 @@ section MainBridge
 variable {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
 variable {p : ℕ} [Fact (Nat.Prime p)] [CharP F p]
 
+omit [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)] [CharP F p] in
+/-- A subgroup containing the center is determined by its noncentral part: if
+`center SL(2,F) ≤ A`, `center SL(2,F) ≤ A'` and `noncenter A = noncenter A'`, then `A = A'`.
+(Proof: `A = noncenter A ∪ center SL(2,F)` as sets, since `center SL(2,F) ⊆ A`, and likewise for
+`A'`.) Used by `hComplete` (`BridgeData`) to upgrade the "same noncenter, up to `G`-conjugacy"
+relation carried by the setoid `lift_noncenter_MaximalAbelianSubgroupsOf` into an actual
+subgroup-conjugacy statement. -/
+theorem eq_of_noncenter_eq_of_center_le {A A' : Subgroup SL(2,F)}
+    (hA : center SL(2,F) ≤ A) (hA' : center SL(2,F) ≤ A')
+    (h : noncenter A = noncenter A') : A = A' := by
+  apply SetLike.coe_injective
+  have e1 : (A : Set SL(2,F)) \ (center SL(2,F) : Set SL(2,F))
+      ∪ (center SL(2,F) : Set SL(2,F)) = (A : Set SL(2,F)) :=
+    Set.sdiff_union_of_subset (SetLike.coe_subset_coe.mpr hA)
+  have e2 : (A' : Set SL(2,F)) \ (center SL(2,F) : Set SL(2,F))
+      ∪ (center SL(2,F) : Set SL(2,F)) = (A' : Set SL(2,F)) :=
+    Set.sdiff_union_of_subset (SetLike.coe_subset_coe.mpr hA')
+  rw [← e1, ← e2, show (A : Set SL(2,F)) \ (center SL(2,F) : Set SL(2,F)) = noncenter A from rfl,
+    show (A' : Set SL(2,F)) \ (center SL(2,F) : Set SL(2,F)) = noncenter A' from rfl, h]
+
 /--
 **Witness-carrying companion to `main_bridge`.** `main_bridge` only exports the *numerals*
 `g, q, k, s, t, gs, gt` of Butler's class equation; but Butler's own case-by-case proofs (Ch7,
@@ -998,6 +1018,31 @@ structure BridgeData (p : ℕ) (F : Type*) [Field F] [IsAlgClosed F] [DecidableE
   hgs_ge : ∀ i, 2 ≤ gs i
   hgt_ge : ∀ i, 2 ≤ gt i
   heq : CaseArithmetic.ClassEquation g q k gs gt
+  /-- **Completeness of the witness families.** Every maximal abelian subgroup `B` of `G` --
+  not just the chosen representatives `As i`/`At i` -- is accounted for: `B` is either `G`-conjugate
+  to some `As i`, `G`-conjugate to some `At j`, or is itself of Sylow type (`IsSylowType p G B`,
+  i.e. equal to `Q ⊔ Z F` for a nontrivial elementary abelian Sylow `p`-subgroup `Q` of `G`; by
+  `isSylowType_conj_of_isSylowType` any two such `B` are mutually `G`-conjugate, and, in the
+  `hSylow` right-disjunct branch, `G`-conjugate to `Q ⊔ Z F` for the specific witness `Q` recorded
+  there). This is the converse of `hAs_mem`/`hAt_mem`/`hSylow`: those assert the witnesses *are*
+  maximal abelian subgroups of the claimed type; `hComplete` asserts there are *no others*, up to
+  `G`-conjugacy. Proved in `exists_bridgeData` directly from its construction: every `B` gives rise
+  to a class `cls` of the Fintype `Quotient (lift_noncenter_MaximalAbelianSubgroupsOf G)` (via its
+  noncentral part), `B` is `G`-conjugate to the chosen representative `A cls` of that class
+  (`eq_of_noncenter_eq_of_center_le`), and `cls` was partitioned (at construction) into exactly the
+  `As`-indexed, `At`-indexed, or Sylow-type piece. -/
+  hComplete : ∀ B ∈ MaximalAbelianSubgroupsOf G,
+    (∃ (i : Fin s) (c : SL(2,F)), c ∈ G ∧ conj c • B = As i) ∨
+    (∃ (i : Fin t) (c : SL(2,F)), c ∈ G ∧ conj c • B = At i) ∨
+    IsSylowType p G B
+  /-- **Distinctness of the `s`-family.** Distinct indices `i ≠ j` give `G`-non-conjugate
+  representatives `As i`, `As j` -- they really are `s` *different* conjugacy classes, not the
+  same class counted twice. (By construction: `As` is built from `Finset.equivFin`, an `Equiv`,
+  hence injective, applied to a `Finset` of pairwise-distinct classes of the setoid
+  `lift_noncenter_MaximalAbelianSubgroupsOf G`.) -/
+  hAs_distinct : ∀ i j : Fin s, i ≠ j → ¬ ∃ c ∈ G, conj c • As i = As j
+  /-- same as `hAs_distinct`, for the `At` family. -/
+  hAt_distinct : ∀ i j : Fin t, i ≠ j → ¬ ∃ c ∈ G, conj c • At i = At j
 
 /--
 RESTATED+PROVED (justification: the original statement needed `hp2 : p ≠ 2` for the
@@ -1366,6 +1411,84 @@ theorem exists_bridgeData (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
           (Nat.card (lift_union_conj_noncenter_MaximalAbelianSubgroupsOf G cls) : ℚ)
             / (Nat.card G : ℚ)) := by
     linarith [hcombined]
+  -- ### completeness: every `B ∈ MaximalAbelianSubgroupsOf G` is `G`-conjugate to some `As i`,
+  -- some `At j`, or is itself of Sylow type. This holds independently of the `Sfin.card = 0`
+  -- case split below, so is established once and reused in both branches.
+  have hComplete : ∀ B ∈ MaximalAbelianSubgroupsOf G,
+      (∃ (i : Fin s) (c : SL(2,F)), c ∈ G ∧ conj c • B = As i) ∨
+      (∃ (i : Fin t) (c : SL(2,F)), c ∈ G ∧ conj c • B = At i) ∨
+      IsSylowType p G B := by
+    intro B hB
+    set nB : noncenter_MaximalAbelianSubgroupsOf G :=
+      ⟨noncenter B, noncenter_mem_noncenter_MaximalAbelianSubgroupsOf G ⟨B, hB⟩⟩ with hnB_def
+    set cls : ι := Quotient.mk (lift_noncenter_MaximalAbelianSubgroupsOf G) nB with hcls_def
+    have hrel : cls.out ≈ nB := by
+      rw [hcls_def]; exact Quotient.exact (Quotient.out_eq _)
+    obtain ⟨x, hxG, hx⟩ := hrel
+    have hx' : conj x • noncenter (A cls) = noncenter B := by rw [hA_eq cls]; exact hx
+    have hnc : noncenter (conj x • A cls) = noncenter B := by
+      rw [conj_noncenter_eq_noncenter_conj ⟨A cls, hA_mem cls⟩]; exact hx'
+    have hAxG_mem : conj x • A cls ∈ MaximalAbelianSubgroupsOf G :=
+      conj_smul_mem_MaximalAbelianSubgroupsOf_of_mem (hA_mem cls) hxG
+    have hZ_le_conj : center SL(2,F) ≤ conj x • A cls := center_le G _ hAxG_mem center_le_G
+    have hZ_le_B : center SL(2,F) ≤ B := center_le G B hB center_le_G
+    have hABeq : conj x • A cls = B := eq_of_noncenter_eq_of_center_le hZ_le_conj hZ_le_B hnc
+    have hBA : conj x⁻¹ • B = A cls := by
+      rw [map_inv, inv_smul_eq_iff]; exact hABeq.symm
+    have hcls_mem_univ : cls ∈ (Finset.univ : Finset ι) := Finset.mem_univ cls
+    rw [← hCS_union, Finset.mem_union] at hcls_mem_univ
+    rcases hcls_mem_univ with hClsC | hClsS
+    · rw [← hS12_union, Finset.mem_union] at hClsC
+      rcases hClsC with hCls1 | hCls2
+      · left
+        refine ⟨eS1 ⟨cls, hCls1⟩, x⁻¹, inv_mem hxG, ?_⟩
+        show conj x⁻¹ • B = A ((eS1.symm (eS1 ⟨cls, hCls1⟩)).val)
+        rw [Equiv.symm_apply_apply]; exact hBA
+      · right; left
+        refine ⟨eS2 ⟨cls, hCls2⟩, x⁻¹, inv_mem hxG, ?_⟩
+        show conj x⁻¹ • B = A ((eS2.symm (eS2 ⟨cls, hCls2⟩)).val)
+        rw [Equiv.symm_apply_apply]; exact hBA
+    · right; right
+      haveI := hA_fin cls
+      have hSylowCls : IsSylowType p G (A cls) := by
+        simpa [Sfin, Finset.mem_filter] using hClsS
+      have hSylowB :=
+        isSylowType_conj_smul_of_isSylowType (p := p) center_le_G (hA_mem cls) hxG hSylowCls
+      rwa [hABeq] at hSylowB
+  -- ### distinctness: the `As`/`At` families really are `s`/`t` pairwise `G`-non-conjugate
+  -- representatives (not the same class counted twice).
+  have hAs_distinct : ∀ i j : Fin s, i ≠ j → ¬ ∃ c ∈ G, conj c • As i = As j := by
+    rintro i j hij ⟨c, hcG, hc⟩
+    set cls_i : ι := (eS1.symm i).val with hcls_i_def
+    set cls_j : ι := (eS1.symm j).val with hcls_j_def
+    have hnc : conj c • noncenter (A cls_i) = noncenter (A cls_j) := by
+      have h := conj_noncenter_eq_noncenter_conj (G := G) ⟨As i, hAs_mem i⟩ c
+      rw [hc] at h
+      exact h.symm
+    have hrel : cls_i.out ≈ cls_j.out := by
+      refine ⟨c, hcG, ?_⟩
+      rw [hA_eq cls_i, hA_eq cls_j] at hnc
+      exact hnc
+    have heqcls : cls_i = cls_j := by
+      have h := Quotient.sound hrel
+      rwa [Quotient.out_eq, Quotient.out_eq] at h
+    exact hij (eS1.symm.injective (Subtype.ext heqcls))
+  have hAt_distinct : ∀ i j : Fin t, i ≠ j → ¬ ∃ c ∈ G, conj c • At i = At j := by
+    rintro i j hij ⟨c, hcG, hc⟩
+    set cls_i : ι := (eS2.symm i).val with hcls_i_def
+    set cls_j : ι := (eS2.symm j).val with hcls_j_def
+    have hnc : conj c • noncenter (A cls_i) = noncenter (A cls_j) := by
+      have h := conj_noncenter_eq_noncenter_conj (G := G) ⟨At i, hAt_mem i⟩ c
+      rw [hc] at h
+      exact h.symm
+    have hrel : cls_i.out ≈ cls_j.out := by
+      refine ⟨c, hcG, ?_⟩
+      rw [hA_eq cls_i, hA_eq cls_j] at hnc
+      exact hnc
+    have heqcls : cls_i = cls_j := by
+      have h := Quotient.sound hrel
+      rwa [Quotient.out_eq, Quotient.out_eq] at h
+    exact hij (eS2.symm.injective (Subtype.ext heqcls))
   -- ### case split: does a Sylow-type class exist?
   -- (`by_cases`, not `rcases`/`cases` on a bare `∨`, since the goal `BridgeData p F G` is not a
   -- `Prop`: `Or.casesOn` cannot eliminate into non-`Prop` sorts, but `Decidable.rec` -- underlying
@@ -1381,7 +1504,7 @@ theorem exists_bridgeData (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
     exact ⟨⟨g, 1, 1, s, t, gs, gt, As, At, hAs_mem, hAt_mem, hAs_card, hAt_card,
       hAs_relIndex, hAt_relIndex, hAs_cyclic, hAt_cyclic, hAs_coprime, hAt_coprime,
       hg_eq, Or.inl ⟨rfl, rfl⟩, hgpos, le_refl 1, le_refl 1,
-      hgs_ge2, hgt_ge2, heq⟩⟩
+      hgs_ge2, hgt_ge2, heq, hComplete, hAs_distinct, hAt_distinct⟩⟩
   · -- the unique Sylow-type class `cls0`
     have hS1 : Sfin.card = 1 := by omega
     obtain ⟨cls0, hSfin_eq⟩ := Finset.card_eq_one.mp hS1
@@ -1458,7 +1581,7 @@ theorem exists_bridgeData (G : Subgroup SL(2,F)) [Finite G] (hp2 : p ≠ 2)
       hg_eq,
       Or.inr ⟨Q, K, S, hQ_le_G, hQ_subgroupOf, hQsg_ne_bot, hq_def.symm, hK_le_G, hK_cyc,
         hNG, hQK, hk_eq⟩,
-      hgpos, hqpos, hkpos, hgs_ge2, hgt_ge2, heq2⟩⟩
+      hgpos, hqpos, hkpos, hgs_ge2, hgt_ge2, heq2, hComplete, hAs_distinct, hAt_distinct⟩⟩
 
 /--
 RESTATED+PROVED (justification: as above, `hp2 : p ≠ 2` is needed for the `{1,2}`-dichotomy of
