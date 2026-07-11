@@ -2427,12 +2427,20 @@ in place of the odd-characteristic `p_ne_two`). Butler's argument that `y` is an
 so `y²` centralizes `A`, hence `y² ∈ A` by maximality, and `y` inverting `y² ∈ A` while fixing it
 under conjugation by itself forces `(y²)² = 1`) but concludes more simply: since `A` has *odd*
 order `g1` here (no even-order "unique involution" subtlety as in `case_II`), Lagrange alone forces
-`y² = 1` directly. Case IVb (`q = 3`, `p = 3`) is **partially proved**, in lockstep with
-`case_II`'s `g1 = 3` branch (tex ~1785 itself just says "analogous to Case IIb ... I will leave
-it to the reader to verify"): the numerals (`p = 3`, `e = 2`) and the `Q₈`-shaped generator pair
-`x0, y0` on `A` are proved directly (reusing the `exists_Q8_generators_of_relIndex_two` extraction
-above `case_II`); what remains sorried is the same order-`3`-element/normality gap documented in
-`case_II`'s docstring.
+`y² = 1` directly. Case IVb (`q = 3`, `p = 3`) is now **fully PROVED**, transplanted from
+`case_II`'s (fully proved) `g1 = 3` branch (tex ~1785 itself just says "analogous to Case IIb ...
+I will leave it to the reader to verify") -- see `DIVERGENCES.md` item 10 for the full account of
+that argument. The numerals (`p = 3`, `e = 2`) and the `Q₈`-shaped generator pair `x0, y0` on `A`
+are proved directly (reusing the `exists_Q8_generators_of_relIndex_two` extraction above
+`case_II`), exactly as before. The residual gap `case_II` closes with an order-`3` element `r0`
+drawn from its second maximal-abelian class `A₁` is closed here too, *without* an `A₁`-family
+(`s = 0` in this branch, so `hComplete`'s dispatch is only `2`-way, unlike `case_II`'s `3`-way):
+`r0` is instead drawn directly from the Sylow `3`-subgroup `Q` (`Nat.card Q.toSubgroup = q = 3` is
+prime, so `Q.toSubgroup` is cyclic; a generator, transported down to `↥G` and then `SL(2,F)`, gives
+`r0` with membership in `G` automatic from its type) -- otherwise the argument (`N := N_G(A)` shown
+normal via the `hComplete`-driven "only-`A`-class" element count on its Sylow-`2` normalizer;
+`r0 x0 r0⁻¹` pinned down to one of the `2` remaining conjugates of `A` inside `N` via the "third
+conjugate" counting argument; finite case split on `r0` vs `r0²`) runs identically to `case_II`.
 -/
 lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
     [CharP F p]
@@ -2642,21 +2650,1019 @@ lemma case_IV {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [F
     have hx0_ord4 : orderOf x0 = 4 := by rw [hx0_ord, hg1eq2]
     have hy0_2' : y0 ^ 2 = x0 ^ 2 := by rw [hy0_2, hg1eq2]
     have hcardG24 : Nat.card (↥G) = 24 := by rw [hg, he2, hgeq12]
-    -- TODO: same residual gap as `case_II`'s `g1 = 3` branch -- **now fully closed there** (see
-    -- its proof for the complete argument, using the `hComplete` hypothesis above). The identical
-    -- technique applies here, and should in fact be *simpler*: there is no `A₁`-family to
-    -- exclude (`s = 0` in this `(s,t) = (0,1)` branch, so `hComplete`'s dispatch is only
-    -- `2`-way), and the order-`3` element `r0` can be drawn directly from the Sylow `3`-subgroup
-    -- `Q` (`Nat.card Q.toSubgroup = q = 3`, hence cyclic of prime order, via
-    -- `IsCyclic_of_prime_card`/a direct generator argument) rather than from a second
-    -- maximal-abelian class `A₁`, which does not exist in this branch. This transplant has not
-    -- been carried out in this file (only `case_II`'s `s = 1, t = 1` branch was, given the
-    -- session's scope); see `DIVERGENCES.md` item 8 for the precise residual statement and
-    -- `case_II`'s proof for the template to follow (`N := N_G(A)` shown normal via the
-    -- `hComplete`-driven "only-`A`-class" element count; `r0 x0 r0⁻¹` pinned down to one of the
-    -- `2` remaining conjugates of `A` inside `N` via the same "third conjugate" counting
-    -- argument; finite case split on `r0` vs `r0²`).
-    sorry
+    -- The gap documented above (Butler tex ~1785, "analogous to Case IIb") is closed exactly as
+    -- in `case_II`'s `g1 = 3` branch, using `hComplete` (Theorem 6.8's numeric class equation --
+    -- here only a `2`-way disjunct, since there is no `A₁`-family in this branch, `s = 0`):
+    -- `N := N_G(A)` is shown to be the *unique* Sylow `2`-subgroup of `G` (via a global
+    -- element-order count, `hComplete`-driven), hence normal; an order-`3` element `r0`, drawn
+    -- directly from the Sylow `3`-subgroup `Q` (in place of `case_II`'s `A₁`, which does not exist
+    -- here), acts on it by conjugation, and since `zpowers y1` (`y1 := r0 x0 r0⁻¹`) is forced --
+    -- by the SAME `hComplete`-driven "only the `A`-class" argument, now applied to the *third*
+    -- conjugate `zpowers (x0 y1)` -- to coincide with one of the two remaining conjugates of `A`
+    -- inside `N`, the exact relations Butler needs are pinned down (up to replacing `r0` by `r0²`
+    -- in the second of his two cases).
+    classical
+    have hA_card4 : Nat.card A = 4 := by rw [hA_card', hg1eq2]
+    -- **Step 1**: `N := N_G(A)` has cardinality `8`, hence `[G : N] = 3`.
+    set A' : Subgroup ↥G := A.subgroupOf G with hA'_def
+    set N : Subgroup ↥G := normalizer (A' : Set ↥G) with hN_def
+    have hA'_le_N : A' ≤ N := Subgroup.le_normalizer
+    have hcard_N : Nat.card N = 8 := by
+      have h1 : Nat.card N = Nat.card (↥N ⧸ A'.subgroupOf N) * Nat.card (A'.subgroupOf N) :=
+        Subgroup.card_eq_card_quotient_mul_card_subgroup _
+      have h2 : Nat.card (A'.subgroupOf N) = Nat.card A' :=
+        Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA'_le_N).toEquiv
+      have h3 : Nat.card (↥N ⧸ A'.subgroupOf N) = A'.relIndex N := rfl
+      have hA'_card : Nat.card A' = Nat.card A :=
+        Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA_mem.right).toEquiv
+      rw [h2, h3, hA_relIndex, hA'_card, hA_card4] at h1
+      omega
+    have hindexN : Nat.card N * N.index = Nat.card ↥G := Subgroup.card_mul_index N
+    have hindex3 : N.index = 3 := by rw [hcard_N] at hindexN; omega
+    -- **Step 2**: an order-`3` element `r0 : SL(2,F)`, drawn directly from the Sylow `3`-subgroup
+    -- `Q` (there is no `A₁`-family in this branch, `s = 0`, unlike `case_II`'s `g1 = 3` branch,
+    -- which sources its analogous `r0` from `A₁`'s cyclic subgroup of order `6`). Since
+    -- `Nat.card Q.toSubgroup = q = 3` is prime, `Q.toSubgroup` is cyclic; a generator, transported
+    -- down to `↥G` and then `SL(2,F)`, gives `r0` (membership in `G` is automatic from its type).
+    have hQcard3 : Nat.card Q.toSubgroup = 3 := by rw [hq, hq3]
+    haveI hQcyc : IsCyclic Q.toSubgroup := isCyclic_of_prime_card hQcard3
+    obtain ⟨q0, hq0_gen⟩ := hQcyc.exists_generator
+    have horder_q0 : orderOf q0 = 3 := by
+      rw [orderOf_eq_card_of_forall_mem_zpowers hq0_gen, hQcard3]
+    set r0G : ↥G := (q0 : ↥G) with hr0G_def
+    have hr0G_ord : orderOf r0G = 3 := by
+      rw [hr0G_def]
+      exact (orderOf_injective Q.toSubgroup.subtype
+        (Subgroup.subtype_injective Q.toSubgroup) q0).trans horder_q0
+    set r0 : SL(2,F) := (r0G : SL(2,F)) with hr0_def
+    have hr0_mem_G : r0 ∈ G := r0G.2
+    have hr0_ord : orderOf r0 = 3 := by
+      rw [hr0_def]
+      exact (orderOf_injective G.subtype (Subgroup.subtype_injective G) r0G).trans hr0G_ord
+    have hr0_ne_one : r0 ≠ 1 := by
+      intro h
+      rw [orderOf_eq_one_iff.mpr h] at hr0_ord
+      omega
+    have hr0_cube : r0 ^ 3 = 1 := by
+      rw [← hr0_ord]; exact pow_orderOf_eq_one r0
+    have hr0G_cube : r0G ^ 3 = 1 := by
+      rw [← hr0G_ord]; exact pow_orderOf_eq_one r0G
+    -- **Step 3**: `A' = ⟨x₀⟩` (as subgroups of `↥G`).
+    have hA'_card : Nat.card A' = 4 := by
+      rw [hA'_def, Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA_mem.right).toEquiv, hA_card4]
+    have hx0_mem_A' : x0 ∈ A' := by rw [hA'_def, Subgroup.mem_subgroupOf]; exact hx0_mem_A
+    have hzx0_le_A' : Subgroup.zpowers x0 ≤ A' := by
+      rw [Subgroup.zpowers_le]; exact hx0_mem_A'
+    have hcard_zx0 : Nat.card (Subgroup.zpowers x0) = 4 := by
+      rw [← hx0_ord4]; exact (Nat.card_zpowers x0)
+    have hA'_eq_zpowers_x0 : A' = Subgroup.zpowers x0 := by
+      apply SetLike.coe_injective
+      symm
+      exact Set.eq_of_subset_of_ncard_le (SetLike.coe_subset_coe.mpr hzx0_le_A')
+        (by show Nat.card A' ≤ Nat.card (Subgroup.zpowers x0); rw [hA'_card, hcard_zx0])
+    -- **Step 4**: `r0G` does not centralize `x0` (else it would lie in `A'` by maximality,
+    -- contradicting `orderOf r0G = 3 ∤ 4 = Nat.card A'`).
+    haveI hA'comm : IsMulCommutative A' := hA_mem.left.1
+    have hnc : ¬ Commute r0G x0 := by
+      intro hcomm
+      have hcomm_all : ∀ a ∈ A', Commute r0G a := by
+        intro a ha
+        rw [hA'_eq_zpowers_x0, Subgroup.mem_zpowers_iff] at ha
+        obtain ⟨n, hn⟩ := ha
+        rw [← hn]
+        exact hcomm.zpow_right n
+      set K : Set ↥G := (A' : Set ↥G) ∪ {r0G} with hK_def
+      have hcomm_K : ∀ a ∈ K, ∀ b ∈ K, a * b = b * a := by
+        rintro a (ha | ha) b (hb | hb)
+        · exact setLike_mul_comm ha hb
+        · simp only [Set.mem_singleton_iff] at hb; subst hb
+          exact (hcomm_all a ha).symm
+        · simp only [Set.mem_singleton_iff] at ha; subst ha
+          exact hcomm_all b hb
+        · simp only [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
+      haveI hKcomm : IsMulCommutative (Subgroup.closure K) := Subgroup.isMulCommutative_closure hcomm_K
+      have hA'_le_closure : A' ≤ Subgroup.closure K := by
+        rw [← Subgroup.closure_eq A']; exact Subgroup.closure_mono Set.subset_union_left
+      have hclosure_le : Subgroup.closure K ≤ A' := hA_mem.left.2 hKcomm hA'_le_closure
+      have hr0G_mem_closure : r0G ∈ Subgroup.closure K := subset_closure (Set.mem_union_right _ rfl)
+      have hr0G_mem_A' : r0G ∈ A' := hclosure_le hr0G_mem_closure
+      have hdvd : orderOf r0G ∣ Nat.card A' := by
+        have h1 := orderOf_dvd_natCard (⟨r0G, hr0G_mem_A'⟩ : A')
+        have h2 : orderOf (⟨r0G, hr0G_mem_A'⟩ : A') = orderOf r0G :=
+          (orderOf_injective A'.subtype (Subgroup.subtype_injective A') ⟨r0G, hr0G_mem_A'⟩).symm
+        rwa [h2] at h1
+      rw [hA'_card] at hdvd
+      have hr0G_ord : orderOf r0G = 3 := by
+        have h := orderOf_injective G.subtype (Subgroup.subtype_injective G) r0G
+        rw [← h, hr0G_def]; exact hr0_ord
+      rw [hr0G_ord] at hdvd
+      norm_num at hdvd
+    -- **Step 5**: work at the `SL(2,F)` level. `A = zpowers x0SL`, `x0SL² = -1` (the unique
+    -- involution), and `y1 := r0 * x0SL * r0⁻¹` satisfies the `Q₈` relations relative to `x0SL`.
+    haveI hAfin : Finite A := Nat.finite_of_card_ne_zero (by rw [hA_card4]; norm_num)
+    set x0SL : SL(2,F) := (x0 : SL(2,F)) with hx0SL_def
+    have hx0SL_ord4 : orderOf x0SL = 4 := by rw [hx0SL_def, orderOf_coe]; exact hx0_ord4
+    have hzx0SL_le_A : Subgroup.zpowers x0SL ≤ A := by
+      rw [Subgroup.zpowers_le]; exact hx0_mem_A
+    have hcard_zx0SL : Nat.card (Subgroup.zpowers x0SL) = 4 := by
+      rw [← hx0SL_ord4]; exact Nat.card_zpowers x0SL
+    have hA_eq_zpowers_x0SL : A = Subgroup.zpowers x0SL := by
+      apply SetLike.coe_injective
+      symm
+      exact Set.eq_of_subset_of_ncard_le (SetLike.coe_subset_coe.mpr hzx0SL_le_A)
+        (by show Nat.card A ≤ Nat.card (Subgroup.zpowers x0SL); rw [hA_card4, hcard_zx0SL])
+        (Set.toFinite (A : Set SL(2,F)))
+    -- (`hF2 : NeZero (2 : F)` is already in scope from `case_IV`'s Case IVb setup above, unlike
+    -- `case_II`'s analogous point here which has to derive it from `hp_ne_two` via `CharP`.)
+    have hx0SL_sq : x0SL ^ 2 = -1 := by
+      have hord2 : orderOf (x0SL ^ 2) = 2 := by
+        rw [orderOf_pow' x0SL (by norm_num : (2 : ℕ) ≠ 0), hx0SL_ord4]; norm_num
+      exact SpecialSubgroups.exists_unique_orderOf_eq_two.unique hord2
+        SpecialSubgroups.orderOf_neg_one_eq_two
+    have hneg_one_central : ∀ g : SL(2,F), g * (-1 : SL(2,F)) = (-1 : SL(2,F)) * g := by
+      intro g
+      have hcen : (-1 : SL(2,F)) ∈ center SL(2,F) := by
+        rw [SpecialSubgroups.center_SL2_eq_Z]; exact SpecialSubgroups.neg_one_mem_Z
+      exact Subgroup.mem_center_iff.mp hcen g
+    set r0inv : SL(2,F) := r0⁻¹ with hr0inv_def
+    set y1 : SL(2,F) := r0 * x0SL * r0⁻¹ with hy1_def
+    have hy1_ord4 : orderOf y1 = 4 := by
+      rw [hy1_def, orderOf_conj]; exact hx0SL_ord4
+    have hy1_sq : y1 ^ 2 = -1 := by
+      have h1 : y1 ^ 2 = r0 * (x0SL ^ 2) * r0⁻¹ := by
+        rw [hy1_def, sq, sq]
+        group
+      rw [h1, hx0SL_sq, hneg_one_central r0]
+      group
+    -- `y1 ≠ x0SL` (else `r0` centralizes `x0SL`, contradicting `hnc`).
+    have hy1_ne_x0SL : y1 ≠ x0SL := by
+      intro heq
+      apply hnc
+      have h1 : r0 * x0SL = x0SL * r0 := by
+        have h2 := congrArg (· * r0) heq
+        simpa [hy1_def, mul_assoc] using h2
+      show r0G * x0 = x0 * r0G
+      apply Subtype.ext
+      simpa [hr0G_def, hx0SL_def] using h1
+    -- `y1 ≠ x0SL⁻¹` (else, since `r0³ = 1`, applying the conjugation `3` times forces
+    -- `x0SL = x0SL⁻¹`, contradicting `orderOf x0SL = 4`).
+    have hy1_ne_x0SL_inv : y1 ≠ x0SL⁻¹ := by
+      intro heq
+      set c2 : SL(2,F) := r0 * y1 * r0⁻¹ with hc2_def
+      set c3 : SL(2,F) := r0 * c2 * r0⁻¹ with hc3_def
+      have hc2_eq : c2 = x0SL := by
+        rw [hc2_def, heq]
+        have : r0 * x0SL⁻¹ * r0⁻¹ = (r0 * x0SL * r0⁻¹)⁻¹ := by group
+        rw [this, ← hy1_def, heq, inv_inv]
+      have hc3_eq : c3 = y1 := by rw [hc3_def, hc2_eq, hy1_def]
+      have hcube_eq : r0 * r0 * r0 = r0 ^ 3 := by rw [pow_succ, pow_succ, pow_one]
+      have hiter : c3 = r0 ^ 3 * x0SL * (r0 ^ 3)⁻¹ := by
+        rw [hc3_def, hc2_def, hy1_def, ← hcube_eq]; group
+      rw [hr0_cube] at hiter
+      simp only [one_mul, inv_one, mul_one] at hiter
+      rw [hc3_eq, heq] at hiter
+      have hxeq : x0SL = x0SL⁻¹ := hiter.symm
+      have hone : x0SL * x0SL⁻¹ = 1 := mul_inv_cancel x0SL
+      rw [← hxeq] at hone
+      have : x0SL ^ 2 = 1 := by rw [sq]; exact hone
+      have hdvd : orderOf x0SL ∣ 2 := orderOf_dvd_of_pow_eq_one this
+      rw [hx0SL_ord4] at hdvd
+      norm_num at hdvd
+    -- **Step 6**: `B0 := conj r0 • A` is maximal abelian, equal to `zpowers y1`, and `≠ A`.
+    set B0 : Subgroup SL(2,F) := conj r0 • A with hB0_def
+    have hB0_eq : B0 = Subgroup.zpowers y1 := by
+      rw [hB0_def, hA_eq_zpowers_x0SL, conj_zpowers_eq, ← hy1_def]
+    have hB0_mem : B0 ∈ MaximalAbelianSubgroupsOf G :=
+      conj_smul_mem_MaximalAbelianSubgroupsOf_of_mem hA_mem hr0_mem_G
+    have hB0_ne_A : B0 ≠ A := by
+      intro hcontra
+      have hy1_mem : y1 ∈ A := by
+        rw [← hcontra, hB0_eq]
+        exact Subgroup.mem_zpowers y1
+      rw [hA_eq_zpowers_x0SL] at hy1_mem
+      haveI hfo : IsOfFinOrder x0SL := orderOf_pos_iff.mp (hx0SL_ord4 ▸ (by norm_num))
+      rw [hfo.mem_zpowers_iff_mem_range_orderOf] at hy1_mem
+      simp only [Finset.mem_image, Finset.mem_range] at hy1_mem
+      obtain ⟨m, hm_lt, hm_eq⟩ := hy1_mem
+      rw [hx0SL_ord4] at hm_lt
+      interval_cases m
+      · simp only [pow_zero] at hm_eq
+        rw [← hm_eq, orderOf_one] at hy1_ord4
+        norm_num at hy1_ord4
+      · rw [pow_one] at hm_eq
+        exact hy1_ne_x0SL hm_eq.symm
+      · rw [hx0SL_sq] at hm_eq
+        rw [← hm_eq] at hy1_ord4
+        have : orderOf (-1 : SL(2,F)) = 2 := SpecialSubgroups.orderOf_neg_one_eq_two
+        rw [this] at hy1_ord4
+        norm_num at hy1_ord4
+      · have h4 : x0SL ^ 4 = 1 := by rw [← hx0SL_ord4]; exact pow_orderOf_eq_one x0SL
+        have hmul1 : x0SL ^ 3 * x0SL = 1 := by rw [← pow_succ]; exact h4
+        have hx0cubed : x0SL ^ 3 = x0SL⁻¹ := eq_inv_of_mul_eq_one_left hmul1
+        exact hy1_ne_x0SL_inv (by rw [← hx0cubed]; exact hm_eq.symm)
+    have hcard_B0 : Nat.card B0 = 4 := by
+      rw [hB0_eq]; rw [← hy1_ord4]; exact Nat.card_zpowers y1
+    -- **General fact**: no `IsSylowType` subgroup of `G` has cardinality divisible by `4`
+    -- (its Sylow `3`-part `Q` -- `p` is already known to be `3` in this branch, unlike `case_II`'s
+    -- analogous fact which has to derive `p = 3` from `p ∣ Nat.card G = 24 ∧ p ≠ 2` first -- has
+    -- `Nat.card Q` a power of `3` dividing `24`, forcing the power to be exactly `3^1`; `Q` is
+    -- disjoint from the order-`2` center, so `Nat.card (Q ⊔ Z F) = 3 * 2 = 6`, not divisible
+    -- by `4`).
+    have hNoSylowDiv4 : ∀ B : Subgroup SL(2,F), IsSylowType 3 G B → ¬ (4 : ℕ) ∣ Nat.card B := by
+      intro B hsyl h4dvd
+      obtain ⟨Qp, hQnontriv, hQfin, hQ_le, hB_eq, hQelem, S, hQS⟩ := hsyl
+      haveI := hQfin
+      have hQ_bot_lt : (⊥ : Subgroup SL(2,F)) < Qp :=
+        bot_lt_iff_ne_bot.mpr ((Subgroup.nontrivial_iff_ne_bot Qp).mp hQnontriv)
+      have hQ_isPGroup : IsPGroup 3 Qp :=
+        IsElementaryAbelian.IsPGroup 3 (Fact.out : Nat.Prime 3) Qp hQelem hQ_bot_lt
+      obtain ⟨k, hQcard_eq_pk⟩ := IsPGroup.iff_card.mp hQ_isPGroup
+      have hQcard_ne1 : Nat.card Qp ≠ 1 := by
+        intro h1
+        exact ((Subgroup.nontrivial_iff_ne_bot Qp).mp hQnontriv) (Subgroup.card_eq_one.mp h1)
+      have hQdvd24 : Nat.card Qp ∣ 24 := by
+        rw [← hcardG24]
+        calc Nat.card Qp = Nat.card (Qp.subgroupOf G) :=
+              (Nat.card_congr (Subgroup.subgroupOfEquivOfLe hQ_le).toEquiv).symm
+          _ ∣ Nat.card ↥G := Subgroup.card_subgroup_dvd_card _
+      rw [hQcard_eq_pk] at hQdvd24
+      have hk_le1 : k ≤ 1 := by
+        by_contra hcon
+        push_neg at hcon
+        have h9dvd : (9 : ℕ) ∣ 3 ^ k := by
+          calc (9 : ℕ) = 3 ^ 2 := by norm_num
+            _ ∣ 3 ^ k := pow_dvd_pow 3 hcon
+        have h924 : (9 : ℕ) ∣ 24 := h9dvd.trans hQdvd24
+        norm_num at h924
+      have hk_ge1 : 1 ≤ k := by
+        by_contra hcon
+        push_neg at hcon
+        interval_cases k
+        exact hQcard_ne1 (by rw [hQcard_eq_pk]; norm_num)
+      have hk1 : k = 1 := le_antisymm hk_le1 hk_ge1
+      have hQcard3 : Nat.card Qp = 3 := by rw [hQcard_eq_pk, hk1]; norm_num
+      -- `Qp` and `Z F` are disjoint (coprime cardinalities `3`, `2`).
+      have hZF_card : Nat.card (SpecialSubgroups.Z F) = 2 := by
+        rw [← SpecialSubgroups.center_SL2_eq_Z]; exact he2
+      have hdisj : Disjoint Qp (SpecialSubgroups.Z F) := by
+        rw [disjoint_iff]
+        apply (Subgroup.eq_bot_iff_forall _).mpr
+        intro x hx
+        rw [Subgroup.mem_inf] at hx
+        have hd1 : orderOf (⟨x, hx.1⟩ : Qp) ∣ Nat.card Qp := orderOf_dvd_natCard _
+        have hd2 : orderOf (⟨x, hx.2⟩ : SpecialSubgroups.Z F) ∣ Nat.card (SpecialSubgroups.Z F) :=
+          orderOf_dvd_natCard _
+        have he1 : orderOf (⟨x, hx.1⟩ : Qp) = orderOf x :=
+          (orderOf_injective Qp.subtype (Subgroup.subtype_injective Qp) _).symm
+        have he2' : orderOf (⟨x, hx.2⟩ : SpecialSubgroups.Z F) = orderOf x :=
+          (orderOf_injective (SpecialSubgroups.Z F).subtype
+            (Subgroup.subtype_injective (SpecialSubgroups.Z F)) _).symm
+        rw [he1, hQcard3] at hd1
+        rw [he2', hZF_card] at hd2
+        have hdvd1 : orderOf x ∣ Nat.gcd 3 2 := Nat.dvd_gcd hd1 hd2
+        have hgcd1 : Nat.gcd 3 2 = 1 := by norm_num
+        rw [hgcd1] at hdvd1
+        have hone : orderOf x = 1 := Nat.eq_one_of_dvd_one hdvd1
+        exact orderOf_eq_one_iff.mp hone
+      have hQle_G : Qp ≤ G := hQ_le
+      have hZFle_G : SpecialSubgroups.Z F ≤ G := by
+        rw [← SpecialSubgroups.center_SL2_eq_Z]; exact center_le_G
+      haveI hZFGnormal : ((SpecialSubgroups.Z F).subgroupOf G).Normal := by
+        constructor
+        intro n hn g
+        rw [Subgroup.mem_subgroupOf] at hn ⊢
+        have hcen : (n : SL(2,F)) ∈ center SL(2,F) := by
+          rw [SpecialSubgroups.center_SL2_eq_Z]; exact hn
+        have hcomm : (g : SL(2,F)) * (n : SL(2,F)) = (n : SL(2,F)) * (g : SL(2,F)) :=
+          Subgroup.mem_center_iff.mp hcen (g : SL(2,F))
+        have : (g : SL(2,F)) * (n : SL(2,F)) * (g : SL(2,F))⁻¹ = (n : SL(2,F)) := by
+          rw [hcomm]; group
+        show (↑(g * n * g⁻¹) : SL(2,F)) ∈ SpecialSubgroups.Z F
+        rw [show (↑(g * n * g⁻¹) : SL(2,F)) = (g:SL(2,F)) * (n:SL(2,F)) * (g:SL(2,F))⁻¹ by
+          simp, this]
+        exact hn
+      have hsup_subgroupOf : (Qp ⊔ SpecialSubgroups.Z F).subgroupOf G
+          = Qp.subgroupOf G ⊔ (SpecialSubgroups.Z F).subgroupOf G :=
+        Subgroup.subgroupOf_sup hQle_G hZFle_G
+      have hdisj' : Disjoint (Qp.subgroupOf G) ((SpecialSubgroups.Z F).subgroupOf G) := by
+        rw [disjoint_iff]
+        apply (Subgroup.eq_bot_iff_forall _).mpr
+        intro x hx
+        rw [Subgroup.mem_inf, Subgroup.mem_subgroupOf, Subgroup.mem_subgroupOf] at hx
+        have hxbot : (x : SL(2,F)) ∈ (⊥ : Subgroup SL(2,F)) := by
+          rw [← disjoint_iff.mp hdisj]; exact Subgroup.mem_inf.mpr hx
+        rw [Subgroup.mem_bot] at hxbot
+        exact Subtype.ext hxbot
+      have hcard_sup : Nat.card ((Qp ⊔ SpecialSubgroups.Z F).subgroupOf G)
+          = Nat.card (Qp.subgroupOf G) * Nat.card ((SpecialSubgroups.Z F).subgroupOf G) := by
+        rw [hsup_subgroupOf]
+        exact card_sup_eq_of_disjoint_of_normal hdisj'
+      have hcard_QsupZF : Nat.card (Qp ⊔ SpecialSubgroups.Z F : Subgroup SL(2,F)) = 6 := by
+        have h1 : Nat.card ((Qp ⊔ SpecialSubgroups.Z F).subgroupOf G)
+            = Nat.card (Qp ⊔ SpecialSubgroups.Z F : Subgroup SL(2,F)) :=
+          Nat.card_congr (Subgroup.subgroupOfEquivOfLe (_root_.sup_le hQle_G hZFle_G)).toEquiv
+        have h2 : Nat.card (Qp.subgroupOf G) = Nat.card Qp :=
+          Nat.card_congr (Subgroup.subgroupOfEquivOfLe hQle_G).toEquiv
+        have h3 : Nat.card ((SpecialSubgroups.Z F).subgroupOf G) = Nat.card (SpecialSubgroups.Z F) :=
+          Nat.card_congr (Subgroup.subgroupOfEquivOfLe hZFle_G).toEquiv
+        rw [← h1, hcard_sup, h2, h3, hQcard3, hZF_card]
+      rw [hB_eq, hcard_QsupZF] at h4dvd
+      norm_num at h4dvd
+    have hB0_conj_A : ∃ c ∈ G, conj c • B0 = A := by
+      rcases hComplete B0 hB0_mem with ⟨c, hcG, hc⟩ | hsyl
+      · exact ⟨c, hcG, hc⟩
+      · exact absurd (hcard_B0 ▸ (by norm_num : (4:ℕ) ∣ 4)) (hNoSylowDiv4 B0 hsyl)
+    -- **Step 8**: the same argument, applied via `centralizer {z} ⊓ G`, shows that *any* order-`4`
+    -- element `z ∈ G` generates a cyclic subgroup `G`-conjugate to `A`.
+    have key : ∀ z : SL(2,F), z ∈ G → orderOf z = 4 → ∃ c ∈ G, conj c • Subgroup.zpowers z = A := by
+      intro z hzG hz4
+      have hz_noncentral : z ∉ center SL(2,F) := by
+        intro hzc
+        haveI : Finite (center SL(2,F)) := Nat.finite_of_card_ne_zero (by rw [he2]; norm_num)
+        have hdvd : orderOf (⟨z, hzc⟩ : center SL(2,F)) ∣ Nat.card (center SL(2,F)) :=
+          orderOf_dvd_natCard _
+        have heq : orderOf (⟨z, hzc⟩ : center SL(2,F)) = orderOf z :=
+          (orderOf_injective (center SL(2,F)).subtype (Subgroup.subtype_injective _) _).symm
+        rw [heq, hz4, he2] at hdvd
+        norm_num at hdvd
+      set Cz : Subgroup SL(2,F) := centralizer {z} ⊓ G with hCz_def
+      have hCz_mem : Cz ∈ MaximalAbelianSubgroupsOf G :=
+        centralizer_inf_mem_maximalAbelianSubgroupsOf_of_noncentral G z ⟨hzG, hz_noncentral⟩
+      have hz_mem_Cz : z ∈ Cz := by
+        rw [hCz_def, Subgroup.mem_inf]; exact ⟨mem_centralizer_self z, hzG⟩
+      haveI hCzfin : Finite Cz :=
+        (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hCz_mem.right).to_subtype
+      have hdvd4 : (4 : ℕ) ∣ Nat.card Cz := by
+        have h1 : orderOf (⟨z, hz_mem_Cz⟩ : Cz) ∣ Nat.card Cz := orderOf_dvd_natCard _
+        have h2 : orderOf (⟨z, hz_mem_Cz⟩ : Cz) = orderOf z :=
+          (orderOf_injective Cz.subtype (Subgroup.subtype_injective Cz) _).symm
+        rwa [h2, hz4] at h1
+      rcases hComplete Cz hCz_mem with ⟨c, hcG, hc⟩ | hsyl
+      · refine ⟨c, hcG, ?_⟩
+        have hthis : Nat.card (conj c • Cz : Subgroup SL(2,F)) = Nat.card Cz :=
+          card_conj_smul_eq_card c
+        rw [hc, hA_card4] at hthis
+        have hCzcard4 : Nat.card Cz = 4 := hthis.symm
+        have hzz_le_Cz : Subgroup.zpowers z ≤ Cz := by
+          rw [Subgroup.zpowers_le]; exact hz_mem_Cz
+        have hcard_zz : Nat.card (Subgroup.zpowers z) = 4 := by rw [← hz4]; exact Nat.card_zpowers z
+        have hCz_eq_zz : Cz = Subgroup.zpowers z := by
+          apply SetLike.coe_injective
+          symm
+          exact Set.eq_of_subset_of_ncard_le (SetLike.coe_subset_coe.mpr hzz_le_Cz)
+            (by show Nat.card Cz ≤ Nat.card (Subgroup.zpowers z); rw [hCzcard4, hcard_zz])
+            (Set.toFinite (Cz : Set SL(2,F)))
+        rw [← hCz_eq_zz]; exact hc
+      · exact absurd hdvd4 (hNoSylowDiv4 Cz hsyl)
+    -- **Step 9**: `y0SL`, `z0SL := x0SL * y0SL` (Butler's `y`, `xy`) also have order `4`, square to
+    -- `-1`, and each of `x0SL`, `y0SL`, `z0SL` inverts the "next" one -- so no one of the three
+    -- lies in the `zpowers` of another, i.e. `A = zpowers x0SL`, `zpowers y0SL`, `zpowers z0SL`
+    -- are pairwise distinct.
+    set y0SL : SL(2,F) := (y0 : SL(2,F)) with hy0SL_def
+    have hy0_2SL : y0SL ^ 2 = x0SL ^ 2 := by
+      rw [hy0SL_def, hx0SL_def]
+      have := congrArg (Subtype.val) hy0_2'
+      push_cast at this
+      exact_mod_cast this
+    have hconj0SL : y0SL * x0SL * y0SL⁻¹ = x0SL⁻¹ := by
+      rw [hy0SL_def, hx0SL_def]
+      have := congrArg (Subtype.val) hconj0
+      push_cast at this
+      exact_mod_cast this
+    have hyx0SL : y0SL ∉ A := by
+      rw [hA_eq_zpowers_x0SL]
+      intro hmem
+      apply hyx0
+      rw [Subgroup.mem_zpowers_iff] at hmem ⊢
+      obtain ⟨n, hn⟩ := hmem
+      refine ⟨n, ?_⟩
+      apply Subtype.ext
+      push_cast
+      rw [← hx0SL_def, ← hy0SL_def]
+      exact hn
+    have hnegone_sq : (-1 : SL(2,F)) ^ 2 = 1 := by simp
+    have hy0SL_sq : y0SL ^ 2 = -1 := by rw [hy0_2SL, hx0SL_sq]
+    have hy0SL_ord4 : orderOf y0SL = 4 := by
+      have hne1 : y0SL ^ 2 ≠ 1 := by
+        rw [hy0SL_sq]
+        intro h
+        have := SpecialSubgroups.orderOf_neg_one_eq_two (F := F)
+        rw [h, orderOf_one] at this
+        norm_num at this
+      have h4 : y0SL ^ 4 = 1 := by
+        have heq : y0SL ^ 4 = (y0SL ^ 2) ^ 2 := by rw [← pow_mul]
+        rw [heq, hy0SL_sq, hnegone_sq]
+      have hdvd4 : orderOf y0SL ∣ 4 := orderOf_dvd_of_pow_eq_one h4
+      have hndvd2 : ¬ orderOf y0SL ∣ 2 := by
+        intro h
+        exact hne1 (orderOf_dvd_iff_pow_eq_one.mp h)
+      have hne1' : orderOf y0SL ≠ 1 := by intro h; apply hndvd2; rw [h]; norm_num
+      have hne2' : orderOf y0SL ≠ 2 := by intro h; apply hndvd2; rw [h]
+      have hle4 : orderOf y0SL ≤ 4 := Nat.le_of_dvd (by norm_num) hdvd4
+      have hpos : 0 < orderOf y0SL :=
+        orderOf_pos_iff.mpr (isOfFinOrder_iff_pow_eq_one.mpr ⟨4, by norm_num, h4⟩)
+      interval_cases (orderOf y0SL) <;> omega
+    set z0SL : SL(2,F) := x0SL * y0SL with hz0SL_def
+    -- `y0SL x0SL = x0SL⁻¹ y0SL` (rearranging `hconj0SL`).
+    have hyx0rearr : y0SL * x0SL = x0SL⁻¹ * y0SL := by
+      have h2 : y0SL * x0SL * y0SL⁻¹ * y0SL = x0SL⁻¹ * y0SL := by rw [hconj0SL]
+      rwa [mul_assoc, inv_mul_cancel, mul_one] at h2
+    have hz0SL_sq : z0SL ^ 2 = -1 := by
+      have step : z0SL ^ 2 = x0SL * (y0SL * x0SL) * y0SL := by rw [hz0SL_def, sq]; group
+      rw [step, hyx0rearr]
+      have step2 : x0SL * (x0SL⁻¹ * y0SL) * y0SL = y0SL * y0SL := by group
+      rw [step2, ← sq, hy0SL_sq]
+    have hz0SL_ne1 : z0SL ≠ 1 := by
+      intro h
+      apply hyx0SL
+      rw [hA_eq_zpowers_x0SL, Subgroup.mem_zpowers_iff]
+      refine ⟨-1, ?_⟩
+      have hxz : x0SL⁻¹ * z0SL = y0SL := by rw [hz0SL_def]; group
+      rw [← hxz, h, mul_one, _root_.zpow_neg_one]
+    have hz0SL_ord4 : orderOf z0SL = 4 := by
+      have hne1 : z0SL ^ 2 ≠ 1 := by
+        rw [hz0SL_sq]
+        intro h
+        have := SpecialSubgroups.orderOf_neg_one_eq_two (F := F)
+        rw [h, orderOf_one] at this
+        norm_num at this
+      have h4 : z0SL ^ 4 = 1 := by
+        have heq : z0SL ^ 4 = (z0SL ^ 2) ^ 2 := by rw [← pow_mul]
+        rw [heq, hz0SL_sq, hnegone_sq]
+      have hdvd4 : orderOf z0SL ∣ 4 := orderOf_dvd_of_pow_eq_one h4
+      have hndvd2 : ¬ orderOf z0SL ∣ 2 := by
+        intro h; exact hne1 (orderOf_dvd_iff_pow_eq_one.mp h)
+      have hne1' : orderOf z0SL ≠ 1 := by intro h; apply hndvd2; rw [h]; norm_num
+      have hne2' : orderOf z0SL ≠ 2 := by intro h; apply hndvd2; rw [h]
+      have hle4 : orderOf z0SL ≤ 4 := Nat.le_of_dvd (by norm_num) hdvd4
+      have hpos : 0 < orderOf z0SL :=
+        orderOf_pos_iff.mpr (isOfFinOrder_iff_pow_eq_one.mpr ⟨4, by norm_num, h4⟩)
+      interval_cases (orderOf z0SL) <;> omega
+    -- **Step 10**: `x0SL`, `y0SL`, `z0SL` pairwise invert each other, hence generate `3` pairwise
+    -- distinct cyclic subgroups (`A`, `zpowers y0SL`, `zpowers z0SL`).
+    have hneg_eq : ∀ a : SL(2,F), a ^ 2 = -1 → a ^ 4 = 1 → a⁻¹ = -a := by
+      intro a ha2 ha4
+      have h3 : a ^ 3 = a * a ^ 2 := pow_succ' a 2
+      have h3' : a ^ 3 = -a := by rw [h3, ha2, mul_neg, mul_one]
+      have hmul : a * a ^ 3 = a ^ 4 := (pow_succ' a 3).symm
+      have h1 : a * a ^ 3 = 1 := by rw [hmul, ha4]
+      rw [h3'] at h1
+      exact inv_eq_of_mul_eq_one_right h1
+    have hx0SL4 : x0SL ^ 4 = 1 := by
+      have heq : x0SL ^ 4 = (x0SL ^ 2) ^ 2 := by rw [← pow_mul]
+      rw [heq, hx0SL_sq, hnegone_sq]
+    have hy0SL4 : y0SL ^ 4 = 1 := by
+      have heq : y0SL ^ 4 = (y0SL ^ 2) ^ 2 := by rw [← pow_mul]
+      rw [heq, hy0SL_sq, hnegone_sq]
+    have hz0SL4 : z0SL ^ 4 = 1 := by
+      have heq : z0SL ^ 4 = (z0SL ^ 2) ^ 2 := by rw [← pow_mul]
+      rw [heq, hz0SL_sq, hnegone_sq]
+    have hx0SLinv : x0SL⁻¹ = -x0SL := hneg_eq x0SL hx0SL_sq hx0SL4
+    have hy0SLinv : y0SL⁻¹ = -y0SL := hneg_eq y0SL hy0SL_sq hy0SL4
+    have hz0SLinv : z0SL⁻¹ = -z0SL := hneg_eq z0SL hz0SL_sq hz0SL4
+    -- `x0SL` inverts `y0SL`.
+    have hxinvy : x0SL * y0SL * x0SL⁻¹ = y0SL⁻¹ := by
+      have h1 : x0SL * y0SL * x0SL = y0SL := by
+        have h1' : x0SL * (y0SL * x0SL) = x0SL * (x0SL⁻¹ * y0SL) := congrArg (x0SL * ·) hyx0rearr
+        rw [← mul_assoc, ← mul_assoc, mul_inv_cancel, one_mul] at h1'
+        exact h1'
+      rw [hx0SLinv]
+      have h2 : x0SL * y0SL * (-x0SL) = -(x0SL * y0SL * x0SL) := mul_neg (x0SL * y0SL) x0SL
+      rw [h2, h1, hy0SLinv]
+    -- `x0SL` inverts `z0SL`.
+    have hxinvz : x0SL * z0SL * x0SL⁻¹ = z0SL⁻¹ := by
+      rw [hz0SL_def]
+      have h1 : x0SL * (x0SL * y0SL) * x0SL⁻¹ = x0SL * (x0SL * y0SL * x0SL⁻¹) := by group
+      rw [h1, show x0SL * y0SL * x0SL⁻¹ = y0SL⁻¹ from hxinvy, hy0SLinv]
+      have h2 : x0SL * -y0SL = -(x0SL * y0SL) := mul_neg x0SL y0SL
+      rw [h2, ← hz0SL_def, hz0SLinv]
+    -- `y0SL` inverts `z0SL`.
+    have hyinvz : y0SL * z0SL * y0SL⁻¹ = z0SL⁻¹ := by
+      rw [hz0SL_def]
+      have h1 : y0SL * (x0SL * y0SL) * y0SL⁻¹ = (y0SL * x0SL) * (y0SL * y0SL⁻¹) := by group
+      rw [h1, mul_inv_cancel, mul_one, hyx0rearr]
+      have h2 : x0SL⁻¹ * y0SL = -(x0SL) * y0SL := by rw [hx0SLinv]
+      rw [h2]
+      have h3 : -x0SL * y0SL = -(x0SL * y0SL) := neg_mul x0SL y0SL
+      rw [h3, ← hz0SL_def, hz0SLinv]
+    -- General fact: if `a` inverts `b` (`a * b * a⁻¹ = b⁻¹`) and `orderOf b = 4`, then `b` is not
+    -- a power of `a`.
+    have general_ninv : ∀ a b : SL(2,F), a * b * a⁻¹ = b⁻¹ → orderOf b = 4 →
+        b ∉ Subgroup.zpowers a := by
+      intro a b hab hb4 hmem
+      rw [Subgroup.mem_zpowers_iff] at hmem
+      obtain ⟨n, hn⟩ := hmem
+      have hcomm : a * b = b * a := by rw [← hn]; group
+      have hfix : a * b * a⁻¹ = b := by rw [hcomm]; group
+      rw [hfix] at hab
+      have hbb : b ^ 2 = 1 := by
+        rw [sq]
+        have hmi := mul_inv_cancel b
+        rwa [← hab] at hmi
+      have hdvd : orderOf b ∣ 2 := orderOf_dvd_of_pow_eq_one hbb
+      rw [hb4] at hdvd
+      norm_num at hdvd
+    have hA_ne_zy : A ≠ Subgroup.zpowers y0SL := by
+      intro h
+      apply hyx0SL
+      rw [h]; exact Subgroup.mem_zpowers y0SL
+    have hA_ne_zz : A ≠ Subgroup.zpowers z0SL := by
+      intro h
+      have : z0SL ∈ A := by rw [h]; exact Subgroup.mem_zpowers z0SL
+      rw [hA_eq_zpowers_x0SL] at this
+      exact general_ninv x0SL z0SL hxinvz hz0SL_ord4 this
+    have hzy_ne_zz : Subgroup.zpowers y0SL ≠ Subgroup.zpowers z0SL := by
+      intro h
+      have : z0SL ∈ Subgroup.zpowers y0SL := by rw [h]; exact Subgroup.mem_zpowers z0SL
+      exact general_ninv y0SL z0SL hyinvz hz0SL_ord4 this
+    -- **Step 11**: `zpowers y0SL` and `zpowers z0SL` are also `G`-conjugates of `A` (via `key`),
+    -- hence -- together with `A` itself and `B0` -- (at least) `4` elements of the `3`-element
+    -- set `ConjClassOf G A`, forcing `B0` to coincide with one of `zpowers y0SL`, `zpowers z0SL`.
+    have hy0SL_mem_G : y0SL ∈ G := y0.2
+    have hz0SL_mem_G : z0SL ∈ G := by
+      rw [hz0SL_def]; exact Subgroup.mul_mem G x0.2 hy0SL_mem_G
+    obtain ⟨cy, hcyG, hcy⟩ := key y0SL hy0SL_mem_G hy0SL_ord4
+    obtain ⟨cz, hczG, hcz⟩ := key z0SL hz0SL_mem_G hz0SL_ord4
+    have hCC_card : Nat.card (ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G)) = 3 := by
+      rw [card_ConjClassOf_eq_index_normalizer]
+      exact hindex3
+    have hA_mem_CC : A ∈ ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) :=
+      ⟨1, G.one_mem, by simp⟩
+    have hzy_mem_CC : Subgroup.zpowers y0SL ∈
+        ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) := by
+      rw [smul_eq_iff_eq_inv_smul, ← map_inv] at hcy
+      exact ⟨cy⁻¹, G.inv_mem hcyG, hcy.symm⟩
+    have hzz_mem_CC : Subgroup.zpowers z0SL ∈
+        ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) := by
+      rw [smul_eq_iff_eq_inv_smul, ← map_inv] at hcz
+      exact ⟨cz⁻¹, G.inv_mem hczG, hcz.symm⟩
+    have hB0_mem_CC : B0 ∈ ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) :=
+      ⟨r0, hr0_mem_G, rfl⟩
+    haveI hCCfin : Finite (ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G)) :=
+      Nat.finite_of_card_ne_zero (by rw [hCC_card]; norm_num)
+    -- Since `{A, zpowers y0SL, zpowers z0SL}` is a `3`-element subset of the `3`-element set
+    -- `ConjClassOf G A`, they are equal: `ConjClassOf G A` has *exactly* these `3` members.
+    have hCC_eq : ({A, Subgroup.zpowers y0SL, Subgroup.zpowers z0SL} : Set (Subgroup SL(2,F)))
+        = ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) := by
+      apply Set.eq_of_subset_of_ncard_le
+      · intro x hx
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+        rcases hx with rfl | rfl | rfl
+        · exact hA_mem_CC
+        · exact hzy_mem_CC
+        · exact hzz_mem_CC
+      · have e1 : ({Subgroup.zpowers y0SL, Subgroup.zpowers z0SL} :
+            Set (Subgroup SL(2,F))).ncard = 2 := Set.ncard_pair hzy_ne_zz
+        have e2 : ({A, Subgroup.zpowers y0SL, Subgroup.zpowers z0SL} :
+            Set (Subgroup SL(2,F))).ncard = 3 := by
+          rw [Set.ncard_insert_of_notMem (by simp [hA_ne_zy, hA_ne_zz]), e1]
+        have hcceq : (ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G)).ncard
+            = Nat.card (ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G)) := rfl
+        rw [e2, hcceq, hCC_card]
+      · exact Set.toFinite _
+    have hB0_cases : B0 = A ∨ B0 = Subgroup.zpowers y0SL ∨ B0 = Subgroup.zpowers z0SL := by
+      have := hCC_eq ▸ hB0_mem_CC
+      simpa using this
+    have hB0_cases' : B0 = Subgroup.zpowers y0SL ∨ B0 = Subgroup.zpowers z0SL :=
+      hB0_cases.resolve_left hB0_ne_A
+    -- **Step 12**: general algebraic facts about pairs of order-`4`, square-`-1` elements.
+    have invert_inv_left : ∀ a b : SL(2,F), a * b * a⁻¹ = b⁻¹ → a⁻¹ * b * a = b⁻¹ := by
+      intro a b hab
+      have h1 : a * b = b⁻¹ * a := by
+        have h1' := congrArg (· * a) hab
+        simpa [mul_assoc] using h1'
+      have h2 : b = a⁻¹ * b⁻¹ * a := by
+        have h2' : a⁻¹ * (a * b) = a⁻¹ * (b⁻¹ * a) := congrArg (a⁻¹ * ·) h1
+        rw [← mul_assoc, inv_mul_cancel, one_mul] at h2'
+        rw [mul_assoc]; exact h2'
+      have h3 : b⁻¹ = a⁻¹ * b * a := by
+        have h3' : b⁻¹ = (a⁻¹ * b⁻¹ * a)⁻¹ := congrArg (·⁻¹) h2
+        rw [h3', _root_.mul_inv_rev, _root_.mul_inv_rev, inv_inv, inv_inv, mul_assoc]
+      exact h3.symm
+    -- General fact: if `b` inverts `a` (`b*a*b⁻¹=a⁻¹`) and `a² = b²` (both central of order `2`),
+    -- then `a` inverts `b`.
+    have general_mutual : ∀ a b : SL(2,F), a ^ 2 = -1 → b ^ 2 = -1 → a ^ 4 = 1 → b ^ 4 = 1 →
+        b * a * b⁻¹ = a⁻¹ → a * b * a⁻¹ = b⁻¹ := by
+      intro a b ha2 hb2 ha4 hb4 hab
+      have ainv : a⁻¹ = -a := hneg_eq a ha2 ha4
+      have binv : b⁻¹ = -b := hneg_eq b hb2 hb4
+      have hrearr : b * a = a⁻¹ * b := by
+        have h2 : b * a * b⁻¹ * b = a⁻¹ * b := by rw [hab]
+        rwa [mul_assoc, inv_mul_cancel, mul_one] at h2
+      have h1 : a * b * a = b := by
+        have h1' : a * (b * a) = a * (a⁻¹ * b) := congrArg (a * ·) hrearr
+        rw [← mul_assoc, ← mul_assoc, mul_inv_cancel, one_mul] at h1'
+        exact h1'
+      rw [ainv]
+      have h2 : a * b * (-a) = -(a * b * a) := mul_neg (a * b) a
+      rw [h2, h1, binv]
+    -- General fact: an element of order `4` lying in `zpowers a` (`a` also order `4`) is `a` or
+    -- `a⁻¹`.
+    have order4_mem_zpowers : ∀ a b : SL(2,F), orderOf a = 4 → orderOf b = 4 →
+        b ∈ Subgroup.zpowers a → b = a ∨ b = a⁻¹ := by
+      intro a b ha4 hb4 hmem
+      have ha4' : a ^ 4 = 1 := by rw [← ha4]; exact pow_orderOf_eq_one a
+      haveI hfo : IsOfFinOrder a := orderOf_pos_iff.mp (by rw [ha4]; norm_num)
+      rw [hfo.mem_zpowers_iff_mem_range_orderOf] at hmem
+      simp only [Finset.mem_image, Finset.mem_range] at hmem
+      obtain ⟨m, hm_lt, hm_eq⟩ := hmem
+      rw [ha4] at hm_lt
+      interval_cases m
+      · exfalso; rw [pow_zero] at hm_eq; rw [← hm_eq, orderOf_one] at hb4; norm_num at hb4
+      · left; rw [pow_one] at hm_eq; exact hm_eq.symm
+      · exfalso
+        have hb_eq : b = a ^ 2 := hm_eq.symm
+        have hsq : (a ^ 2) ^ 2 = 1 := by
+          have hpm : (a ^ 2) ^ 2 = a ^ 4 := by rw [← pow_mul]
+          rw [hpm, ha4']
+        have hordb2 : orderOf b ∣ 2 := by rw [hb_eq]; exact orderOf_dvd_of_pow_eq_one hsq
+        rw [hb4] at hordb2
+        norm_num at hordb2
+      · right
+        have hmul1 : a ^ 3 * a = 1 := by rw [← pow_succ]; exact ha4'
+        exact (eq_inv_of_mul_eq_one_left hmul1) ▸ hm_eq.symm
+    -- `a` inverts `b⁻¹` whenever it inverts `b`.
+    have invert_inv_right : ∀ a b : SL(2,F), a * b * a⁻¹ = b⁻¹ → a * b⁻¹ * a⁻¹ = b := by
+      intro a b hab
+      have h := congrArg (·⁻¹) hab
+      rw [_root_.mul_inv_rev, _root_.mul_inv_rev, inv_inv, inv_inv, ← mul_assoc] at h
+      exact h
+    -- Iterating conjugation by `r0` three times is the identity (`r0³ = 1`).
+    have hiterate3 : ∀ w : SL(2,F), r0 * (r0 * (r0 * w * r0⁻¹) * r0⁻¹) * r0⁻¹ = w := by
+      intro w
+      have hcube_eq : r0 * r0 * r0 = r0 ^ 3 := by rw [pow_succ, pow_succ, pow_one]
+      have hiter : r0 * (r0 * (r0 * w * r0⁻¹) * r0⁻¹) * r0⁻¹ = r0 ^ 3 * w * (r0 ^ 3)⁻¹ := by
+        rw [← hcube_eq]; group
+      rw [hiter, hr0_cube]
+      simp
+    -- `r0` does not centralize the generator of a cardinality-`4` maximal abelian subgroup.
+    have hnc_general : ∀ (C : Subgroup SL(2,F)) (hC_mem : C ∈ MaximalAbelianSubgroupsOf G)
+        (w : SL(2,F)) (hw_mem : w ∈ G) (hCeq : C = Subgroup.zpowers w) (hCcard : Nat.card C = 4),
+        r0 * w ≠ w * r0 := by
+      intro C hC_mem w hw_mem hCeq hCcard hcomm
+      set C' : Subgroup ↥G := C.subgroupOf G with hC'_def
+      set wG : ↥G := ⟨w, hw_mem⟩ with hwG_def
+      have hC'_card : Nat.card C' = 4 := by
+        rw [hC'_def, Nat.card_congr (Subgroup.subgroupOfEquivOfLe hC_mem.right).toEquiv, hCcard]
+      have hwG_mem_C' : wG ∈ C' := by
+        rw [hC'_def, Subgroup.mem_subgroupOf]
+        show w ∈ C
+        rw [hCeq]; exact Subgroup.mem_zpowers w
+      haveI hC'comm : IsMulCommutative C' := hC_mem.left.1
+      have hcomm' : Commute r0G wG := by
+        apply Subtype.ext
+        show r0 * w = w * r0
+        exact hcomm
+      have hcomm_all : ∀ a ∈ C', Commute r0G a := by
+        intro a ha
+        have hCeq' : C' = Subgroup.zpowers wG := by
+          apply SetLike.coe_injective
+          symm
+          have hle : Subgroup.zpowers wG ≤ C' := by
+            rw [Subgroup.zpowers_le]; exact hwG_mem_C'
+          have hcardzw : Nat.card (Subgroup.zpowers wG) = 4 := by
+            have hordwG : orderOf wG = 4 := by
+              have h := orderOf_injective G.subtype (Subgroup.subtype_injective G) wG
+              rw [← h, hwG_def]
+              show orderOf w = 4
+              have hordw : orderOf w = Nat.card C := by
+                rw [hCeq]; exact (Nat.card_zpowers w).symm
+              rw [hordw, hCcard]
+            rw [← hordwG]; exact Nat.card_zpowers wG
+          exact Set.eq_of_subset_of_ncard_le (SetLike.coe_subset_coe.mpr hle)
+            (by show Nat.card C' ≤ Nat.card (Subgroup.zpowers wG); rw [hC'_card, hcardzw])
+            (Set.toFinite _)
+        rw [hCeq', Subgroup.mem_zpowers_iff] at ha
+        obtain ⟨n, hn⟩ := ha
+        rw [← hn]
+        exact hcomm'.zpow_right n
+      set K : Set ↥G := (C' : Set ↥G) ∪ {r0G} with hK_def
+      have hcomm_K : ∀ a ∈ K, ∀ b ∈ K, a * b = b * a := by
+        rintro a (ha | ha) b (hb | hb)
+        · exact setLike_mul_comm ha hb
+        · simp only [Set.mem_singleton_iff] at hb; subst hb
+          exact (hcomm_all a ha).symm
+        · simp only [Set.mem_singleton_iff] at ha; subst ha
+          exact hcomm_all b hb
+        · simp only [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
+      haveI hKcomm : IsMulCommutative (Subgroup.closure K) := Subgroup.isMulCommutative_closure hcomm_K
+      have hC'_le_closure : C' ≤ Subgroup.closure K := by
+        rw [← Subgroup.closure_eq C']; exact Subgroup.closure_mono Set.subset_union_left
+      have hclosure_le : Subgroup.closure K ≤ C' := hC_mem.left.2 hKcomm hC'_le_closure
+      have hr0G_mem_closure : r0G ∈ Subgroup.closure K := subset_closure (Set.mem_union_right _ rfl)
+      have hr0G_mem_C' : r0G ∈ C' := hclosure_le hr0G_mem_closure
+      have hdvd : orderOf r0G ∣ Nat.card C' := by
+        have h1 := orderOf_dvd_natCard (⟨r0G, hr0G_mem_C'⟩ : C')
+        have h2 : orderOf (⟨r0G, hr0G_mem_C'⟩ : C') = orderOf r0G :=
+          (orderOf_injective C'.subtype (Subgroup.subtype_injective C') ⟨r0G, hr0G_mem_C'⟩).symm
+        rwa [h2] at h1
+      rw [hC'_card] at hdvd
+      have hr0G_ord : orderOf r0G = 3 := by
+        have h := orderOf_injective G.subtype (Subgroup.subtype_injective G) r0G
+        rw [← h, hr0G_def]; exact hr0_ord
+      rw [hr0G_ord] at hdvd
+      norm_num at hdvd
+    -- **Step 13**: pin down `y1`'s exact identity among `{y0SL, y0SL⁻¹, z0SL, z0SL⁻¹}`, and derive
+    -- that `x0SL` inverts `y1` (hence, by `general_mutual`, `y1` inverts `x0SL`).
+    have hy1_mem_zy_or_zz : y1 ∈ Subgroup.zpowers y0SL ∨ y1 ∈ Subgroup.zpowers z0SL := by
+      rcases hB0_cases' with h | h
+      · left; rw [hB0_eq] at h; rw [← h]; exact Subgroup.mem_zpowers y1
+      · right; rw [hB0_eq] at h; rw [← h]; exact Subgroup.mem_zpowers y1
+    have hxinvy1 : x0SL * y1 * x0SL⁻¹ = y1⁻¹ := by
+      rcases hy1_mem_zy_or_zz with hmem | hmem
+      · rcases order4_mem_zpowers y0SL y1 hy0SL_ord4 hy1_ord4 hmem with heq | heq
+        · rw [heq]; exact hxinvy
+        · rw [heq, inv_inv]; exact invert_inv_right x0SL y0SL hxinvy
+      · rcases order4_mem_zpowers z0SL y1 hz0SL_ord4 hy1_ord4 hmem with heq | heq
+        · rw [heq]; exact hxinvz
+        · rw [heq, inv_inv]; exact invert_inv_right x0SL z0SL hxinvz
+    have hy1_4 : y1 ^ 4 = 1 := by
+      have heq : y1 ^ 4 = (y1 ^ 2) ^ 2 := by rw [← pow_mul]
+      rw [heq, hy1_sq, hnegone_sq]
+    have hyinvx0 : y1 * x0SL * y1⁻¹ = x0SL⁻¹ :=
+      general_mutual y1 x0SL hy1_sq hx0SL_sq hy1_4 hx0SL4 hxinvy1
+    -- **Step 14**: `z1 := x0SL * y1` (Butler's third candidate), with the same `Q₈`-type
+    -- properties as `z0SL` had relative to `y0SL`.
+    set z1 : SL(2,F) := x0SL * y1 with hz1_def
+    have hyx0rearr1 : y1 * x0SL = x0SL⁻¹ * y1 := by
+      have h2 : y1 * x0SL * y1⁻¹ * y1 = x0SL⁻¹ * y1 := by rw [hyinvx0]
+      rwa [mul_assoc, inv_mul_cancel, mul_one] at h2
+    have hz1_sq : z1 ^ 2 = -1 := by
+      have step : z1 ^ 2 = x0SL * (y1 * x0SL) * y1 := by rw [hz1_def, sq]; group
+      rw [step, hyx0rearr1]
+      have step2 : x0SL * (x0SL⁻¹ * y1) * y1 = y1 * y1 := by group
+      rw [step2, ← sq, hy1_sq]
+    have hz1_ord4 : orderOf z1 = 4 := by
+      have hne1 : z1 ^ 2 ≠ 1 := by
+        rw [hz1_sq]
+        intro h
+        have := SpecialSubgroups.orderOf_neg_one_eq_two (F := F)
+        rw [h, orderOf_one] at this
+        norm_num at this
+      have h4 : z1 ^ 4 = 1 := by
+        have heq : z1 ^ 4 = (z1 ^ 2) ^ 2 := by rw [← pow_mul]
+        rw [heq, hz1_sq, hnegone_sq]
+      have hdvd4 : orderOf z1 ∣ 4 := orderOf_dvd_of_pow_eq_one h4
+      have hndvd2 : ¬ orderOf z1 ∣ 2 := by
+        intro h; exact hne1 (orderOf_dvd_iff_pow_eq_one.mp h)
+      have hne1' : orderOf z1 ≠ 1 := by intro h; apply hndvd2; rw [h]; norm_num
+      have hne2' : orderOf z1 ≠ 2 := by intro h; apply hndvd2; rw [h]
+      have hle4 : orderOf z1 ≤ 4 := Nat.le_of_dvd (by norm_num) hdvd4
+      have hpos : 0 < orderOf z1 :=
+        orderOf_pos_iff.mpr (isOfFinOrder_iff_pow_eq_one.mpr ⟨4, by norm_num, h4⟩)
+      interval_cases (orderOf z1) <;> omega
+    have hxinvz1 : x0SL * z1 * x0SL⁻¹ = z1⁻¹ := by
+      rw [hz1_def]
+      have h1 : x0SL * (x0SL * y1) * x0SL⁻¹ = x0SL * (x0SL * y1 * x0SL⁻¹) := by group
+      rw [h1, hxinvy1]
+      have h2 : x0SL * -y1 = -(x0SL * y1) := mul_neg x0SL y1
+      have hy1inv : y1⁻¹ = -y1 := hneg_eq y1 hy1_sq hy1_4
+      rw [hy1inv, h2, ← hz1_def]
+      exact (hneg_eq z1 hz1_sq (by
+        have heq : z1 ^ 4 = (z1 ^ 2) ^ 2 := by rw [← pow_mul]
+        rw [heq, hz1_sq, hnegone_sq])).symm
+    have hyinvz1 : y1 * z1 * y1⁻¹ = z1⁻¹ := by
+      rw [hz1_def]
+      have h1 : y1 * (x0SL * y1) * y1⁻¹ = (y1 * x0SL) * (y1 * y1⁻¹) := by group
+      rw [h1, mul_inv_cancel, mul_one, hyx0rearr1]
+      have h2 : x0SL⁻¹ * y1 = -(x0SL) * y1 := by rw [hneg_eq x0SL hx0SL_sq hx0SL4]
+      rw [h2]
+      have h3 : -x0SL * y1 = -(x0SL * y1) := neg_mul x0SL y1
+      rw [h3, ← hz1_def]
+      exact (hneg_eq z1 hz1_sq (by
+        have heq : z1 ^ 4 = (z1 ^ 2) ^ 2 := by rw [← pow_mul]
+        rw [heq, hz1_sq, hnegone_sq])).symm
+    -- **Step 15**: `z1` is `∉ A` and `∉ zpowers y1` (so `A, zpowers y1, zpowers z1` are pairwise
+    -- distinct), and (via `key`) `zpowers z1` is a `G`-conjugate of `A`.
+    have hz1_notin_A : z1 ∉ A := by
+      rw [hA_eq_zpowers_x0SL]; exact general_ninv x0SL z1 hxinvz1 hz1_ord4
+    have hz1_notin_zy1 : z1 ∉ Subgroup.zpowers y1 := general_ninv y1 z1 hyinvz1 hz1_ord4
+    have hzy1_ne_zz1 : Subgroup.zpowers y1 ≠ Subgroup.zpowers z1 := by
+      intro h; exact hz1_notin_zy1 (h ▸ Subgroup.mem_zpowers z1)
+    have hA_ne_zz1 : A ≠ Subgroup.zpowers z1 := by
+      intro h; exact hz1_notin_A (h ▸ Subgroup.mem_zpowers z1)
+    have hy1_mem_G : y1 ∈ G := by
+      rw [hy1_def]; exact Subgroup.mul_mem G (Subgroup.mul_mem G hr0_mem_G x0.2) (G.inv_mem hr0_mem_G)
+    have hz1_mem_G : z1 ∈ G := by rw [hz1_def]; exact Subgroup.mul_mem G x0.2 hy1_mem_G
+    obtain ⟨cz1, hcz1G, hcz1⟩ := key z1 hz1_mem_G hz1_ord4
+    have hzz1_mem_CC : Subgroup.zpowers z1 ∈
+        ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) := by
+      rw [smul_eq_iff_eq_inv_smul, ← map_inv] at hcz1
+      exact ⟨cz1⁻¹, G.inv_mem hcz1G, hcz1.symm⟩
+    -- **Step 16**: `φ(y1) := r0 * y1 * r0⁻¹` has order `4`, is `≠ A`-generator, `≠ y1`-generator
+    -- (via the `r0³ = 1` / non-centralizing arguments), hence -- since `ConjClassOf` has only the
+    -- `3` elements `A, zpowers y1 ∈ {zpowers y0SL, zpowers z0SL}, ` and both `zpowers z1` and
+    -- `zpowers (φ y1)` avoid `A` and `zpowers y1` while lying in `ConjClassOf` -- they coincide.
+    set phi_y1 : SL(2,F) := r0 * y1 * r0⁻¹ with hphiy1_def
+    have hphiy1_ord4 : orderOf phi_y1 = 4 := by rw [hphiy1_def, orderOf_conj]; exact hy1_ord4
+    have hphiy1_mem_G : phi_y1 ∈ G := by
+      rw [hphiy1_def]
+      exact Subgroup.mul_mem G (Subgroup.mul_mem G hr0_mem_G hy1_mem_G) (G.inv_mem hr0_mem_G)
+    have hh : r0 * phi_y1 * r0⁻¹ = x0SL := by
+      have h0 := hiterate3 x0SL
+      rw [← hy1_def, ← hphiy1_def] at h0
+      exact h0
+    have hphiy1_ne_A : Subgroup.zpowers phi_y1 ≠ A := by
+      intro heqA
+      have hmemA : phi_y1 ∈ A := heqA ▸ Subgroup.mem_zpowers phi_y1
+      rw [hA_eq_zpowers_x0SL] at hmemA
+      rcases order4_mem_zpowers x0SL phi_y1 hx0SL_ord4 hphiy1_ord4 hmemA with heq | heq
+      · rw [heq] at hh; rw [← hy1_def] at hh; exact hy1_ne_x0SL hh
+      · rw [heq] at hh
+        have hconjinv : r0 * x0SL⁻¹ * r0⁻¹ = (r0 * x0SL * r0⁻¹)⁻¹ := by group
+        rw [hconjinv, ← hy1_def] at hh
+        apply hy1_ne_x0SL_inv
+        rw [← inv_inv y1, hh]
+    have hphiy1_ne_y1 : Subgroup.zpowers phi_y1 ≠ Subgroup.zpowers y1 := by
+      intro heqy1
+      have hmemy1 : phi_y1 ∈ Subgroup.zpowers y1 := heqy1 ▸ Subgroup.mem_zpowers phi_y1
+      rcases order4_mem_zpowers y1 phi_y1 hy1_ord4 hphiy1_ord4 hmemy1 with heq | heq
+      · apply hnc_general B0 hB0_mem y1 hy1_mem_G hB0_eq hcard_B0
+        rw [hphiy1_def] at heq
+        have h2 : r0 * y1 * r0⁻¹ * r0 = y1 * r0 := by rw [heq]
+        rwa [mul_assoc, inv_mul_cancel, mul_one] at h2
+      · have h0 := hiterate3 y1
+        rw [← hphiy1_def] at h0
+        rw [heq] at h0
+        have hconjinv : r0 * y1⁻¹ * r0⁻¹ = (r0 * y1 * r0⁻¹)⁻¹ := by group
+        rw [hconjinv, ← hphiy1_def, heq, inv_inv] at h0
+        -- `h0 : r0 * y1 * r0⁻¹ = y1`, i.e. (unfolding `phi_y1`) `phi_y1 = y1`; combined with
+        -- `heq : phi_y1 = y1⁻¹` this gives `y1 = y1⁻¹`.
+        have hphiy1eqy1 : phi_y1 = y1 := h0
+        have hy1eqinv : y1 = y1⁻¹ := hphiy1eqy1.symm.trans heq
+        have hy1sq1 : y1 ^ 2 = 1 := by
+          rw [sq]
+          have hinvcancel := inv_mul_cancel y1
+          rwa [← hy1eqinv] at hinvcancel
+        rw [hy1_sq] at hy1sq1
+        have hordneg1 := SpecialSubgroups.orderOf_neg_one_eq_two (F := F)
+        rw [hy1sq1, orderOf_one] at hordneg1
+        norm_num at hordneg1
+    -- **Step 17**: `zpowers phi_y1 = zpowers z1` (both are the unique element of
+    -- `ConjClassOf G A \ {A, zpowers y1}`).
+    have hzy1_ne_A : Subgroup.zpowers y1 ≠ A := hB0_eq ▸ hB0_ne_A
+    obtain ⟨cphi, hcphiG, hcphi⟩ := key phi_y1 hphiy1_mem_G hphiy1_ord4
+    have hphiy1_mem_CC : Subgroup.zpowers phi_y1 ∈
+        ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) := by
+      rw [smul_eq_iff_eq_inv_smul, ← map_inv] at hcphi
+      exact ⟨cphi⁻¹, G.inv_mem hcphiG, hcphi.symm⟩
+    have hsub2 : ({A, Subgroup.zpowers y1} : Set (Subgroup SL(2,F)))
+        ⊆ ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G) := by
+      intro x hx
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+      rcases hx with rfl | rfl
+      · exact hA_mem_CC
+      · exact hB0_eq ▸ hB0_mem_CC
+    have hcard2 : ({A, Subgroup.zpowers y1} : Set (Subgroup SL(2,F))).ncard = 2 :=
+      Set.ncard_pair hzy1_ne_A.symm
+    have hCCcard_eq : (ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G)).ncard
+        = Nat.card (ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G)) := rfl
+    have hCC_diff_card : (ConjClassOf G (⟨A, hA_mem⟩ : MaximalAbelianSubgroupsOf G)
+        \ ({A, Subgroup.zpowers y1} : Set (Subgroup SL(2,F)))).ncard = 1 := by
+      rw [Set.ncard_diff hsub2 (Set.toFinite _), hcard2, hCCcard_eq, hCC_card]
+    have hzz1_in_diff : Subgroup.zpowers z1 ∈ ConjClassOf G (⟨A, hA_mem⟩ :
+        MaximalAbelianSubgroupsOf G) \ ({A, Subgroup.zpowers y1} : Set (Subgroup SL(2,F))) := by
+      refine ⟨hzz1_mem_CC, ?_⟩
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      push_neg
+      exact ⟨hA_ne_zz1.symm, fun h => hzy1_ne_zz1 h.symm⟩
+    have hphiy1_in_diff : Subgroup.zpowers phi_y1 ∈ ConjClassOf G (⟨A, hA_mem⟩ :
+        MaximalAbelianSubgroupsOf G) \ ({A, Subgroup.zpowers y1} : Set (Subgroup SL(2,F))) := by
+      refine ⟨hphiy1_mem_CC, ?_⟩
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      push_neg
+      exact ⟨hphiy1_ne_A, hphiy1_ne_y1⟩
+    obtain ⟨s, hs⟩ := Set.ncard_eq_one.mp hCC_diff_card
+    rw [hs, Set.mem_singleton_iff] at hzz1_in_diff hphiy1_in_diff
+    have hphiy1_eq_z1 : Subgroup.zpowers phi_y1 = Subgroup.zpowers z1 :=
+      hphiy1_in_diff.trans hzz1_in_diff.symm
+    -- **Step 18**: `φ(y1) = z1` or `φ(y1) = z1⁻¹` (order-`4` elements of the same cyclic group);
+    -- either way, transport `(x0SL, y1, r0)` (resp. `(x0SL, z1⁻¹, r0²)`) up to `↥G` and conclude via
+    -- `mulEquiv_SL2_ZMod3_of`.
+    have hphiy1_mem_zz1 : phi_y1 ∈ Subgroup.zpowers z1 :=
+      hphiy1_eq_z1 ▸ Subgroup.mem_zpowers phi_y1
+    have hy1_notin_x0 : y1 ∉ Subgroup.zpowers x0SL := by
+      intro hmem
+      rcases order4_mem_zpowers x0SL y1 hx0SL_ord4 hy1_ord4 hmem with heq | heq
+      · exact hy1_ne_x0SL heq
+      · exact hy1_ne_x0SL_inv heq
+    have hxy2 : x0SL ^ 2 = y1 ^ 2 := hx0SL_sq.trans hy1_sq.symm
+    rcases order4_mem_zpowers z1 phi_y1 hz1_ord4 hphiy1_ord4 hphiy1_mem_zz1 with hcaseA | hcaseB
+    · -- **Case A**: `φ(y1) = z1 = x0SL * y1`.
+      set y1G : ↥G := ⟨y1, hy1_mem_G⟩ with hy1G_def
+      have hx0y1_2 : x0 ^ 2 = y1G ^ 2 := by
+        apply Subtype.ext
+        show x0SL ^ 2 = y1 ^ 2
+        exact hxy2
+      have hconjG : y1G * x0 * y1G⁻¹ = x0⁻¹ := by
+        apply Subtype.ext
+        show y1 * x0SL * y1⁻¹ = x0SL⁻¹
+        exact hyinvx0
+      have hyxG : y1G ∉ Subgroup.zpowers x0 := by
+        intro hmem
+        apply hy1_notin_x0
+        obtain ⟨n, hn⟩ := hmem
+        refine ⟨n, ?_⟩
+        have := congrArg (Subtype.val) hn
+        simpa [hy1G_def] using this
+      have hrxG : r0G * x0 * r0G⁻¹ = y1G := by
+        apply Subtype.ext
+        show r0 * x0SL * r0⁻¹ = y1
+        exact hy1_def.symm
+      have hryG : r0G * y1G * r0G⁻¹ = x0 * y1G := by
+        apply Subtype.ext
+        show r0 * y1 * r0⁻¹ = x0SL * y1
+        rw [← hphiy1_def, hcaseA, hz1_def]
+      exact ⟨mulEquiv_SL2_ZMod3_of x0 y1G r0G hx0_ord4 hx0y1_2 hconjG hyxG hr0G_cube hrxG hryG
+        hcardG24⟩
+    · -- **Case B**: `φ(y1) = z1⁻¹`. Use `r0² := r0 * r0` and `y := z1⁻¹` instead.
+      have hz1_4 : z1 ^ 4 = 1 := by
+        have heq : z1 ^ 4 = (z1 ^ 2) ^ 2 := by rw [← pow_mul]
+        rw [heq, hz1_sq, hnegone_sq]
+      have hz1invx0 : z1 * x0SL * z1⁻¹ = x0SL⁻¹ :=
+        general_mutual z1 x0SL hz1_sq hx0SL_sq hz1_4 hx0SL4 hxinvz1
+      have hxy2z : x0SL ^ 2 = z1⁻¹ ^ 2 := by
+        rw [hx0SL_sq]
+        have : z1⁻¹ ^ 2 = (z1 ^ 2)⁻¹ := by
+          rw [sq, sq]; group
+        rw [this, hz1_sq]
+        have hnegone_mul : (-1 : SL(2,F)) * -1 = 1 := by rw [← sq]; exact hnegone_sq
+        have hnegone_inv : (-1 : SL(2,F))⁻¹ = -1 := inv_eq_of_mul_eq_one_right hnegone_mul
+        exact hnegone_inv.symm
+      have hconjz : z1⁻¹ * x0SL * (z1⁻¹)⁻¹ = x0SL⁻¹ := by
+        rw [inv_inv]; exact invert_inv_left z1 x0SL hz1invx0
+      have hyxz : z1⁻¹ ∉ Subgroup.zpowers x0SL := by
+        intro hmem
+        apply hz1_notin_A
+        rw [hA_eq_zpowers_x0SL]
+        have hinv := Subgroup.inv_mem (Subgroup.zpowers x0SL) hmem
+        rwa [inv_inv] at hinv
+      set r0sq : SL(2,F) := r0 * r0 with hr0sq_def
+      have hr0sq_cube : r0sq ^ 3 = 1 := by
+        have h6 : r0 ^ 6 = 1 := by
+          have e1 : r0 ^ 6 = r0 ^ 3 * r0 ^ 3 := by
+            simp only [pow_succ, pow_zero, one_mul]; group
+          rw [e1, hr0_cube, mul_one]
+        have heq : r0sq ^ 3 = r0 ^ 6 := by
+          rw [hr0sq_def]
+          simp only [pow_succ, pow_zero, one_mul]; group
+        rw [heq, h6]
+      have hconj_mul : ∀ a b : SL(2,F), r0 * (a * b) * r0⁻¹ = (r0 * a * r0⁻¹) * (r0 * b * r0⁻¹) := by
+        intro a b; group
+      have hconj_inv : ∀ a : SL(2,F), r0 * a⁻¹ * r0⁻¹ = (r0 * a * r0⁻¹)⁻¹ := by
+        intro a; group
+      have hr0sq_conj : ∀ w : SL(2,F), r0sq * w * r0sq⁻¹ = r0 * (r0 * w * r0⁻¹) * r0⁻¹ := by
+        intro w; rw [hr0sq_def]; group
+      have hrx_sq : r0sq * x0SL * r0sq⁻¹ = z1⁻¹ := by
+        rw [hr0sq_conj, ← hy1_def, ← hphiy1_def, hcaseB]
+      have hcomp1 : r0 * y1⁻¹ * r0⁻¹ = z1 := by
+        rw [hconj_inv, ← hphiy1_def, hcaseB, inv_inv]
+      have hcomp2 : r0 * x0SL⁻¹ * r0⁻¹ = y1⁻¹ := by
+        rw [hconj_inv, ← hy1_def]
+      have hcomp3 : r0 * z1⁻¹ * r0⁻¹ = z1 * y1⁻¹ := by
+        have hz1inv_eq : z1⁻¹ = y1⁻¹ * x0SL⁻¹ := by rw [hz1_def]; group
+        rw [hz1inv_eq, hconj_mul, hcomp1, hcomp2]
+      have hcomp4 : r0 * z1 * r0⁻¹ = y1 * z1⁻¹ := by
+        have hz1_eq : z1 = x0SL * y1 := hz1_def
+        rw [hz1_eq, hconj_mul, hy1_def, ← hphiy1_def, hcaseB]
+      have hxz1inv_eq_y1 : x0SL * z1⁻¹ = y1 := by
+        have hz1inv_eq : z1⁻¹ = y1⁻¹ * x0SL⁻¹ := by rw [hz1_def]; group
+        rw [hz1inv_eq, ← mul_assoc]
+        exact invert_inv_right x0SL y1 hxinvy1
+      have hry_sq : r0sq * z1⁻¹ * r0sq⁻¹ = x0SL * z1⁻¹ := by
+        rw [hr0sq_conj, hcomp3, hxz1inv_eq_y1]
+        have hstep := hconj_mul z1 y1⁻¹
+        rw [hcomp4, hcomp1] at hstep
+        rw [hstep, mul_assoc, inv_mul_cancel, mul_one]
+      set z1G : ↥G := ⟨z1, hz1_mem_G⟩ with hz1G_def
+      have hr0sqG_mem_G : r0sq ∈ G := by rw [hr0sq_def]; exact Subgroup.mul_mem G hr0_mem_G hr0_mem_G
+      set r0sqG : ↥G := ⟨r0sq, hr0sqG_mem_G⟩ with hr0sqG_def
+      have hr0sqG_cube : r0sqG ^ 3 = 1 := Subtype.ext (by rw [hr0sqG_def]; exact hr0sq_cube)
+      have hx0z1inv_2 : x0 ^ 2 = z1G⁻¹ ^ 2 := by
+        apply Subtype.ext
+        show x0SL ^ 2 = (z1⁻¹) ^ 2
+        exact hxy2z
+      have hconjG : z1G⁻¹ * x0 * (z1G⁻¹)⁻¹ = x0⁻¹ := by
+        apply Subtype.ext
+        show z1⁻¹ * x0SL * (z1⁻¹)⁻¹ = x0SL⁻¹
+        exact hconjz
+      have hyxG : z1G⁻¹ ∉ Subgroup.zpowers x0 := by
+        intro hmem
+        apply hyxz
+        obtain ⟨n, hn⟩ := hmem
+        refine ⟨n, ?_⟩
+        have := congrArg (Subtype.val) hn
+        simpa [hz1G_def] using this
+      have hrxG : r0sqG * x0 * r0sqG⁻¹ = z1G⁻¹ := by
+        apply Subtype.ext
+        show r0sq * x0SL * r0sq⁻¹ = z1⁻¹
+        exact hrx_sq
+      have hryG : r0sqG * z1G⁻¹ * r0sqG⁻¹ = x0 * z1G⁻¹ := by
+        apply Subtype.ext
+        show r0sq * z1⁻¹ * r0sq⁻¹ = x0SL * z1⁻¹
+        exact hry_sq
+      exact ⟨mulEquiv_SL2_ZMod3_of x0 z1G⁻¹ r0sqG hx0_ord4 hx0z1inv_2 hconjG hyxG hr0sqG_cube hrxG
+        hryG hcardG24⟩
 
 
 -- We first need to define the homomorphism of

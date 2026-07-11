@@ -20,9 +20,9 @@ here and in the corresponding docstrings.
    **`Ch7: case_IV` now unblocked**: Case IVa (`p = 2`, dihedral) previously stopped
    short of the final group-recognition step because it needed exactly this char-2
    inverting-element fact; it is now wired in (`of_index_normalizer_eq_two_char_two`),
-   and Case IVa is PROVED in full (Case IVb, `p = 3`, remains sorried separately —
-   it needs the unrelated "analogous to Case IIb" `SL(2,3)`-construction, itself
-   sorried in `case_II`'s `g1 = 3` branch).
+   and Case IVa is PROVED in full. Case IVb (`p = 3`) is now also PROVED in full,
+   via the (now closed) "analogous to Case IIb" `SL(2,3)`-construction transplanted
+   from `case_II`'s `g1 = 3` branch — see item 10 below.
 
 2. **Case (0,3) arithmetic** (tex 2115-2160; `S4_CaseArithmetic.case_0_3`).
    Butler's displayed equation for Case VI does **not** determine `k` (the `(q-1)`
@@ -143,7 +143,7 @@ here and in the corresponding docstrings.
    not imply `center_le_G`) and the char-2 finale (`hp2 : p ≠ 2` excludes `p = 2`
    entirely, tracking `case_IV`'s Case IVb-independent residual gap, item 1 above).
 
-10. **Case IIb residual gap -- now CLOSED; Case IVb still open** (tex ~1512-1653 and ~1785; `Ch7:
+10. **Case IIb and Case IVb residual gaps -- now both CLOSED** (tex ~1512-1653 and ~1785; `Ch7:
     exists_Q8_generators_of_relIndex_two`, `case_II`'s `g1 = 3` branch, `case_IV`'s Case IVb
     branch). Butler's numerals (`g2 = 2`/`g1 = 2`, `g = 12`, `e = 2`, `Nat.card G = 24`) and his
     `Q₈`-shaped presentation of `N_G(A₂)` (resp. `N_G(A)`) -- `x0, y0 : ↥G` with `orderOf x0 = 4`,
@@ -192,18 +192,27 @@ here and in the corresponding docstrings.
     `key`, the `y0SL`/`z0SL`/`z1` constructions, `general_mutual`/`order4_mem_zpowers`, and the
     final `2`-case `mulEquiv_SL2_ZMod3_of` application via `r0`/`r0²`).
 
-    **Case IVb remains open**: `case_IV` now also carries an analogous (but `2`-disjunct, no
-    `A1`-case) `hComplete` hypothesis, and `exists_Q8_generators_of_relIndex_two`'s signature
-    change was propagated to its call site, but the Case IIb argument itself has *not* been
-    transplanted there (out of this wave's scope). The transplant should in fact be simpler
-    (`s = 0` here, so no `A1`-conjugate case to exclude, and the order-`3` element is available
-    directly from the Sylow `3`-subgroup `Q` -- `Nat.card Q.toSubgroup = q = 3`, hence cyclic of
-    prime order -- rather than needing a second maximal-abelian class). This matches the same
-    category of gap left open in `case_VI_core`'s `gb = gc = 3` branch (tex ~2149-2157,
-    "Sylow-conjugacy elimination... genuinely group-theoretic, not pure arithmetic, and is not
-    attempted here") -- both were, until Case IIb's closure, instances of the same missing
-    global-exhaustiveness infrastructure; `case_VI_core`'s gap and Case IVb's are the two
-    remaining instances.
+    **Case IVb is now also fully PROVED**, by transplanting the just-closed Case IIb argument
+    verbatim: `case_IV` already carried an analogous (but `2`-disjunct, no `A1`-case) `hComplete`
+    hypothesis, and `exists_Q8_generators_of_relIndex_two`'s call site was already in place. The
+    transplant was indeed simpler than Case IIb, exactly as anticipated: there is no `A1`-conjugate
+    case to exclude (`s = 0` here, so every `rcases hComplete ... with ⟨c, hcG, hc⟩ | hsyl` is
+    `2`-way, not `3`-way, dropping the `hA1_card6`-based cardinality-mismatch arm entirely), and the
+    order-`3` element `r0` is drawn directly from the Sylow `3`-subgroup `Q` (`Nat.card Q.toSubgroup
+    = q = 3` is prime, so `isCyclic_of_prime_card` gives `IsCyclic Q.toSubgroup`; a generator,
+    transported down to `↥G` and then to `SL(2,F)`, gives `r0` with membership in `G` automatic
+    from its type -- no `hA1_mem.right` detour needed) rather than from a second maximal-abelian
+    class. One further simplification fell out along the way: `case_IV`'s Case IVb branch already
+    has `p` substituted to the literal `3` (via `subst hp3`) and `hF2 : NeZero (2 : F)` already in
+    scope *before* the transplanted block begins, so the repeated `p ≠ 2 → CharP`-argument idiom
+    Case IIb uses (to derive `(2:F) ≠ 0`, and later to rule out `y1 = y1⁻¹`/order-`4`-square-`1`
+    contradictions) collapses to a direct `SpecialSubgroups.orderOf_neg_one_eq_two` appeal in each
+    case, and the `hNoSylowDiv4`-internal `have hp3 : p = 3 := ⟨...⟩; subst hp3` derivation (`p ∣ 24
+    ∧ p ≠ 2 ⟹ p = 3`) is dropped entirely in favor of stating `IsSylowType 3 G B` directly. This
+    also closes the category of gap left open in `case_VI_core`'s `gb = gc = 3` branch (tex
+    ~2149-2157, "Sylow-conjugacy elimination... genuinely group-theoretic, not pure arithmetic, and
+    is not attempted here") for *this* instance; `case_VI_core`'s own gap is the sole remaining
+    instance of the same missing global-exhaustiveness infrastructure.
 
 ## Repaired Lean statement drafts (not Butler errors)
 
