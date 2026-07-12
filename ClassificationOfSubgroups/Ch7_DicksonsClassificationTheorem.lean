@@ -3833,10 +3833,95 @@ lemma caseV_q_mul_k_dvd_g {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)]
     rwa [hrw] at hNz_dvd
   exact (mul_dvd_mul_iff_left he.ne').mp h1
 
-/-- (SORRY) Butler (6.14), tex 1897-1913: `k ∣ q - 1`. **Gap:** `N_G(Q)` acts by conjugation on
-`Q \ I_G`; the stabiliser of a noncentral `x ∈ Q` is `C_G(x) ∩ N_G(Q) = Q × Z` (Thm 6.8(iii)),
-so each orbit has size `[N_G(Q) : Q×Z] = k`, whence `k ∣ |Q \ I_G| = q - 1`. Needs the
-centralizer structure `C_G(x) = Q × Z` for noncentral unipotent `x`, not yet available. -/
+/-- Pure orbit-count helper: if a finite group `H` acts on a finite type `β`, `b₀` is a global
+fixed point, and every other point has an orbit of cardinality `m`, then `m ∣ card β - 1`. -/
+lemma caseV_dvd_card_sub_one_of_orbit {H : Type*} [Group H] {β : Type*} [MulAction H β]
+    [Finite β] {m : ℕ} (b₀ : β) (hb₀ : ∀ h : H, h • b₀ = b₀)
+    (horb : ∀ b : β, b ≠ b₀ → Nat.card (MulAction.orbit H b) = m) :
+    m ∣ Nat.card β - 1 := by
+  classical
+  letI : Fintype (MulAction.orbitRel.Quotient H β) := Fintype.ofFinite _
+  set Ω := MulAction.orbitRel.Quotient H β with hΩ
+  set f : Ω → ℕ := fun ω => Nat.card (MulAction.orbit H ω.out) with hf_def
+  have key : Nat.card β = ∑ ω : Ω, f ω := by
+    rw [Nat.card_congr (MulAction.selfEquivSigmaOrbits H β), Nat.card_sigma]
+  have hb₀orbit : Nat.card (MulAction.orbit H b₀) = 1 := by
+    have hset : MulAction.orbit H b₀ = {b₀} := by
+      ext x
+      simp only [MulAction.mem_orbit_iff, Set.mem_singleton_iff]
+      constructor
+      · rintro ⟨h, rfl⟩; exact hb₀ h
+      · rintro rfl; exact ⟨1, one_smul _ _⟩
+    rw [hset, Nat.card_eq_one_iff_unique]
+    exact ⟨Set.uniqueSingleton b₀ |>.instSubsingleton, ⟨b₀, rfl⟩⟩
+  set ω₀ : Ω := Quotient.mk'' b₀ with hω₀
+  have hfω₀ : f ω₀ = 1 := by
+    have hmem : ω₀.out ∈ MulAction.orbit H b₀ := by
+      have : Quotient.mk'' ω₀.out = (Quotient.mk'' b₀ : Ω) := by rw [Quotient.out_eq']
+      rwa [Quotient.eq'', MulAction.orbitRel_apply, MulAction.mem_orbit_iff] at this
+    rw [hf_def]
+    simp only
+    rw [MulAction.orbit_eq_iff.mpr hmem, hb₀orbit]
+  have hfne : ∀ ω : Ω, ω ≠ ω₀ → f ω = m := by
+    intro ω hω
+    have hout : ω.out ≠ b₀ := by
+      intro h
+      apply hω
+      rw [hω₀, ← h, Quotient.out_eq']
+    exact horb ω.out hout
+  have hsum : ∑ ω : Ω, f ω = 1 + (Finset.univ.erase ω₀).card * m := by
+    rw [← Finset.add_sum_erase Finset.univ f (Finset.mem_univ ω₀), hfω₀]
+    congr 1
+    rw [Finset.sum_congr rfl (fun ω hω => hfne ω (Finset.mem_erase.mp hω).1),
+      Finset.sum_const, smul_eq_mul]
+  rw [key, hsum]
+  simp only [Nat.add_sub_cancel_left]
+  exact dvd_mul_left m _
+
+/-- Lagrange for `N_G(Q) = Q ⋊ K`: `|N_G(Q)| = q · (e · k)`. (Complement block of
+`caseV_q_mul_k_dvd_g`, isolated for the orbit-count argument of `caseV_k_dvd_q_sub_one`.) -/
+lemma caseV_card_normalizer_Q {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p)]
+    (G : Subgroup SL(2,F)) [Finite G] (Q : Sylow p G) (q k : ℕ)
+    (hq : Nat.card Q.toSubgroup = q)
+    (K : Subgroup SL(2,F)) (hK_le : K ≤ G)
+    (hK_card : Nat.card K = Nat.card (center SL(2,F)) * k)
+    (hNQK : normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K.subgroupOf G)
+    (hQK_disj : Disjoint Q.toSubgroup (K.subgroupOf G)) :
+    Nat.card ↥(normalizer (Q.toSubgroup : Set ↥G)) = q * (Nat.card (center SL(2,F)) * k) := by
+  set Nz : Subgroup ↥G := normalizer (Q.toSubgroup : Set ↥G) with hNz_def
+  have hQ_le_Nz : Q.toSubgroup ≤ Nz := Subgroup.le_normalizer
+  have hK_le_Nz : K.subgroupOf G ≤ Nz := by rw [hNQK]; exact le_sup_right
+  set Qn : Subgroup ↥Nz := Q.toSubgroup.subgroupOf Nz with hQn_def
+  set Kn : Subgroup ↥Nz := (K.subgroupOf G).subgroupOf Nz with hKn_def
+  have hsup : Qn ⊔ Kn = ⊤ := by
+    have h := congrArg (Subgroup.subgroupOf · Nz) hNQK
+    rw [Subgroup.subgroupOf_self, Subgroup.subgroupOf_sup hQ_le_Nz hK_le_Nz] at h
+    exact h.symm
+  have hdisj : Qn ⊓ Kn = ⊥ := by
+    have h := congrArg (Subgroup.subgroupOf · Nz) (disjoint_iff.mp hQK_disj)
+    rwa [subgroupOf_inf_eq, Subgroup.bot_subgroupOf] at h
+  haveI hQn_normal : Qn.Normal := Subgroup.normal_in_normalizer (H := Q.toSubgroup)
+  have hcomplement : IsComplement' Qn Kn := by
+    apply isComplement'_of_disjoint_and_mul_eq_univ (disjoint_iff.mpr hdisj)
+    have h := Subgroup.normal_mul Qn Kn
+    rw [hsup, Subgroup.coe_top] at h
+    exact h.symm
+  have hcard_Nz : Nat.card Qn * Nat.card Kn = Nat.card Nz := hcomplement.card_mul
+  have hcard_Qn : Nat.card Qn = q := by
+    rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hQ_le_Nz).toEquiv]; exact hq
+  have hcard_Kn : Nat.card Kn = Nat.card (center SL(2,F)) * k := by
+    rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le_Nz).toEquiv,
+      Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le).toEquiv]
+    exact hK_card
+  rw [← hcard_Nz, hcard_Qn, hcard_Kn]
+
+/-- Butler (6.14), tex 1897-1913: `k ∣ q - 1`. `N_G(Q)` acts on `Q` by conjugation (via the
+normalizer's `MulDistribMulAction`); `1` is fixed and every noncentral `b ∈ Q` has an orbit of
+size `[N_G(Q) : Stab(b)] = k`, so `k ∣ |Q| - 1 = q - 1` (`caseV_dvd_card_sub_one_of_orbit`). The
+orbit size is `k` because `|N_G(Q)| = q·e·k` (`caseV_card_normalizer_Q`) and `Stab(b) =
+C_G(b) ∩ N_G(Q) = Q × Z` has cardinality `q·e`. **Residual `sorry`** (`hstab`): this last
+cardinality is Butler Thm 6.8(iii) (`C_G(x) = Q × Z` for noncentral unipotent `x`), the
+orbit-counting/Sylow geometry flagged "outside scope" in `CaseArithmetic.case_0_2`. -/
 lemma caseV_k_dvd_q_sub_one {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -3846,7 +3931,40 @@ lemma caseV_k_dvd_q_sub_one {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [Dec
     (hNQK : normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K.subgroupOf G)
     (hQK_disj : Disjoint Q.toSubgroup (K.subgroupOf G)) :
     k ∣ q - 1 := by
-  sorry
+  classical
+  haveI : Finite ↥Q.toSubgroup := Subtype.finite
+  haveI : Finite ↥(normalizer (Q.toSubgroup : Set ↥G)) := Subtype.finite
+  have hcardNz : Nat.card ↥(normalizer (Q.toSubgroup : Set ↥G))
+      = q * (Nat.card (center SL(2,F)) * k) :=
+    caseV_card_normalizer_Q G Q q k hq K hK_le hK_card hNQK hQK_disj
+  set e := Nat.card (center SL(2,F)) with he_def
+  have hq_pos : 0 < q := by rw [← hq]; exact Nat.card_pos
+  have he_pos : 0 < e := by rw [he_def]; exact Nat.card_pos
+  have horb : ∀ b : ↥Q.toSubgroup, b ≠ 1 →
+      Nat.card (MulAction.orbit (↥(normalizer (Q.toSubgroup : Set ↥G))) b) = k := by
+    intro b hb
+    have hos : Nat.card (MulAction.orbit (↥(normalizer (Q.toSubgroup : Set ↥G))) b)
+        * Nat.card (MulAction.stabilizer (↥(normalizer (Q.toSubgroup : Set ↥G))) b)
+        = Nat.card ↥(normalizer (Q.toSubgroup : Set ↥G)) := by
+      have h1 : Nat.card (MulAction.orbit (↥(normalizer (Q.toSubgroup : Set ↥G))) b)
+          = (MulAction.stabilizer (↥(normalizer (Q.toSubgroup : Set ↥G))) b).index := by
+        rw [Nat.card_coe_set_eq, ← MulAction.index_stabilizer]
+      rw [h1, Subgroup.index_mul_card]
+    -- RESIDUAL (Butler 6.8(iii)): the stabiliser of the conjugation action at a noncentral
+    -- `b ∈ Q` is `C_G(b) ∩ N_G(Q) = Q × Z`, of cardinality `q · e`.
+    have hstab : Nat.card (MulAction.stabilizer (↥(normalizer (Q.toSubgroup : Set ↥G))) b)
+        = q * e := by
+      sorry
+    rw [hstab, hcardNz] at hos
+    have hqe : 0 < q * e := Nat.mul_pos hq_pos he_pos
+    have hfin : Nat.card (MulAction.orbit (↥(normalizer (Q.toSubgroup : Set ↥G))) b) * (q * e)
+        = k * (q * e) := by rw [hos]; ring
+    exact Nat.eq_of_mul_eq_mul_right hqe hfin
+  have hdvd : k ∣ Nat.card ↥Q.toSubgroup - 1 :=
+    caseV_dvd_card_sub_one_of_orbit
+      (H := ↥(normalizer (Q.toSubgroup : Set ↥G))) (1 : ↥Q.toSubgroup)
+      (fun h => smul_one h) horb
+  rwa [hq] at hdvd
 
 /-- Butler tex 1928-1933 ("Applying Lemma `caseVlemma`, `Q` is not normal in `G`"): hence
 `|N_G(Q)| = e q k < e g = |G|`, i.e. `q * k ≠ g`. Proof: `K` is cyclic with `|K| = e·k > e`
@@ -6456,10 +6574,34 @@ lemma pgl_descent_PSL2_ZMod3_iso_alternating :
 
 /-- `PSL(2,5) ≅ A₅` (feeds Class I item (iv) / Class II item (viii), tex ~2088-2113: Butler's
 Case Vd identifies `G/Z` as a simple group of order `60`, and every simple group of order `60`
-is `≅ A₅`). Missing infrastructure: `Ch7_SimpleGroup60.lean` (new, in progress, not yet
-imported here) develops exactly the "simple of order `60` ⟹ `≅ A₅`" recognition; wiring it in
-additionally needs simplicity and the order computation for `PSL(2,5)` (mathlib has neither for
-`SL(2,·) ⧸ center`). Sorried pending those. -/
+is `≅ A₅`).
+
+VERIFIED FOUNDATION (Wave 19; compiled green in scratch, mirrors the A₄ sibling
+`pgl_descent_PSL2_ZMod3_iso_alternating` up to the divergence point): `Nat.card SL(2,5) = 120`
+(`decide` after `letI : Fintype SL(2, ZMod 5) := Subtype.fintype _`), hence `Nat.card PSL(2,5) = 60`
+(`center_SL2_eq_Z`, `card_Z_eq_two_of_two_ne_zero`, `card_mul_index`); `ℙ¹(𝔽₅)` has `6` points
+(`Projectivization.card_of_finrank_two`), giving an injective
+`g : PSL(2,5) →* Equiv.Perm (Fin 6)` (`PSLAction.toPermHom`, `toPermHom_injective`,
+`Equiv.permCongrHom`) with `Nat.card g.range = 60`.
+
+REMAINING (two independent multi-session gaps; unlike the A₄ case the image has order `60`,
+index `12` in `S₆`, so the index-2 trick does NOT finish):
+1. `g.range ≤ alternatingGroup (Fin 6)`. RECOMMENDED route (bypasses proving `PSL(2,5)` simple,
+   for which there is no mathlib/repo support -- `caseV_d_quotient_simple` is itself sorried):
+   reduce to `PSL(2,5)` perfect ⟸ `SL(2,5)` perfect ⟸ transvections generate `SL(2,5)`; then the
+   sign character `sign ∘ g : PSL(2,5) →* ℤˣ` is trivial. Mathlib has
+   `Matrix.SpecialLinearGroup.transvection_mem_commutator` (each transvection `∈ commutator`) but
+   LACKS the generation half `⊤ = closure {transvections}` (only Gaussian elimination in
+   `LinearAlgebra/Matrix/Transvection.lean`, not stated as a subgroup-closure fact).
+2. Recognize the index-`6` subgroup `g.range` of `A₆` as `A₅` (the crux, common to all routes,
+   does NOT need `PSL(2,5)` simple -- only `A₆` simple): `Ch7_SimpleGroup60.lean` step
+   `isoAlternatingGroupFive_of_index_six`, STILL MISSING. Ingredients present: `A₆` simple
+   (`alternatingGroup.isSimpleGroup`), `normalCore_eq_ker` (coset-action kernel),
+   `stabilizer_quotient`, `alternatingGroup.ofSubtype`, and that file's
+   `range_le_alternatingGroup_of_isSimpleGroup`.
+   `Ch7_SimpleGroup60.lean` is NOT imported here and still lacks steps `toPermHom_sylow_injective`
+   (2), `isoAlternatingGroupFive_of_index_six` (5), `isSimpleGroup_card_sixty_iso_alternating` (6).
+Sorried pending gap 1 + step (5). -/
 lemma pgl_descent_PSL2_ZMod5_iso_alternating :
     Nonempty (PSL (Fin 2) (ZMod 5) ≃* alternatingGroup (Fin 5)) := by
   sorry
