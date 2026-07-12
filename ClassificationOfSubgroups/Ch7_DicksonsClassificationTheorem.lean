@@ -4,6 +4,7 @@ import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S2_B_Ma
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S4_CaseArithmetic
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S5_NumericClassEquation
 import ClassificationOfSubgroups.Ch7_GroupRecognition
+import ClassificationOfSubgroups.Ch7_SimpleGroup60
 import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.GroupTheory.Complement
 import Mathlib.GroupTheory.Nilpotent
@@ -3750,6 +3751,18 @@ noncomputable def SL2_join_d (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+) (π : (Ga
   ⊔
   Subgroup.closure { d π }
 
+/-- Butler's constraint on the twisting unit `π` of item (x)/Case Vb (tex ~1848-2113, 2213-2254):
+`π ∈ 𝔽_{q²} \ 𝔽_q` while `π² ∈ 𝔽_q` (which forces `π²` to be a *nonsquare* of `𝔽_q`: from
+`π² = a²` with `a ∈ 𝔽_q` follows `π = ±a ∈ 𝔽_q`). The subfield `𝔽_q ⊆ 𝔽_{q²}` is rendered as
+`Set.range (GaloisField_ringHom p k)`. Wave 20 exhibited the
+`⟨SL(2,𝔽_q), d_π⟩ ⧸ {±1} ≅ PGL(2,𝔽_q)` identification as FALSE for arbitrary `π` (see
+`pgl_descent_SL2_join_d_quotient`), so every statement producing or consuming the `SL2_join_d`
+shape now carries this spec. -/
+def SL2_join_d_pi_spec (p : ℕ) [Fact (Nat.Prime p)] (k : ℕ+)
+    (π : (GaloisField p (2 * k.val))ˣ) : Prop :=
+  (π : GaloisField p (2 * k.val)) ∉ Set.range (GaloisField_ringHom p k) ∧
+    ((π : GaloisField p (2 * k.val)) ^ 2) ∈ Set.range (GaloisField_ringHom p k)
+
 
 /-- Butler's class equation for `(s,t) = (0,2)` is symmetric in the two `t`-class numerals. -/
 lemma caseV_classEquation_swap (g q k ga gb : ℕ)
@@ -3915,13 +3928,230 @@ lemma caseV_card_normalizer_Q {F : Type*} {p : ℕ} [Field F] [Fact (Nat.Prime p
     exact hK_card
   rw [← hcard_Nz, hcard_Qn, hcard_Kn]
 
+/-- Cardinality of a join of two disjoint subgroups, one of which is normal:
+`|H ⊔ K| = |H| · |K|`. (Used for `|Q × Z| = q·e` in `caseV_card_stabilizer_eq`.) -/
+lemma caseV_card_sup_disjoint_normal {Γ : Type*} [Group Γ] (H K : Subgroup Γ)
+    [Finite ↥(H ⊔ K)] (hK : K.Normal) (hdisj : Disjoint H K) :
+    Nat.card ↥(H ⊔ K) = Nat.card ↥H * Nat.card ↥K := by
+  have hHle : H ≤ H ⊔ K := le_sup_left
+  have hKle : K ≤ H ⊔ K := le_sup_right
+  haveI : (K.subgroupOf (H ⊔ K)).Normal := hK.subgroupOf (H ⊔ K)
+  have hsup : H.subgroupOf (H ⊔ K) ⊔ K.subgroupOf (H ⊔ K) = ⊤ := by
+    rw [← Subgroup.subgroupOf_sup hHle hKle, Subgroup.subgroupOf_self]
+  have hdisj' : H.subgroupOf (H ⊔ K) ⊓ K.subgroupOf (H ⊔ K) = ⊥ := by
+    rw [← subgroupOf_inf_eq, disjoint_iff.mp hdisj, Subgroup.bot_subgroupOf]
+  have hcompl : IsComplement' (H.subgroupOf (H ⊔ K)) (K.subgroupOf (H ⊔ K)) := by
+    apply isComplement'_of_disjoint_and_mul_eq_univ (disjoint_iff.mpr hdisj')
+    have h := Subgroup.mul_normal (H.subgroupOf (H ⊔ K)) (K.subgroupOf (H ⊔ K))
+    rw [hsup, Subgroup.coe_top] at h
+    exact h.symm
+  have hcard := hcompl.card_mul
+  rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hHle).toEquiv,
+      Nat.card_congr (Subgroup.subgroupOfEquivOfLe hKle).toEquiv] at hcard
+  exact hcard.symm
+
+/-- Butler Thm 6.8(iii) (tex ~899-1000), the `hstab` ingredient of `caseV_k_dvd_q_sub_one`: the
+stabiliser of a noncentral `b ∈ Q` under the conjugation action of `N_G(Q)` is
+`C_G(b) ∩ N_G(Q) = Q × Z`, of cardinality `q · e` (`e = |Z(SL(2,F))|`). Proof: conjugate `Q` to
+the standard shear group via `exists_conj_Sylow_eq_S_inf_and_normalizer_le_L`, so the image `x` of
+`b` is `c (s σ) c⁻¹` (`σ ≠ 0`); the stabiliser is `centralizer {b} ⊓ N_G(Q)`, and using
+`centralizer_s_eq_SZ` (`C_{SL₂}(s σ) = SZ`) every element normalising `Q` and centralising `x`
+lands in `Q'` or `(-1)·Q'`, giving `centralizer {b} ⊓ N_G(Q) = Q ⊔ Z`; `Q` abelian (`⊆ conj c • S`)
+and `Z` central provide the reverse inclusion, and `caseV_card_sup_disjoint_normal` computes the
+cardinality (`Q ∩ Z = ⊥` since `-1 ∉ Q` unless `char = 2` collapses `-1 = 1`). -/
+lemma caseV_card_stabilizer_eq {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
+    [Fact (Nat.Prime p)] [CharP F p]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (Q : Sylow p G) (q : ℕ) (hq : Nat.card Q.toSubgroup = q)
+    (b : ↥Q.toSubgroup) (hb : b ≠ 1) :
+    Nat.card (MulAction.stabilizer (↥(normalizer (Q.toSubgroup : Set ↥G))) b)
+      = q * Nat.card (center SL(2,F)) := by
+  classical
+  set Nsub : Subgroup ↥G := normalizer (Q.toSubgroup : Set ↥G) with hNsub_def
+  set β : ↥G := Q.toSubgroup.subtype b with hβ_def
+  set Zc : Subgroup ↥G := (center SL(2,F)).subgroupOf G with hZc_def
+  set M : Subgroup ↥G := Q.toSubgroup ⊔ Zc with hM_def
+  have hβ_mem : β ∈ Q.toSubgroup := b.2
+  have hQne : Q.toSubgroup ≠ ⊥ := by
+    have : Nontrivial ↥Q.toSubgroup := nontrivial_of_ne b 1 hb
+    exact (Subgroup.nontrivial_iff_ne_bot _).mp this
+  obtain ⟨c, hQeq, -⟩ := exists_conj_Sylow_eq_S_inf_and_normalizer_le_L G Q hQne
+  have hβ_ne : β ≠ 1 := by
+    intro hcontra
+    apply hb
+    apply Subgroup.subtype_injective Q.toSubgroup
+    rw [_root_.map_one, ← hβ_def]; exact hcontra
+  have hxβ_conjS : G.subtype β ∈ MulAut.conj c • SpecialSubgroups.S F := by
+    have hmem : G.subtype β ∈ map G.subtype Q.toSubgroup := mem_map_of_mem G.subtype hβ_mem
+    rw [hQeq] at hmem
+    exact hmem.1
+  obtain ⟨σ, hσ⟩ := (mem_pointwise_smul_iff_inv_smul_mem).mp hxβ_conjS
+  have hx_eq : G.subtype β = c * s σ * c⁻¹ := by
+    have h1 : G.subtype β = (MulAut.conj c) • ((MulAut.conj c)⁻¹ • (G.subtype β)) :=
+      (smul_inv_smul (MulAut.conj c) _).symm
+    rw [← hσ] at h1
+    rw [h1, MulAut.smul_def, MulAut.conj_apply]
+  have hσ0 : σ ≠ 0 := by
+    intro h0
+    apply hβ_ne
+    apply Subgroup.subtype_injective G
+    rw [_root_.map_one, hx_eq, h0, s_zero_eq_one, mul_one, mul_inv_cancel]
+  have hQ'_le_S : map G.subtype Q.toSubgroup ≤ MulAut.conj c • SpecialSubgroups.S F := by
+    rw [hQeq]; exact inf_le_left
+  haveI hScomm : IsMulCommutative (MulAut.conj c • SpecialSubgroups.S F : Subgroup SL(2,F)) := by
+    have hrw : (MulAut.conj c • SpecialSubgroups.S F : Subgroup SL(2,F))
+        = (SpecialSubgroups.S F).map (MulAut.conj c).toMonoidHom := rfl
+    rw [hrw]; infer_instance
+  haveI hQ'comm : IsMulCommutative (map G.subtype Q.toSubgroup) :=
+    ⟨⟨fun x y => Subtype.ext (setLike_mul_comm (hQ'_le_S x.2) (hQ'_le_S y.2))⟩⟩
+  have hQ_subgroupOf_eq : (map G.subtype Q.toSubgroup).subgroupOf G = Q.toSubgroup :=
+    Subgroup.comap_map_eq_self_of_injective (Subgroup.subtype_injective G) Q.toSubgroup
+  haveI hQcomm : IsMulCommutative Q.toSubgroup := by
+    rw [← hQ_subgroupOf_eq]; infer_instance
+  have hZc_le_center : Zc ≤ Subgroup.center (↥G) := by
+    intro g hg
+    rw [Subgroup.mem_center_iff]
+    intro h
+    apply Subgroup.subtype_injective G
+    rw [_root_.map_mul, _root_.map_mul]
+    have hgc : G.subtype g ∈ center SL(2,F) := Subgroup.mem_subgroupOf.mp hg
+    exact Subgroup.mem_center_iff.mp hgc (G.subtype h)
+  have hle_easy : M ≤ Subgroup.centralizer {β} ⊓ Nsub := by
+    rw [hM_def]
+    apply sup_le
+    · apply le_inf
+      · intro g hg
+        rw [Subgroup.mem_centralizer_singleton_iff]
+        exact setLike_mul_comm hg hβ_mem
+      · exact Subgroup.le_normalizer
+    · apply le_inf
+      · exact hZc_le_center.trans (Subgroup.center_le_centralizer {β})
+      · exact hZc_le_center.trans (Subgroup.center_le_normalizer (Q.toSubgroup : Set ↥G))
+  have hM_le_N : M ≤ Nsub := hle_easy.trans inf_le_right
+  have hle_hard : Subgroup.centralizer {β} ⊓ Nsub ≤ M := by
+    intro g hg
+    have hcomm := Subgroup.mem_centralizer_singleton_iff.mp hg.1
+    have hyx : G.subtype g * G.subtype β = G.subtype β * G.subtype g := by
+      rw [← _root_.map_mul, ← _root_.map_mul, hcomm]
+    have hm_mem : (c⁻¹ * G.subtype g * c) ∈ Subgroup.centralizer {s σ} := by
+      rw [Subgroup.mem_centralizer_singleton_iff]
+      have hsσ : s σ = c⁻¹ * G.subtype β * c := by rw [hx_eq]; group
+      rw [hsσ]
+      have e1 : (c⁻¹ * G.subtype g * c) * (c⁻¹ * G.subtype β * c)
+          = c⁻¹ * (G.subtype g * G.subtype β) * c := by group
+      have e2 : (c⁻¹ * G.subtype β * c) * (c⁻¹ * G.subtype g * c)
+          = c⁻¹ * (G.subtype β * G.subtype g) * c := by group
+      rw [e1, e2, hyx]
+    rw [centralizer_s_eq_SZ hσ0] at hm_mem
+    have hm_set : (c⁻¹ * G.subtype g * c) ∈ ((SpecialSubgroups.SZ F) : Set SL(2,F)) := hm_mem
+    simp only [SpecialSubgroups.SZ, coe_set_mk, Submonoid.coe_set_mk, Subsemigroup.coe_set_mk,
+      Set.mem_union, Set.mem_setOf_eq] at hm_set
+    have hg_in_G : G.subtype g ∈ G := g.2
+    rcases hm_set with ⟨τ, hτ⟩ | ⟨τ, hτ⟩
+    · have hy_eq : G.subtype g = c * s τ * c⁻¹ := by rw [hτ]; group
+      have hy_in : G.subtype g ∈ MulAut.conj c • SpecialSubgroups.S F := by
+        rw [hy_eq]
+        have hcs : (MulAut.conj c) • (s τ) = c * s τ * c⁻¹ := by
+          rw [MulAut.smul_def, MulAut.conj_apply]
+        rw [← hcs]
+        exact smul_mem_pointwise_smul (s τ) (MulAut.conj c) (SpecialSubgroups.S F) ⟨τ, rfl⟩
+      have hy_map : G.subtype g ∈ map G.subtype Q.toSubgroup := by
+        rw [hQeq]; exact ⟨hy_in, hg_in_G⟩
+      have hgQ : g ∈ Q.toSubgroup :=
+        (Subgroup.mem_map_iff_mem (Subgroup.subtype_injective G)).mp hy_map
+      rw [hM_def]; exact Subgroup.mem_sup_left hgQ
+    · have hy_eq : G.subtype g = c * (-s τ) * c⁻¹ := by rw [hτ]; group
+      have hg'_eq : (-1 : SL(2,F)) * G.subtype g = c * s τ * c⁻¹ := by
+        rw [hy_eq]
+        have h1 : c * (-s τ) * c⁻¹ = -(c * s τ * c⁻¹) := by rw [mul_neg, neg_mul]
+        rw [h1, neg_one_mul, neg_neg]
+      have hneg1_mem : (-1 : SL(2,F)) ∈ center SL(2,F) := by
+        rw [SpecialSubgroups.center_SL2_eq_Z]; exact SpecialSubgroups.neg_one_mem_Z
+      set z : ↥G := ⟨(-1 : SL(2,F)), center_le_G hneg1_mem⟩ with hz_def
+      have hz_Zc : z ∈ Zc := Subgroup.mem_subgroupOf.mpr hneg1_mem
+      have hg'_in : c * s τ * c⁻¹ ∈ MulAut.conj c • SpecialSubgroups.S F := by
+        have hcs : (MulAut.conj c) • (s τ) = c * s τ * c⁻¹ := by
+          rw [MulAut.smul_def, MulAut.conj_apply]
+        rw [← hcs]
+        exact smul_mem_pointwise_smul (s τ) (MulAut.conj c) (SpecialSubgroups.S F) ⟨τ, rfl⟩
+      have hzg_subtype : G.subtype (z * g) = c * s τ * c⁻¹ := by
+        rw [_root_.map_mul]
+        show (-1 : SL(2,F)) * G.subtype g = c * s τ * c⁻¹
+        exact hg'_eq
+      have hg'_G : c * s τ * c⁻¹ ∈ G := by rw [← hzg_subtype]; exact (z * g).2
+      have hzg_map : G.subtype (z * g) ∈ map G.subtype Q.toSubgroup := by
+        rw [hQeq, hzg_subtype]; exact ⟨hg'_in, hg'_G⟩
+      have hzg_Q : z * g ∈ Q.toSubgroup :=
+        (Subgroup.mem_map_iff_mem (Subgroup.subtype_injective G)).mp hzg_map
+      have hg_eq : g = z⁻¹ * (z * g) := by group
+      rw [hM_def, hg_eq]
+      exact Subgroup.mul_mem _ (Subgroup.mem_sup_right (inv_mem hz_Zc))
+        (Subgroup.mem_sup_left hzg_Q)
+  have hkey : Subgroup.centralizer {β} ⊓ Nsub = M := le_antisymm hle_hard hle_easy
+  have hstab_eq : MulAction.stabilizer (↥Nsub) b = M.subgroupOf Nsub := by
+    ext n
+    rw [MulAction.mem_stabilizer_iff, Subgroup.mem_subgroupOf, ← hkey, Subgroup.mem_inf]
+    have smul_val : ((n • b : ↥Q.toSubgroup) : ↥G) = (n : ↥G) * β * (n : ↥G)⁻¹ := rfl
+    constructor
+    · intro h
+      refine ⟨?_, n.2⟩
+      rw [Subgroup.mem_centralizer_singleton_iff]
+      have hval : (n : ↥G) * β * (n : ↥G)⁻¹ = β := by
+        have hc := congrArg Subtype.val h
+        rw [smul_val] at hc
+        exact hc
+      rw [mul_inv_eq_iff_eq_mul] at hval
+      exact hval
+    · rintro ⟨hc, -⟩
+      rw [Subgroup.mem_centralizer_singleton_iff] at hc
+      have hval : (n : ↥G) * β * (n : ↥G)⁻¹ = β := by rw [hc]; group
+      apply Subtype.ext
+      rw [smul_val]; exact hval
+  rw [hstab_eq, Nat.card_congr (Subgroup.subgroupOfEquivOfLe hM_le_N).toEquiv, hM_def]
+  haveI : Finite ↥(Q.toSubgroup ⊔ Zc) := Subtype.finite
+  have hZc_normal : Zc.Normal := by
+    rw [hZc_def]; exact Subgroup.Normal.subgroupOf (inferInstance) G
+  have hdisj : Disjoint Q.toSubgroup Zc := by
+    rw [Subgroup.disjoint_def]
+    intro g hgQ hgZ
+    have hgc : G.subtype g ∈ center SL(2,F) := Subgroup.mem_subgroupOf.mp hgZ
+    rw [SpecialSubgroups.center_SL2_eq_Z, ← SetLike.mem_coe, SpecialSubgroups.set_Z_eq,
+      Set.mem_insert_iff, Set.mem_singleton_iff] at hgc
+    rcases hgc with h1 | hn1
+    · apply Subgroup.subtype_injective G
+      rw [_root_.map_one]; exact h1
+    · have hgQ' : G.subtype g ∈ map G.subtype Q.toSubgroup := mem_map_of_mem G.subtype hgQ
+      rw [hQeq] at hgQ'
+      have hin : G.subtype g ∈ MulAut.conj c • SpecialSubgroups.S F := hgQ'.1
+      rw [hn1] at hin
+      have hin' : (MulAut.conj c)⁻¹ • (-1 : SL(2,F)) ∈ SpecialSubgroups.S F :=
+        (mem_pointwise_smul_iff_inv_smul_mem).mp hin
+      have hcomp : (MulAut.conj c)⁻¹ • (-1 : SL(2,F)) = -1 := by
+        have hci : (MulAut.conj c)⁻¹ = MulAut.conj c⁻¹ := (_root_.map_inv MulAut.conj c).symm
+        rw [hci]
+        simp only [MulAut.smul_def, MulAut.conj_apply, inv_inv, mul_neg_one, neg_mul,
+          inv_mul_cancel]
+      rw [hcomp] at hin'
+      obtain ⟨ρ, hρ⟩ := hin'
+      have hFF : (1 : F) = -1 := by
+        have h00 := congrArg (fun A : SL(2,F) => (A : Matrix (Fin 2) (Fin 2) F) 0 0) hρ
+        simpa [SpecialMatrices.s] using h00
+      have h1F : (1 : F) + 1 = 0 := by nth_rewrite 1 [hFF]; exact neg_add_cancel 1
+      have h2z : (2 : F) = 0 := by rw [← one_add_one_eq_two]; exact h1F
+      have hcollapse : (1 : SL(2,F)) = -1 :=
+        SpecialSubgroups.SpecialLinearGroup.neg_one_eq_one_of_two_eq_zero h2z
+      apply Subgroup.subtype_injective G
+      rw [_root_.map_one, hn1]; exact hcollapse.symm
+  rw [caseV_card_sup_disjoint_normal Q.toSubgroup Zc hZc_normal hdisj, hq]
+  congr 1
+  exact Nat.card_congr (Subgroup.subgroupOfEquivOfLe center_le_G).toEquiv
+
 /-- Butler (6.14), tex 1897-1913: `k ∣ q - 1`. `N_G(Q)` acts on `Q` by conjugation (via the
 normalizer's `MulDistribMulAction`); `1` is fixed and every noncentral `b ∈ Q` has an orbit of
 size `[N_G(Q) : Stab(b)] = k`, so `k ∣ |Q| - 1 = q - 1` (`caseV_dvd_card_sub_one_of_orbit`). The
 orbit size is `k` because `|N_G(Q)| = q·e·k` (`caseV_card_normalizer_Q`) and `Stab(b) =
-C_G(b) ∩ N_G(Q) = Q × Z` has cardinality `q·e`. **Residual `sorry`** (`hstab`): this last
-cardinality is Butler Thm 6.8(iii) (`C_G(x) = Q × Z` for noncentral unipotent `x`), the
-orbit-counting/Sylow geometry flagged "outside scope" in `CaseArithmetic.case_0_2`. -/
+C_G(b) ∩ N_G(Q) = Q × Z` has cardinality `q·e` (`caseV_card_stabilizer_eq`, Butler Thm 6.8(iii),
+`C_G(x) = Q × Z` for noncentral unipotent `x`). Fully proven. -/
 lemma caseV_k_dvd_q_sub_one {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -3954,7 +4184,8 @@ lemma caseV_k_dvd_q_sub_one {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [Dec
     -- `b ∈ Q` is `C_G(b) ∩ N_G(Q) = Q × Z`, of cardinality `q · e`.
     have hstab : Nat.card (MulAction.stabilizer (↥(normalizer (Q.toSubgroup : Set ↥G))) b)
         = q * e := by
-      sorry
+      rw [he_def]
+      exact caseV_card_stabilizer_eq G center_le_G Q q hq b hb
     rw [hstab, hcardNz] at hos
     have hqe : 0 < q * e := Nat.mul_pos hq_pos he_pos
     have hfin : Nat.card (MulAction.orbit (↥(normalizer (Q.toSubgroup : Set ↥G))) b) * (q * e)
@@ -4383,9 +4614,83 @@ lemma caseV_d_quotient_simple {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [D
     IsSimpleGroup (↥G ⧸ center ↥G) := by
   sorry
 
-/-- (SORRY) Case Va, Butler tex 1988-2011 (`i = 1` or `e = 1`, so `ei = 2`, `|K| = q - 1`):
-`G ≅ SL(2,𝔽_q)`. **Gap:** the projective-line/triple-transitivity normalization (`Q ⊆ T`,
-`K ⊆ D`, `y` anti-diagonal) and the `𝕄 = 𝔽_q^*` root-counting giving `G̃ = SL(2,𝔽_q)`. -/
+/-- Butler tex 2046-2054 (Case Va root-count crux): in a field `F`, two `n`-element finsets whose
+members are all roots of `Xⁿ - 1` coincide (both equal `nthRootsFinset n 1`, which has `≤ n`
+elements). Applied with `n = q - 1` to `𝕄 = {ω : d_ω ∈ K}` and `𝔽_q^*` — both of cardinality
+`q - 1`, both consisting of `(q-1)`-th roots of unity — this gives `𝕄 = 𝔽_q^*`, the step that
+distinguishes Case Va from Vb (where only `ω²` is forced to be a `(q-1)`-th root). -/
+lemma caseV_finset_eq_of_card_of_pow_eq_one {F : Type*} [Field F] {n : ℕ} (hn : 0 < n)
+    (S T : Finset F)
+    (hS : ∀ x ∈ S, x ^ n = 1) (hT : ∀ x ∈ T, x ^ n = 1)
+    (hScard : S.card = n) (hTcard : T.card = n) : S = T := by
+  classical
+  set R := nthRootsFinset n (1 : F) with hR
+  have hSsub : S ⊆ R := fun x hx => (mem_nthRootsFinset hn 1).mpr (hS x hx)
+  have hTsub : T ⊆ R := fun x hx => (mem_nthRootsFinset hn 1).mpr (hT x hx)
+  have hRcard : R.card ≤ n := by
+    rw [hR, nthRootsFinset]
+    exact (Multiset.toFinset_card_le _).trans (card_nthRoots n 1)
+  have hSR : S = R := Finset.eq_of_subset_of_card_le hSsub (by rw [hScard]; exact hRcard)
+  have hTR : T = R := Finset.eq_of_subset_of_card_le hTsub (by rw [hTcard]; exact hRcard)
+  rw [hSR, hTR]
+
+/-- Order of `SL(2, 𝔽_q)` for `q = pⁿ` (Butler tex 2054, "Proposition ordersl2q":
+`|SL(2,𝔽_q)| = q(q²-1)`), specialised to the `GaloisField` realisation of `𝔽_q`. Feeds the final
+cardinality match `|G̃| = |SL(2,𝔽_q)|` concluding Cases Va (and, mutatis mutandis, Vb). -/
+lemma caseV_card_SL2_GaloisField {p : ℕ} [Fact (Nat.Prime p)] (n : ℕ+) :
+    Nat.card SL(2, GaloisField p n.val) = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ) := by
+  haveI : Fintype (GaloisField p n.val) := Fintype.ofFinite _
+  have hcard : Fintype.card (GaloisField p n.val) = p ^ (n : ℕ) := by
+    rw [Fintype.card_eq_nat_card]; exact GaloisField.card p n.val n.pos.ne'
+  have hp1 : 1 < p := (Fact.out : Nat.Prime p).one_lt
+  have hq1 : p ^ (n : ℕ) > 1 := Nat.one_lt_pow n.pos.ne' hp1
+  rw [Nat.card_eq_fintype_card, SL_card hcard hq1]
+
+/-- (SORRY) Case Va, Butler tex 1953-2054 (`i = 1` or `e = 1`, so `ei = 2`, `|K| = q - 1`):
+`G ≅ SL(2, 𝔽_q)` with `𝔽_q = GaloisField p n`, `q = pⁿ`.
+
+ROUTE MAP (the geometric normalization of Steps 1-3 is shared verbatim with `caseV_b`).
+
+* **Step 1 — projective-line normalization (tex 1953-1985).** By Butler 6.7 each noncentral
+  element of the Sylow `Q` shares one fixed point `P₁ ∈ ℒ` on the projective line, and each
+  noncentral element of `K` fixes `P₁` and one other point `P₂` (6.8(v)). For noncentral `u ∈ Q`
+  set `P₃ = u • P₂`; then `P₁, P₂, P₃` are distinct. Triple transitivity (Ch5
+  `SL2_triptrans_on_projectivization`, Butler 6.6) supplies `v ∈ L` sending `P₁,P₂,P₃` to
+  `R₁ = ⟦0,1⟧`, `R₂ = ⟦1,0⟧`, `R₃ = ⟦1,1⟧`. Passing to `G̃ = v G v⁻¹` (WLOG, `G̃` conjugate to
+  `G`): `vQv⁻¹` fixes `R₁` and has order-`p` noncentral elements, so lands in the lower shears
+  `T` (repo `s`/`S`); `vKv⁻¹` fixes `R₁, R₂` so lands in the diagonals `D` (repo `d`); and the
+  `R₂ ↦ R₃` computation pins `u = t₁`. Net: `Q ⊆ T`, `K ⊆ D`, `u = t₁`.
+* **Step 2 — the anti-diagonal `y` (tex 1987-2011).** Let `x` generate `K`; by 6.8(iv) pick
+  `y ∈ N_G̃(K) ∖ K` with `y x = x⁻¹ y`. Since `x` fixes `R₁`, `y` maps `{R₁,R₂}` to itself;
+  `y R₁ = R₁` would force `y ∈ D` (contradiction, `D` centralises `x`), so `y` interchanges
+  `R₁ ↔ R₂`, whence `y = d_ρ w = !![0, ρ; -ρ⁻¹, 0]` is anti-diagonal (repo `d ρ * w`).
+* **Step 3 — double-coset partition (tex 2013-2038).** Counting right cosets,
+  `[N_G̃(Q) y Q : N_G̃(Q)] = [Q : Q ∩ y⁻¹ N_G̃(Q) y] = q` (the intersection is trivial as only
+  `1 ∈ Q` fixes `R₂`), so `|N_G̃(Q) y Q| = q·|N_G̃(Q)|`. The product `t_λ d_ω y t_μ` has nonzero
+  top-right entry (tex `onemore`) hence lies outside `H = Stab(R₁)` (lower-triangulars) ⊇ `N_G̃(Q)`,
+  so `N_G̃(Q) y Q ∩ N_G̃(Q) = ∅`; and `(q+1)|N_G̃(Q)| = (q+1)·e·q·g₁ = e·i·q·(q²-1)/2 = |G̃|`.
+  Therefore `G̃ = N_G̃(Q) y Q ⊍ N_G̃(Q)` (tex `gsplit`).
+* **Step 4 — `𝕄 = 𝔽_q^*` (tex 2040-2054, Va-specific).** Set `ℕ = {λ : t_λ ∈ Q}`,
+  `𝕄 = {ω : d_ω ∈ K}`. For `t_λ ∈ Q ∖ Z`, `y t_λ y⁻¹ ∉ H` lands in `N_G̃(Q) y Q`; equating
+  top-right entries gives `ω = -ρλ` (tex `mattr`). Taking `λ = -1` shows `d_ρ ∈ K`, so `y` may be
+  replaced by `w` (`ρ = 1`), simplifying to `ω = -λ` (`mattr2`). Since `ei = 2` and `|K| = q-1`,
+  every `ω ∈ 𝕄` is a `(q-1)`-th root of unity; the subfield `𝔽_q = R F p n` (repo `R`, tex 1351
+  `subfield`) contributes `q-1` such roots via `𝔽_q^*`. Both sets have cardinality `q-1`, so
+  `𝕄 = 𝔽_q^*` by `caseV_finset_eq_of_card_of_pow_eq_one`; with `mattr2` and `0 ∈ ℕ`, `ℕ = 𝔽_q`.
+* **Step 5 — conclusion (tex 2054).** Every element of `G̃` is `t_λ d_ω` or `t_λ d_ω w t_μ` with
+  `λ, μ ∈ 𝔽_q`, `ω ∈ 𝔽_q^*`, so `G̃ ⊆ SL(2, 𝔽_q)`; as
+  `|SL(2, 𝔽_q)| = q(q²-1) = |G̃|` (`caseV_card_SL2_GaloisField`), `G̃ = SL(2, 𝔽_q)`. Conjugacy
+  `G̃ = vGv⁻¹` and the subfield realisation `R F p n ≃* GaloisField p n` give
+  `G ≅ SL(2, GaloisField p n)` (`m := n`).
+
+RESIDUALS (multi-session; not yet mechanised): Steps 1-3 (the entire projective-line normalization
+and double-coset partition) must be transcribed through Ch5's `Projectivization` /
+`SL2_triptrans_on_projectivization` API — the largest block, and shared with `caseV_b`; Step 4's
+identification of the abstract `𝕄`, `ℕ` with concrete `Finset`s and of `𝔽_q^*` with `(R F p n)ˣ`;
+and Step 5's subfield iso `R F p n ≃* GaloisField p n` plus the `SL(2,·)` transport
+(`SL2_mulEquiv_of_ringEquiv`). The two helpers above (`caseV_finset_eq_of_card_of_pow_eq_one`,
+`caseV_card_SL2_GaloisField`) discharge the root-count crux (Step 4) and the final cardinality
+match (Step 5). -/
 lemma caseV_a {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -4442,7 +4747,8 @@ lemma caseV_b {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     (he2 : Nat.card (center SL(2,F)) = 2)
     (hshape1 : ga = q - 1) (hshape2 : gb = q + 1)
     (hshape3 : g = q * (q ^ 2 - 1)) :
-    ∃ m : ℕ+, ∃ π : (GaloisField p (2 * m.val))ˣ, Isomorphic G (SL2_join_d p m π) := by
+    ∃ m : ℕ+, ∃ π : (GaloisField p (2 * m.val))ˣ,
+      SL2_join_d_pi_spec p m π ∧ Isomorphic G (SL2_join_d p m π) := by
   sorry
 
 /-- Core dispatch: proven modulo the sorried sub-lemmas above. -/
@@ -4468,7 +4774,8 @@ private lemma caseV_core {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [Decida
     (hkga : k = ga) (hga_ge : 2 ≤ ga) (hgb_ge : 2 ≤ gb) (hgpos : 1 ≤ g) (hq2 : 2 ≤ q)
     (heq' : ClassEquation g q k (s := 0) (t := 2) (fun i => i.elim0) ![ga, gb]) :
     (∃ m : ℕ+, Isomorphic G SL(2, GaloisField p m.val)) ∨
-      (∃ m : ℕ+, ∃ π : (GaloisField p (2 * m.val))ˣ, Isomorphic G (SL2_join_d p m π)) ∨
+      (∃ m : ℕ+, ∃ π : (GaloisField p (2 * m.val))ˣ,
+        SL2_join_d_pi_spec p m π ∧ Isomorphic G (SL2_join_d p m π)) ∨
       (p = 3 ∧ Isomorphic G SL(2, ZMod 5)) := by
   obtain ⟨n, hn⟩ := IsPGroup.iff_card.mp Q.isPGroup'
   rw [hq] at hn
@@ -4604,7 +4911,8 @@ lemma case_V {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     (heq : 1 ≤ k ∧ 2 ≤ g1 ∧ 2 ≤ g2 ∧ 2 * g1 ≤ g ∧ 2 * g2 ≤ g ∧
       ClassEquation g q k (s := 0) (t := 2) (fun i => i.elim0) ![g1, g2]) :
     (∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)) ∨
-      (∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ, Isomorphic G (SL2_join_d p k π)) ∨
+      (∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ,
+        SL2_join_d_pi_spec p k π ∧ Isomorphic G (SL2_join_d p k π)) ∨
       (p = 3 ∧ Isomorphic G SL(2, ZMod 5)) := by
   obtain ⟨hk_ge, hg1_ge, hg2_ge, hg_ge1, hg_ge2, heq'⟩ := heq
   have hgpos : 1 ≤ g := by omega
@@ -5837,7 +6145,8 @@ theorem dicksons_classification_theorem_class_II {F : Type*} [Field F] [IsAlgClo
       (p = 2 ∧ ∃ n : ℕ, Odd n ∧ Isomorphic G (DihedralGroup n)) ∨
       (p = 3 ∧ Isomorphic G SL(2, ZMod 5)) ∨
       (∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)) ∨
-      (∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ, Isomorphic G (SL2_join_d p k π))
+      (∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ,
+        SL2_join_d_pi_spec p k π ∧ Isomorphic G (SL2_join_d p k π))
   := by
   have hG_ne : G ≠ center SL(2,F) := by
     intro hEq
@@ -6208,10 +6517,10 @@ back along the 2-to-1 covering `SL(2, F̄_p) → PGL(2, F̄_p)` (surjective with
 `center SL(2,F̄_p) = {±1}` since `F̄_p` is algebraically closed,
 `Ch4_PGLIsoPSLOverAlgClosedField`) and pushing each disjunct of the `SL₂`-classification of the
 pullback down through the quotient by the order-`2` kernel. The `pgl_descent_*` lemmas below are
-the per-disjunct quotient identifications; four genuinely missing recognition facts are isolated
-as documented `sorry`s (`pgl_descent_PSL2_ZMod3_iso_alternating`,
-`pgl_descent_PSL2_ZMod5_iso_alternating`, `pgl_descent_binaryOctahedral_quotient`,
-`pgl_descent_SL2_join_d_quotient`). -/
+the per-disjunct quotient identifications; two genuinely missing recognition facts remain
+isolated as documented `sorry`s (`pgl_descent_binaryOctahedral_quotient`,
+`pgl_descent_SL2_join_d_quotient`); `pgl_descent_PSL2_ZMod3_iso_alternating` and
+`pgl_descent_PSL2_ZMod5_iso_alternating` are fully proven (Waves 18/20). -/
 
 /-- In a field of characteristic `p ≠ 2`, `2 ≠ 0`. -/
 lemma pgl_descent_neZero_two (K : Type*) [Field K] (p : ℕ) [Fact (Nat.Prime p)] [CharP K p]
@@ -6220,6 +6529,168 @@ lemma pgl_descent_neZero_two (K : Type*) [Field K] (p : ℕ) [Fact (Nat.Prime p)
   have h2 : ((2 : ℕ) : K) = 0 := by exact_mod_cast h
   have hdvd : p ∣ 2 := (CharP.cast_eq_zero_iff K p 2).mp h2
   exact (Nat.prime_dvd_prime_iff_eq Fact.out Nat.prime_two).mp hdvd
+
+/-! ### `SL(2, 𝔽₅)` and `PSL(2, 𝔽₅)` are perfect (transvection generation)
+
+These feed the `PSL(2,5) ≅ A₅` leaf (`pgl_descent_PSL2_ZMod5_iso_alternating`): the sign
+character of any permutation representation of `PSL(2,5)` is trivial, so the image lands in the
+alternating group. -/
+
+/-- coe of the mathlib upper transvection to `!![1,c;0,1]`. -/
+lemma pgl_descent_uc_coe {F : Type*} [Field F] (c : F) :
+    ((SpecialLinearGroup.transvection (zero_ne_one) c : SL(2, F)) :
+      Matrix (Fin 2) (Fin 2) F) = !![1, c; 0, 1] := by
+  rw [SpecialLinearGroup.transvection_coe]
+  apply Matrix.ext; intro i j
+  fin_cases i <;> fin_cases j <;> simp [Matrix.single_apply]
+
+/-- coe of `w` to `!![0,1;-1,0]`. -/
+lemma pgl_descent_w_coe {F : Type*} [Field F] :
+    ((SpecialMatrices.w : SL(2, F)) : Matrix (Fin 2) (Fin 2) F) = !![0, 1; -1, 0] := rfl
+
+/-- `w * uc c * w⁻¹ = s (-c)` : conjugating the upper shear by `w` gives a lower shear. -/
+lemma pgl_descent_s_eq_conj {F : Type*} [Field F] (c : F) :
+    SpecialMatrices.s (-c) =
+      SpecialMatrices.w * (SpecialLinearGroup.transvection (zero_ne_one) c) *
+        (SpecialMatrices.w)⁻¹ := by
+  rw [SpecialMatrices.inv_w_eq_neg_w]
+  apply Matrix.SpecialLinearGroup.ext
+  intro i j
+  fin_cases i <;> fin_cases j <;>
+    simp [SpecialMatrices.s, Matrix.SpecialLinearGroup.coe_mul,
+      Matrix.SpecialLinearGroup.coe_neg, pgl_descent_uc_coe, pgl_descent_w_coe, Matrix.neg_apply]
+
+/-- `uc 1 * s(-1) * uc 1 = w`. -/
+lemma pgl_descent_w_eq_prod {F : Type*} [Field F] :
+    (SpecialMatrices.w : SL(2, F)) =
+      (SpecialLinearGroup.transvection (zero_ne_one) 1) * SpecialMatrices.s (-1) *
+        (SpecialLinearGroup.transvection (zero_ne_one) 1) := by
+  apply Matrix.SpecialLinearGroup.ext
+  intro i j
+  fin_cases i <;> fin_cases j <;>
+    simp [SpecialMatrices.s, SpecialMatrices.w, SpecialLinearGroup.transvection_coe,
+      Matrix.single_apply, Matrix.mul_apply, Fin.sum_univ_two,
+      Matrix.SpecialLinearGroup.coe_mul, Matrix.add_apply, Matrix.one_apply]
+
+/-- `uc δ * s(-δ⁻¹) * uc δ = dw δ`. -/
+lemma pgl_descent_dw_eq_prod {F : Type*} [Field F] (δ : Fˣ) :
+    (SpecialMatrices.dw δ : SL(2, F)) =
+      (SpecialLinearGroup.transvection (zero_ne_one) (δ : F)) *
+        SpecialMatrices.s (-((δ : F)⁻¹)) *
+        (SpecialLinearGroup.transvection (zero_ne_one) (δ : F)) := by
+  apply Matrix.SpecialLinearGroup.ext
+  intro i j
+  fin_cases i <;> fin_cases j <;>
+    simp [SpecialMatrices.s, SpecialMatrices.dw, SpecialLinearGroup.transvection_coe,
+      Matrix.single_apply, Matrix.mul_apply, Fin.sum_univ_two,
+      Matrix.SpecialLinearGroup.coe_mul, Matrix.add_apply, Matrix.one_apply,
+      mul_inv_cancel₀ δ.ne_zero]
+
+/-- **Generation / perfectness of `SL(2, F)`.** If `F` has an element `a ≠ 0` with `a² ≠ 1`
+(i.e. `F` is not `𝔽₂` or `𝔽₃`), then `SL(2, F)` is perfect: every element is a product of
+transvections and det-`1` diagonals (mathlib Gaussian elimination
+`Matrix.diagonal_transvection_induction`), the upper transvections lie in the commutator subgroup
+(`transvection_mem_commutator`), and lower transvections/diagonals follow by normality of the
+commutator together with an explicit shear decomposition. -/
+theorem pgl_descent_SL2_commutator_eq_top {F : Type*} [Field F]
+    (a : F) (ha : a ≠ 0) (ha2 : a ^ 2 ≠ 1) :
+    commutator SL(2, F) = ⊤ := by
+  haveI hN : (commutator SL(2, F)).Normal := inferInstance
+  have huc : ∀ c : F, (SpecialLinearGroup.transvection (zero_ne_one) c : SL(2, F)) ∈
+      commutator SL(2, F) :=
+    fun c => transvection_mem_commutator a ha ha2 c
+  have hs : ∀ σ : F, (SpecialMatrices.s σ : SL(2, F)) ∈ commutator SL(2, F) := by
+    intro σ
+    have := hN.conj_mem _ (huc (-σ)) SpecialMatrices.w
+    rw [← pgl_descent_s_eq_conj (-σ), neg_neg] at this
+    exact this
+  have hw : (SpecialMatrices.w : SL(2, F)) ∈ commutator SL(2, F) := by
+    rw [pgl_descent_w_eq_prod]
+    exact (commutator SL(2, F)).mul_mem
+      ((commutator SL(2, F)).mul_mem (huc 1) (hs (-1))) (huc 1)
+  have hd : ∀ δ : Fˣ, (SpecialMatrices.d δ : SL(2, F)) ∈ commutator SL(2, F) := by
+    intro δ
+    have hdw : (SpecialMatrices.dw δ : SL(2, F)) ∈ commutator SL(2, F) := by
+      rw [pgl_descent_dw_eq_prod]
+      exact (commutator SL(2, F)).mul_mem
+        ((commutator SL(2, F)).mul_mem (huc _) (hs _)) (huc _)
+    have hid : SpecialMatrices.d δ = SpecialMatrices.dw δ * (SpecialMatrices.w)⁻¹ := by
+      rw [← SpecialMatrices.d_mul_w_eq_dw, mul_assoc, mul_inv_cancel, mul_one]
+    rw [hid]
+    exact (commutator SL(2, F)).mul_mem hdw ((commutator SL(2, F)).inv_mem hw)
+  -- generation via Gaussian elimination
+  rw [eq_top_iff]
+  intro A _
+  obtain ⟨S, hScoe, hmem⟩ := Matrix.diagonal_transvection_induction
+    (fun M => ∃ S : SL(2, F), (S : Matrix (Fin 2) (Fin 2) F) = M ∧ S ∈ commutator SL(2, F))
+    (A : Matrix (Fin 2) (Fin 2) F)
+    (fun D hD => by
+      have hdet : D 0 * D 1 = 1 := by
+        have hd1 : (Matrix.diagonal D).det = 1 := by rw [hD]; exact A.2
+        rwa [Matrix.det_diagonal, Fin.prod_univ_two] at hd1
+      have hD0 : D 0 ≠ 0 := by
+        rintro h0; rw [h0, zero_mul] at hdet; exact zero_ne_one hdet
+      refine ⟨SpecialMatrices.d (Units.mk0 (D 0) hD0), ?_, hd _⟩
+      rw [SpecialMatrices.d_coe_eq]
+      apply Matrix.ext; intro i j
+      fin_cases i <;> fin_cases j <;> simp [Matrix.diagonal, Units.val_mk0]
+      · rw [inv_eq_one_div, div_eq_iff hD0, mul_comm]; exact hdet.symm)
+    (fun t => by
+      obtain ⟨i, j, hij, c⟩ := t
+      fin_cases i <;> fin_cases j
+      · exact absurd rfl hij
+      · refine ⟨SpecialLinearGroup.transvection (zero_ne_one) c, ?_, huc c⟩
+        rw [pgl_descent_uc_coe]
+        apply Matrix.ext; intro a b
+        fin_cases a <;> fin_cases b <;>
+          simp [TransvectionStruct.toMatrix, Matrix.transvection, Matrix.single_apply]
+      · refine ⟨SpecialMatrices.s c, ?_, hs c⟩
+        apply Matrix.ext; intro a b
+        fin_cases a <;> fin_cases b <;>
+          simp [SpecialMatrices.s, TransvectionStruct.toMatrix, Matrix.transvection,
+            Matrix.single_apply]
+      · exact absurd rfl hij)
+    (fun A' B' hA' hB' => by
+      obtain ⟨SA, hSA, hmA⟩ := hA'
+      obtain ⟨SB, hSB, hmB⟩ := hB'
+      refine ⟨SA * SB, ?_, (commutator SL(2, F)).mul_mem hmA hmB⟩
+      rw [← hSA, ← hSB]
+      exact Matrix.SpecialLinearGroup.coe_mul SA SB)
+  have hSA : S = A :=
+    (Matrix.SpecialLinearGroup.ext_iff S A).mpr (fun i j => congrFun (congrFun hScoe i) j)
+  rwa [hSA] at hmem
+
+/-- `SL(2, ZMod 5)` is perfect. -/
+theorem pgl_descent_SL2_ZMod5_isPerfect : Group.IsPerfect SL(2, ZMod 5) :=
+  (Group.isPerfect_def).mpr
+    (pgl_descent_SL2_commutator_eq_top (2 : ZMod 5) (by decide) (by decide))
+
+/-- `PSL(2, ZMod 5)` is perfect (quotient of a perfect group by its center). -/
+theorem pgl_descent_PSL2_ZMod5_isPerfect : Group.IsPerfect (PSL (Fin 2) (ZMod 5)) := by
+  haveI := pgl_descent_SL2_ZMod5_isPerfect
+  infer_instance
+
+/-- **Sign character is trivial on `PSL(2,5)`.** Any homomorphism `PSL(2,5) →* Perm (Fin m)` has
+its range inside the alternating group: the sign character `sign ∘ g : PSL(2,5) →* ℤˣ` kills the
+commutator subgroup, which by perfectness is all of `PSL(2,5)`. -/
+theorem pgl_descent_PSL2_ZMod5_range_le_alternatingGroup {m : ℕ}
+    (g : PSL (Fin 2) (ZMod 5) →* Equiv.Perm (Fin m)) :
+    g.range ≤ alternatingGroup (Fin m) := by
+  haveI := pgl_descent_PSL2_ZMod5_isPerfect
+  set χ : PSL (Fin 2) (ZMod 5) →* ℤˣ := Equiv.Perm.sign.comp g with hχ
+  have hker : commutator (PSL (Fin 2) (ZMod 5)) ≤ χ.ker := by
+    rw [_root_.commutator_def, Subgroup.commutator_le]
+    intro p _ q _
+    rw [MonoidHom.mem_ker, _root_.map_commutatorElement]
+    exact commutatorElement_eq_one_iff_commute.mpr (Commute.all _ _)
+  intro y hy
+  obtain ⟨x, rfl⟩ := hy
+  have hx : x ∈ χ.ker := hker (Group.IsPerfect.mem_commutator)
+  rw [MonoidHom.mem_ker] at hx
+  rw [Equiv.Perm.mem_alternatingGroup]
+  have hval : χ x = Equiv.Perm.sign (g x) := rfl
+  rw [hval] at hx
+  exact hx
 
 /-- A subgroup of order `2` is generated by an involution. -/
 lemma pgl_descent_exists_involution_generator {T : Type*} [Group T] (W : Subgroup T)
@@ -6572,39 +7043,83 @@ lemma pgl_descent_PSL2_ZMod3_iso_alternating :
     (Subgroup.eq_of_le_of_card_ge hAle hle).symm
   exact ⟨(MonoidHom.ofInjective hg_inj).trans (MulEquiv.subgroupCongr hRA)⟩
 
+/-- `(2 : ZMod 5) ≠ 0` (as a named lemma so `decide` runs with a concrete, non-metavariable
+proposition; used to supply the `NeZero (2 : ZMod 5)` instance below). -/
+lemma pgl_descent_two_ne_ZMod5 : (2 : ZMod 5) ≠ 0 := by decide
+
+set_option maxRecDepth 40000 in
+/-- `|SL(2,5)| = 120`. Proven by `decide`, but forcing the *computable* `Subtype.fintype`
+instance for `SL(2, ZMod 5)` (as in `pgl_descent_card_SL2_ZMod3`), and raising `maxRecDepth`
+for the kernel reduction of the `120`-element enumeration. -/
+lemma pgl_descent_card_SL2_ZMod5 : Nat.card SL(2, ZMod 5) = 120 := by
+  letI : Fintype SL(2, ZMod 5) := Subtype.fintype _
+  rw [Nat.card_eq_fintype_card]; decide
+
 /-- `PSL(2,5) ≅ A₅` (feeds Class I item (iv) / Class II item (viii), tex ~2088-2113: Butler's
 Case Vd identifies `G/Z` as a simple group of order `60`, and every simple group of order `60`
 is `≅ A₅`).
 
-VERIFIED FOUNDATION (Wave 19; compiled green in scratch, mirrors the A₄ sibling
-`pgl_descent_PSL2_ZMod3_iso_alternating` up to the divergence point): `Nat.card SL(2,5) = 120`
-(`decide` after `letI : Fintype SL(2, ZMod 5) := Subtype.fintype _`), hence `Nat.card PSL(2,5) = 60`
+Proof (Waves 19-20): `|SL(2,5)| = 120` (`pgl_descent_card_SL2_ZMod5`), hence `|PSL(2,5)| = 60`
 (`center_SL2_eq_Z`, `card_Z_eq_two_of_two_ne_zero`, `card_mul_index`); `ℙ¹(𝔽₅)` has `6` points
 (`Projectivization.card_of_finrank_two`), giving an injective
 `g : PSL(2,5) →* Equiv.Perm (Fin 6)` (`PSLAction.toPermHom`, `toPermHom_injective`,
-`Equiv.permCongrHom`) with `Nat.card g.range = 60`.
-
-REMAINING (two independent multi-session gaps; unlike the A₄ case the image has order `60`,
-index `12` in `S₆`, so the index-2 trick does NOT finish):
-1. `g.range ≤ alternatingGroup (Fin 6)`. RECOMMENDED route (bypasses proving `PSL(2,5)` simple,
-   for which there is no mathlib/repo support -- `caseV_d_quotient_simple` is itself sorried):
-   reduce to `PSL(2,5)` perfect ⟸ `SL(2,5)` perfect ⟸ transvections generate `SL(2,5)`; then the
-   sign character `sign ∘ g : PSL(2,5) →* ℤˣ` is trivial. Mathlib has
-   `Matrix.SpecialLinearGroup.transvection_mem_commutator` (each transvection `∈ commutator`) but
-   LACKS the generation half `⊤ = closure {transvections}` (only Gaussian elimination in
-   `LinearAlgebra/Matrix/Transvection.lean`, not stated as a subgroup-closure fact).
-2. Recognize the index-`6` subgroup `g.range` of `A₆` as `A₅` (the crux, common to all routes,
-   does NOT need `PSL(2,5)` simple -- only `A₆` simple): `Ch7_SimpleGroup60.lean` step
-   `isoAlternatingGroupFive_of_index_six`, STILL MISSING. Ingredients present: `A₆` simple
-   (`alternatingGroup.isSimpleGroup`), `normalCore_eq_ker` (coset-action kernel),
-   `stabilizer_quotient`, `alternatingGroup.ofSubtype`, and that file's
-   `range_le_alternatingGroup_of_isSimpleGroup`.
-   `Ch7_SimpleGroup60.lean` is NOT imported here and still lacks steps `toPermHom_sylow_injective`
-   (2), `isoAlternatingGroupFive_of_index_six` (5), `isSimpleGroup_card_sixty_iso_alternating` (6).
-Sorried pending gap 1 + step (5). -/
+`Equiv.permCongrHom`). Unlike the `A₄` sibling the image has order `60`, index `12` in `S₆`, so
+the index-2 trick does not finish: instead `g.range ≤ alternatingGroup (Fin 6)` by the sign
+trick (`pgl_descent_PSL2_ZMod5_range_le_alternatingGroup`, via perfectness of `PSL(2,5)`), the
+corestriction of `g` to `A₆` has range of order `60` and hence index `360 / 60 = 6`, and every
+index-`6` subgroup of `A₆` is `≅ A₅` (`Ch7SimpleGroup60.isoAlternatingGroupFive_of_index_six`,
+via the coset action and simplicity of `A₆`). -/
 lemma pgl_descent_PSL2_ZMod5_iso_alternating :
     Nonempty (PSL (Fin 2) (ZMod 5) ≃* alternatingGroup (Fin 5)) := by
-  sorry
+  haveI : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+  haveI : NeZero (2 : ZMod 5) := ⟨pgl_descent_two_ne_ZMod5⟩
+  -- The projective line `ℙ¹(𝔽₅)` has 6 points.
+  haveI : Fintype (Projectivization (ZMod 5) (Fin 2 → ZMod 5)) := Fintype.ofFinite _
+  have hcardP : Nat.card (Projectivization (ZMod 5) (Fin 2 → ZMod 5)) = 6 := by
+    have h2 : Module.finrank (ZMod 5) (Fin 2 → ZMod 5) = 2 := Module.finrank_fin_fun (ZMod 5)
+    have hk : Nat.card (ZMod 5) = 5 := by rw [Nat.card_eq_fintype_card, ZMod.card]
+    rw [Projectivization.card_of_finrank_two (ZMod 5) (Fin 2 → ZMod 5) h2, hk]
+  have hcardP' : Fintype.card (Projectivization (ZMod 5) (Fin 2 → ZMod 5)) = 6 := by
+    rw [← Nat.card_eq_fintype_card]; exact hcardP
+  let eP : Projectivization (ZMod 5) (Fin 2 → ZMod 5) ≃ Fin 6 := Fintype.equivFinOfCardEq hcardP'
+  -- The faithful action of PSL(2,5) on ℙ¹, transported to `Fin 6`.
+  let f : PSL (Fin 2) (ZMod 5) →* Equiv.Perm (Projectivization (ZMod 5) (Fin 2 → ZMod 5)) :=
+    Projectivization.PSLAction.toPermHom
+  have hf_inj : Function.Injective f :=
+    Matrix.ProjectiveSpecialLinearGroup.toPermHom_injective (K := ZMod 5) (ι := Fin 2)
+  let g : PSL (Fin 2) (ZMod 5) →* Equiv.Perm (Fin 6) := (eP.permCongrHom.toMonoidHom).comp f
+  have hg_inj : Function.Injective g := fun a b hab =>
+    hf_inj (eP.permCongrHom.injective hab)
+  -- `|PSL(2,5)| = 60`.
+  have hcardPSL : Nat.card (PSL (Fin 2) (ZMod 5)) = 60 := by
+    have hZ : Nat.card (center SL(2, ZMod 5)) = 2 := by
+      rw [SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.card_Z_eq_two_of_two_ne_zero]
+    have hidx : Nat.card (center SL(2, ZMod 5)) * (center SL(2, ZMod 5)).index
+        = Nat.card SL(2, ZMod 5) := Subgroup.card_mul_index _
+    have hPSLidx : Nat.card (PSL (Fin 2) (ZMod 5)) = (center SL(2, ZMod 5)).index := rfl
+    rw [hZ, pgl_descent_card_SL2_ZMod5] at hidx
+    rw [hPSLidx]; omega
+  -- `g.range ≤ A₆` (sign trick via perfectness), so corestrict `g` to `A₆`.
+  have hmem : ∀ a, g a ∈ alternatingGroup (Fin 6) := fun a =>
+    pgl_descent_PSL2_ZMod5_range_le_alternatingGroup g (MonoidHom.mem_range.mpr ⟨a, rfl⟩)
+  let g' : PSL (Fin 2) (ZMod 5) →* alternatingGroup (Fin 6) :=
+    g.codRestrict (alternatingGroup (Fin 6)) hmem
+  have hg'inj : Function.Injective g' :=
+    (MonoidHom.injective_codRestrict g (alternatingGroup (Fin 6)) hmem).mpr hg_inj
+  -- `g'.range` has order `60`, hence index `6` in `A₆` (order `360`).
+  have hcardH : Nat.card ↥(g'.range) = 60 :=
+    (Nat.card_congr (MonoidHom.ofInjective hg'inj).toEquiv).symm.trans hcardPSL
+  have hperm : Nat.card (Equiv.Perm (Fin 6)) = 720 := by
+    rw [Nat.card_eq_fintype_card, Fintype.card_perm, Fintype.card_fin]; rfl
+  have hcardA : Nat.card (alternatingGroup (Fin 6)) = 360 := by
+    have h := two_mul_nat_card_alternatingGroup (α := Fin 6)
+    rw [hperm] at h; omega
+  have hHindex : g'.range.index = 6 := by
+    have h := Subgroup.card_mul_index g'.range
+    rw [hcardH, hcardA] at h; omega
+  -- Any index-`6` subgroup of `A₆` is `≅ A₅`.
+  exact ⟨(MonoidHom.ofInjective hg'inj).trans
+    (Ch7SimpleGroup60.isoAlternatingGroupFive_of_index_six g'.range hHindex)⟩
 
 /-- `SL(2,3)` modulo any order-`2` subgroup is `A₄` (the subgroup is forced to be the center
 `{±1}` by `pgl_descent_card_two_eq_center_SL2`; the residual gap is exactly
@@ -6618,7 +7133,7 @@ lemma pgl_descent_SL2_ZMod3_quotient (W : Subgroup SL(2, ZMod 3)) [W.Normal]
     (pgl_descent_card_two_eq_center_SL2 W hW)).trans e⟩
 
 /-- `SL(2,5)` modulo any order-`2` subgroup is `A₅` (the subgroup is forced to be the center
-`{±1}` by `pgl_descent_card_two_eq_center_SL2`; the residual gap is exactly
+`{±1}` by `pgl_descent_card_two_eq_center_SL2`, then apply
 `pgl_descent_PSL2_ZMod5_iso_alternating`). -/
 lemma pgl_descent_SL2_ZMod5_quotient (W : Subgroup SL(2, ZMod 5)) [W.Normal]
     (hW : Nat.card W = 2) :
@@ -6640,15 +7155,82 @@ lemma pgl_descent_binaryOctahedral_quotient (W : Subgroup BinaryOctahedralGroup)
     Nonempty ((BinaryOctahedralGroup ⧸ W) ≃* Equiv.Perm (Fin 4)) := by
   sorry
 
-/-- `⟨SL(2,𝔽_q), d_π⟩ ⧸ {±1} ≅ PGL(2,𝔽_q)` (feeds Class II item (x), tex 2213-2254, through
-the descent; README item 2: `H` conjugate to `PGL₂(𝔽_{ℓ^r})`). Missing infrastructure: the
-identification sends `SL(2,𝔽_q)` onto `PSL(2,𝔽_q)` and `d_π = diag(π, π⁻¹)` (with
-`π² ∈ 𝔽_q` a nonsquare) to the class of `diag(1, π⁻²) ∈ GL(2,𝔽_q)`, which together with
-`PSL₂` generates `PGL₂(𝔽_q)` (index `2` for odd `q`); none of the `PGL(2,𝔽_q)`-side machinery
-(the `PSL ≤ PGL` index-`2` decomposition over a *finite*, non-algebraically-closed field)
-exists in the repo or mathlib. Sorried pending that. -/
+/-- The center of `GL(2, 𝔽_q)` is the scalar torus, of order `q-1`
+(`GeneralLinearGroup.center_eq_range_scalar` + `Matrix.scalar` injective + `Fintype.card_units`).
+A `pgl_descent_` cardinality helper (Wave 20), reusable for `|PGL(2,q)|`. -/
+lemma pgl_descent_card_center_GL_two {F : Type*} [Field F] [Fintype F] :
+    Nat.card (center (GL (Fin 2) F)) = Fintype.card F - 1 := by
+  classical
+  have hinj : Function.Injective (GeneralLinearGroup.scalar (Fin 2) (R := F)) := by
+    intro a b hab
+    have hab' : Matrix.scalar (Fin 2) (a : F) = Matrix.scalar (Fin 2) (b : F) :=
+      congrArg Units.val hab
+    exact Units.ext (Matrix.scalar_inj.mp hab')
+  have h2 : Nat.card (Fˣ) = Fintype.card F - 1 := by
+    rw [Nat.card_eq_fintype_card, Fintype.card_units]
+  rw [GeneralLinearGroup.center_eq_range_scalar]
+  exact (Nat.card_congr (MonoidHom.ofInjective hinj).symm.toEquiv).trans h2
+
+/-- `|PGL(2,𝔽_q)| · (q-1) = |GL(2,𝔽_q)|`, since `PGL(2,q) = GL(2,q)/Z` and `|Z| = q-1`
+(`pgl_descent_card_center_GL_two`, `Subgroup.index_mul_card`). Hence
+`|PGL(2,q)| = q(q²-1) = |SL(2,q)|`, matching the right-hand order of the target below. A
+`pgl_descent_` cardinality helper (Wave 20). -/
+lemma pgl_descent_card_PGL_two_mul {F : Type*} [Field F] [Fintype F] :
+    Nat.card (PGL (Fin 2) F) * (Fintype.card F - 1) = Nat.card (GL (Fin 2) F) := by
+  have hc : Nat.card (center (GL (Fin 2) F)) = Fintype.card F - 1 :=
+    pgl_descent_card_center_GL_two
+  have hidx : Nat.card (PGL (Fin 2) F) = (center (GL (Fin 2) F)).index := rfl
+  rw [hidx, ← hc]
+  exact Subgroup.index_mul_card _
+
+/-- `⟨SL(2,𝔽_q), d_π⟩ ⧸ {±1} ≅ PGL(2,𝔽_q)` (feeds Class II item (x), tex 2213-2254; README
+item 2: `H` conjugate to `PGL₂(𝔽_{ℓ^r})`), where `q = p^k`, `SL2_join_d` embeds `SL(2,q)` into
+`SL(2,q²)` and adjoins `d_π = diag(π, π⁻¹)`.
+
+STATEMENT REPAIRED (Wave 20 integration): the original form quantified `π` universally and was
+false; it now requires `hπ : SL2_join_d_pi_spec p k π` (`π ∉ 𝔽_q`, `π² ∈ 𝔽_q`), threaded from
+`caseV_b` through `caseV_core`/`case_V`/`class_II` item (x) to the dispatch here. Original
+falseness analysis, kept for the record: Butler's Vb constructs a *specific* `π`: a generator
+of the order
+`2(q-1)` cyclic torus with `π² ∈ 𝔽_q` a nonsquare, so `d_π² = diag(π²,π⁻²) ∈ SL(2,q)` and
+`⟨SL(2,q), d_π⟩ = SL(2,q) ⊔ SL(2,q)·d_π` has order `2·|SL(2,q)|`, its quotient by `{±1}` order
+`q(q²-1) = |PGL(2,q)|`. But this leaf quantifies `π : 𝔽_{q²}ˣ` *universally* with no `π² ∈ 𝔽_q`
+constraint; the caller (`dicksons_classification_theorem_class_II`, item (x)) only ever feeds
+Butler's `π`. Counterexample to the statement as written: `p = 3`, `k = 1` (`q = 3`), `π` a
+generator of `𝔽_9ˣ` (order 8, `π² ∉ 𝔽_3`). Then `d_π` does not normalize `SL(2,3)` (diagonal
+conjugation scales the off-diagonal by `π²∉𝔽_3`): `d_π·!![1,1;0,1]·d_π⁻¹ = !![1,π²;0,1]` lies in a
+third `SL(2,3)`-coset, so `[⟨SL(2,3),d_π⟩ : SL(2,3)] ≥ 3`, `|⟨SL(2,3),d_π⟩| ≥ 72`; with `W = {±1}`
+(normal, order 2 — hypotheses satisfied) the quotient has order `≥ 36 ≠ 24 = |PGL(2,3)|`, so no
+isomorphism exists. Provable only after narrowing the statement with `π² ∈ 𝔽_q` nonsquare — which
+the wave protocol forbids (statement must not change).
+
+INFRASTRUCTURE (corrects the prior "no `PGL(2,𝔽_q)` machinery exists in repo or mathlib"
+assessment): mathlib v4.32 now has `Matrix.ProjGenLinGroup` (`PGL(n,R) := GL n R ⧸ center (GL n R)`,
+defeq to this repo's Ch4 `PGL`) with `ProjGenLinGroup.map (f : R →+* S) : PGL(n,R) →* PGL(n,S)`
+(field-extension functoriality), `SpecialLinearGroup.toPGL`, `ProjectiveSpecialLinearGroup.toPGL` +
+`toPGL_injective`, and `toPGL_surj_iff [Nonempty n] : Surjective toPGL ↔ ∀ r:Rˣ, ∃ k, k^(card n)=r`.
+For `n = 2` over a finite field of odd order the RHS fails on nonsquares, so `PSL(2,q) ↪ PGL(2,q)`
+has cokernel `𝔽_qˣ/(𝔽_qˣ)²` of order 2 (`FiniteField.unit_isSquare_iff`, `hp2`) — the index-2 fact.
+
+TRUE ROUTE (narrowed statement, `π²∈𝔽_q` nonsquare): `⟨SL(2,q),d_π⟩ = SL(2,q) ⊔ SL(2,q)·d_π` maps
+to `PGL(2,q)` by `s ↦ [s]`, `s·d_π ↦ [s·diag(1,π⁻²)]` (each element is an `𝔽_{q²}ˣ`-scalar multiple
+of a `GL(2,q)` matrix; the `PGL(2,q)`-class kills the scalar). Surjective (image ⊇ `PSL(2,q) =
+SL(2,q).toPGL.range` and the extra generator `[diag(1,π⁻²)] ∉ PSL` by the index-2 fact), kernel
+`{±1}`; finish with `quotientKerEquivOfSurjective`. Remaining true gaps (the statement
+narrowing itself is now done):
+(1) building this coset-wise hom out of a subgroup of `SL(2,q²)` into `PGL(2,q)` by hand — no
+mathlib `map` covers the field-*descent* `q²→q`;
+(2) `[diag(1,π⁻²)] ∉ PSL(2,q)` / index-2: assemblable from `toPGL_surj_iff` + `unit_isSquare_iff`
+but not packaged as a `PGL/PSL ≅ 𝔽_qˣ/sq` cokernel lemma;
+(3) `W = {±1}` forced (normal order-2 ⟹ central; `-1` the unique involution of `SL(2,q²)`,
+`char ≠ 2`) — as in the sibling `pgl_descent_card_two_eq_center_SL2`.
+
+LANDED (Wave 20; `#print axioms`-clean): `pgl_descent_card_center_GL_two` (`|Z(GL(2,q))| = q-1`) and
+`pgl_descent_card_PGL_two_mul` (`|PGL(2,q)|·(q-1) = |GL(2,q)|`, giving `|PGL(2,q)| = |SL(2,q)|` — the
+target's right-hand order). Sorried pending gaps (1)/(2). -/
 lemma pgl_descent_SL2_join_d_quotient {p : ℕ} [Fact (Nat.Prime p)] (hp2 : p ≠ 2) (k : ℕ+)
-    (π : (GaloisField p (2 * k.val))ˣ) (W : Subgroup (SL2_join_d p k π)) [W.Normal]
+    (π : (GaloisField p (2 * k.val))ˣ) (hπ : SL2_join_d_pi_spec p k π)
+    (W : Subgroup (SL2_join_d p k π)) [W.Normal]
     (hW : Nat.card W = 2) :
     Nonempty ((↥(SL2_join_d p k π) ⧸ W) ≃* PGL (Fin 2) (GaloisField p k.val)) := by
   sorry
@@ -6731,9 +7313,9 @@ Status: descent fully implemented. The pullback along `SL(2,F̄_p) → PGL(2,F̄
 pushed down through the order-`2` quotient: cyclic → cyclic, dicyclic → dihedral
 (`pgl_descent_quaternion_quotient`, fully proven), item (vi) → item (vi)
 (`pgl_descent_elementaryAbelian_of_surjective`, fully proven), `SL(2,𝔽_q)` → `PSL(2,𝔽_q)`
-(`pgl_descent_card_two_eq_center_SL2`, fully proven). Remaining gaps are exactly the four
-documented recognition `sorry`s above (`PSL(2,3) ≅ A₄`, `PSL(2,5) ≅ A₅`, `2O/{±1} ≅ S₄`,
-`⟨SL(2,𝔽_q),d_π⟩/{±1} ≅ PGL(2,𝔽_q)`) plus whatever
+(`pgl_descent_card_two_eq_center_SL2`, fully proven), `PSL(2,3) ≅ A₄` and `PSL(2,5) ≅ A₅`
+(fully proven, Waves 18/20). Remaining gaps are exactly the two documented recognition
+`sorry`s above (`2O/{±1} ≅ S₄`, `⟨SL(2,𝔽_q),d_π⟩/{±1} ≅ PGL(2,𝔽_q)`) plus whatever
 `dicksons_classification_theorem_class_I/II` themselves still carry internally. -/
 -- ANCHOR: FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod
 theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ}
@@ -6754,7 +7336,7 @@ theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ}
   by_cases hdvd : p ∣ Nat.card Ghat
   · -- Class II: `p` divides the order of the pullback.
     rcases dicksons_classification_theorem_class_II Ghat hdvd hZle hp2 with
-      ⟨Q, hQe, hQn, K, hQK, hKc, hKcop⟩ | ⟨hp2', -⟩ | ⟨-, h35⟩ | ⟨k, h3q⟩ | ⟨k, π, h3j⟩
+      ⟨Q, hQe, hQn, K, hQK, hKc, hKcop⟩ | ⟨hp2', -⟩ | ⟨-, h35⟩ | ⟨k, h3q⟩ | ⟨k, π, hπs, h3j⟩
     · -- (vi) elementary-abelian-by-cyclic descends to the same structure
       exact Or.inr (Or.inr (Or.inl
         (pgl_descent_elementaryAbelian_of_surjective ψ hψ_surj Q hQe hQn K hQK hKc hKcop)))
@@ -6780,7 +7362,7 @@ theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ}
       obtain ⟨e2⟩ := h3j
       haveI := pgl_descent_ker_map_normal ψ e2
       obtain ⟨e3⟩ := pgl_descent_quotient_transfer ψ hψ_surj e2
-      obtain ⟨e4⟩ := pgl_descent_SL2_join_d_quotient hp2 k π _
+      obtain ⟨e4⟩ := pgl_descent_SL2_join_d_quotient hp2 k π hπs _
         ((pgl_descent_ker_map_card ψ e2).trans hψ_ker_card)
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
         ⟨k, ⟨e3.trans e4⟩⟩))))))

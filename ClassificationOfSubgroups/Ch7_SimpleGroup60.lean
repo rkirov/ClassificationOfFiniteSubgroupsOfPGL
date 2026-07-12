@@ -101,8 +101,12 @@ instance instFiniteSylowFive : Finite (Sylow 5 G) :=
 /-- A Sylow `5`-subgroup of a group of order `60` has order `5`. -/
 theorem sylow_five_card_eq_five (hcard : Nat.card G = 60) (P : Sylow 5 G) :
     Nat.card P = 5 := by
-  rw [P.card_eq_multiplicity, hcard]
-  decide
+  have hf : (60 : ℕ).factorization 5 = 1 := by
+    rw [show (60 : ℕ) = 5 * 12 by norm_num,
+      Nat.factorization_mul (by norm_num) (by norm_num), Finsupp.add_apply,
+      Nat.Prime.factorization_self (by norm_num),
+      Nat.factorization_eq_zero_of_not_dvd (by norm_num)]
+  rw [P.card_eq_multiplicity, hcard, hf, pow_one]
 
 /-- The index of a Sylow `5`-subgroup of a group of order `60` is `12`. -/
 theorem sylow_five_index_eq_twelve (hcard : Nat.card G = 60) (P : Sylow 5 G) :
@@ -118,7 +122,7 @@ theorem card_sylow_five_eq_one_or_six (hcard : Nat.card G = 60) :
     Nat.card (Sylow 5 G) = 1 ∨ Nat.card (Sylow 5 G) = 6 := by
   obtain P := Classical.arbitrary (Sylow 5 G)
   have hdvd : Nat.card (Sylow 5 G) ∣ 12 := (sylow_five_index_eq_twelve hcard P) ▸ P.card_dvd_index
-  have hmod : Nat.card (Sylow 5 G) ≡ 1 [MOD 5] := Sylow.card_sylow_modEq_one 5 G
+  have hmod : Nat.card (Sylow 5 G) ≡ 1 [MOD 5] := card_sylow_modEq_one 5 G
   have hpos : 0 < Nat.card (Sylow 5 G) := Nat.card_pos
   have hle : Nat.card (Sylow 5 G) ≤ 12 := Nat.le_of_dvd (by norm_num) hdvd
   unfold Nat.ModEq at hmod
@@ -132,26 +136,174 @@ theorem card_sylow_five_eq_six (hs : IsSimpleGroup G) (hcard : Nat.card G = 60) 
   rcases card_sylow_five_eq_one_or_six hcard with h1 | h6
   · exfalso
     obtain P := Classical.arbitrary (Sylow 5 G)
-    have hP_unique : ∀ Q : Sylow 5 G, Q = P := by
-      have : Subsingleton (Sylow 5 G) := Nat.card_eq_one_iff_unique.mp h1 |>.1
-      exact fun Q => Subsingleton.elim Q P
-    haveI hPnormal : P.toSubgroup.Normal := by
-      constructor
-      intro n hn g
-      have : g • P = P := hP_unique (g • P)
-      have hmem : g * n * g⁻¹ ∈ (g • P).toSubgroup := by
-        rw [Sylow.pointwise_smul_def]
-        exact ⟨n, hn, rfl⟩
-      rwa [this] at hmem
-    rcases P.toSubgroup.normal.eq_bot_or_eq_top with hbot | htop
-    · have : Nat.card P.toSubgroup = 5 := sylow_five_card_eq_five hcard P
-      rw [hbot] at this
-      simp at this
+    haveI : Subsingleton (Sylow 5 G) := Nat.card_eq_one_iff_unique.mp h1 |>.1
+    have hPnormal : P.toSubgroup.Normal := Sylow.normal_of_subsingleton P
+    rcases hPnormal.eq_bot_or_eq_top with hbot | htop
     · have h5 : Nat.card P.toSubgroup = 5 := sylow_five_card_eq_five hcard P
-      rw [htop] at h5
-      rw [Subgroup.card_top] at h5
-      rw [hcard] at h5
+      rw [hbot] at h5
+      simp at h5
+    · have h5 : Nat.card P.toSubgroup = 5 := sylow_five_card_eq_five hcard P
+      rw [htop, Subgroup.card_top, hcard] at h5
       norm_num at h5
   · exact h6
+
+/-! ### Step 5: an index-`6` subgroup of `A₆` is isomorphic to `A₅`
+
+The crux of the theorem. Given `H ≤ alternatingGroup (Fin 6)` (order `360`) of index `6`, the
+coset action `alternatingGroup (Fin 6) →* Equiv.Perm (Fin 6)` (transported along a chosen bijection
+`(alternatingGroup (Fin 6) ⧸ H) ≃ Fin 6`) is injective (its kernel is `H.normalCore`, which is
+`⊥` since `A₆` is simple and `H ≠ ⊤`), and lands in `alternatingGroup (Fin 6)` by the shared sign
+trick (step 3). The image of `H` under this embedding is the point-stabilizer of `e ⟦1⟧`, i.e. the
+range of `alternatingGroup.ofSubtype {e ⟦1⟧}ᶜ` (even permutations fixing that point). A cardinality
+count (`60 = 60`) shows the containment is an equality, so `H` is isomorphic to the range, which is
+isomorphic to `alternatingGroup ↥{e ⟦1⟧}ᶜ ≃* alternatingGroup (Fin 5)` (a `5`-element index set). -/
+noncomputable def isoAlternatingGroupFive_of_index_six
+    (H : Subgroup (alternatingGroup (Fin 6))) (hH : H.index = 6) :
+    ↥H ≃* alternatingGroup (Fin 5) := by
+  classical
+  haveI hAsimple : IsSimpleGroup (alternatingGroup (Fin 6)) :=
+    alternatingGroup.isSimpleGroup (by rw [Nat.card_eq_fintype_card, Fintype.card_fin]; norm_num)
+  -- Cardinalities.
+  have hcardA : Nat.card (alternatingGroup (Fin 6)) = 360 := by
+    rw [nat_card_alternatingGroup, Nat.card_eq_fintype_card, Fintype.card_fin]; decide
+  have hcardH : Nat.card ↥H = 60 := by
+    have := Subgroup.card_mul_index H
+    rw [hcardA, hH] at this; omega
+  have hcardQ : Nat.card (alternatingGroup (Fin 6) ⧸ H) = 6 := by
+    rw [← Subgroup.index_eq_card]; exact hH
+  -- Faithfulness of the coset action: its kernel is `H.normalCore = ⊥`.
+  have hker : (MulAction.toPermHom (alternatingGroup (Fin 6))
+      (alternatingGroup (Fin 6) ⧸ H)).ker = ⊥ := by
+    rw [← Subgroup.normalCore_eq_ker H]
+    rcases (Subgroup.normalCore_normal H).eq_bot_or_eq_top with h | h
+    · exact h
+    · exfalso
+      have hHtop : H = ⊤ := top_le_iff.mp (h ▸ H.normalCore_le)
+      rw [hHtop, Subgroup.index_top] at hH
+      exact absurd hH (by norm_num)
+  have hφinj : Function.Injective (MulAction.toPermHom (alternatingGroup (Fin 6))
+      (alternatingGroup (Fin 6) ⧸ H)) := (MonoidHom.ker_eq_bot_iff _).mp hker
+  -- Transport the action to `Fin 6` via a chosen bijection `e`.
+  haveI : Fintype (alternatingGroup (Fin 6) ⧸ H) := Fintype.ofFinite _
+  let e : (alternatingGroup (Fin 6) ⧸ H) ≃ Fin 6 :=
+    Fintype.equivFinOfCardEq (by rw [← Nat.card_eq_fintype_card]; exact hcardQ)
+  let φ' : alternatingGroup (Fin 6) →* Equiv.Perm (Fin 6) :=
+    (e.permCongrHom.toMonoidHom).comp
+      (MulAction.toPermHom (alternatingGroup (Fin 6)) (alternatingGroup (Fin 6) ⧸ H))
+  have hφ'inj : Function.Injective φ' :=
+    (EquivLike.injective e.permCongrHom).comp hφinj
+  -- The sign trick (step 3): the image is even.
+  have hrange : φ'.range ≤ alternatingGroup (Fin 6) :=
+    range_le_alternatingGroup_of_isSimpleGroup hAsimple (by rw [hcardA]; norm_num) φ'
+  have hmem : ∀ a, φ' a ∈ alternatingGroup (Fin 6) :=
+    fun a => hrange (MonoidHom.mem_range.mpr ⟨a, rfl⟩)
+  let ψ : alternatingGroup (Fin 6) →* alternatingGroup (Fin 6) :=
+    φ'.codRestrict (alternatingGroup (Fin 6)) hmem
+  have hψinj : Function.Injective ψ :=
+    (MonoidHom.injective_codRestrict φ' (alternatingGroup (Fin 6)) hmem).mpr hφ'inj
+  -- The stabilised point and the complementary `5`-element index set.
+  set q₀ : alternatingGroup (Fin 6) ⧸ H :=
+    ((1 : alternatingGroup (Fin 6)) : alternatingGroup (Fin 6) ⧸ H) with hq₀
+  set p₀ : Fin 6 := e q₀ with hp₀
+  set s : Finset (Fin 6) := {p₀}ᶜ with hs
+  have hs5 : s.card = 5 := by
+    rw [hs, Finset.card_compl, Finset.card_singleton, Fintype.card_fin]
+  -- The image of `H` lands in the point-stabilizer `range (ofSubtype s)`.
+  have hmaple : H.map ψ ≤ (alternatingGroup.ofSubtype s).range := by
+    intro x hx
+    rw [Subgroup.mem_map] at hx
+    obtain ⟨h, hh, rfl⟩ := hx
+    have hs2 : h • q₀ = q₀ := by
+      apply MulAction.mem_stabilizer_iff.mp
+      rw [hq₀, MulAction.stabilizer_quotient]; exact hh
+    have fixproof : (↑(ψ h) : Equiv.Perm (Fin 6)) p₀ = p₀ := by
+      show (e.permCongr (MulAction.toPermHom (alternatingGroup (Fin 6))
+          (alternatingGroup (Fin 6) ⧸ H) h)) p₀ = p₀
+      rw [hp₀, Equiv.permCongr_apply, Equiv.symm_apply_apply,
+        MulAction.toPermHom_apply, MulAction.toPerm_apply, hs2]
+    rw [alternatingGroup.mem_range_ofSubtype_iff, hs]
+    intro y hy
+    rw [Finset.mem_compl, Finset.mem_singleton]
+    rintro rfl
+    exact (Equiv.Perm.mem_support.mp hy) fixproof
+  -- The stabilizer has order `60`, hence the containment is an equality.
+  have hcardT : Nat.card ↥(alternatingGroup.ofSubtype s).range = 60 := by
+    haveI : Nontrivial ↥s :=
+      Fintype.one_lt_card_iff_nontrivial.mp (by rw [Fintype.card_coe, hs5]; norm_num)
+    rw [← Nat.card_congr
+        (MonoidHom.ofInjective (alternatingGroup.ofSubtype_injective (s := s))).toEquiv,
+      nat_card_alternatingGroup, Nat.card_eq_fintype_card, Fintype.card_coe, hs5]; decide
+  have hmap : H.map ψ = (alternatingGroup.ofSubtype s).range := by
+    refine Subgroup.eq_of_le_of_card_ge hmaple (le_of_eq ?_)
+    rw [hcardT, ← Nat.card_congr (H.equivMapOfInjective ψ hψinj).toEquiv, hcardH]
+  -- Assemble the isomorphism.
+  exact (H.equivMapOfInjective ψ hψinj).trans <|
+    (MulEquiv.subgroupCongr hmap).trans <|
+      (MonoidHom.ofInjective (alternatingGroup.ofSubtype_injective (s := s))).symm.trans <|
+        Equiv.altCongrHom (Finset.equivFinOfCardEq hs5)
+
+/-! ### Step 2: the conjugation action on the Sylow `5`-subgroups is faithful -/
+
+/-- For a simple group `G` of order `60`, the conjugation action on its (six) Sylow `5`-subgroups
+is faithful: `G →* Equiv.Perm (Sylow 5 G)` is injective. Its kernel is normal, hence (`G` simple)
+`⊥` or `⊤`; `⊤` is impossible because the action is transitive (Sylow's second theorem) on a set
+with `6 ≠ 1` elements. -/
+theorem toPermHom_sylow_injective (hs : IsSimpleGroup G) (hcard : Nat.card G = 60) :
+    Function.Injective (MulAction.toPermHom G (Sylow 5 G)) := by
+  haveI := hs
+  rw [← MonoidHom.ker_eq_bot_iff]
+  rcases (inferInstance : (MulAction.toPermHom G (Sylow 5 G)).ker.Normal).eq_bot_or_eq_top with
+    hbot | htop
+  · exact hbot
+  · exfalso
+    have h6 : Nat.card (Sylow 5 G) = 6 := card_sylow_five_eq_six hs hcard
+    have hsub : Subsingleton (Sylow 5 G) := by
+      refine ⟨fun P Q => ?_⟩
+      obtain ⟨g, hg⟩ := MulAction.exists_smul_eq G P Q
+      have hgker : g ∈ (MulAction.toPermHom G (Sylow 5 G)).ker := by
+        rw [htop]; exact Subgroup.mem_top g
+      have hg1 : (MulAction.toPermHom G (Sylow 5 G)) g = 1 := MonoidHom.mem_ker.mp hgker
+      have hgP : g • P = P := by
+        have := Equiv.Perm.ext_iff.mp hg1 P
+        simpa [MulAction.toPermHom_apply, MulAction.toPerm_apply] using this
+      rwa [hgP] at hg
+    have hle := Finite.card_le_one_iff_subsingleton.mpr hsub
+    omega
+
+/-! ### Step 6: the capstone -/
+
+/-- **Every simple group of order `60` is isomorphic to `A₅`.** The group acts faithfully by
+conjugation on its `6` Sylow `5`-subgroups (steps 1–2), giving (after the sign trick, step 3) an
+embedding into `alternatingGroup (Fin 6)` whose image is a subgroup of index `6`, which is
+isomorphic to `alternatingGroup (Fin 5)` (step 5). -/
+theorem isSimpleGroup_card_sixty_iso_alternating (hs : IsSimpleGroup G) (hcard : Nat.card G = 60) :
+    Nonempty (G ≃* alternatingGroup (Fin 5)) := by
+  haveI := hs
+  have h6 : Nat.card (Sylow 5 G) = 6 := card_sylow_five_eq_six hs hcard
+  haveI : Fintype (Sylow 5 G) := Fintype.ofFinite _
+  -- Transport the (transitive, faithful) conjugation action to `Fin 6`.
+  let e : Sylow 5 G ≃ Fin 6 :=
+    Fintype.equivFinOfCardEq (by rw [← Nat.card_eq_fintype_card]; exact h6)
+  let φ : G →* Equiv.Perm (Fin 6) :=
+    (e.permCongrHom.toMonoidHom).comp (MulAction.toPermHom G (Sylow 5 G))
+  have hφinj : Function.Injective φ :=
+    (EquivLike.injective e.permCongrHom).comp (toPermHom_sylow_injective hs hcard)
+  have hrange : φ.range ≤ alternatingGroup (Fin 6) :=
+    range_le_alternatingGroup_of_isSimpleGroup hs (by rw [hcard]; norm_num) φ
+  let ψ : G →* alternatingGroup (Fin 6) :=
+    φ.codRestrict (alternatingGroup (Fin 6)) (fun a => hrange (MonoidHom.mem_range.mpr ⟨a, rfl⟩))
+  have hψinj : Function.Injective ψ :=
+    (MonoidHom.injective_codRestrict φ (alternatingGroup (Fin 6)) _).mpr hφinj
+  -- The image is a subgroup of `A₆` of index `6`.
+  have hHindex : ψ.range.index = 6 := by
+    have hcardH : Nat.card ↥ψ.range = 60 := by
+      rw [← Nat.card_congr (MonoidHom.ofInjective hψinj).toEquiv]; exact hcard
+    have hcardA : Nat.card (alternatingGroup (Fin 6)) = 360 := by
+      rw [nat_card_alternatingGroup, Nat.card_eq_fintype_card, Fintype.card_fin]; decide
+    have := Subgroup.card_mul_index ψ.range
+    rw [hcardH, hcardA] at this; omega
+  -- Combine `G ≃* ψ.range` with step 5.
+  exact ⟨(MonoidHom.ofInjective hψinj).trans
+    (isoAlternatingGroupFive_of_index_six ψ.range hHindex)⟩
 
 end Ch7SimpleGroup60
