@@ -3848,10 +3848,13 @@ lemma caseV_k_dvd_q_sub_one {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [Dec
     k ∣ q - 1 := by
   sorry
 
-/-- (SORRY) Butler tex 1928-1933 ("Applying Lemma `caseVlemma`, `Q` is not normal in `G`"):
-hence `|N_G(Q)| = e q k < e g = |G|`, i.e. `q * k ≠ g`. **Gap:** the Case-V non-normality of `Q`
-(cf. `Sylow.not_normal_subgroup_of_G`, whose `map G.subtype` hypotheses and maximal-abelian `K`
-do not directly match this signature). -/
+/-- Butler tex 1928-1933 ("Applying Lemma `caseVlemma`, `Q` is not normal in `G`"): hence
+`|N_G(Q)| = e q k < e g = |G|`, i.e. `q * k ≠ g`. Proof: `K` is cyclic with `|K| = e·k > e`
+and (via the Sylow complement `N_G(Q) = Q ⋊ K`) order coprime to `p`, so
+`K_mem_MaximalAbelianSubgroups_of_center_lt_card_K` makes `K` maximal abelian; `hComplete`
+(ruling out Sylow type by coprimality) plus `relIndex_normalizer_conj_smul_eq` gives
+`[N_G(K) : K] = 2`, so `Sylow.not_normal_subgroup_of_G` applies. If `q * k = g` then
+`|N_G(Q)| = e q k = e g = |G|` forces `N_G(Q) = ⊤`, i.e. `Q ⊴ G`, contradiction. -/
 lemma caseV_qk_ne_g {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -3868,7 +3871,111 @@ lemma caseV_qk_ne_g {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq
     (hComplete : ∀ B' ∈ MaximalAbelianSubgroupsOf G, (∃ c ∈ G, conj c • B' = A) ∨
       (∃ c ∈ G, conj c • B' = B) ∨ NumericClassEquation.IsSylowType p G B') :
     q * k ≠ g := by
-  sorry
+  have he_pos : 0 < Nat.card (center SL(2,F)) := Nat.card_pos
+  haveI : Finite ↥K :=
+    Finite.of_injective (Subgroup.inclusion hK_le) (Subgroup.inclusion_injective hK_le)
+  -- `Q` is nontrivial.
+  have hQ_ne_bot : Q.toSubgroup ≠ ⊥ := by
+    intro h
+    have h1 : (1 : ℕ) = q := by rw [← hq, h]; exact Subgroup.card_bot.symm
+    omega
+  -- Cardinality of the internal `K`.
+  have hcard_KsubG : Nat.card (K.subgroupOf G) = Nat.card (center SL(2,F)) * k := by
+    rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le).toEquiv, hK_card]
+  -- === complement block (modelled on `caseV_q_mul_k_dvd_g`) ===
+  set Nz : Subgroup ↥G := normalizer (Q.toSubgroup : Set ↥G) with hNz_def
+  have hQ_le_Nz : Q.toSubgroup ≤ Nz := Subgroup.le_normalizer
+  have hK'_le_Nz : K.subgroupOf G ≤ Nz := by rw [hNQK]; exact le_sup_right
+  set Qn : Subgroup ↥Nz := Q.toSubgroup.subgroupOf Nz with hQn_def
+  set Kn : Subgroup ↥Nz := (K.subgroupOf G).subgroupOf Nz with hKn_def
+  have hsup : Qn ⊔ Kn = ⊤ := by
+    have h := congrArg (Subgroup.subgroupOf · Nz) hNQK
+    rw [Subgroup.subgroupOf_self, Subgroup.subgroupOf_sup hQ_le_Nz hK'_le_Nz] at h
+    exact h.symm
+  have hdisj : Qn ⊓ Kn = ⊥ := by
+    have h := congrArg (Subgroup.subgroupOf · Nz) (disjoint_iff.mp hQK_disj)
+    rwa [subgroupOf_inf_eq, Subgroup.bot_subgroupOf] at h
+  haveI hQn_normal : Qn.Normal := Subgroup.normal_in_normalizer (H := Q.toSubgroup)
+  have hcomplement : IsComplement' Qn Kn := by
+    apply isComplement'_of_disjoint_and_mul_eq_univ (disjoint_iff.mpr hdisj)
+    have h := Subgroup.normal_mul Qn Kn
+    rw [hsup, Subgroup.coe_top] at h
+    exact h.symm
+  have hcard_Nz : Nat.card Qn * Nat.card Kn = Nat.card Nz := hcomplement.card_mul
+  have hcard_Qn : Nat.card Qn = q := by
+    rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hQ_le_Nz).toEquiv]; exact hq
+  have hcard_Kn_eq : Nat.card Kn = Nat.card (K.subgroupOf G) :=
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK'_le_Nz).toEquiv
+  have hcard_Nz_eq : Nat.card Nz = q * Nat.card (K.subgroupOf G) := by
+    rw [← hcard_Nz, hcard_Qn, hcard_Kn_eq]
+  -- === coprimality: `Nat.card (K.subgroupOf G)` is coprime to `p` ===
+  have hqne : (q : ℕ) ≠ 0 := by omega
+  have hNz_dvd_G : Nat.card Nz ∣ Nat.card G := Subgroup.card_subgroup_dvd_card Nz
+  have hdvd_qcard : q * Nat.card (K.subgroupOf G) ∣ Nat.card G := hcard_Nz_eq ▸ hNz_dvd_G
+  have hG_card : Nat.card G = q * Q.toSubgroup.index := by
+    have h := Subgroup.index_mul_card Q.toSubgroup
+    rw [hq] at h
+    rw [← h]; ring
+  have hdvd2 : q * Nat.card (K.subgroupOf G) ∣ q * Q.toSubgroup.index := hG_card ▸ hdvd_qcard
+  have hcardK_dvd_index : Nat.card (K.subgroupOf G) ∣ Q.toSubgroup.index :=
+    (mul_dvd_mul_iff_left hqne).mp hdvd2
+  have hp_ndvd_index : ¬ p ∣ Q.toSubgroup.index := Q.not_dvd_index
+  have hp_ndvd_K : ¬ p ∣ Nat.card (K.subgroupOf G) :=
+    fun h => hp_ndvd_index (h.trans hcardK_dvd_index)
+  have hcop_KsubG : Nat.Coprime (Nat.card (K.subgroupOf G)) p :=
+    ((Fact.out : Nat.Prime p).coprime_iff_not_dvd.mpr hp_ndvd_K).symm
+  -- === `K` (internal) is cyclic, big, hence maximal abelian ===
+  have hK'_cyc : IsCyclic (K.subgroupOf G) :=
+    (MulEquiv.isCyclic (Subgroup.subgroupOfEquivOfLe hK_le)).mpr hK_cyc
+  have hKZ_gt : Nat.card (K.subgroupOf G) > Nat.card (center SL(2,F)) := by
+    rw [hcard_KsubG]
+    have h1 : Nat.card (center SL(2,F)) * 2 ≤ Nat.card (center SL(2,F)) * k :=
+      Nat.mul_le_mul (le_refl _) hk2
+    omega
+  have hNG_arg : normalizer (Q.toSubgroup : Set ↥G) = Q.toSubgroup ⊔ K.subgroupOf G := hNQK
+  have hK_maxAb : map G.subtype (K.subgroupOf G) ∈ MaximalAbelianSubgroupsOf G :=
+    K_mem_MaximalAbelianSubgroups_of_center_lt_card_K G Q hQ_ne_bot (K.subgroupOf G)
+      hK'_cyc hNG_arg hKZ_gt hcop_KsubG
+  -- `map G.subtype (K.subgroupOf G) = K` since `K ≤ G`.
+  have hMA : map G.subtype (K.subgroupOf G) = K := by
+    rw [Subgroup.subgroupOf_map_subtype, inf_eq_left.mpr hK_le]
+  have hK_maxAb' : K ∈ MaximalAbelianSubgroupsOf G := hMA ▸ hK_maxAb
+  -- === `[N_G(K) : K] = 2` via `hComplete` ===
+  have hNK : relIndex (K.subgroupOf G)
+      (normalizer ((K.subgroupOf G : Subgroup ↥G) : Set ↥G)) = 2 := by
+    rcases hComplete (map G.subtype (K.subgroupOf G)) hK_maxAb with
+      ⟨c, hc, hconj⟩ | ⟨c, hc, hconj⟩ | hsyl
+    · rw [hMA] at hconj
+      have hrel := NumericClassEquation.relIndex_normalizer_conj_smul_eq (G := G) (A := K) hc
+      rw [hconj, hA_relIndex] at hrel
+      exact hrel.symm
+    · rw [hMA] at hconj
+      have hrel := NumericClassEquation.relIndex_normalizer_conj_smul_eq (G := G) (A := K) hc
+      rw [hconj, hB_relIndex] at hrel
+      exact hrel.symm
+    · exfalso
+      rw [hMA] at hsyl
+      have hpdvd : p ∣ Nat.card K := NumericClassEquation.dvd_card_of_isSylowType hsyl
+      have hpdvd' : p ∣ Nat.card (K.subgroupOf G) := by
+        rwa [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le).toEquiv]
+      exact hp_ndvd_K hpdvd'
+  -- === assemble non-normality (Butler `caseVlemma`) ===
+  have hQK_arg : map G.subtype (normalizer (Q.toSubgroup : Set ↥G))
+      = map G.subtype Q.toSubgroup ⊔ K := by
+    rw [← hNz_def, hNQK, Subgroup.map_sup, hMA]
+  have hQcapK_arg : map G.subtype Q.toSubgroup ⊓ K = ⊥ := by
+    rw [← hMA, ← Subgroup.map_inf Q.toSubgroup (K.subgroupOf G) G.subtype
+      (G.subtype_injective), disjoint_iff.mp hQK_disj, Subgroup.map_bot]
+  have hnot_normal : ¬ Normal Q.toSubgroup :=
+    Sylow.not_normal_subgroup_of_G G K Q hK_maxAb' hQK_arg hQcapK_arg hNK
+  -- === conclude `q * k ≠ g` ===
+  intro heq
+  apply hnot_normal
+  have hNz_top : Nz = ⊤ := by
+    apply Subgroup.eq_top_of_card_eq
+    rw [hcard_Nz_eq, hcard_KsubG, hg, ← heq]; ring
+  rw [hNz_def] at hNz_top
+  exact normalizer_eq_top_iff.mp hNz_top
 
 /-- Case V arithmetic core: fully proven. -/
 theorem caseV_arith (g q g1 g2 : ℕ) (hgpos : 1 ≤ g) (hq2 : 2 ≤ q)
@@ -6252,15 +6359,100 @@ lemma pgl_descent_quotient_transfer {G₁ H T : Type*} [Group G₁] [Group H] [G
   ⟨(QuotientGroup.quotientKerEquivOfSurjective ψ hψ).symm.trans
     (QuotientGroup.congr ψ.ker (ψ.ker.map e2.toMonoidHom) e2 rfl)⟩
 
+/-- `(2 : ZMod 3) ≠ 0` (as a named lemma so `decide` runs with a concrete, non-metavariable
+proposition; used to supply the `NeZero (2 : ZMod 3)` instance below). -/
+lemma pgl_descent_two_ne_ZMod3 : (2 : ZMod 3) ≠ 0 := by decide
+
+/-- `|SL(2,3)| = 24`. Proven by `decide`, but forcing the *computable* `Subtype.fintype`
+instance for `SL(2, ZMod 3)`: in this file's import environment the ambient `Fintype` instance
+does not kernel-reduce, so a bare `decide` on `Fintype.card SL(2, ZMod 3)` gets stuck. -/
+lemma pgl_descent_card_SL2_ZMod3 : Nat.card SL(2, ZMod 3) = 24 := by
+  letI : Fintype SL(2, ZMod 3) := Subtype.fintype _
+  rw [Nat.card_eq_fintype_card]; decide
+
 /-- `PSL(2,3) ≅ A₄` (classical; feeds Class I item (iii), tex ~2246 "Case IIb: This leads to
 Class I (iii)", through the descent -- README item 3 lists `A₄` among the exceptional images).
-Missing infrastructure: neither mathlib nor this repo currently identifies
-`SL(2,3) ⧸ {±1}` with `A₄` (e.g. via the action of `SL(2,3)` on the four points of `ℙ¹(𝔽₃)`,
-whose kernel is exactly `{±1}` and whose image is the unique index-`2` subgroup `A₄ ≤ S₄`);
-sorried pending that construction. -/
+
+Proof: `SL(2,3)` acts on the four points of `ℙ¹(𝔽₃) = Projectivization (ZMod 3) (Fin 2 → ZMod 3)`
+(mathlib `Projectivization.PSLAction.toPermHom`); the induced map on `PSL(2,3) = SL(2,3)/{±1}` is
+injective (`Matrix.ProjectiveSpecialLinearGroup.toPermHom_injective`), so transporting the
+`4`-element projective line to `Fin 4` gives an embedding `g : PSL(2,3) ↪ S₄`. Its image has
+order `|PSL(2,3)| = |SL(2,3)|/|Z| = 24/2 = 12`, hence index `2` in `S₄`. Every `3`-cycle has odd
+order, so lands in any index-`2` subgroup; since the `3`-cycles generate `A₄`
+(`closure_three_cycles_eq_alternating`), `A₄ ≤ g.range`, and equal cardinality (`12`) forces
+`g.range = A₄`. Thus `PSL(2,3) ≃* g.range = A₄`. -/
 lemma pgl_descent_PSL2_ZMod3_iso_alternating :
     Nonempty (PSL (Fin 2) (ZMod 3) ≃* alternatingGroup (Fin 4)) := by
-  sorry
+  haveI : Fact (Nat.Prime 3) := ⟨by norm_num⟩
+  haveI : NeZero (2 : ZMod 3) := ⟨pgl_descent_two_ne_ZMod3⟩
+  -- The projective line `ℙ¹(𝔽₃)` has 4 points.
+  haveI : Fintype (Projectivization (ZMod 3) (Fin 2 → ZMod 3)) := Fintype.ofFinite _
+  have hcardP : Nat.card (Projectivization (ZMod 3) (Fin 2 → ZMod 3)) = 4 := by
+    have h2 : Module.finrank (ZMod 3) (Fin 2 → ZMod 3) = 2 := Module.finrank_fin_fun (ZMod 3)
+    have hk : Nat.card (ZMod 3) = 3 := by rw [Nat.card_eq_fintype_card, ZMod.card]
+    rw [Projectivization.card_of_finrank_two (ZMod 3) (Fin 2 → ZMod 3) h2, hk]
+  have hcardP' : Fintype.card (Projectivization (ZMod 3) (Fin 2 → ZMod 3)) = 4 := by
+    rw [← Nat.card_eq_fintype_card]; exact hcardP
+  let eP : Projectivization (ZMod 3) (Fin 2 → ZMod 3) ≃ Fin 4 := Fintype.equivFinOfCardEq hcardP'
+  -- The faithful action of PSL(2,3) on ℙ¹.
+  let f : PSL (Fin 2) (ZMod 3) →* Equiv.Perm (Projectivization (ZMod 3) (Fin 2 → ZMod 3)) :=
+    Projectivization.PSLAction.toPermHom
+  have hf_inj : Function.Injective f :=
+    Matrix.ProjectiveSpecialLinearGroup.toPermHom_injective (K := ZMod 3) (ι := Fin 2)
+  -- Transport to permutations of `Fin 4`.
+  let g : PSL (Fin 2) (ZMod 3) →* Equiv.Perm (Fin 4) := (eP.permCongrHom.toMonoidHom).comp f
+  have hg_inj : Function.Injective g := fun a b hab =>
+    hf_inj (eP.permCongrHom.injective hab)
+  -- Cardinalities.
+  have hcardPSL : Nat.card (PSL (Fin 2) (ZMod 3)) = 12 := by
+    have hZ : Nat.card (center SL(2, ZMod 3)) = 2 := by
+      rw [SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.card_Z_eq_two_of_two_ne_zero]
+    have hidx : Nat.card (center SL(2, ZMod 3)) * (center SL(2, ZMod 3)).index
+        = Nat.card SL(2, ZMod 3) := Subgroup.card_mul_index _
+    have hPSLidx : Nat.card (PSL (Fin 2) (ZMod 3)) = (center SL(2, ZMod 3)).index := rfl
+    rw [hZ, pgl_descent_card_SL2_ZMod3] at hidx
+    rw [hPSLidx]; omega
+  have hperm : Nat.card (Equiv.Perm (Fin 4)) = 24 := by
+    rw [Nat.card_eq_fintype_card, Fintype.card_perm, Fintype.card_fin]
+    rfl
+  have hcardA : Nat.card (alternatingGroup (Fin 4)) = 12 := by
+    have h := two_mul_nat_card_alternatingGroup (α := Fin 4)
+    rw [hperm] at h; omega
+  have hcardR : Nat.card (g.range) = 12 :=
+    (Nat.card_congr (MonoidHom.ofInjective hg_inj).toEquiv).symm.trans hcardPSL
+  -- `g.range` has index 2, hence is normal.
+  have hRidx : g.range.index = 2 := by
+    have h := Subgroup.index_mul_card (g.range)
+    rw [hcardR, hperm] at h; omega
+  haveI hRnormal : (g.range).Normal := Subgroup.normal_of_index_eq_two hRidx
+  -- Every 3-cycle lies in `g.range`.
+  have h3cyc : ∀ c : Equiv.Perm (Fin 4), c.IsThreeCycle → c ∈ g.range := by
+    intro c hc
+    have hord : orderOf c = 3 := hc.orderOf
+    have h1 : orderOf (QuotientGroup.mk' (g.range) c) ∣ 3 := by
+      have := orderOf_map_dvd (QuotientGroup.mk' (g.range)) c
+      rwa [hord] at this
+    have hQcard : Nat.card (Equiv.Perm (Fin 4) ⧸ g.range) = 2 := hRidx
+    have h2 : orderOf (QuotientGroup.mk' (g.range) c) ∣ 2 := by
+      have := _root_.orderOf_dvd_natCard (QuotientGroup.mk' (g.range) c)
+      rwa [hQcard] at this
+    have hg1 : orderOf (QuotientGroup.mk' (g.range) c) ∣ Nat.gcd 3 2 := Nat.dvd_gcd h1 h2
+    have hgcd : Nat.gcd 3 2 = 1 := by decide
+    rw [hgcd] at hg1
+    have h3 : orderOf (QuotientGroup.mk' (g.range) c) = 1 := Nat.dvd_one.mp hg1
+    have hqc : QuotientGroup.mk' (g.range) c = 1 := orderOf_eq_one_iff.mp h3
+    rw [QuotientGroup.mk'_apply, QuotientGroup.eq_one_iff] at hqc
+    exact hqc
+  -- `A₄ ≤ g.range`, hence equal by cardinality.
+  have hAle : alternatingGroup (Fin 4) ≤ g.range := by
+    rw [← Equiv.Perm.closure_three_cycles_eq_alternating, Subgroup.closure_le]
+    intro c hc
+    exact h3cyc c hc
+  have hle : Nat.card (g.range) ≤ Nat.card (alternatingGroup (Fin 4)) :=
+    le_of_eq (hcardR.trans hcardA.symm)
+  have hRA : g.range = alternatingGroup (Fin 4) :=
+    (Subgroup.eq_of_le_of_card_ge hAle hle).symm
+  exact ⟨(MonoidHom.ofInjective hg_inj).trans (MulEquiv.subgroupCongr hRA)⟩
 
 /-- `PSL(2,5) ≅ A₅` (feeds Class I item (iv) / Class II item (viii), tex ~2088-2113: Butler's
 Case Vd identifies `G/Z` as a simple group of order `60`, and every simple group of order `60`
