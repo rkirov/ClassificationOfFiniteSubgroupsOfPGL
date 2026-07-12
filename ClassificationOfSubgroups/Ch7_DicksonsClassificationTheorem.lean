@@ -5270,6 +5270,52 @@ lemma caseV_geo_y_eq_dw_of_inverting [DecidableEq F] {K : Subgroup SL(2,F)}
     rw [← normalizer_subgroup_D_eq_DW_of_two_lt_card hK2 hKD]; exact hyN
   exact caseV_geo_y_eq_dw hyDW (caseV_geo_inverting_notMem_D (hKD hxK) hxnc hinv)
 
+/-- Step-5 elementwise bridge (tex 2054): an `SL(2,F)` matrix whose four entries all lie in a
+subfield `R` is in the image of `SL(2,R)` under the entrywise inclusion
+`Matrix.SpecialLinearGroup.map R.subtype`. Reduces the Step-5 hypothesis of
+`caseV_iso_of_conj_le_map` (`conj c • G ≤ map …`) to the elementwise fact "every generator of
+`G̃` has entries in `R F p n`". -/
+lemma caseV_geo_mem_map_subtype_of_entries (R : Subfield F) (x : SL(2,F))
+    (h : ∀ i j, (x : Matrix (Fin 2) (Fin 2) F) i j ∈ R) :
+    x ∈ Subgroup.map (Matrix.SpecialLinearGroup.map R.subtype) (⊤ : Subgroup SL(2,R)) := by
+  classical
+  set M : Matrix (Fin 2) (Fin 2) R := fun i j => ⟨(x : Matrix (Fin 2) (Fin 2) F) i j, h i j⟩
+    with hM
+  have hmap : M.map R.subtype = (x : Matrix (Fin 2) (Fin 2) F) := Matrix.ext fun i j => rfl
+  have hinj : Function.Injective (R.subtype) := Subtype.val_injective
+  have hdet : M.det = 1 := by
+    apply hinj
+    rw [RingHom.map_det, RingHom.mapMatrix_apply, hmap, x.property, map_one]
+  refine ⟨⟨M, hdet⟩, Subgroup.mem_top _, ?_⟩
+  apply Subtype.ext
+  rw [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply]
+  exact hmap
+
+/-- Step-3 anti-diagonal conjugation: conjugating a lower-triangular `n` by `y⁻¹` where
+`y = d_ρ w` yields an upper-triangular matrix (lower-left entry `0`). Companion to
+`caseV_geo_conj_shear`; supplies the "each element of `y⁻¹ N_G̃(Q) y` fixes `R₂`" step. -/
+lemma caseV_geo_conj_antidiag_upperTri [DecidableEq F] (rho : Fˣ) (n : SL(2,F))
+    (hn : (n : Matrix (Fin 2) (Fin 2) F) 0 1 = 0) :
+    (((d rho * w)⁻¹ * n * (d rho * w) : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) 1 0 = 0 := by
+  rw [inv_of_d_mul_w, d_mul_w_eq_dw, d_mul_w_eq_dw]
+  simp only [Matrix.SpecialLinearGroup.coe_mul, dw, Matrix.mul_apply, Fin.sum_univ_two,
+    Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.empty_val', Matrix.cons_val_fin_one]
+  rw [hn]
+  ring
+
+/-- Step-3 trivial-intersection (tex 2013-2022, `Q ∩ y⁻¹ N_G̃(Q) y = 1`): the only lower shear
+`s σ` that arises as `y⁻¹ n y` with `y = d_ρ w` and `n ∈ N ≤ L F` (lower-triangular) is the
+identity. This is the covering-count key input `[Q : Q ∩ y⁻¹ N y] = |Q|`. -/
+lemma caseV_geo_shear_eq_conj_antidiag_of_L [DecidableEq F] {N : Subgroup SL(2,F)}
+    (hN : N ≤ SpecialSubgroups.L F) (rho : Fˣ) {σ : F} {n : SL(2,F)} (hn : n ∈ N)
+    (heq : s σ = (d rho * w)⁻¹ * n * (d rho * w)) : σ = 0 := by
+  have hnL : (n : Matrix (Fin 2) (Fin 2) F) 0 1 = 0 :=
+    (SpecialSubgroups.mem_L_iff_lower_triangular).mp (hN hn)
+  have h10 : ((s σ : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) 1 0 = 0 := by
+    rw [heq]; exact caseV_geo_conj_antidiag_upperTri rho n hnL
+  simpa [s] using h10
+
 end CaseVGeo
 
 /- ==========================================================================================
@@ -6845,6 +6891,19 @@ lemma caseV_iso_of_conj_le_map {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
     le_of_eq (by rw [hcardImg, hcc, hcard])
   have heq : conj c • G = Subgroup.map φ ⊤ := Subgroup.eq_of_le_of_card_ge hle hcardle
   exact caseV_iso_of_conj_eq_map n G c (hφ ▸ heq)
+
+/-- **Case Va Step-5 interface** (tex 2054): the entire Va residual reduced to a single geometric
+hypothesis. If some conjugate `conj c • G` has every element's entries in the subfield `R F p n`
+(the concrete output of Steps 1-4: `G̃ ⊆ SL(2, 𝔽_q)`), and `|G| = q(q²-1)` with `q = pⁿ`, then
+`G ≅ SL(2, GaloisField p n)`. Chains `caseV_geo_mem_map_subtype_of_entries` (elementwise into the
+subfield image) with `caseV_iso_of_conj_le_map` (cardinality-forced equality + transport). -/
+lemma caseV_a_step5_finish {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) [Finite G] (c : SL(2,F))
+    (hentries : ∀ x ∈ conj c • G, ∀ i j, (x : Matrix (Fin 2) (Fin 2) F) i j ∈ R F p n)
+    (hcard : Nat.card G = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ)) :
+    Isomorphic G SL(2, GaloisField p n.val) := by
+  refine caseV_iso_of_conj_le_map n G c (fun x hx => ?_) hcard
+  exact caseV_geo_mem_map_subtype_of_entries (R F p n) x (hentries x hx)
 
 /-- **Theorem 6.8(v), coprimality half.** If `K` is the (Schur–Zassenhaus, `S2_B.exists_IsCyclic_
 K_normalizer_eq_Q_join_K`) complement to a Sylow `p`-subgroup `S₀` of `G` (`normalizer (S₀.
