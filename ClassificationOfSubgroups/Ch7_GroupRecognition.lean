@@ -890,4 +890,433 @@ noncomputable def mulEquiv_SL2_ZMod3_of {G : Type*} [Group G] [Finite G] (x y r 
 
 end SL2ZMod3
 
+section BinaryOctahedral
+
+/-!
+### Binary octahedral group `2O` recognition (Butler Case VIb, tex ~2173-2201)
+
+**Target**: identify a finite group `G` with `Nat.card G = 48`, a unique involution `z`, and
+`G / ⟨z⟩ ≅ S₄` in which transpositions lift to order-`4` elements, with the **binary octahedral
+group `2O`** (Butler's `Ŝ₄`, cf. `Ch7_DicksonsClassificationTheorem.BinaryOctahedralGroup`).
+
+**What is proved here** (fully, no `sorry`): the two elementary group-theoretic facts Butler uses
+freely along the way, isolated as reusable lemmas since they do not depend on the hard part below:
+
+* `isCentral_of_unique_involution`: the unique involution of a finite group is central
+  (conjugates of an involution are again involutions, so uniqueness forces them to be fixed).
+* `card_eq_two_mul_card_quotient_zpowers_of_unique_involution`: consequently `⟨z⟩` is *normal*
+  (a subgroup of the center always is) and Lagrange gives `Nat.card G = 2 * Nat.card (G ⧸ ⟨z⟩)`
+  -- this is exactly Butler's remark "Consider the quotient group `G/Z` of order `24`" (tex ~2178).
+
+**What is *not* proved** (recorded as `sorry`, TODO below, and `DIVERGENCES.md` item 11): the
+actual content of Case VIb is Butler's citation of Suzuki, *"S₄ has exactly two representation
+groups up to isomorphism, distinguished by the order (`2` or `4`) of the lift of a transposition"*
+(tex ~2198-2201). This is a nontrivial fact about the Schur multiplier of `S₄`
+(`H²(S₄, ℤ/2) ≅ (ℤ/2)²`, giving four cohomology classes of central extensions by `ℤ/2`, which
+collapse to *three* isomorphism classes of groups: the split extension `S₄ × ℤ/2`, and two
+non-split ones distinguished by transposition-lift order -- `2O` and `GL(2,3)`). Formalizing this
+requires either (a) genuine group-cohomology machinery to classify central extensions of `S₄` by
+`ℤ/2` up to equivalence (`mathlib` currently has no Schur-multiplier / representation-group
+infrastructure for a specific finite group like `S₄`), or (b) a from-scratch coset-enumeration-style
+argument bounding `|⟨x,y | x⁴=y³=(xy)²⟩|` from above by `48` and exhibiting a matching injection
+(the same style of difficulty Butler himself sidesteps by citing Suzuki rather than proving it).
+Neither is attempted here; the statement below (`mulEquiv_of_card48_uniqueInvolution_quotientS4`)
+records exactly the *shape* of the missing "two covers are the only two covers" uniqueness
+argument as a `sorry`, so that once such an argument becomes available the Case VIb branch of
+`Ch7_DicksonsClassificationTheorem.case_VI_core` can invoke it directly.
+
+A **time-boxed exploration of a concrete matrix model** for `2O` (as suggested by the "approach
+menu": subgroup of `SL(2, GaloisField 3 2)`, i.e. `SL(2, 𝔽₉)`) was attempted and abandoned:
+`GaloisField 3 2` is built as a `SplittingField` quotient construction and has **no `DecidableEq`
+instance** (confirmed directly: `example : DecidableEq (GaloisField 3 2) := by infer_instance`
+fails to synthesize), so the `decide`-based matrix-identity verification used throughout
+`SL2ZMod3` above (e.g. `Butler_a_orderOf`) is not available for it. A hand-rolled `𝔽₉` (e.g. as
+`ZMod 3 × ZMod 3` with a custom `CommRing`/`Field` structure adjoining a square root of `-1`) would
+restore `DecidableEq`, but then the *entire* 48-matrix generation/relation/uniqueness argument
+would still need to be redone from scratch on top of it -- no smaller than, and in fact no
+different in kind from, the Suzuki-citation gap above (either way one has to independently pin
+down that this particular order-`48` matrix group is *the* order-`4`-transposition cover, not
+`GL(2,3)`, the order-`2`-transposition one). `GL (Fin 2) (ZMod 3)` itself is *not* a valid target
+here at all (`DIVERGENCES.md` item 3: it is the *other*, order-`2`-transposition cover). Given
+this, and unlike `SL2ZMod3`'s semidirect-gluing route (which crucially relies on the extension
+`Q₈ ⋊ ⟨r⟩` *splitting*, `Nat.card Q₈ = 8` and `Nat.card ⟨r⟩ = 3` being coprime), **no
+semidirect-product-style shortcut is available for `2O` either**: the whole point of Case VIb
+(transpositions lift to order `4`, not `2`) is precisely that `⟨z⟩ → G → S₄` does *not* split
+(no complementary copy of `S₄` sits inside `G`), so `SemidirectProduct.mulEquivSubgroup` /
+`.congr` cannot be brought to bear the way they were for `SL(2,3)`.
+-/
+
+omit [Finite G] in
+/-- **A finite group's unique involution is central.** If `z : G` is an involution (`z^2 = 1`,
+`z ≠ 1`) and every involution of `G` equals `z`, then `z ∈ center G`: for any `g : G`, the
+conjugate `g * z * g⁻¹` is again an involution (conjugation preserves both `_^2 = 1` and
+`_ ≠ 1`), hence by uniqueness `g * z * g⁻¹ = z`, i.e. `g` and `z` commute. Used by Butler
+throughout (e.g. Case VIa/VIb/VIc, tex ~2170/2178/2202) via the standing hypothesis that
+`SL(2,F)` (`p ≠ 2`) has a unique involution `-1`, without ever spelling out this elementary
+justification for its centrality. -/
+lemma isCentral_of_unique_involution {z : G} (hz2 : z ^ 2 = 1) (hz1 : z ≠ 1)
+    (huniq : ∀ g : G, g ^ 2 = 1 → g ≠ 1 → g = z) :
+    z ∈ Subgroup.center G := by
+  rw [Subgroup.mem_center_iff]
+  intro g
+  have hconjne1 : g * z * g⁻¹ ≠ 1 := by
+    intro hcon
+    apply hz1
+    have heq : MulAut.conj g z = MulAut.conj g 1 := by
+      rw [MulAut.conj_apply, map_one]; exact hcon
+    exact (MulAut.conj g).injective heq
+  have hconj2 : (g * z * g⁻¹) ^ 2 = 1 := by
+    have h : (g * z * g⁻¹) ^ 2 = g * z ^ 2 * g⁻¹ := by
+      simp only [sq]; group
+    rw [h, hz2]; group
+  have hfix : g * z * g⁻¹ = z := huniq _ hconj2 hconjne1
+  calc g * z = g * z * g⁻¹ * g := by group
+    _ = z * g := by rw [hfix]
+
+omit [Finite G] in
+/-- A subgroup of the center is always normal: conjugation fixes every central element. Needed to
+put a group structure on `G ⧸ Subgroup.zpowers z` when `z` is (as here) a central involution,
+since `Mathlib`'s `HasQuotient`/`QuotientGroup` machinery for `G ⧸ N` as a *group* requires
+`N.Normal`. (Deliberately *not* registered as a global `instance`: `hz` is a genuine proof
+obligation, not something typeclass search can invent, so callers supply it via `haveI :=
+normal_zpowers_of_mem_center hz` / as an explicit `[...]` hypothesis, as done below.) -/
+lemma normal_zpowers_of_mem_center {z : G} (hz : z ∈ Subgroup.center G) :
+    (Subgroup.zpowers z).Normal := by
+  constructor
+  intro n hn g
+  obtain ⟨k, hk⟩ := hn
+  have hgz : g * z * g⁻¹ = z := by
+    have h := Subgroup.mem_center_iff.mp hz g
+    calc g * z * g⁻¹ = z * g * g⁻¹ := by rw [h]
+      _ = z := by group
+  have hstep : g * n * g⁻¹ = z ^ k := by
+    rw [← hk]
+    have h2 := map_zpow (MulAut.conj g) z k
+    rw [MulAut.conj_apply, MulAut.conj_apply, hgz] at h2
+    exact h2
+  rw [hstep]
+  exact ⟨k, rfl⟩
+
+omit [Finite G] in
+/-- **`Nat.card G = 2 * Nat.card (G ⧸ ⟨z⟩)` for a central involution `z`.** This is Butler's
+unremarked step "Consider the quotient group `G/Z` of order `24`" (Case VIb, tex ~2178, `|G| =
+48`): `⟨z⟩` has cardinality `orderOf z = 2` (`Nat.card_zpowers`), and Lagrange
+(`Subgroup.card_eq_card_quotient_mul_card_subgroup`) gives the rest. Combined with
+`isCentral_of_unique_involution`, this reduces Butler's remark to a one-line corollary once `z`
+is known to be the unique involution. -/
+lemma card_eq_two_mul_card_quotient_zpowers_of_unique_involution {z : G}
+    (hz2 : z ^ 2 = 1) (hz1 : z ≠ 1)
+    (huniq : ∀ g : G, g ^ 2 = 1 → g ≠ 1 → g = z) :
+    Nat.card G = 2 * Nat.card (G ⧸ Subgroup.zpowers z) := by
+  haveI : (Subgroup.zpowers z).Normal :=
+    normal_zpowers_of_mem_center (isCentral_of_unique_involution hz2 hz1 huniq)
+  have hordz : orderOf z = 2 := by
+    have hdvd : orderOf z ∣ 2 := orderOf_dvd_of_pow_eq_one hz2
+    have hne1 : orderOf z ≠ 1 := by rw [Ne, orderOf_eq_one_iff]; exact hz1
+    rcases (Nat.prime_two).eq_one_or_self_of_dvd _ hdvd with h | h
+    · exact absurd h hne1
+    · exact h
+  have hcardz : Nat.card (Subgroup.zpowers z) = 2 := by rw [Nat.card_zpowers, hordz]
+  have h := Subgroup.card_eq_card_quotient_mul_card_subgroup (Subgroup.zpowers z)
+  rw [hcardz] at h
+  omega
+
+/-- Butler's local name (`Ŝ₄`) for `2O`, presented -- exactly as in
+`Ch7_DicksonsClassificationTheorem.BinaryOctahedralGroup`, whose relations this mirrors -- as the
+`⟨4,3,2⟩` binary polyhedral/von Dyck group `⟨x, y | x⁴ = y³ = (xy)²⟩`. Kept as a *local* copy
+(rather than importing the other file, which is owned by a concurrently-working agent and would
+create a build-order dependency the wrong way round: this file is imported *before*
+`Ch7_DicksonsClassificationTheorem` from the project root) so that the recognition machinery in
+this section type-checks independently; reconciling the two definitions (they are the same
+presentation, so `PresentedGroup`-transportable) is left to the orchestrator. -/
+inductive BinaryOctahedralSymbols
+  | x
+  | y
+
+open FreeGroup BinaryOctahedralSymbols PresentedGroup in
+/-- Relations for `⟨x, y | x⁴ = y³ = (xy)²⟩`, see `BinaryOctahedralGroup`. -/
+def BinaryOctahedralRelations : Set (FreeGroup BinaryOctahedralSymbols) :=
+  { .of x ^ 4 * ((.of y) ^ 3)⁻¹ } ∪
+  { .of x ^ 4 * ((.of x * .of y) ^ 2)⁻¹ }
+
+/-- The binary octahedral group `2O`, presented as `⟨x, y | x⁴ = y³ = (xy)²⟩`. See the module
+docstring above and `DIVERGENCES.md` item 11. -/
+abbrev BinaryOctahedralGroup := PresentedGroup BinaryOctahedralRelations
+
+/-- Concrete generator pair for `S₄ = Perm (Fin 4)` matching the `⟨x, y | x⁴ = y³ = (xy)²⟩`
+presentation shape: a `4`-cycle `s` (the rotation `finRotate 4`), an element `t` with `t³ = 1`
+(namely `s⁻¹ · (0 1)`, a `3`-cycle), whose product `s * t = (0 1)` is a transposition, and which
+together generate `S₄` (`Equiv.Perm.closure_cycle_adjacent_swap`: a full cycle plus an adjacent
+transposition generate). The concrete facts are all `decide`d on `Perm (Fin 4)`. -/
+lemma binaryOctahedral_exists_generators :
+    ∃ s t : Equiv.Perm (Fin 4), s ^ 4 = 1 ∧ s ^ 2 ≠ 1 ∧ t ^ 3 = 1 ∧
+      (s * t).IsSwap ∧ (s * t) ^ 2 = 1 ∧
+      Subgroup.closure ({s, t} : Set (Equiv.Perm (Fin 4))) = ⊤ := by
+  have hst : finRotate 4 * ((finRotate 4)⁻¹ * Equiv.swap 0 (finRotate 4 0)) =
+      Equiv.swap 0 (finRotate 4 0) := mul_inv_cancel_left _ _
+  refine ⟨finRotate 4, (finRotate 4)⁻¹ * Equiv.swap 0 (finRotate 4 0), ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · decide
+  · decide
+  · decide
+  · exact ⟨0, finRotate 4 0, by decide, hst⟩
+  · rw [hst, pow_two, Equiv.swap_mul_self]
+  · rw [eq_top_iff, ← Equiv.Perm.closure_cycle_adjacent_swap
+      (isCycle_finRotate_of_le (by norm_num))
+      (support_finRotate_of_le (by norm_num)) (0 : Fin 4),
+      Subgroup.closure_le]
+    rintro w (rfl | rfl)
+    · exact Subgroup.subset_closure (Set.mem_insert _ _)
+    · have hmem := Subgroup.mul_mem
+        (Subgroup.closure ({finRotate 4, (finRotate 4)⁻¹ * Equiv.swap 0 (finRotate 4 0)} :
+          Set (Equiv.Perm (Fin 4))))
+        (Subgroup.subset_closure (Set.mem_insert _ _))
+        (Subgroup.subset_closure (Set.mem_insert_of_mem _ rfl))
+      rw [hst] at hmem
+      exact hmem
+
+omit [Finite G] in
+/-- Every element of `⟨z⟩` for an involution `z` (`z² = 1`) is `1` or `z`: split the exponent
+`k = 2 * (k / 2) + k % 2` and kill the even part with `z² = 1`. -/
+lemma binaryOctahedral_mem_zpowers_involution {z : G} (hz2 : z ^ 2 = 1) :
+    ∀ w : G, w ∈ Subgroup.zpowers z → w = 1 ∨ w = z := by
+  have hz2' : z ^ (2 : ℤ) = 1 := by
+    rw [zpow_two, ← pow_two, hz2]
+  intro w hw
+  obtain ⟨k, hk⟩ := hw
+  have hk' : z ^ k = w := hk
+  have hdecomp : z ^ k = z ^ (k % 2) := by
+    conv_lhs => rw [← Int.mul_ediv_add_emod k 2]
+    rw [zpow_add, zpow_mul, hz2', one_zpow, one_mul]
+  rcases Int.emod_two_eq_zero_or_one k with h | h
+  · left; rw [← hk', hdecomp, h, zpow_zero]
+  · right; rw [← hk', hdecomp, h, zpow_one]
+
+/-- The first defining relation of `2O`, as an in-group equation: `x⁴ = y³`. -/
+lemma binaryOctahedral_x_pow_four_eq_y_pow_three :
+    (PresentedGroup.of BinaryOctahedralSymbols.x : BinaryOctahedralGroup) ^ 4 =
+      (PresentedGroup.of BinaryOctahedralSymbols.y : BinaryOctahedralGroup) ^ 3 := by
+  have h : PresentedGroup.mk BinaryOctahedralRelations
+      (FreeGroup.of BinaryOctahedralSymbols.x ^ 4 *
+        ((FreeGroup.of BinaryOctahedralSymbols.y) ^ 3)⁻¹) = 1 :=
+    PresentedGroup.one_of_mem (Or.inl rfl)
+  rw [map_mul, map_pow, map_inv, map_pow] at h
+  exact mul_inv_eq_one.mp h
+
+/-- The second defining relation of `2O`, as an in-group equation: `x⁴ = (x * y)²`. -/
+lemma binaryOctahedral_x_pow_four_eq_x_mul_y_sq :
+    (PresentedGroup.of BinaryOctahedralSymbols.x : BinaryOctahedralGroup) ^ 4 =
+      (PresentedGroup.of BinaryOctahedralSymbols.x *
+        PresentedGroup.of BinaryOctahedralSymbols.y : BinaryOctahedralGroup) ^ 2 := by
+  have h : PresentedGroup.mk BinaryOctahedralRelations
+      (FreeGroup.of BinaryOctahedralSymbols.x ^ 4 *
+        ((FreeGroup.of BinaryOctahedralSymbols.x *
+          FreeGroup.of BinaryOctahedralSymbols.y) ^ 2)⁻¹) = 1 :=
+    PresentedGroup.one_of_mem (Or.inr rfl)
+  rw [map_mul, map_pow, map_inv, map_pow, map_mul] at h
+  exact mul_inv_eq_one.mp h
+
+/-- `z := x⁴` is central in `2O`: it commutes with `x` (a power of it) and with `y` (equal to
+`y³` by the first relation), hence with everything the generators generate. First stepping stone
+towards the missing `Nat.card` bound of `binaryOctahedral_finite_and_card_le` below. -/
+lemma binaryOctahedral_commute_x_pow_four (g : BinaryOctahedralGroup) :
+    Commute g ((PresentedGroup.of BinaryOctahedralSymbols.x : BinaryOctahedralGroup) ^ 4) := by
+  have hx : Commute (PresentedGroup.of BinaryOctahedralSymbols.x : BinaryOctahedralGroup)
+      ((PresentedGroup.of BinaryOctahedralSymbols.x : BinaryOctahedralGroup) ^ 4) :=
+    (Commute.refl _).pow_right 4
+  have hy : Commute (PresentedGroup.of BinaryOctahedralSymbols.y : BinaryOctahedralGroup)
+      ((PresentedGroup.of BinaryOctahedralSymbols.x : BinaryOctahedralGroup) ^ 4) := by
+    rw [binaryOctahedral_x_pow_four_eq_y_pow_three]
+    exact (Commute.refl _).pow_right 3
+  have htop : g ∈ Subgroup.closure
+      (Set.range (PresentedGroup.of : BinaryOctahedralSymbols → BinaryOctahedralGroup)) := by
+    rw [PresentedGroup.closure_range_of]
+    trivial
+  refine Subgroup.closure_induction (fun a ha => ?_) (Commute.one_left _)
+    (fun a b _ _ ha hb => ha.mul_left hb) (fun a _ ha => ha.inv_left) htop
+  obtain ⟨v, rfl⟩ := ha
+  cases v
+  · exact hx
+  · exact hy
+
+/-- **The presented group `2O = ⟨x, y | x⁴ = y³ = (xy)²⟩` is finite with at most `48` elements**
+-- `sorry`d; this is now the *sole* remaining gap of Butler's Case VIb (tex ~2198-2201, see the
+module docstring above and `DIVERGENCES.md` item 11).
+
+The true cardinality is exactly `48`, but only finiteness and the *upper* bound are stated (and
+consumed by `mulEquiv_of_card48_uniqueInvolution_quotientS4` below). The lower bound `48 ≤ |2O|`
+would require a faithful concrete model of `2O` (every nontrivial normal subgroup of `2O`
+contains the unique involution `z = x⁴`, so no non-injective homomorphism separates `z` from `1`;
+the natural matrix models need `√2`, e.g. inside `SL(2, 𝔽₉)` -- see the module docstring for why
+that route was abandoned), whereas in the recognition lemma below it comes for free from the
+constructed *surjection* `2O →* G` onto the order-`48` group `G`. Closing this `sorry` therefore
+needs only a Todd-Coxeter-style upper bound: exhibit `48` words in `x, y` containing `1`, show
+the set is stable under left multiplication by `x` and `y` using the defining relations
+(`binaryOctahedral_x_pow_four_eq_y_pow_three`, `binaryOctahedral_x_pow_four_eq_x_mul_y_sq`,
+centrality `binaryOctahedral_commute_x_pow_four`, and derived rewriting consequences such as
+`y*x*y = x³`-style exchange rules plus `z² = 1` -- itself a nontrivial syntactic derivation), and
+conclude via `Subgroup.closure_induction` from `PresentedGroup.closure_range_of` that the set
+exhausts `2O`.
+
+A cleaner decomposition (halving the enumeration to `24` words over a *concrete* target): `z := x⁴`
+is central (`binaryOctahedral_commute_x_pow_four`) with `z² = 1` (still to be derived), so
+`Nat.card 2O ≤ 2 * Nat.card (2O ⧸ ⟨z⟩)`, and the central quotient `2O ⧸ ⟨z⟩` -- obtained by killing
+`z` -- satisfies the *symmetric-group* presentation `⟨x, y | x⁴ = y³ = (xy)² = 1⟩`. It therefore
+suffices to bound *that* quotient by `24`; here the Todd-Coxeter target is the explicit
+`Perm (Fin 4)`, reached by the surjection `x ↦ finRotate 4`, `y ↦ (finRotate 4)⁻¹ · (0 1)` of
+`binaryOctahedral_exists_generators`, so a `24`-element normal-form set stable under left
+multiplication by `x, y` (or, dually, proving that surjection injective) closes it. Note no faithful
+homomorphism *out of* `2O` can be exhibited without first establishing the upper bound (a surjection
+*onto* `2O` only lower-bounds its codomain), which is why the syntactic enumeration is unavoidable
+here absent `mathlib` Todd-Coxeter or Schur-multiplier infrastructure. -/
+lemma binaryOctahedral_finite_and_card_le :
+    Finite BinaryOctahedralGroup ∧ Nat.card BinaryOctahedralGroup ≤ 48 := by
+  sorry
+
+omit [Finite G] in
+/-- **Recognition lemma for the binary octahedral group `2O` (Butler Case VIb, tex ~2173-2201) --
+fully proven modulo the single isolated `sorry` of `binaryOctahedral_finite_and_card_le` above
+(finiteness/order of the presented group), which is where all of the remaining
+Suzuki-citation difficulty now lives.**
+
+If `G` is a finite group of order `48` with a unique involution `z` (so `z` is central by
+`isCentral_of_unique_involution`, giving `G ⧸ ⟨z⟩` a group structure of order `24`), and `f`
+exhibits `G ⧸ ⟨z⟩` as (abstractly) `S₄` in which every transposition lifts (along `f` and the
+quotient map) to an order-`4` element of `G`, then `G ≅ 2O`.
+
+This is precisely Suzuki's classification of the two representation groups of `S₄`
+(cited by Butler, tex ~2198-2201) applied to rule out every possibility other than `2O`; see the
+module docstring for why it is out of reach here (no `mathlib` Schur-multiplier infrastructure,
+and no semidirect-product shortcut since the extension `⟨z⟩ → G → S₄` does not split). -/
+theorem mulEquiv_of_card48_uniqueInvolution_quotientS4 {z : G} (hz2 : z ^ 2 = 1) (hz1 : z ≠ 1)
+    (huniq : ∀ g : G, g ^ 2 = 1 → g ≠ 1 → g = z)
+    -- supplied by the caller, e.g. via `normal_zpowers_of_mem_center
+    -- (isCentral_of_unique_involution hz2 hz1 huniq)`, so that `G ⧸ Subgroup.zpowers z` below
+    -- (and `QuotientGroup.mk`) elaborate as a group / group homomorphism target.
+    [hzNormal : (Subgroup.zpowers z).Normal]
+    (hcard : Nat.card G = 48)
+    (f : (G ⧸ Subgroup.zpowers z) ≃* Equiv.Perm (Fin 4))
+    (hswap : ∀ g : G, (f (QuotientGroup.mk g)).IsSwap → orderOf g = 4) :
+    Nonempty (G ≃* BinaryOctahedralGroup) := by
+  classical
+  obtain ⟨s, t, hs4, hs2, ht3, hswap_st, hst2, hclosure⟩ := binaryOctahedral_exists_generators
+  -- the composite projection `π : G →* S₄`
+  let π : G →* Equiv.Perm (Fin 4) :=
+    f.toMonoidHom.comp (QuotientGroup.mk' (Subgroup.zpowers z))
+  have hπ_apply : ∀ g : G, π g = f (QuotientGroup.mk g) := fun _ => rfl
+  have hπ_surj : Function.Surjective π := by
+    intro w
+    obtain ⟨q, hq⟩ := f.surjective w
+    obtain ⟨g, hg⟩ := QuotientGroup.mk'_surjective (Subgroup.zpowers z) q
+    exact ⟨g, by rw [hπ_apply, ← hq]; exact congrArg f hg⟩
+  -- kernel description
+  have hker : ∀ w : G, π w = 1 ↔ w ∈ Subgroup.zpowers z := by
+    intro w
+    rw [hπ_apply, ← QuotientGroup.eq_one_iff (N := Subgroup.zpowers z) w]
+    exact f.map_eq_one_iff
+  have hzpow := binaryOctahedral_mem_zpowers_involution hz2
+  have hπz : π z = 1 := (hker z).mpr (Subgroup.mem_zpowers z)
+  -- centrality of z
+  have hzcentral : z ∈ Subgroup.center G := isCentral_of_unique_involution hz2 hz1 huniq
+  have hzcomm : ∀ g : G, g * z = z * g := fun g => Subgroup.mem_center_iff.mp hzcentral g
+  -- lift the generators
+  obtain ⟨x₀, hx₀⟩ := hπ_surj s
+  obtain ⟨y₀, hy₀⟩ := hπ_surj t
+  -- pin down x₀ ^ 4 = z
+  have hx4mem : x₀ ^ 4 ∈ Subgroup.zpowers z := by
+    rw [← hker, map_pow, hx₀, hs4]
+  have hx4 : x₀ ^ 4 = z := by
+    rcases hzpow _ hx4mem with h1 | hz'
+    · exfalso
+      have hx2sq : (x₀ ^ 2) ^ 2 = 1 := by rw [← pow_mul]; exact h1
+      have hx2ne : x₀ ^ 2 ≠ 1 := by
+        intro h
+        apply hs2
+        rw [← hx₀, ← map_pow, h, map_one]
+      have hx2z := huniq _ hx2sq hx2ne
+      apply hs2
+      rw [← hx₀, ← map_pow, hx2z, hπz]
+    · exact hz'
+  -- pin down y₁ ^ 3 = z (adjusting the lift of t by z if necessary)
+  have hy3mem : y₀ ^ 3 ∈ Subgroup.zpowers z := by
+    rw [← hker, map_pow, hy₀, ht3]
+  obtain ⟨y₁, hy₁π, hy13⟩ : ∃ y₁ : G, π y₁ = t ∧ y₁ ^ 3 = z := by
+    rcases hzpow _ hy3mem with h1 | hz'
+    · refine ⟨y₀ * z, ?_, ?_⟩
+      · rw [map_mul, hy₀, hπz, mul_one]
+      · have hc : Commute y₀ z := hzcomm y₀
+        rw [hc.mul_pow, h1, one_mul, show (3 : ℕ) = 2 + 1 from rfl, pow_add, hz2, one_mul,
+          pow_one]
+    · exact ⟨y₀, hy₀, hz'⟩
+  -- pin down (x₀ * y₁) ^ 2 = z, using the order-4-transposition-lift hypothesis
+  have hπxy : π (x₀ * y₁) = s * t := by rw [map_mul, hx₀, hy₁π]
+  have hxyswap : (f (QuotientGroup.mk (x₀ * y₁))).IsSwap := by
+    rw [← hπ_apply, hπxy]; exact hswap_st
+  have hordxy : orderOf (x₀ * y₁) = 4 := hswap _ hxyswap
+  have hxy2mem : (x₀ * y₁) ^ 2 ∈ Subgroup.zpowers z := by
+    rw [← hker, map_pow, hπxy, hst2]
+  have hxy2 : (x₀ * y₁) ^ 2 = z := by
+    rcases hzpow _ hxy2mem with h1 | hz'
+    · exfalso
+      have hdvd : orderOf (x₀ * y₁) ∣ 2 := orderOf_dvd_of_pow_eq_one h1
+      rw [hordxy] at hdvd
+      norm_num at hdvd
+    · exact hz'
+  -- build the presented-group homomorphism
+  let gens : BinaryOctahedralSymbols → G := fun v => match v with
+    | .x => x₀
+    | .y => y₁
+  have hgx : gens BinaryOctahedralSymbols.x = x₀ := rfl
+  have hgy : gens BinaryOctahedralSymbols.y = y₁ := rfl
+  have hrels : ∀ r ∈ BinaryOctahedralRelations, FreeGroup.lift gens r = 1 := by
+    intro r hr
+    simp only [BinaryOctahedralRelations, Set.mem_union, Set.mem_singleton_iff] at hr
+    rcases hr with rfl | rfl
+    · simp only [map_mul, map_pow, map_inv, FreeGroup.lift_apply_of]
+      rw [hgx, hgy, hx4, hy13, mul_inv_cancel]
+    · simp only [map_mul, map_pow, map_inv, FreeGroup.lift_apply_of]
+      rw [hgx, hgy, hx4, hxy2, mul_inv_cancel]
+  let φ : BinaryOctahedralGroup →* G := PresentedGroup.toGroup hrels
+  have hφx : φ (PresentedGroup.of BinaryOctahedralSymbols.x) = x₀ :=
+    PresentedGroup.toGroup.of hrels
+  have hφy : φ (PresentedGroup.of BinaryOctahedralSymbols.y) = y₁ :=
+    PresentedGroup.toGroup.of hrels
+  -- surjectivity
+  have hx₀mem : x₀ ∈ φ.range := ⟨PresentedGroup.of BinaryOctahedralSymbols.x, hφx⟩
+  have hy₁mem : y₁ ∈ φ.range := ⟨PresentedGroup.of BinaryOctahedralSymbols.y, hφy⟩
+  have hzmem : z ∈ φ.range := by
+    rw [← hx4]
+    exact pow_mem hx₀mem 4
+  have hrange_top : φ.range = ⊤ := by
+    rw [eq_top_iff]
+    intro g _
+    have hmap : Subgroup.map π φ.range = ⊤ := by
+      rw [eq_top_iff, ← hclosure, Subgroup.closure_le]
+      rintro w (rfl | rfl)
+      · exact ⟨x₀, hx₀mem, hx₀⟩
+      · exact ⟨y₁, hy₁mem, hy₁π⟩
+    have hπg : π g ∈ Subgroup.map π φ.range := by rw [hmap]; exact Subgroup.mem_top _
+    obtain ⟨h, hh, hhg⟩ := Subgroup.mem_map.mp hπg
+    have hker_g : h⁻¹ * g ∈ Subgroup.zpowers z := by
+      rw [← hker, map_mul, map_inv, hhg, inv_mul_cancel]
+    have hg : g = h * (h⁻¹ * g) := by group
+    rw [hg]
+    refine Subgroup.mul_mem _ hh ?_
+    rcases hzpow _ hker_g with h1 | hz'
+    · rw [h1]; exact Subgroup.one_mem _
+    · rw [hz']; exact hzmem
+  have hφ_surj : Function.Surjective φ := MonoidHom.range_eq_top.mp hrange_top
+  -- cardinality transfer: `|2O| ≤ 48` (the sorried gap) plus `|2O| ≥ |G| = 48` (from
+  -- surjectivity) pin `|2O| = 48`, upgrading the surjection to a bijection.
+  obtain ⟨hfin, hle⟩ := binaryOctahedral_finite_and_card_le
+  haveI := hfin
+  have hge : 48 ≤ Nat.card BinaryOctahedralGroup := by
+    rw [← hcard]
+    exact Nat.card_le_card_of_surjective φ hφ_surj
+  have hbij : Function.Bijective φ :=
+    (Nat.bijective_iff_surjective_and_card φ).mpr
+      ⟨hφ_surj, by rw [le_antisymm hle hge, hcard]⟩
+  exact ⟨(MulEquiv.ofBijective φ hbij).symm⟩
+
+end BinaryOctahedral
+
 end Ch7GroupRecognition

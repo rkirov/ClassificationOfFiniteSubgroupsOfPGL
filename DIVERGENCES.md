@@ -214,6 +214,59 @@ here and in the corresponding docstrings.
     is not attempted here") for *this* instance; `case_VI_core`'s own gap is the sole remaining
     instance of the same missing global-exhaustiveness infrastructure.
 
+11. **Theorem 6.8(v), "a nontrivial complement is a recognized class" -- CLOSED for `Ch7:
+    dicksons_classification_theorem_class_II`** (tex 899-948, Thm 6.8(v-a)/(v-b);
+    `S5_NumericClassEquation.BridgeData.hSylow`'s witness `K`). `CaseArithmetic.case_1_0`/
+    `case_0_0`/`case_1_1`/`case_0_3` each carry an extra hypothesis (`hK`/`hKle`) asserting that
+    Butler's specific complement `K = C_G(x) ∩ G` (`x` noncentral in the Sylow `p`-subgroup `Q`),
+    if nontrivial, coincides with one of the recognized coprime-type classes `Aᵢ` -- ungrounded in
+    `Ch7`'s `case_I`/`case_II`/`case_IV`/`case_VI` above, which simply carry it as a further
+    hypothesis on top of `BridgeData`'s own witnesses (needed because `BridgeData`'s `K`, per
+    `S2_B`'s divergence item 4, is built generically via Schur–Zassenhaus, not identified with
+    Butler's centralizer). For `dicksons_classification_theorem_class_II`'s own dispatch (`(1,0)`/
+    `(0,0)` branches; `p ∣ Nat.card G` forces `BridgeData`'s witness genuinely nontrivial there)
+    this is now **proved**, via two new lemmas: `coprime_card_complement_of_normalizer_eq_sylow_
+    join` (`Nat.card K` is coprime to `p`, since the Sylow subgroup `S₀` is already a *full* Sylow
+    `p`-subgroup of `N_G(S₀) = S₀ ⊔ K`, so an extra factor of `p` in `Nat.card K` would exceed
+    `Nat.card G`'s own `p`-adic valuation) and `card_K_eq_of_one_lt_of_normalizer_eq_sylow_join`
+    (given that coprimality, `S2_B.K_mem_MaximalAbelianSubgroups_of_center_lt_card_K` shows `K`'s
+    image genuinely is a maximal abelian subgroup of `G`, and `hComplete` then pins it to a
+    specific `As i`/`At j` by cardinality). This closes `(1,0)`/`(0,0)` in full (no residual
+    sorry). It does *not* by itself close `case_I`/`case_II`/`case_IV`/`case_VI`'s own standing
+    `hK`/`hKle` hypotheses in general (those lemmas are stated for an arbitrary externally-supplied
+    `Q`/`hq`, not tied to `BridgeData`'s own witness the way `class_II`'s dispatch is) -- doing so
+    would need the same argument threaded through each lemma's own signature.
+
+12. **`BridgeData.hSylow`'s "no witness" disjunct vs. `p ∣ Nat.card G` -- now CLOSED** (`Ch7:
+    dicksons_classification_theorem_class_II`, `(1,1)`/`(0,3)` branches). `CaseArithmetic.
+    case_1_1`/`case_0_3` force `q = 1` *unconditionally* for the `(s,t) = (1,1)`/`(0,3)` class-
+    equation shapes (independent of any hypothesis on `p`) -- mathematically, Butler's Case
+    II/Case VI, occurring only when `p ∤ Nat.card G` (`dicksons_classification_theorem_class_I`'s
+    own dispatch of these same two branches). Formalizing "this is incompatible with `p ∣ Nat.card
+    G`" needs `BridgeData`'s `hSylow` field's "no witness" disjunct (`q = 1 ∧ k = 1`) to be shown
+    impossible whenever `G` has a nontrivial Sylow `p`-subgroup -- i.e. that `q` genuinely tracks
+    Sylow-triviality, not merely a bookkeeping numeral. This does *not* follow from `BridgeData`'s
+    exposed fields: unlike item 11 above (where `hSylow`'s *witness* disjunct directly supplies a
+    real subgroup to reason about), the "no witness" disjunct supplies nothing to connect back to
+    an independently-constructed nontrivial Sylow subgroup, and `hComplete`, applied to any such
+    independently-constructed Sylow-type maximal abelian subgroup, only reconfirms it *is* Sylow
+    type (consistent with either disjunct) rather than contradicting `hSylow`'s "no witness" claim.
+    Closing this genuinely needs either (a) exposing a stronger invariant on `BridgeData` itself
+    (out of scope here -- `S5_NumericClassEquation.lean` is not this wave's target file), or (b) an
+    independent proof that `Sfin` (the Finset of Sylow-type noncenter classes inside `exists_
+    bridgeData`'s own construction) is nonempty whenever `p ∣ Nat.card G`, which would need
+    re-deriving (not merely invoking) a chunk of that construction. **Closed (Wave 17) by
+    neither route**: no link between `q` and an actual Sylow subgroup is needed. In the
+    "no witness" case (`q = 1`) the `(1,1)`/`(0,3)` class equations clear denominators to
+    ℕ-identities of the shape `g·(⋯) = (⋯)·(g + 2)`; from `p ∣ Nat.card G = |Z|·g` and
+    `Nat.Coprime |Z| p` (`coprime_card_Z_prime`) follows `p ∣ g`, each class size `gs i`/`gt j`
+    is coprime to `p` (`hAs_coprime`/`hAt_coprime` + the card equations), so `p` prime forces
+    `p ∣ g + 2`, hence `p ∣ 2`, contradicting `hp2 : p ≠ 2` (helpers `classII_arith_1_1_false`/
+    `classII_arith_0_3_false`). The witness disjunct dispatches exactly like the proven
+    `(1,0)`/`(0,0)` branches (`card_K_eq_of_one_lt_of_normalizer_eq_sylow_join` discharging
+    `case_1_1`/`case_0_3`'s `hK`, which force `q = 1` against the witness's nontriviality).
+    `dicksons_classification_theorem_class_II` is now sorry-free.
+
 ## Repaired Lean statement drafts (not Butler errors)
 
 - `IsPGroup.not_le_normalizer` → `IsPGroup.lt_normalizer_subgroupOf` (original
@@ -224,3 +277,11 @@ here and in the corresponding docstrings.
   the subgroup-equality conjunct); now stated internally to G.
 - Final-theorem disjunct lists: self-contained existentials; `Equiv.Perm (Fin 5)`
   → `(Fin 4)` in the PGL₂ statement (S₄, per the classical list).
+- `FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod` (Wave 17): the finite
+  field `𝕂` was *universally* quantified (false as stated — take `G ≅ PSL(2,p²)` against
+  `𝕂 = 𝔽_p`); now existential, `∃ k : ℕ+, … GaloisField p k.val …`, matching Class II
+  items (ix)/(x). The README's Borel disjunct ("conjugate to a subgroup of the upper
+  triangular matrices") was missing entirely — the unipotent `(ℤ/p)² ≤ PGL₂(F̄_p)`
+  satisfied no listed disjunct; restored abstractly (elementary abelian normal `Q` +
+  cyclic complement coprime to `p`), mirroring Class II item (vi). `hp2 : p ≠ 2` added
+  (README assumes an odd prime `ℓ`).
