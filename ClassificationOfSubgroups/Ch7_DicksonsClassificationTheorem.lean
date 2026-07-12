@@ -5004,9 +5004,23 @@ lemma caseV_d_recognition {H : Type*} [Group H] [Finite H] (hcard : Nat.card H =
   obtain ⟨e⟩ := Ch7SimpleGroup60.isSimpleGroup_card_sixty_iso_alternating hsimple h60
   exact caseV_d_schur_cover hcard hinv e
 
-/-- (SORRY) Vd, Butler tex 2088-2102: `G/Z` is simple of order `60`. **Gap:** the element-order
-census (`1` identity, `15` involutions, `24` order-`5`, `20` order-`3`, summing to `60`) forces
-any normal subgroup's order to be a subset-sum of `{1,15,20,24}` dividing `60`, so `1` or `60`. -/
+/-- The center of a group `H` lies inside every maximal abelian subgroup: joining a maximal
+abelian subgroup with the (central) `center H` keeps it abelian, so maximality forces equality. -/
+lemma caseV_d_center_le_maximalAbelian {H : Type*} [Group H] (A : Subgroup H)
+    (hA : IsMaximalAbelian A) : Subgroup.center H ≤ A := by
+  have hAcomm : IsMulCommutative A := hA.1
+  have hjoin : IsMulCommutative (Subgroup.center H ⊔ A : Subgroup H) :=
+    IsComm_of_center_join_IsComm A hAcomm
+  have hle : (Subgroup.center H ⊔ A : Subgroup H) ≤ A := hA.2 hjoin le_sup_right
+  exact le_sup_left.trans hle
+
+/-- **Case Vd (Butler tex 2088-2102): `G ⧸ Z` is simple.** With `|G| = 120` and `|Z| = 2`, so
+`|G/Z| = 60`, this replaces Butler's element-order census by a Sylow argument. Bridge B1:
+`|center ↥G| = 2` from `center ↥G ≤ A' ∩ B'` (`caseV_d_center_le_maximalAbelian`, orders `4` and
+`10`) and the central `Z ≤ center ↥G` (order `2`). Bridge B2: the image `B̄` of `B' = B.subgroupOf
+G` in `G/Z` is a Sylow-`5` (order `5`) that is not normal (else `B'` would be, contradicting
+`|N_G(B')| = 20 ≠ 120` from `hB_relIndex`), so `n₅(G/Z) ≠ 1`. Then
+`Ch7SimpleGroup60.isSimpleGroup_of_card_60_of_sylow5_ne_one` concludes. -/
 lemma caseV_d_quotient_simple {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -5029,7 +5043,83 @@ lemma caseV_d_quotient_simple {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [D
     (hp3 : p = 3) (hq3 : q = 3) (hga2 : ga = 2) (hgb5 : gb = 5) (hg60 : g = 60)
     (hkga : k = ga) (he2 : Nat.card (center SL(2,F)) = 2) :
     IsSimpleGroup (↥G ⧸ center ↥G) := by
-  sorry
+  haveI : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+  have hcard120G : Nat.card ↥G = 120 := by rw [hg, he2, hg60]
+  -- B1: |center ↥G| = 2
+  have hZc_le : (center SL(2,F)).subgroupOf G ≤ Subgroup.center ↥G := by
+    intro x hx
+    rw [Subgroup.mem_center_iff]
+    intro h
+    apply Subgroup.subtype_injective G
+    rw [_root_.map_mul, _root_.map_mul]
+    have hgc : G.subtype x ∈ center SL(2,F) := Subgroup.mem_subgroupOf.mp hx
+    exact Subgroup.mem_center_iff.mp hgc (G.subtype h)
+  have hZc_card : Nat.card ((center SL(2,F)).subgroupOf G) = 2 := by
+    rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe center_le_G).toEquiv, he2]
+  have h2dvd : 2 ∣ Nat.card (Subgroup.center ↥G) := by
+    have h := Subgroup.card_dvd_of_le hZc_le; rwa [hZc_card] at h
+  have hcenA : Subgroup.center ↥G ≤ A.subgroupOf G := caseV_d_center_le_maximalAbelian _ hA_mem.1
+  have hcenB : Subgroup.center ↥G ≤ B.subgroupOf G := caseV_d_center_le_maximalAbelian _ hB_mem.1
+  have hcardA : Nat.card (A.subgroupOf G) = 4 := by
+    rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hA_mem.2).toEquiv, hA_card, he2, hga2]
+  have hcardB : Nat.card (B.subgroupOf G) = 10 := by
+    rw [Nat.card_congr (Subgroup.subgroupOfEquivOfLe hB_mem.2).toEquiv, hB_card, he2, hgb5]
+  have hcen_dvd4 : Nat.card (Subgroup.center ↥G) ∣ 4 := by
+    have h := Subgroup.card_dvd_of_le hcenA; rwa [hcardA] at h
+  have hcen_dvd10 : Nat.card (Subgroup.center ↥G) ∣ 10 := by
+    have h := Subgroup.card_dvd_of_le hcenB; rwa [hcardB] at h
+  have hcen_dvd2 : Nat.card (Subgroup.center ↥G) ∣ 2 :=
+    (Nat.dvd_gcd hcen_dvd4 hcen_dvd10).trans (by norm_num)
+  have hZ2 : Nat.card (Subgroup.center ↥G) = 2 := Nat.dvd_antisymm hcen_dvd2 h2dvd
+  -- |G/Z| = 60
+  have hqcard : Nat.card (↥G ⧸ Subgroup.center ↥G) = 60 := by
+    have h := Subgroup.card_mul_index (Subgroup.center ↥G)
+    rw [hcard120G, hZ2] at h
+    rw [← Subgroup.index_eq_card]; omega
+  -- B2: n₅(G/Z) ≠ 1
+  have hn5 : Nat.card (Sylow 5 (↥G ⧸ Subgroup.center ↥G)) ≠ 1 := by
+    set π := QuotientGroup.mk' (Subgroup.center ↥G) with hπ
+    set B' := B.subgroupOf G with hB'
+    set Bbar := B'.map π with hBbar
+    have hsurj : Function.Surjective π := QuotientGroup.mk'_surjective _
+    have hker : π.ker = Subgroup.center ↥G := QuotientGroup.ker_mk' _
+    have hZleB' : Subgroup.center ↥G ≤ B' := hcenB
+    have hcomap : Bbar.comap π = B' := by
+      rw [hBbar, Subgroup.comap_map_eq_self (by rw [hker]; exact hZleB')]
+    have hB'idx : B'.index = 12 := by
+      have h := Subgroup.card_mul_index B'
+      rw [hcardB, hcard120G] at h; omega
+    have hBbaridx : Bbar.index = 12 := by
+      have h : (Bbar.comap π).index = Bbar.index := Subgroup.index_comap_of_surjective _ hsurj
+      rw [hcomap, hB'idx] at h; omega
+    have hBbarcard : Nat.card Bbar = 5 := by
+      have h := Subgroup.card_mul_index Bbar
+      rw [hqcard, hBbaridx] at h; omega
+    have hfact60 : (Nat.card (↥G ⧸ Subgroup.center ↥G)).factorization 5 = 1 := by
+      rw [hqcard, show (60 : ℕ) = 5 * 12 by norm_num,
+        Nat.factorization_mul (by norm_num) (by norm_num), Finsupp.add_apply,
+        Nat.Prime.factorization_self (by norm_num),
+        Nat.factorization_eq_zero_of_not_dvd (by norm_num)]
+    -- B' not normal (normalizer would be ⊤, but relIndex says 2 ≠ 12)
+    have hB'_not_normal : ¬ B'.Normal := by
+      intro hn
+      have htop : normalizer (B' : Set ↥G) = ⊤ := @Subgroup.normalizer_eq_top _ _ B' hn
+      have h := hB_relIndex
+      rw [htop, Subgroup.relIndex_top_right] at h
+      omega
+    have hBbar_not_normal : ¬ Bbar.Normal := by
+      intro hn
+      exact hB'_not_normal (hcomap ▸ hn.comap π)
+    intro hn5eq1
+    haveI : Subsingleton (Sylow 5 (↥G ⧸ Subgroup.center ↥G)) :=
+      (Nat.card_eq_one_iff_unique.mp hn5eq1).1
+    let PB : Sylow 5 (↥G ⧸ Subgroup.center ↥G) :=
+      Sylow.ofCard Bbar (by rw [hBbarcard, hfact60]; norm_num)
+    have hcoe : (PB : Subgroup (↥G ⧸ Subgroup.center ↥G)) = Bbar := Sylow.coe_ofCard _ _
+    have hnorm := Sylow.normal_of_subsingleton PB
+    rw [hcoe] at hnorm
+    exact hBbar_not_normal hnorm
+  exact Ch7SimpleGroup60.isSimpleGroup_of_card_60_of_sylow5_ne_one hqcard hn5
 
 /-- Butler tex 2046-2054 (Case Va root-count crux): in a field `F`, two `n`-element finsets whose
 members are all roots of `Xⁿ - 1` coincide (both equal `nthRootsFinset n 1`, which has `≤ n`
@@ -5182,6 +5272,49 @@ lemma caseV_geo_y_eq_dw_of_inverting [DecidableEq F] {K : Subgroup SL(2,F)}
 
 end CaseVGeo
 
+/- ==========================================================================================
+`caseV` Step-5 subfield realisation (Butler tex 2040-2054), frame-independent and shared by Cases
+Va/Vb. The fixed field `R F p n` of the `n`-th Frobenius is the copy of `𝔽_q = 𝔽_{pⁿ}` sitting
+inside the ambient algebraically closed `F`; these two lemmas give its cardinality (`= q`) and its
+ring isomorphism with `GaloisField p n`, so `SL(2, R F p n)` transports to `SL(2, GaloisField p n)`
+via `SL2_mulEquiv_of_ringEquiv`. -/
+
+/-- The subfield `R F p n` (fixed field of the `n`-th Frobenius) has exactly `pⁿ` elements: its
+carrier is the root set of the separable, fully-split (`F` algebraically closed) polynomial
+`Xᵖ^ⁿ - X`, whose `pⁿ` roots are counted by `card_rootSet_eq_natDegree`. -/
+lemma caseV_card_R {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ} [Fact (Nat.Prime p)]
+    [CharP F p] (n : ℕ+) : Nat.card (R F p n) = p ^ (n : ℕ) := by
+  classical
+  set f : F[X] := X ^ (p ^ (n : ℕ)) - X with hf
+  have hp1 : 1 < p := (Fact.out : p.Prime).one_lt
+  have hsep : f.Separable :=
+    galois_poly_separable (K := F) p (p ^ (n : ℕ)) (dvd_pow_self p n.pos.ne')
+  have hsplit : Splits (f.map (algebraMap F F)) := IsAlgClosed.splits (f.map (algebraMap F F))
+  have hnd : f.natDegree = p ^ (n : ℕ) :=
+    FiniteField.X_pow_card_pow_sub_X_natDegree_eq F n.pos.ne' hp1
+  have hcard_root : Fintype.card (f.rootSet F) = p ^ (n : ℕ) := by
+    rw [card_rootSet_eq_natDegree hsep hsplit, hnd]
+  have hfne : f ≠ 0 := by
+    intro h; rw [h, natDegree_zero] at hnd; exact (pow_pos (by omega : 0 < p) (n : ℕ)).ne' hnd.symm
+  have hset : (R F p n : Set F) = f.rootSet F := by
+    ext x
+    simp only [SetLike.mem_coe, R, RingHom.mem_eqLocusField, RingHom.id_apply]
+    rw [Polynomial.mem_rootSet]
+    simp only [hf, map_sub, aeval_X_pow, aeval_X, sub_eq_zero]
+    exact ⟨fun h => ⟨hfne, h⟩, fun h => h.2⟩
+  have key : Nat.card (R F p n) = Fintype.card (f.rootSet F) :=
+    (Nat.card_congr (Equiv.setCongr hset)).trans Nat.card_eq_fintype_card
+  rw [key, hcard_root]
+
+/-- Step-5 subfield realisation (frame-independent): the fixed field `R F p n` is ring-isomorphic
+to `GaloisField p n`, via `GaloisField.algEquivGaloisField` applied to `caseV_card_R`. -/
+lemma caseV_ringEquiv_R_GaloisField {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) :
+    Nonempty (R F p n ≃+* GaloisField p n.val) := by
+  haveI hchar : CharP (R F p n) p := CharP.subring F p (R F p n).toSubring
+  letI : Algebra (ZMod p) (R F p n) := (ZMod.castHom (dvd_refl p) (R F p n)).toAlgebra
+  exact ⟨(GaloisField.algEquivGaloisField p n.val (caseV_card_R n)).toRingEquiv⟩
+
 /-- (SORRY) Case Va, Butler tex 1953-2054 (`i = 1` or `e = 1`, so `ei = 2`, `|K| = q - 1`):
 `G ≅ SL(2, 𝔽_q)` with `𝔽_q = GaloisField p n`, `q = pⁿ`.
 
@@ -5254,6 +5387,195 @@ lemma caseV_a {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     (hshape3 : 2 * g = i * (q * (q ^ 2 - 1))) :
     ∃ m : ℕ+, Isomorphic G SL(2, GaloisField p m.val) := by
   sorry
+
+section CaseVb
+
+variable {k : ℕ+}
+
+lemma caseV_vb_ringHom_inj : Function.Injective (GaloisField_ringHom p k) := by
+  unfold GaloisField_ringHom
+  exact RingHom.injective _
+
+lemma caseV_vb_monoidHom_inj : Function.Injective (@SL2_monoidHom_SL2 p _ k) := by
+  unfold SL2_monoidHom_SL2
+  intro A B hAB
+  apply Subtype.ext
+  apply Matrix.ext
+  intro i j
+  have hc := congrArg (fun M : SL(2, GaloisField p (2*k.val)) =>
+      (M : Matrix (Fin 2) (Fin 2) (GaloisField p (2*k.val))) i j) hAB
+  simp only [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply,
+    Matrix.map_apply] at hc
+  exact RingHom.injective _ hc
+
+/-- Entry-access: the (i,j) entry of `SL2_monoidHom_SL2 A` is `GaloisField_ringHom` applied to
+the (i,j) entry of `A`. -/
+lemma caseV_vb_monoidHom_apply_entry (A : SL(2, GaloisField p k.val)) (i j : Fin 2) :
+    (SL2_monoidHom_SL2 A : Matrix (Fin 2) (Fin 2) (GaloisField p (2*k.val))) i j
+      = GaloisField_ringHom p k ((A : Matrix (Fin 2) (Fin 2) (GaloisField p k.val)) i j) := by
+  unfold SL2_monoidHom_SL2 GaloisField_ringHom
+  rw [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply]
+  rfl
+
+/-- The image `M = SL2_monoidHom_SL2 '' SL(2,𝔽_q)` has the cardinality of `SL(2,𝔽_q)`. -/
+lemma caseV_vb_card_image :
+    Nat.card (Subgroup.map (@SL2_monoidHom_SL2 p _ k) ⊤)
+      = Nat.card SL(2, GaloisField p k.val) := by
+  rw [← Nat.card_congr (Subgroup.equivMapOfInjective ⊤ _ caseV_vb_monoidHom_inj).toEquiv]
+  exact Nat.card_congr (Subgroup.topEquiv).toEquiv
+
+lemma caseV_vb_d_pi_notMem (π : (GaloisField p (2*k.val))ˣ) (hπ : SL2_join_d_pi_spec p k π) :
+    d π ∉ Subgroup.map (@SL2_monoidHom_SL2 p _ k) ⊤ := by
+  intro hmem
+  rw [Subgroup.mem_map] at hmem
+  obtain ⟨A, -, hA⟩ := hmem
+  apply hπ.1
+  refine ⟨(A : Matrix (Fin 2) (Fin 2) (GaloisField p k.val)) 0 0, ?_⟩
+  have hentry : (SL2_monoidHom_SL2 A : Matrix (Fin 2) (Fin 2) (GaloisField p (2*k.val))) 0 0
+      = (d π : Matrix (Fin 2) (Fin 2) (GaloisField p (2*k.val))) 0 0 := by rw [hA]
+  rw [caseV_vb_monoidHom_apply_entry] at hentry
+  rw [hentry]
+  simp [d]
+
+lemma caseV_vb_d_pi_sq_mem (π : (GaloisField p (2*k.val))ˣ) (hπ : SL2_join_d_pi_spec p k π) :
+    (d π)^2 ∈ Subgroup.map (@SL2_monoidHom_SL2 p _ k) ⊤ := by
+  obtain ⟨c, hc⟩ := hπ.2
+  have hcne : c ≠ 0 := by
+    intro h
+    rw [h, map_zero] at hc
+    exact (pow_ne_zero 2 (Units.ne_zero π)) hc.symm
+  set γ : (GaloisField p k.val)ˣ := Units.mk0 c hcne with hγ
+  rw [Subgroup.mem_map]
+  refine ⟨d γ, Subgroup.mem_top _, ?_⟩
+  have hsq : (d π)^2 = d (π^2) := by rw [sq, d_mul_d_eq_d_mul, sq]
+  rw [hsq]
+  apply Subtype.ext
+  refine Matrix.fin_two_ext ?_ ?_ ?_ ?_
+  · rw [caseV_vb_monoidHom_apply_entry]
+    simp only [d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply, Matrix.cons_val_zero, hγ,
+      Units.val_mk0, Units.val_pow_eq_pow_val]
+    exact hc
+  · rw [caseV_vb_monoidHom_apply_entry]
+    simp only [d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply, Matrix.cons_val_zero,
+      Matrix.cons_val_one]
+    exact map_zero _
+  · rw [caseV_vb_monoidHom_apply_entry]
+    simp only [d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply, Matrix.cons_val_zero,
+      Matrix.cons_val_one]
+    exact map_zero _
+  · rw [caseV_vb_monoidHom_apply_entry]
+    simp only [d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Units.val_pow_eq_pow_val, hγ, Units.val_mk0]
+    rw [map_inv₀]
+    exact congrArg (·⁻¹) hc
+
+-- range of the ring hom is closed under inverse
+lemma caseV_vb_range_inv {x : GaloisField p (2*k.val)}
+    (hx : x ∈ Set.range (GaloisField_ringHom p k)) :
+    x⁻¹ ∈ Set.range (GaloisField_ringHom p k) := by
+  obtain ⟨a, ha⟩ := hx
+  exact ⟨a⁻¹, by rw [map_inv₀]; exact congrArg (·⁻¹) ha⟩
+
+/-- Conjugation of `Y` by the diagonal `d ρ` scales the off-diagonal entries by `ρ^2`, `ρ^{-2}`. -/
+lemma caseV_vb_conj_formula (ρ : (GaloisField p (2*k.val))ˣ) (Y : SL(2, GaloisField p (2*k.val))) :
+    ((d ρ * Y * (d ρ)⁻¹ : SL(2, GaloisField p (2*k.val))) :
+      Matrix (Fin 2) (Fin 2) (GaloisField p (2*k.val)))
+      = !![Y.1 0 0, (ρ:GaloisField p (2*k.val))^2 * Y.1 0 1;
+           ((ρ:GaloisField p (2*k.val))^2)⁻¹ * Y.1 1 0, Y.1 1 1] := by
+  rw [inv_d_eq_d_inv]
+  refine Matrix.fin_two_ext ?_ ?_ ?_ ?_ <;>
+    simp only [Matrix.SpecialLinearGroup.coe_mul, d, Matrix.mul_apply, Fin.sum_univ_two,
+      Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Units.val_inv_eq_inv_val, Matrix.cons_val', Matrix.empty_val',
+      Matrix.cons_val_fin_one] <;> field_simp <;> ring
+
+lemma caseV_vb_dpi_mem_normalizer (π : (GaloisField p (2*k.val))ˣ) (hπ : SL2_join_d_pi_spec p k π) :
+    d π ∈ normalizer (Subgroup.map (@SL2_monoidHom_SL2 p _ k) ⊤) := by
+  rw [mem_normalizer_iff_map_conj_eq]
+  refine Subgroup.eq_of_le_of_card_ge ?_ ?_
+  · rintro y hy
+    rw [Subgroup.mem_map] at hy
+    obtain ⟨x, hxM, rfl⟩ := hy
+    rw [Subgroup.mem_map] at hxM
+    obtain ⟨A, -, rfl⟩ := hxM
+    obtain ⟨c, hc⟩ := hπ.2
+    have hcne : c ≠ 0 := by
+      intro h; rw [h, map_zero] at hc; exact (pow_ne_zero 2 (Units.ne_zero π)) hc.symm
+    have hdetA : (A : Matrix (Fin 2) (Fin 2) (GaloisField p k.val)) 0 0
+        * (A : Matrix (Fin 2) (Fin 2) (GaloisField p k.val)) 1 1
+        - (A : Matrix (Fin 2) (Fin 2) (GaloisField p k.val)) 0 1
+        * (A : Matrix (Fin 2) (Fin 2) (GaloisField p k.val)) 1 0 = 1 := by
+      have hA := A.property; rw [Matrix.det_fin_two] at hA; exact hA
+    refine ⟨⟨!![A.1 0 0, c * A.1 0 1; c⁻¹ * A.1 1 0, A.1 1 1], ?_⟩, Subgroup.mem_top _, ?_⟩
+    · rw [Matrix.det_fin_two]
+      simp only [Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+        Matrix.cons_val', Matrix.empty_val', Matrix.cons_val_fin_one]
+      field_simp
+      linear_combination hdetA
+    · have hf : (MulAut.conj (d π) :
+          SL(2, GaloisField p (2*k.val)) →* SL(2, GaloisField p (2*k.val)))
+          (SL2_monoidHom_SL2 A) = d π * SL2_monoidHom_SL2 A * (d π)⁻¹ := rfl
+      rw [hf]
+      apply Subtype.ext
+      rw [caseV_vb_conj_formula]
+      refine Matrix.fin_two_ext ?_ ?_ ?_ ?_ <;>
+        rw [caseV_vb_monoidHom_apply_entry] <;>
+        simp only [Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+          Matrix.cons_val', Matrix.empty_val', Matrix.cons_val_fin_one, map_mul, map_inv₀, hc,
+          caseV_vb_monoidHom_apply_entry] <;> rfl
+  · apply le_of_eq
+    exact Nat.card_congr (Subgroup.equivMapOfInjective (Subgroup.map (@SL2_monoidHom_SL2 p _ k) ⊤)
+      (MulAut.conj (d π) : SL(2, GaloisField p (2*k.val)) →* SL(2, GaloisField p (2*k.val)))
+      (MulEquiv.injective _)).toEquiv
+
+lemma caseV_vb_card_SL2_join_d (π : (GaloisField p (2*k.val))ˣ) (hπ : SL2_join_d_pi_spec p k π) :
+    Nat.card (SL2_join_d p k π) = 2 * Nat.card SL(2, GaloisField p k.val) := by
+  set M := Subgroup.map (@SL2_monoidHom_SL2 p _ k) ⊤ with hM
+  have hnorm : d π ∈ normalizer M := caseV_vb_dpi_mem_normalizer π hπ
+  have hcl_le : Subgroup.closure {d π} ≤ normalizer M := by
+    rw [Subgroup.closure_le]; intro x hx
+    rw [Set.mem_singleton_iff] at hx; subst hx; exact hnorm
+  have hJ : SL2_join_d p k π = M ⊔ Subgroup.closure {d π} := rfl
+  have hdecomp : (↑(M ⊔ Subgroup.closure {d π}) : Set SL(2, GaloisField p (2*k.val)))
+      = ↑M * ↑(Subgroup.closure {d π}) :=
+    Subgroup.coe_mul_of_right_le_normalizer_left M (Subgroup.closure {d π}) hcl_le
+  have hs2 : (d π ^ (2:ℤ)) ∈ M := by
+    rw [show (d π : SL(2, GaloisField p (2*k.val))) ^ (2:ℤ) = (d π) ^ 2 from by
+      rw [show (2:ℤ) = ((2:ℕ):ℤ) from rfl, zpow_natCast]]
+    exact caseV_vb_d_pi_sq_mem π hπ
+  have hz : ∀ z ∈ Subgroup.closure ({d π} : Set SL(2, GaloisField p (2*k.val))),
+      z ∈ M ∨ z * d π ∈ M := by
+    intro z hzmem
+    rw [Subgroup.mem_closure_singleton] at hzmem
+    obtain ⟨n, rfl⟩ := hzmem
+    rcases Int.even_or_odd n with ⟨j, rfl⟩ | ⟨j, rfl⟩
+    · left
+      have heq : d π ^ (j + j) = (d π ^ (2:ℤ)) ^ j := by rw [← _root_.zpow_mul]; congr 1; ring
+      rw [heq]; exact zpow_mem hs2 j
+    · right
+      have heq : d π ^ (2*j+1) * d π = (d π ^ (2:ℤ)) ^ (j+1) := by
+        rw [← _root_.zpow_add_one, ← _root_.zpow_mul]; congr 1; ring
+      rw [heq]; exact zpow_mem hs2 (j+1)
+  have hrel : M.relIndex (SL2_join_d p k π) = 2 := by
+    rw [hJ, Subgroup.relIndex_eq_two_iff_exists_notMem_and]
+    refine ⟨d π, ?_, caseV_vb_d_pi_notMem π hπ, ?_⟩
+    · exact (le_sup_right : Subgroup.closure {d π} ≤ M ⊔ Subgroup.closure {d π})
+        (Subgroup.subset_closure (Set.mem_singleton (d π)))
+    · intro b hb
+      rw [← SetLike.mem_coe, hdecomp, Set.mem_mul] at hb
+      obtain ⟨m, hm, z, hzc, rfl⟩ := hb
+      rcases hz z hzc with h | h
+      · right; exact mul_mem hm h
+      · left; rw [mul_assoc]; exact mul_mem hm h
+  have hMJ : M ≤ SL2_join_d p k π := by rw [hJ]; exact le_sup_left
+  have hcard := Subgroup.card_mul_index (M.subgroupOf (SL2_join_d p k π))
+  have hidx : (M.subgroupOf (SL2_join_d p k π)).index = 2 := hrel
+  have hcM : Nat.card (M.subgroupOf (SL2_join_d p k π)) = Nat.card M :=
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe hMJ).toEquiv
+  rw [hidx, hcM, hM, caseV_vb_card_image] at hcard
+  omega
+
+end CaseVb
 
 /-- (SORRY) Case Vb (and Vc at `q = 3`), Butler tex 2013-2043 (`i = 2 = e`, `|K| = 2(q-1)`):
 `G ≅ ⟨SL(2,𝔽_q), d_π⟩` with `SL(2,𝔽_q) ◁ G`. **Gap:** same projective-line normalization as Va,
@@ -6456,6 +6778,73 @@ noncomputable def SL2_mulEquiv_of_ringEquiv {R S : Type*} [CommRing R] [CommRing
 lemma card_conj_smul_eq_card {L : Type*} [Group L] {B : Subgroup L} (c : L) :
     Nat.card (conj c • B : Subgroup L) = Nat.card B :=
   (Nat.card_congr (Subgroup.equivSMul (conj c) B).toEquiv).symm
+
+/- ==========================================================================================
+`caseV` Step-5 recognition endpoint (Butler tex 2054), frame-independent and shared by Cases Va/Vb.
+Given the normalized-frame conclusion of Steps 1-4 — a conjugate of `G` sits inside (Va: equals)
+the subfield copy `SL(2, R F p n)` — these lemmas transport it through the chain
+`G ≃* vGv⁻¹ ≃* SL(2, R F p n) ≃* SL(2, GaloisField p n)` (conjugation `Subgroup.equivSMul`; the
+subfield inclusion `Matrix.SpecialLinearGroup.map (R F p n).subtype` is injective, so its image on
+`⊤` is `Subgroup.equivMapOfInjective`-isomorphic to `SL(2, R F p n)`; then the subfield ring iso of
+`caseV_ringEquiv_R_GaloisField` via `SL2_mulEquiv_of_ringEquiv`). NB: these consume
+`SL2_mulEquiv_of_ringEquiv`/`card_conj_smul_eq_card` above, so when `caseV_a` is mechanized this
+block (together with those two) relocates before it. -/
+
+/-- Step-5 recognition, equality form: if a conjugate of `G` *equals* the image of the whole
+`SL(2, R F p n)` under the subfield inclusion, then `G ≅ SL(2, GaloisField p n)`. -/
+lemma caseV_iso_of_conj_eq_map {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) (c : SL(2,F))
+    (hG : conj c • G =
+      Subgroup.map (Matrix.SpecialLinearGroup.map (R F p n).subtype) ⊤) :
+    Isomorphic G SL(2, GaloisField p n.val) := by
+  obtain ⟨eR⟩ := caseV_ringEquiv_R_GaloisField (F := F) (p := p) n
+  set φ : SL(2, R F p n) →* SL(2, F) := Matrix.SpecialLinearGroup.map (R F p n).subtype with hφ
+  have hsub_inj : Function.Injective ⇑(R F p n).subtype := fun a b h => Subtype.ext h
+  have hφinj : Function.Injective φ := by
+    intro A B hAB
+    apply Subtype.ext
+    have h : (φ A).1 = (φ B).1 := Subtype.ext_iff.mp hAB
+    simp only [hφ, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply] at h
+    exact Matrix.map_injective hsub_inj h
+  let e1 : ↥G ≃* ↥(conj c • G) := Subgroup.equivSMul (conj c) G
+  let e2 : ↥(conj c • G) ≃* ↥(Subgroup.map φ ⊤) := MulEquiv.subgroupCongr hG
+  let e3 : ↥(Subgroup.map φ ⊤) ≃* SL(2, R F p n) :=
+    (Subgroup.equivMapOfInjective ⊤ φ hφinj).symm.trans Subgroup.topEquiv
+  exact ⟨((e1.trans e2).trans e3).trans (SL2_mulEquiv_of_ringEquiv eR)⟩
+
+/-- Step-5 recognition, containment form (the route-map's actual Step-4 output, tex 2054): if a
+conjugate of `G` is *contained* in the subfield copy `SL(2, R F p n)` and `|G| = q(q²-1)` with
+`q = pⁿ`, then equality holds by cardinality and `G ≅ SL(2, GaloisField p n)`. -/
+lemma caseV_iso_of_conj_le_map {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) [Finite G] (c : SL(2,F))
+    (hle : conj c • G ≤ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p n).subtype) ⊤)
+    (hcard : Nat.card G = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ)) :
+    Isomorphic G SL(2, GaloisField p n.val) := by
+  set φ : SL(2, R F p n) →* SL(2, F) := Matrix.SpecialLinearGroup.map (R F p n).subtype with hφ
+  have hsub_inj : Function.Injective ⇑(R F p n).subtype := fun a b h => Subtype.ext h
+  have hφinj : Function.Injective φ := by
+    intro A B hAB
+    apply Subtype.ext
+    have h : (φ A).1 = (φ B).1 := Subtype.ext_iff.mp hAB
+    simp only [hφ, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply] at h
+    exact Matrix.map_injective hsub_inj h
+  have hcardR : Nat.card (R F p n) = p ^ (n : ℕ) := caseV_card_R n
+  haveI : Finite (R F p n) :=
+    Nat.finite_of_card_ne_zero (by rw [hcardR]; exact pow_ne_zero _ (Fact.out : p.Prime).pos.ne')
+  haveI : Fintype (R F p n) := Fintype.ofFinite _
+  have hq1 : 1 < p ^ (n : ℕ) := Nat.one_lt_pow n.pos.ne' (Fact.out : p.Prime).one_lt
+  have hfc : Fintype.card (R F p n) = p ^ (n : ℕ) := by rw [← hcardR, Nat.card_eq_fintype_card]
+  let e3 : ↥(Subgroup.map φ ⊤) ≃* SL(2, R F p n) :=
+    (Subgroup.equivMapOfInjective ⊤ φ hφinj).symm.trans Subgroup.topEquiv
+  haveI : Finite ↥(Subgroup.map φ ⊤) := Finite.of_equiv _ e3.symm.toEquiv
+  haveI : Finite ↥(conj c • G) := Finite.of_equiv _ (Subgroup.equivSMul (conj c) G).toEquiv
+  have hcardImg : Nat.card (Subgroup.map φ ⊤) = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ) := by
+    rw [Nat.card_congr e3.toEquiv, Nat.card_eq_fintype_card]; exact SL_card hfc hq1
+  have hcc : Nat.card (conj c • G : Subgroup SL(2,F)) = Nat.card G := card_conj_smul_eq_card c
+  have hcardle : Nat.card (Subgroup.map φ ⊤) ≤ Nat.card (conj c • G : Subgroup SL(2,F)) :=
+    le_of_eq (by rw [hcardImg, hcc, hcard])
+  have heq : conj c • G = Subgroup.map φ ⊤ := Subgroup.eq_of_le_of_card_ge hle hcardle
+  exact caseV_iso_of_conj_eq_map n G c (hφ ▸ heq)
 
 /-- **Theorem 6.8(v), coprimality half.** If `K` is the (Schur–Zassenhaus, `S2_B.exists_IsCyclic_
 K_normalizer_eq_Q_join_K`) complement to a Sylow `p`-subgroup `S₀` of `G` (`normalizer (S₀.
