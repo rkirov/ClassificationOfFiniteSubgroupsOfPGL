@@ -4577,15 +4577,432 @@ lemma caseV_exists_unique_involution {F : Type*} [Field F] [NeZero (2:F)]
     have h2 : (-1 : SL(2,F)) = τ := hτuniq _ SpecialSubgroups.orderOf_neg_one_eq_two
     exact Subtype.ext (by rw [h1, ← h2])
 
-/-- (SORRY) Vd/VIc recognition core, Butler tex 2103-2113: a group `H` of order `120` with a
-unique involution and simple central quotient `H/Z(H)` (order `60`) is `≅ SL(2,5)`. **Gap:**
-combine "simple of order `60` ⟹ `A₅`" (`Ch7_SimpleGroup60`, incomplete and not imported here)
-with Schur's theorem that `A₅`'s unique perfect degree-`2` central extension is `SL(2,5)`. -/
+/-! ### Case Vd/VIc, Butler tex 2088-2111: elementary group theory feeding `caseV_d_recognition`.
+
+Butler derives `|G/Z| = 60` and `G/Z` simple directly from the `SL(2,F)` class-equation
+arithmetic (where `Z = Z(SL(2,F)) = {±1}` is manifestly of order `2`). The abstract recognition
+lemma only sees `|H| = 120`, a unique involution, and `IsSimpleGroup (H ⧸ Z(H))`, so it must
+*recover* `|Z(H)| = 2` (equivalently `|H/Z(H)| = 60`). This is the classical fact that the only
+simple group whose order lies strictly between `1` and `120` and divides `120` (with even
+cofactor) is `A₅` of order `60` — proved here by ruling out simple groups of every intermediate
+order `{6,10,12,15,20}` and `30`, none of which appears in mathlib. -/
+
+-- A group of order `2q` (`q` prime) has an index-`2`, hence normal, cyclic subgroup: not simple.
+lemma caseV_d_not_simple_two_mul_prime {Q : Type*} [Group Q] [Finite Q] {q : ℕ} [Fact q.Prime]
+    (hcard : Nat.card Q = 2 * q) : ¬ IsSimpleGroup Q := by
+  intro hs
+  have hq2 : 2 ≤ q := (Fact.out : q.Prime).two_le
+  obtain ⟨g, hg⟩ := exists_prime_orderOf_dvd_card' q ⟨2, by rw [hcard]; ring⟩
+  have hzp : Nat.card (Subgroup.zpowers g) = q := by rw [Nat.card_zpowers, hg]
+  have hqpos : 0 < q := by omega
+  have hidx : (Subgroup.zpowers g).index = 2 := by
+    have h := Subgroup.card_mul_index (Subgroup.zpowers g)
+    rw [hzp, hcard] at h
+    exact Nat.eq_of_mul_eq_mul_left hqpos (by rw [h]; ring)
+  have hnorm : (Subgroup.zpowers g).Normal := Subgroup.normal_of_index_eq_two hidx
+  rcases hnorm.eq_bot_or_eq_top with hb | ht
+  · have : Nat.card (Subgroup.zpowers g) = 1 := by rw [hb]; exact Subgroup.card_bot
+    omega
+  · have : Nat.card (Subgroup.zpowers g) = Nat.card Q := by rw [ht]; exact Subgroup.card_top
+    omega
+
+lemma caseV_d_not_simple_sylow_card_one {Q : Type*} [Group Q] [Finite Q] {p : ℕ} [Fact p.Prime]
+    (P : Sylow p Q) (hn : Nat.card (Sylow p Q) = 1)
+    (hpos : 1 < Nat.card (P : Subgroup Q)) (hlt : Nat.card (P : Subgroup Q) < Nat.card Q) :
+    ¬ IsSimpleGroup Q := by
+  intro hs
+  haveI : Subsingleton (Sylow p Q) := Nat.card_eq_one_iff_unique.mp hn |>.1
+  have hnorm : (P : Subgroup Q).Normal := Sylow.normal_of_subsingleton P
+  rcases hnorm.eq_bot_or_eq_top with hb | ht
+  · rw [hb] at hpos; rw [Subgroup.card_bot] at hpos; omega
+  · rw [ht] at hlt; rw [Subgroup.card_top] at hlt; omega
+
+lemma caseV_d_sylow_card_ne_one_of_simple {Q : Type*} [Group Q] [Finite Q] {p : ℕ} [Fact p.Prime]
+    (hs : IsSimpleGroup Q) (P : Sylow p Q) (hpos : 1 < Nat.card (P : Subgroup Q))
+    (hlt : Nat.card (P : Subgroup Q) < Nat.card Q) : Nat.card (Sylow p Q) ≠ 1 :=
+  fun hn => caseV_d_not_simple_sylow_card_one P hn hpos hlt hs
+
+lemma caseV_d_not_simple_15 {Q : Type*} [Group Q] [Finite Q] (hcard : Nat.card Q = 15) :
+    ¬ IsSimpleGroup Q := by
+  haveI : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+  obtain P := Classical.arbitrary (Sylow 5 Q)
+  have hf : (15 : ℕ).factorization 5 = 1 := by
+    rw [show (15 : ℕ) = 5 * 3 by norm_num, Nat.factorization_mul (by norm_num) (by norm_num),
+      Finsupp.add_apply, Nat.Prime.factorization_self (by norm_num),
+      Nat.factorization_eq_zero_of_not_dvd (by norm_num)]
+  have hcardP : Nat.card (P : Subgroup Q) = 5 := by rw [P.card_eq_multiplicity, hcard, hf, pow_one]
+  have hidx : (P : Subgroup Q).index = 3 := by
+    have := P.toSubgroup.card_mul_index; rw [hcardP, hcard] at this; omega
+  have hn : Nat.card (Sylow 5 Q) = 1 := by
+    have hdvd : Nat.card (Sylow 5 Q) ∣ 3 := hidx ▸ P.card_dvd_index
+    have hmod : Nat.card (Sylow 5 Q) ≡ 1 [MOD 5] := card_sylow_modEq_one 5 Q
+    have hle : Nat.card (Sylow 5 Q) ≤ 3 := Nat.le_of_dvd (by norm_num) hdvd
+    have hpos : 0 < Nat.card (Sylow 5 Q) := Nat.card_pos
+    unfold Nat.ModEq at hmod; interval_cases (Nat.card (Sylow 5 Q)) <;> omega
+  exact caseV_d_not_simple_sylow_card_one P hn (by omega) (by omega)
+
+lemma caseV_d_not_simple_20 {Q : Type*} [Group Q] [Finite Q] (hcard : Nat.card Q = 20) :
+    ¬ IsSimpleGroup Q := by
+  haveI : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+  obtain P := Classical.arbitrary (Sylow 5 Q)
+  have hf : (20 : ℕ).factorization 5 = 1 := by
+    rw [show (20 : ℕ) = 5 * 4 by norm_num, Nat.factorization_mul (by norm_num) (by norm_num),
+      Finsupp.add_apply, Nat.Prime.factorization_self (by norm_num),
+      Nat.factorization_eq_zero_of_not_dvd (by norm_num)]
+  have hcardP : Nat.card (P : Subgroup Q) = 5 := by rw [P.card_eq_multiplicity, hcard, hf, pow_one]
+  have hidx : (P : Subgroup Q).index = 4 := by
+    have := P.toSubgroup.card_mul_index; rw [hcardP, hcard] at this; omega
+  have hn : Nat.card (Sylow 5 Q) = 1 := by
+    have hdvd : Nat.card (Sylow 5 Q) ∣ 4 := hidx ▸ P.card_dvd_index
+    have hmod : Nat.card (Sylow 5 Q) ≡ 1 [MOD 5] := card_sylow_modEq_one 5 Q
+    have hle : Nat.card (Sylow 5 Q) ≤ 4 := Nat.le_of_dvd (by norm_num) hdvd
+    have hpos : 0 < Nat.card (Sylow 5 Q) := Nat.card_pos
+    unfold Nat.ModEq at hmod; interval_cases (Nat.card (Sylow 5 Q)) <;> omega
+  exact caseV_d_not_simple_sylow_card_one P hn (by omega) (by omega)
+
+/-! The two `p²·q`-type orders `12` and `30` need an element count: `n_p·(p-1)` elements of
+order `p` when `p ‖ |Q|`. -/
+
+lemma caseV_d_inf_eq_bot_of_card_prime {Q : Type*} [Group Q] [Finite Q] {p : ℕ} (hp : p.Prime)
+    (A B : Subgroup Q) (hA : Nat.card A = p) (hB : Nat.card B = p) (hAB : A ≠ B) :
+    A ⊓ B = ⊥ := by
+  have hdvd : Nat.card (A ⊓ B : Subgroup Q) ∣ p := by
+    rw [← hA]; exact Subgroup.card_dvd_of_le inf_le_left
+  rcases (Nat.dvd_prime hp).mp hdvd with h1 | hp'
+  · exact Subgroup.card_eq_one.mp h1
+  · exfalso; apply hAB
+    have hAI : (A ⊓ B : Subgroup Q) = A := by
+      apply Subgroup.eq_of_le_of_card_ge inf_le_left; rw [hp', hA]
+    have hBI : (A ⊓ B : Subgroup Q) = B := by
+      apply Subgroup.eq_of_le_of_card_ge inf_le_right; rw [hp', hB]
+    rw [← hAI, hBI]
+
+lemma caseV_d_orderOf_eq_of_mem_card_prime {Q : Type*} [Group Q] {p : ℕ} [Fact p.Prime]
+    {P : Subgroup Q} (hP : Nat.card P = p) {x : Q} (hx : x ∈ P) (hx1 : x ≠ 1) :
+    orderOf x = p := by
+  have hdvd : orderOf (⟨x, hx⟩ : P) ∣ p := hP ▸ orderOf_dvd_natCard _
+  have hne : orderOf (⟨x, hx⟩ : P) ≠ 1 :=
+    fun h => hx1 (Subtype.ext_iff.mp (orderOf_eq_one_iff.mp h))
+  have hop : orderOf (⟨x, hx⟩ : P) = p := ((Nat.dvd_prime (Fact.out)).mp hdvd).resolve_left hne
+  show orderOf ((⟨x, hx⟩ : P) : Q) = p
+  rw [orderOf_coe]; exact hop
+
+lemma caseV_d_card_orderOf_eq_prime {Q : Type*} [Group Q] [Fintype Q] {p : ℕ} [Fact p.Prime]
+    (hmult : (Nat.card Q).factorization p = 1) :
+    (Finset.univ.filter (fun x : Q => orderOf x = p)).card = Nat.card (Sylow p Q) * (p - 1) := by
+  classical
+  letI : Fintype (Sylow p Q) := Fintype.ofFinite _
+  have hpp : p.Prime := Fact.out
+  have hcardSyl : ∀ P : Sylow p Q, Nat.card (P : Subgroup Q) = p := by
+    intro P; rw [P.card_eq_multiplicity, hmult, pow_one]
+  set T : Sylow p Q → Finset Q :=
+    fun P => Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q) ∧ orderOf x = p) with hT
+  have hbi : Finset.univ.filter (fun x : Q => orderOf x = p) = Finset.univ.biUnion T := by
+    ext x
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_biUnion, hT]
+    constructor
+    · intro hx
+      have hzc : Nat.card (Subgroup.zpowers x) = p ^ (Nat.card Q).factorization p := by
+        rw [Nat.card_zpowers, hx, hmult, pow_one]
+      refine ⟨Sylow.ofCard (Subgroup.zpowers x) hzc, ?_, hx⟩
+      rw [Sylow.coe_ofCard]; exact Subgroup.mem_zpowers x
+    · rintro ⟨P, -, hxo⟩; exact hxo
+  have hdisj : (↑(Finset.univ : Finset (Sylow p Q)) : Set (Sylow p Q)).PairwiseDisjoint T := by
+    intro P _ P' _ hPP'
+    rw [Function.onFun, Finset.disjoint_left]
+    intro x hxP hxP'
+    simp only [hT, Finset.mem_filter, Finset.mem_univ, true_and] at hxP hxP'
+    have hinf : (P : Subgroup Q) ⊓ (P' : Subgroup Q) = ⊥ :=
+      caseV_d_inf_eq_bot_of_card_prime hpp _ _ (hcardSyl P) (hcardSyl P')
+        (fun h => hPP' (Sylow.ext h))
+    have hxmem : x ∈ (P : Subgroup Q) ⊓ (P' : Subgroup Q) := ⟨hxP.1, hxP'.1⟩
+    rw [hinf, Subgroup.mem_bot] at hxmem
+    rw [hxmem] at hxP
+    simp only [orderOf_one, Subgroup.one_mem, true_and] at hxP
+    exact absurd hxP.symm hpp.ne_one
+  rw [hbi, Finset.card_biUnion hdisj]
+  have hterm : ∀ P : Sylow p Q, (T P).card = p - 1 := by
+    intro P
+    have hTP : T P = (Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))).filter (· ≠ 1) := by
+      rw [hT]; ext x
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      constructor
+      · rintro ⟨hxP, hxo⟩
+        exact ⟨hxP, fun h => by rw [h, orderOf_one] at hxo; exact hpp.ne_one hxo.symm⟩
+      · rintro ⟨hxP, hx1⟩; exact ⟨hxP, caseV_d_orderOf_eq_of_mem_card_prime (hcardSyl P) hxP hx1⟩
+    rw [hTP]
+    have hmemcard : (Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))).card = p := by
+      have h1 : (Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))).card
+          = Nat.card (P : Subgroup Q) := by
+        rw [show (Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))).card
+            = Fintype.card {x // x ∈ (P : Subgroup Q)} from (Fintype.card_subtype _).symm,
+          ← Nat.card_eq_fintype_card]
+      rw [h1, hcardSyl P]
+    have h1mem : (1 : Q) ∈ Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q)) := by simp
+    rw [Finset.filter_ne', Finset.card_erase_of_mem h1mem, hmemcard]
+  rw [Finset.sum_congr rfl (fun P _ => hterm P), Finset.sum_const, Finset.card_univ,
+    ← Nat.card_eq_fintype_card, smul_eq_mul]
+
+lemma caseV_d_not_simple_30 {Q : Type*} [Group Q] [Finite Q] (hcard : Nat.card Q = 30) :
+    ¬ IsSimpleGroup Q := by
+  classical
+  intro hs
+  haveI : Fintype Q := Fintype.ofFinite Q
+  haveI : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+  haveI : Fact (Nat.Prime 3) := ⟨by norm_num⟩
+  have hf5 : (Nat.card Q).factorization 5 = 1 := by
+    rw [hcard, show (30 : ℕ) = 5 * 6 by norm_num, Nat.factorization_mul (by norm_num) (by norm_num),
+      Finsupp.add_apply, Nat.Prime.factorization_self (by norm_num),
+      Nat.factorization_eq_zero_of_not_dvd (by norm_num)]
+  have hf3 : (Nat.card Q).factorization 3 = 1 := by
+    rw [hcard, show (30 : ℕ) = 3 * 10 by norm_num,
+      Nat.factorization_mul (by norm_num) (by norm_num),
+      Finsupp.add_apply, Nat.Prime.factorization_self (by norm_num),
+      Nat.factorization_eq_zero_of_not_dvd (by norm_num)]
+  obtain P5 := Classical.arbitrary (Sylow 5 Q)
+  obtain P3 := Classical.arbitrary (Sylow 3 Q)
+  have hc5P : Nat.card (P5 : Subgroup Q) = 5 := by rw [P5.card_eq_multiplicity, hf5, pow_one]
+  have hc3P : Nat.card (P3 : Subgroup Q) = 3 := by rw [P3.card_eq_multiplicity, hf3, pow_one]
+  have hn5 : Nat.card (Sylow 5 Q) = 6 := by
+    have hidx : (P5 : Subgroup Q).index = 6 := by
+      have := P5.toSubgroup.card_mul_index; rw [hc5P, hcard] at this; omega
+    have hdvd : Nat.card (Sylow 5 Q) ∣ 6 := hidx ▸ P5.card_dvd_index
+    have hmod : Nat.card (Sylow 5 Q) ≡ 1 [MOD 5] := card_sylow_modEq_one 5 Q
+    have hle : Nat.card (Sylow 5 Q) ≤ 6 := Nat.le_of_dvd (by norm_num) hdvd
+    have hpos : 0 < Nat.card (Sylow 5 Q) := Nat.card_pos
+    have hne : Nat.card (Sylow 5 Q) ≠ 1 :=
+      caseV_d_sylow_card_ne_one_of_simple hs P5 (by omega) (by omega)
+    unfold Nat.ModEq at hmod; interval_cases (Nat.card (Sylow 5 Q)) <;> omega
+  have hn3 : Nat.card (Sylow 3 Q) = 10 := by
+    have hidx : (P3 : Subgroup Q).index = 10 := by
+      have := P3.toSubgroup.card_mul_index; rw [hc3P, hcard] at this; omega
+    have hdvd : Nat.card (Sylow 3 Q) ∣ 10 := hidx ▸ P3.card_dvd_index
+    have hmod : Nat.card (Sylow 3 Q) ≡ 1 [MOD 3] := card_sylow_modEq_one 3 Q
+    have hle : Nat.card (Sylow 3 Q) ≤ 10 := Nat.le_of_dvd (by norm_num) hdvd
+    have hpos : 0 < Nat.card (Sylow 3 Q) := Nat.card_pos
+    have hne : Nat.card (Sylow 3 Q) ≠ 1 :=
+      caseV_d_sylow_card_ne_one_of_simple hs P3 (by omega) (by omega)
+    unfold Nat.ModEq at hmod; interval_cases (Nat.card (Sylow 3 Q)) <;> omega
+  have hcnt5 := caseV_d_card_orderOf_eq_prime (Q := Q) (p := 5) hf5
+  have hcnt3 := caseV_d_card_orderOf_eq_prime (Q := Q) (p := 3) hf3
+  rw [hn5] at hcnt5; rw [hn3] at hcnt3
+  have hdisj : Disjoint (Finset.univ.filter (fun x : Q => orderOf x = 5))
+      (Finset.univ.filter (fun x : Q => orderOf x = 3)) := by
+    rw [Finset.disjoint_left]; intro x h5 h3
+    simp only [Finset.mem_filter] at h5 h3; omega
+  have hunion := Finset.card_union_of_disjoint hdisj
+  have hle : (Finset.univ.filter (fun x : Q => orderOf x = 5) ∪
+      Finset.univ.filter (fun x : Q => orderOf x = 3)).card ≤ Fintype.card Q :=
+    Finset.card_le_univ _
+  rw [hunion, hcnt5, hcnt3, ← Nat.card_eq_fintype_card, hcard] at hle
+  omega
+
+lemma caseV_d_not_simple_12 {Q : Type*} [Group Q] [Finite Q] (hcard : Nat.card Q = 12) :
+    ¬ IsSimpleGroup Q := by
+  classical
+  intro hs
+  haveI : Fintype Q := Fintype.ofFinite Q
+  haveI : Fact (Nat.Prime 3) := ⟨by norm_num⟩
+  haveI : Fact (Nat.Prime 2) := ⟨by norm_num⟩
+  have hf3 : (Nat.card Q).factorization 3 = 1 := by
+    rw [hcard, show (12 : ℕ) = 3 * 4 by norm_num, Nat.factorization_mul (by norm_num) (by norm_num),
+      Finsupp.add_apply, Nat.Prime.factorization_self (by norm_num),
+      Nat.factorization_eq_zero_of_not_dvd (by norm_num)]
+  obtain P3 := Classical.arbitrary (Sylow 3 Q)
+  have hc3P : Nat.card (P3 : Subgroup Q) = 3 := by rw [P3.card_eq_multiplicity, hf3, pow_one]
+  have hn3 : Nat.card (Sylow 3 Q) = 4 := by
+    have hidx : (P3 : Subgroup Q).index = 4 := by
+      have := P3.toSubgroup.card_mul_index; rw [hc3P, hcard] at this; omega
+    have hdvd : Nat.card (Sylow 3 Q) ∣ 4 := hidx ▸ P3.card_dvd_index
+    have hmod : Nat.card (Sylow 3 Q) ≡ 1 [MOD 3] := card_sylow_modEq_one 3 Q
+    have hle : Nat.card (Sylow 3 Q) ≤ 4 := Nat.le_of_dvd (by norm_num) hdvd
+    have hpos : 0 < Nat.card (Sylow 3 Q) := Nat.card_pos
+    have hne : Nat.card (Sylow 3 Q) ≠ 1 :=
+      caseV_d_sylow_card_ne_one_of_simple hs P3 (by omega) (by omega)
+    unfold Nat.ModEq at hmod; interval_cases (Nat.card (Sylow 3 Q)) <;> omega
+  have hcnt3 := caseV_d_card_orderOf_eq_prime (Q := Q) (p := 3) hf3
+  rw [hn3] at hcnt3
+  have hcompl : (Finset.univ.filter (fun x : Q => orderOf x ≠ 3)).card ≤ 4 := by
+    have hdisj : Disjoint (Finset.univ.filter (fun x : Q => orderOf x ≠ 3))
+        (Finset.univ.filter (fun x : Q => orderOf x = 3)) := by
+      rw [Finset.disjoint_left]; intro x h1 h2
+      simp only [Finset.mem_filter] at h1 h2; exact h1.2 h2.2
+    have hle : (Finset.univ.filter (fun x : Q => orderOf x ≠ 3)
+        ∪ Finset.univ.filter (fun x : Q => orderOf x = 3)).card ≤ Fintype.card Q :=
+      Finset.card_le_univ _
+    rw [Finset.card_union_of_disjoint hdisj, hcnt3, ← Nat.card_eq_fintype_card, hcard] at hle
+    omega
+  have hf2 : (Nat.card Q).factorization 2 = 2 := by
+    rw [hcard, show (12 : ℕ) = 2 ^ 2 * 3 by norm_num,
+      Nat.factorization_mul (by norm_num) (by norm_num), Finsupp.add_apply,
+      Nat.factorization_pow, Finsupp.smul_apply, Nat.Prime.factorization_self (by norm_num),
+      Nat.factorization_eq_zero_of_not_dvd (by norm_num), smul_eq_mul]
+  have hc2P : ∀ P : Sylow 2 Q, Nat.card (P : Subgroup Q) = 4 := by
+    intro P; rw [P.card_eq_multiplicity, hf2]; norm_num
+  have hset : ∀ P : Sylow 2 Q,
+      Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))
+        = Finset.univ.filter (fun x : Q => orderOf x ≠ 3) := by
+    intro P
+    have hsub : Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))
+        ⊆ Finset.univ.filter (fun x : Q => orderOf x ≠ 3) := by
+      intro x hx
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
+      have hdvd : orderOf x ∣ 4 := by
+        have hd : orderOf (⟨x, hx⟩ : (P : Subgroup Q)) ∣ 4 := by
+          have := orderOf_dvd_natCard (⟨x, hx⟩ : (P : Subgroup Q)); rwa [hc2P P] at this
+        show orderOf ((⟨x, hx⟩ : (P : Subgroup Q)) : Q) ∣ 4
+        rw [orderOf_coe]; exact hd
+      intro h3; rw [h3] at hdvd; omega
+    have hcardP : (Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))).card = 4 := by
+      have h1 : (Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))).card
+          = Nat.card (P : Subgroup Q) := by
+        rw [show (Finset.univ.filter (fun x : Q => x ∈ (P : Subgroup Q))).card
+            = Fintype.card {x // x ∈ (P : Subgroup Q)} from (Fintype.card_subtype _).symm,
+          ← Nat.card_eq_fintype_card]
+      rw [h1, hc2P P]
+    exact Finset.eq_of_subset_of_card_le hsub (by rw [hcardP]; exact hcompl)
+  haveI : Subsingleton (Sylow 2 Q) := by
+    refine ⟨fun P P' => Sylow.ext (SetLike.ext (fun x => ?_))⟩
+    have hP := hset P; have hP' := hset P'
+    constructor <;> intro hx
+    · have : x ∈ Finset.univ.filter (fun y : Q => y ∈ (P' : Subgroup Q)) := by
+        rw [hP', ← hP]; simp [hx]
+      simpa using this
+    · have : x ∈ Finset.univ.filter (fun y : Q => y ∈ (P : Subgroup Q)) := by
+        rw [hP, ← hP']; simp [hx]
+      simpa using this
+  obtain P2 := Classical.arbitrary (Sylow 2 Q)
+  have hn2 : Nat.card (Sylow 2 Q) = 1 :=
+    Nat.card_eq_one_iff_unique.mpr ⟨inferInstance, inferInstance⟩
+  exact caseV_d_not_simple_sylow_card_one P2 hn2 (by rw [hc2P P2]; omega)
+    (by rw [hc2P P2, hcard]; omega) hs
+
+/-- **Case Vd/VIc (Butler tex 2088-2109): `|Z(H)| = 2`.** A finite group `H` of order `120`
+with a unique involution and simple central quotient `H ⧸ Z(H)` has center of order exactly `2`
+(so `|H/Z(H)| = 60`). The unique involution is central (`isCentral_of_unique_involution`), giving
+`2 ∣ |Z(H)|`; if `H/Z(H)` were cyclic then `H` would be abelian and `Z(H) = ⊤`, contradicting
+simplicity, so `H/Z(H)` is nonabelian; and every candidate order `120/|Z(H)| ∈ {1,…,30}` for a
+nonabelian simple quotient is excluded (primes give cyclic quotients; the composite orders
+`4,6,10,12,15,20,30` admit no simple group), leaving `|H/Z(H)| = 60`. -/
+lemma caseV_d_center_card_eq_two {H : Type*} [Group H] [Finite H] (hcard : Nat.card H = 120)
+    (hinv : ∃! τ : H, orderOf τ = 2) (hsimple : IsSimpleGroup (H ⧸ center H)) :
+    Nat.card (center H) = 2 := by
+  haveI : Fact (Nat.Prime 2) := ⟨by norm_num⟩
+  haveI : Fact (Nat.Prime 3) := ⟨by norm_num⟩
+  haveI : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+  -- unique involution is central; gives 2 ∣ |center H|
+  obtain ⟨τ, hτ2, hτu⟩ := hinv
+  have hτne1 : τ ≠ 1 := by intro h; rw [h, orderOf_one] at hτ2; exact absurd hτ2 (by norm_num)
+  have hτsq : τ ^ 2 = 1 := by rw [← hτ2]; exact pow_orderOf_eq_one τ
+  have huniq2 : ∀ g : H, g ^ 2 = 1 → g ≠ 1 → g = τ := by
+    intro g hg2 hg1
+    exact hτu g (orderOf_eq_prime hg2 hg1)
+  have hτC : τ ∈ center H := Ch7GroupRecognition.isCentral_of_unique_involution hτsq hτne1 huniq2
+  have h2dvd : 2 ∣ Nat.card (center H) := by
+    have hoc : orderOf (⟨τ, hτC⟩ : center H) = 2 := by
+      have htr : orderOf ((⟨τ, hτC⟩ : center H) : H) = orderOf (⟨τ, hτC⟩ : center H) :=
+        orderOf_coe _
+      rw [← htr]; exact hτ2
+    rw [← hoc]; exact orderOf_dvd_natCard _
+  -- |center| * |H/center| = 120
+  have hmul : Nat.card (center H) * Nat.card (H ⧸ center H) = 120 := by
+    have h := Subgroup.card_mul_index (center H)
+    rw [hcard] at h; exact h
+  -- H/center is not cyclic
+  have hncyc : ¬ IsCyclic (H ⧸ center H) := by
+    intro hcyc
+    haveI := hcyc
+    have hcomm : ∀ a b : H, a * b = b * a :=
+      fun a b => (isMulCommutative_of_isCyclic_quotient_center_self (G := H)).is_comm.comm a b
+    have htop : center H = ⊤ := by
+      rw [eq_top_iff]; intro x _; rw [Subgroup.mem_center_iff]; intro g; exact hcomm g x
+    have h1 : Nat.card (H ⧸ center H) = 1 := by
+      rw [show Nat.card (H ⧸ center H) = (center H).index from rfl, htop, Subgroup.index_top]
+    haveI := hsimple.toNontrivial
+    have := Finite.one_lt_card (α := H ⧸ center H)
+    omega
+  -- n ∣ 60
+  set n := Nat.card (H ⧸ center H) with hn_def
+  have hn_pos : 0 < n := Nat.card_pos
+  have hn_dvd60 : n ∣ 60 := by
+    obtain ⟨k, hk⟩ := h2dvd
+    have h2kn : 2 * (k * n) = 120 := by rw [← mul_assoc, ← hk]; exact hmul
+    have hkn : k * n = 60 := by omega
+    exact ⟨k, by rw [← hkn]; ring⟩
+  -- enumerate divisors of 60
+  have hcases : n = 1 ∨ n = 2 ∨ n = 3 ∨ n = 4 ∨ n = 5 ∨ n = 6 ∨ n = 10 ∨ n = 12 ∨ n = 15
+      ∨ n = 20 ∨ n = 30 ∨ n = 60 := by
+    have hle : n ≤ 60 := Nat.le_of_dvd (by norm_num) hn_dvd60
+    interval_cases n <;> omega
+  -- rule out each proper divisor
+  have h60 : n = 60 := by
+    rcases hcases with h|h|h|h|h|h|h|h|h|h|h|h
+    · exfalso; haveI := hsimple.toNontrivial
+      have := Finite.one_lt_card (α := H ⧸ center H)
+      rw [← hn_def] at this; omega
+    · exact absurd (isCyclic_of_prime_card (α := H ⧸ center H) (p := 2)
+        (by rw [← hn_def]; exact h)) hncyc
+    · exact absurd (isCyclic_of_prime_card (α := H ⧸ center H) (p := 3)
+        (by rw [← hn_def]; exact h)) hncyc
+    · exact absurd (caseV_d_not_simple_two_mul_prime (Q := H ⧸ center H) (q := 2)
+        (by rw [← hn_def]; omega)) (fun hh => hh hsimple)
+    · exact absurd (isCyclic_of_prime_card (α := H ⧸ center H) (p := 5)
+        (by rw [← hn_def]; exact h)) hncyc
+    · exact absurd (caseV_d_not_simple_two_mul_prime (Q := H ⧸ center H) (q := 3)
+        (by rw [← hn_def]; omega)) (fun hh => hh hsimple)
+    · exact absurd (caseV_d_not_simple_two_mul_prime (Q := H ⧸ center H) (q := 5)
+        (by rw [← hn_def]; omega)) (fun hh => hh hsimple)
+    · exact absurd (caseV_d_not_simple_12 (Q := H ⧸ center H) (by rw [← hn_def]; exact h))
+        (fun hh => hh hsimple)
+    · exact absurd (caseV_d_not_simple_15 (Q := H ⧸ center H) (by rw [← hn_def]; exact h))
+        (fun hh => hh hsimple)
+    · exact absurd (caseV_d_not_simple_20 (Q := H ⧸ center H) (by rw [← hn_def]; exact h))
+        (fun hh => hh hsimple)
+    · exact absurd (caseV_d_not_simple_30 (Q := H ⧸ center H) (by rw [← hn_def]; exact h))
+        (fun hh => hh hsimple)
+    · exact h
+  rw [h60] at hmul; omega
+
+/-- (SORRY) **The sole remaining gap of Case Vd/VIc — Schur's theorem.** A finite group `H`
+of order `120` with a unique involution and `H ⧸ Z(H) ≃* A₅` is `≅ SL(2, ZMod 5)`. Butler
+(tex 2111) invokes this as "beyond the scope of this thesis", citing Schur: `A₅` is perfect with
+Schur multiplier `H₂(A₅) = C₂`, so up to isomorphism it has exactly two central `C₂`-extensions —
+the split one `A₅ × C₂` and the universal cover `SL(2,5) = 2I` (the binary icosahedral group).
+Since `|H| = 120` forces `|Z(H)| = 2` (`caseV_d_center_card_eq_two`), `H` is one of these two, and
+the *unique involution* hypothesis excludes the split extension `A₅ × C₂` (which has `15` further
+involutions from `A₅`), leaving `H ≅ SL(2,5)`.
+
+**Missing infrastructure:** mathlib has group cohomology `H²` (`RepresentationTheory.Homological.
+GroupCohomology.LowDegree`) but no universal-central-extension / Schur-cover API and no computation
+`H₂(A₅) = C₂`. A formalizable route: build the concrete perfect central `C₂`-extension `SL(2,5)`
+of `A₅` as the universal cover, then show any perfect central `C₂`-extension of a perfect group is
+a quotient of its universal cover — here an iso by order. All *other* content of Case Vd/VIc is
+proven (`caseV_d_center_card_eq_two` and the assembly in `caseV_d_recognition`). -/
+lemma caseV_d_schur_cover {H : Type*} [Group H] [Finite H] (hcard : Nat.card H = 120)
+    (hinv : ∃! τ : H, orderOf τ = 2)
+    (e : H ⧸ center H ≃* alternatingGroup (Fin 5)) :
+    Isomorphic H SL(2, ZMod 5) := by
+  sorry
+
+/-- **Case Vd/VIc recognition (Butler tex 2088-2111): `|H| = 120` + unique involution + simple
+central quotient `H ⧸ Z(H)` ⟹ `H ≅ SL(2, ZMod 5)`.** Reduces to two facts: `|Z(H)| = 2`
+(`caseV_d_center_card_eq_two`, fully proven) so `|H/Z(H)| = 60`, whence `H ⧸ Z(H) ≃* A₅`
+(`Ch7SimpleGroup60.isSimpleGroup_card_sixty_iso_alternating`); and Schur's theorem
+(`caseV_d_schur_cover`, the sole remaining `sorry`) identifying the resulting perfect central
+`C₂`-extension of `A₅` (with a unique involution) as `SL(2,5)`. The abstract statement (order
+`120`, unique involution, simple quotient) is the reusable core shared by Case Vd and Case VIc,
+each of which supplies a `Subgroup SL(2,F)` with `|Z| = 2`. -/
 lemma caseV_d_recognition {H : Type*} [Group H] [Finite H] (hcard : Nat.card H = 120)
     (hinv : ∃! τ : H, orderOf τ = 2)
     (hsimple : IsSimpleGroup (H ⧸ center H)) :
     Isomorphic H SL(2, ZMod 5) := by
-  sorry
+  have hZ2 : Nat.card (center H) = 2 := caseV_d_center_card_eq_two hcard hinv hsimple
+  have h60 : Nat.card (H ⧸ center H) = 60 := by
+    have hmul : Nat.card (center H) * Nat.card (H ⧸ center H) = 120 := by
+      have h := Subgroup.card_mul_index (center H); rw [hcard] at h; exact h
+    rw [hZ2] at hmul; omega
+  obtain ⟨e⟩ := Ch7SimpleGroup60.isSimpleGroup_card_sixty_iso_alternating hsimple h60
+  exact caseV_d_schur_cover hcard hinv e
 
 /-- (SORRY) Vd, Butler tex 2088-2102: `G/Z` is simple of order `60`. **Gap:** the element-order
 census (`1` identity, `15` involutions, `24` order-`5`, `20` order-`3`, summing to `60`) forces
@@ -4645,6 +5062,125 @@ lemma caseV_card_SL2_GaloisField {p : ℕ} [Fact (Nat.Prime p)] (n : ℕ+) :
   have hp1 : 1 < p := (Fact.out : Nat.Prime p).one_lt
   have hq1 : p ^ (n : ℕ) > 1 := Nat.one_lt_pow n.pos.ne' hp1
   rw [Nat.card_eq_fintype_card, SL_card hcard hq1]
+
+/- ==========================================================================================
+`caseV_geo_*` — the algebraic heart of Steps 1-3 of the shared `caseV_a`/`caseV_b` route
+(Butler tex 1953-2038), proved without transcribing the projective-line argument. The Q-side
+of Step 1 (`Q ⊆ S`, `N(Q) ⊆ L`) is supplied by `exists_conj_Sylow_eq_S_inf_and_normalizer_le_L`
+(Ch6); these lemmas discharge the anti-diagonal `y` of Step 2 and the double-coset disjointness
+of Step 3, and are frame-agnostic so both `caseV_a` and `caseV_b` consume them next wave.
+Residual (not yet mechanised): the `K ⊆ D` refinement and `u = t₁` of Step 1, and the covering
+half of the Step-3 partition (the `(q+1)|N(Q)| = |G̃|` cardinality count). -/
+section CaseVGeo
+variable {F : Type*} [Field F]
+
+/-- tex `onemore` (2017-2020): the (0,1) (top-right) entry of the general element
+`t_λ d_ω y t_μ` of the double coset `N(Q) y Q`, where `y = d_ρ w`, is `ω ρ`. -/
+lemma caseV_geo_onemore_topRight (lam mu : F) (om rho : Fˣ) :
+    (s lam * d om * (d rho * w) * s mu).1 0 1 = (om : F) * (rho : F) := by
+  rw [d_mul_w_eq_dw]
+  simp [s, d, dw, Matrix.mul_apply, Fin.sum_univ_two]
+
+/-- tex 2022: since `ω, ρ ∈ F^*`, the element `t_λ d_ω y t_μ` has nonzero top-right entry,
+hence is not lower-triangular, i.e. lies outside `H = L F ⊇ N(Q)`. -/
+lemma caseV_geo_onemore_notMem_L [DecidableEq F] (lam mu : F) (om rho : Fˣ) :
+    s lam * d om * (d rho * w) * s mu ∉ SpecialSubgroups.L F := by
+  rw [SpecialSubgroups.mem_L_iff_lower_triangular, MatrixShapes.IsLowerTriangular,
+    caseV_geo_onemore_topRight]
+  exact mul_ne_zero (Units.ne_zero om) (Units.ne_zero rho)
+
+/-- tex `mattr` matrix (2029-2033): the conjugate `y t_λ y⁻¹` (with `y = d_ρ w`) is the upper
+shear `!![1, -ρ²λ; 0, 1]`; its top-right entry `-ρ²λ` drives the `ω = -ρλ` identity of Step 4. -/
+lemma caseV_geo_conj_shear (lam : F) (rho : Fˣ) :
+    ((d rho * w) * s lam * (d rho * w)⁻¹).1 = !![1, -(rho:F)^2 * lam; 0, 1] := by
+  simp only [d_mul_w_eq_dw]
+  apply Matrix.fin_two_ext <;>
+    (simp [s, dw, Matrix.mul_apply, Fin.sum_univ_two]; try ring)
+
+/-- A lower-triangular `SL(2,F)` matrix has invertible diagonal: `n₀₀·n₁₁ = 1`. -/
+lemma caseV_geo_lowerTri_diag (n : SL(2,F)) (hn : n.1 0 1 = 0) :
+    n.1 0 0 * n.1 1 1 = 1 := by
+  have h := n.property
+  rw [Matrix.det_fin_two, hn] at h
+  linear_combination h
+
+/-- Step 3 core (tex 2016-2022), frame-agnostic: for *any* lower-triangular `n, q ∈ SL(2,F)`
+and `ρ ∈ F^*`, the double-coset element `n · (d_ρ w) · q` has top-right entry `n₀₀ ρ q₁₁`. -/
+lemma caseV_geo_doset_topRight (n q : SL(2,F)) (hn : n.1 0 1 = 0) (hq : q.1 0 1 = 0) (rho : Fˣ) :
+    (n * (d rho * w) * q).1 0 1 = n.1 0 0 * (rho : F) * q.1 1 1 := by
+  rw [show n * (d rho * w) * q = n * dw rho * q from by rw [d_mul_w_eq_dw]]
+  show (n.1 * (dw rho).1 * q.1) 0 1 = _
+  simp only [dw, Matrix.mul_apply, Fin.sum_univ_two, Fin.isValue,
+    of_apply, cons_val', cons_val_zero, cons_val_one, cons_val_fin_one, empty_val', hn, hq]
+  ring
+
+/-- Step 3 disjointness (tex 2016-2022): with `N, Q` lower-triangular (`≤ L F`, as furnished by
+`exists_conj_Sylow_eq_S_inf_and_normalizer_le_L` in the normalized frame), every element of the
+double coset `N · (d_ρ w) · Q` lies outside `H = L F`, so `N (d_ρ w) Q` is disjoint from `N`. -/
+lemma caseV_geo_doset_notMem_L [DecidableEq F] {N Q : Subgroup SL(2,F)}
+    (hN : N ≤ SpecialSubgroups.L F) (hQ : Q ≤ SpecialSubgroups.L F) (rho : Fˣ)
+    {n : SL(2,F)} (hn : n ∈ N) {q : SL(2,F)} (hq : q ∈ Q) :
+    n * (d rho * w) * q ∉ SpecialSubgroups.L F := by
+  have hnL : n.1 0 1 = 0 := (SpecialSubgroups.mem_L_iff_lower_triangular).mp (hN hn)
+  have hqL : q.1 0 1 = 0 := (SpecialSubgroups.mem_L_iff_lower_triangular).mp (hQ hq)
+  rw [SpecialSubgroups.mem_L_iff_lower_triangular, MatrixShapes.IsLowerTriangular,
+    caseV_geo_doset_topRight n q hnL hqL]
+  have hn00 : n.1 0 0 ≠ 0 := left_ne_zero_of_mul_eq_one (caseV_geo_lowerTri_diag n hnL)
+  have hq11 : q.1 1 1 ≠ 0 := right_ne_zero_of_mul_eq_one (caseV_geo_lowerTri_diag q hqL)
+  exact mul_ne_zero (mul_ne_zero hn00 (Units.ne_zero rho)) hq11
+
+/-- Packaged Step-3 disjointness as a `Disjoint` of the double coset with `N` (tex `gsplit`,
+disjoint half). -/
+lemma caseV_geo_doset_disjoint_L [DecidableEq F] {N Q : Subgroup SL(2,F)}
+    (hN : N ≤ SpecialSubgroups.L F) (hQ : Q ≤ SpecialSubgroups.L F) (rho : Fˣ) :
+    Disjoint (DoubleCoset.doubleCoset (d rho * w) (N : Set SL(2,F)) (Q : Set SL(2,F)))
+      (N : Set SL(2,F)) := by
+  rw [Set.disjoint_left]
+  rintro x hxD hxN
+  obtain ⟨n, hn, q, hq, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hxD
+  exact caseV_geo_doset_notMem_L hN hQ rho hn hq (hN hxN)
+
+/-- Step 2, anti-diagonal form (tex 1989-1991): any element of `N_{SL₂}(D) = DW F` that is not
+diagonal is of the form `y = d_ρ w`. -/
+lemma caseV_geo_y_eq_dw {y : SL(2,F)} (hy : y ∈ SpecialSubgroups.DW F)
+    (hy' : y ∉ SpecialSubgroups.D F) : ∃ rho : Fˣ, y = d rho * w := by
+  rcases hy with (⟨δ, rfl⟩ | ⟨δ, rfl⟩)
+  · exact absurd SpecialSubgroups.d_mem_D hy'
+  · exact ⟨δ, rfl⟩
+
+/-- Step 2, `y ∉ D` (tex 1971-1988, algebraic replacement of the projective interchange argument):
+an element `y` that inverts a noncentral diagonal `x` (`y x y⁻¹ = x⁻¹`) cannot itself be diagonal,
+since `D` is abelian and would force `x = x⁻¹`, i.e. `x` central. -/
+lemma caseV_geo_inverting_notMem_D {x y : SL(2,F)} (hx : x ∈ SpecialSubgroups.D F)
+    (hxnc : x ∉ SpecialSubgroups.Z F) (hinv : y * x * y⁻¹ = x⁻¹) :
+    y ∉ SpecialSubgroups.D F := by
+  rintro ⟨δ', rfl⟩
+  obtain ⟨δ, rfl⟩ := hx
+  have hcomm : d δ' * d δ * (d δ')⁻¹ = d δ := by
+    rw [inv_d_eq_d_inv, d_mul_d_eq_d_mul, d_mul_d_eq_d_mul, mul_comm δ' δ, mul_assoc,
+      mul_inv_cancel, mul_one]
+  rw [hcomm, inv_d_eq_d_inv, d_eq_d_iff] at hinv
+  apply hxnc
+  rw [SpecialSubgroups.mem_Z_iff]
+  have hsq : δ ^ 2 = 1 ^ 2 := by
+    rw [one_pow, pow_two]; nth_rewrite 1 [hinv]; exact inv_mul_cancel δ
+  rcases Units.eq_or_eq_neg_of_sq_eq_sq δ 1 hsq with h1 | h1
+  · exact Or.inl (by rw [h1, d_one_eq_one])
+  · exact Or.inr (by rw [h1, d_neg_one_eq_neg_one])
+
+/-- Step 2, packaged (tex 1971-1991): if `K ≤ D` with `|K| > 2`, `x ∈ K` noncentral, and
+`y ∈ N_{SL₂}(K)` inverts `x` (`y x y⁻¹ = x⁻¹`, from Butler 6.8(iv)), then `y = d_ρ w`. Uses
+`normalizer_subgroup_D_eq_DW_of_two_lt_card` (`N(K) = DW`) to place `y ∈ DW`, then the two
+algebraic facts above. This is the full Step-2 output consumed by Step 3. -/
+lemma caseV_geo_y_eq_dw_of_inverting [DecidableEq F] {K : Subgroup SL(2,F)}
+    (hKD : K ≤ SpecialSubgroups.D F) (hK2 : 2 < Nat.card K) {x y : SL(2,F)}
+    (hxK : x ∈ K) (hxnc : x ∉ SpecialSubgroups.Z F) (hyN : y ∈ normalizer K)
+    (hinv : y * x * y⁻¹ = x⁻¹) : ∃ rho : Fˣ, y = d rho * w := by
+  have hyDW : y ∈ SpecialSubgroups.DW F := by
+    rw [← normalizer_subgroup_D_eq_DW_of_two_lt_card hK2 hKD]; exact hyN
+  exact caseV_geo_y_eq_dw hyDW (caseV_geo_inverting_notMem_D (hKD hxK) hxnc hinv)
+
+end CaseVGeo
 
 /-- (SORRY) Case Va, Butler tex 1953-2054 (`i = 1` or `e = 1`, so `ei = 2`, `|K| = q - 1`):
 `G ≅ SL(2, 𝔽_q)` with `𝔽_q = GaloisField p n`, `q = pⁿ`.
