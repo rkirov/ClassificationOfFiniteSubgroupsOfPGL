@@ -5,6 +5,7 @@ import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S4_Case
 import ClassificationOfSubgroups.Ch6_MaximalAbelianSubgroupClassEquation.S5_NumericClassEquation
 import ClassificationOfSubgroups.Ch7_GroupRecognition
 import ClassificationOfSubgroups.Ch7_SimpleGroup60
+import ClassificationOfSubgroups.Ch7_S4Recognition
 import ClassificationOfSubgroups.Ch7_CaseVd_2I
 import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.GroupTheory.Complement
@@ -5363,6 +5364,84 @@ lemma caseV_geo_doset_ncard [DecidableEq F] {N Q : Subgroup SL(2,F)}
       exact ⟨(⟨n', hn'⟩, ⟨q', hq'⟩), rfl⟩
   rw [← hrange, Set.ncard_range_of_injective hfinj, Nat.card_prod]
 
+/-- Shear conjugation of a lower-triangular `d δ * s σ` by a shear `s τ` (repo convention: `s` is
+the lower shear, `d` the diagonal). Pure 2×2 algebra; the algebraic replacement for Step 1's
+projective normalization of `K` into `D`. -/
+lemma caseV_geo_shear_conj (δ : Fˣ) (σ τ : F) :
+    s τ * (d δ * s σ) * (s τ)⁻¹ = d δ * s (σ + τ * ((δ : F) ^ 2 - 1)) := by
+  have hδ : (δ : F) ≠ 0 := δ.ne_zero
+  rw [s_inv]
+  apply Subtype.ext
+  refine Matrix.fin_two_ext ?_ ?_ ?_ ?_ <;>
+    simp only [Matrix.SpecialLinearGroup.coe_mul, s, d, Matrix.mul_apply, Fin.sum_univ_two,
+      Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val',
+      Matrix.empty_val', Matrix.cons_val_fin_one] <;>
+    field_simp <;> ring
+
+/-- The "simultaneous conjugator" shear kills the shear part: with `τ = σ/(1 - δ²)` and `δ² ≠ 1`,
+conjugating `d δ * s σ` by `s τ` returns the pure diagonal `d δ`. -/
+lemma caseV_geo_shear_conj_kill (δ : Fˣ) (σ : F) (hδ : (δ : F) ^ 2 ≠ 1) :
+    s (σ / (1 - (δ : F) ^ 2)) * (d δ * s σ) * (s (σ / (1 - (δ : F) ^ 2)))⁻¹ = d δ := by
+  rw [caseV_geo_shear_conj]
+  have h1 : (1 : F) - (δ : F) ^ 2 ≠ 0 := sub_ne_zero.mpr (Ne.symm hδ)
+  have hkill : σ + σ / (1 - (δ : F) ^ 2) * ((δ : F) ^ 2 - 1) = 0 := by
+    field_simp; ring
+  rw [hkill, s_zero_eq_one, mul_one]
+
+/-- Conjugating a shear by a shear is trivial (both lie in the abelian `S`). -/
+lemma caseV_geo_s_conj_s (a b : F) : s a * s b * (s a)⁻¹ = s b := by
+  rw [s_inv, s_mul_s_eq_s_add, s_mul_s_eq_s_add]; congr 1; ring
+
+/-- Square of a lower-triangular `d δ * s σ`. Feeds the `δ² ≠ 1` step of `caseV_a`: a `δ² = 1`
+generator would square into the shear group `S`, forcing `|K| ≤ 2` against `|K| = q - 1 ≥ 3`. -/
+lemma caseV_geo_ds_sq (δ : Fˣ) (σ : F) :
+    (d δ * s σ) ^ 2 = d (δ ^ 2) * s (σ * ((δ : F) ^ 2 + 1)) := by
+  have hδ : (δ : F) ≠ 0 := δ.ne_zero
+  rw [pow_two]
+  apply Subtype.ext
+  refine Matrix.fin_two_ext ?_ ?_ ?_ ?_ <;>
+    simp only [Matrix.SpecialLinearGroup.coe_mul, s, d, Matrix.mul_apply, Fin.sum_univ_two,
+      Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val',
+      Matrix.empty_val', Matrix.cons_val_fin_one, Units.val_pow_eq_pow_val] <;>
+    field_simp <;> ring
+
+/-- **Piece 1 (the simultaneous conjugator), frame-agnostic** (Step 1's `K ⊆ D` refinement, tex
+1953-1985, discharged by pure algebra rather than the projective interchange). If the cyclic
+`K = ⟨κ⟩` has a generator `κ = d δ * s σ ∈ L F` with `δ² ≠ 1` (a genuinely noncentral diagonal
+part — supplied by `K ∩ S = ⊥` via `Nat.card K` coprime to `p` together with `2 < Nat.card K`) and
+`Q ≤ S`, then the single shear `s τ` with `τ = σ/(1-δ²)` conjugates `K` into the diagonals `D`
+while fixing `Q` pointwise (`S` is abelian and `Q ≤ S`, so `s τ` centralises `Q`). Composed with
+the Ch6 conjugator `exists_conj_Sylow_eq_S_inf_and_normalizer_le_L` (which already places `Q ⊆ S`,
+`N(Q) ⊆ L`), this yields the fully-normalized frame `Q̃ ⊆ S`, `K̃ ⊆ D` consumed by Steps 2-3. -/
+lemma caseV_geo_simul_conj [DecidableEq F] {K Q : Subgroup SL(2,F)}
+    {κ : SL(2,F)} (hKgen : K = Subgroup.zpowers κ)
+    {δ : Fˣ} {σ : F} (hκ : κ = d δ * s σ) (hδ : (δ : F) ^ 2 ≠ 1)
+    (hQS : Q ≤ SpecialSubgroups.S F) :
+    ∃ τ : F, conj (s τ) • K ≤ SpecialSubgroups.D F ∧ conj (s τ) • Q = Q := by
+  refine ⟨σ / (1 - (δ : F) ^ 2), ?_, ?_⟩
+  · rw [hKgen]
+    intro y hy
+    rw [Subgroup.mem_smul_pointwise_iff_exists] at hy
+    obtain ⟨x, hx, rfl⟩ := hy
+    rw [Subgroup.mem_zpowers_iff] at hx
+    obtain ⟨m, rfl⟩ := hx
+    rw [MulAut.smul_def, _root_.map_zpow, conj_apply, hκ, caseV_geo_shear_conj_kill δ σ hδ]
+    exact zpow_mem SpecialSubgroups.d_mem_D m
+  · apply le_antisymm
+    · intro y hy
+      rw [Subgroup.mem_smul_pointwise_iff_exists] at hy
+      obtain ⟨x, hxQ, rfl⟩ := hy
+      rw [MulAut.smul_def, conj_apply]
+      obtain ⟨ρ, rfl⟩ := hQS hxQ
+      rw [caseV_geo_s_conj_s]
+      exact hxQ
+    · intro y hyQ
+      rw [Subgroup.mem_smul_pointwise_iff_exists]
+      refine ⟨y, hyQ, ?_⟩
+      rw [MulAut.smul_def, conj_apply]
+      obtain ⟨ρ, rfl⟩ := hQS hyQ
+      rw [caseV_geo_s_conj_s]
+
 end CaseVGeo
 
 /- ==========================================================================================
@@ -5408,7 +5487,111 @@ lemma caseV_ringEquiv_R_GaloisField {F : Type*} [Field F] [IsAlgClosed F] {p : �
   letI : Algebra (ZMod p) (R F p n) := (ZMod.castHom (dvd_refl p) (R F p n)).toAlgebra
   exact ⟨(GaloisField.algEquivGaloisField p n.val (caseV_card_R n)).toRingEquiv⟩
 
-/-- (SORRY) Case Va, Butler tex 1953-2054 (`i = 1` or `e = 1`, so `ei = 2`, `|K| = q - 1`):
+/-- A ring isomorphism `R ≃+* S` induces a group isomorphism `SL(2,R) ≃* SL(2,S)`
+(`Matrix.SpecialLinearGroup.map` applied in both directions along `e`/`e.symm`, mutually
+inverse since `e.symm.comp e.toRingHom = RingHom.id`). Needed to identify `SL(2,ZMod 3)` (the
+concrete group `case_IV`'s Case IVb produces) with `SL(2,GaloisField 3 1)` (Butler Class II's
+item (ix) shape `SL(2,𝔽_{p^k})` at `k = 1`), via `GaloisField.equivZmodP`. -/
+noncomputable def SL2_mulEquiv_of_ringEquiv {R S : Type*} [CommRing R] [CommRing S]
+    (e : R ≃+* S) : SL(2,R) ≃* SL(2,S) where
+  toFun := Matrix.SpecialLinearGroup.map e.toRingHom
+  invFun := Matrix.SpecialLinearGroup.map e.symm.toRingHom
+  left_inv A := by
+    apply Subtype.ext
+    ext <;> simp [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply]
+  right_inv A := by
+    apply Subtype.ext
+    ext <;> simp [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply]
+  map_mul' := (Matrix.SpecialLinearGroup.map e.toRingHom).map_mul
+
+/-- Conjugation preserves the cardinality of a subgroup (`Subgroup.equivSMul` for the
+`MulAut.conj` pointwise action). -/
+lemma card_conj_smul_eq_card {L : Type*} [Group L] {B : Subgroup L} (c : L) :
+    Nat.card (conj c • B : Subgroup L) = Nat.card B :=
+  (Nat.card_congr (Subgroup.equivSMul (conj c) B).toEquiv).symm
+
+/- ==========================================================================================
+`caseV` Step-5 recognition endpoint (Butler tex 2054), frame-independent and shared by Cases Va/Vb.
+Given the normalized-frame conclusion of Steps 1-4 — a conjugate of `G` sits inside (Va: equals)
+the subfield copy `SL(2, R F p n)` — these lemmas transport it through the chain
+`G ≃* vGv⁻¹ ≃* SL(2, R F p n) ≃* SL(2, GaloisField p n)` (conjugation `Subgroup.equivSMul`; the
+subfield inclusion `Matrix.SpecialLinearGroup.map (R F p n).subtype` is injective, so its image on
+`⊤` is `Subgroup.equivMapOfInjective`-isomorphic to `SL(2, R F p n)`; then the subfield ring iso of
+`caseV_ringEquiv_R_GaloisField` via `SL2_mulEquiv_of_ringEquiv`). Relocated (Wave 26, together
+with `SL2_mulEquiv_of_ringEquiv`/`card_conj_smul_eq_card` above) in front of `caseV_a`, whose
+mechanized proof consumes `caseV_iso_of_conj_le_map` and `card_conj_smul_eq_card`. -/
+
+/-- Step-5 recognition, equality form: if a conjugate of `G` *equals* the image of the whole
+`SL(2, R F p n)` under the subfield inclusion, then `G ≅ SL(2, GaloisField p n)`. -/
+lemma caseV_iso_of_conj_eq_map {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) (c : SL(2,F))
+    (hG : conj c • G =
+      Subgroup.map (Matrix.SpecialLinearGroup.map (R F p n).subtype) ⊤) :
+    Isomorphic G SL(2, GaloisField p n.val) := by
+  obtain ⟨eR⟩ := caseV_ringEquiv_R_GaloisField (F := F) (p := p) n
+  set φ : SL(2, R F p n) →* SL(2, F) := Matrix.SpecialLinearGroup.map (R F p n).subtype with hφ
+  have hsub_inj : Function.Injective ⇑(R F p n).subtype := fun a b h => Subtype.ext h
+  have hφinj : Function.Injective φ := by
+    intro A B hAB
+    apply Subtype.ext
+    have h : (φ A).1 = (φ B).1 := Subtype.ext_iff.mp hAB
+    simp only [hφ, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply] at h
+    exact Matrix.map_injective hsub_inj h
+  let e1 : ↥G ≃* ↥(conj c • G) := Subgroup.equivSMul (conj c) G
+  let e2 : ↥(conj c • G) ≃* ↥(Subgroup.map φ ⊤) := MulEquiv.subgroupCongr hG
+  let e3 : ↥(Subgroup.map φ ⊤) ≃* SL(2, R F p n) :=
+    (Subgroup.equivMapOfInjective ⊤ φ hφinj).symm.trans Subgroup.topEquiv
+  exact ⟨((e1.trans e2).trans e3).trans (SL2_mulEquiv_of_ringEquiv eR)⟩
+
+/-- Step-5 recognition, containment form (the route-map's actual Step-4 output, tex 2054): if a
+conjugate of `G` is *contained* in the subfield copy `SL(2, R F p n)` and `|G| = q(q²-1)` with
+`q = pⁿ`, then equality holds by cardinality and `G ≅ SL(2, GaloisField p n)`. -/
+lemma caseV_iso_of_conj_le_map {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) [Finite G] (c : SL(2,F))
+    (hle : conj c • G ≤ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p n).subtype) ⊤)
+    (hcard : Nat.card G = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ)) :
+    Isomorphic G SL(2, GaloisField p n.val) := by
+  set φ : SL(2, R F p n) →* SL(2, F) := Matrix.SpecialLinearGroup.map (R F p n).subtype with hφ
+  have hsub_inj : Function.Injective ⇑(R F p n).subtype := fun a b h => Subtype.ext h
+  have hφinj : Function.Injective φ := by
+    intro A B hAB
+    apply Subtype.ext
+    have h : (φ A).1 = (φ B).1 := Subtype.ext_iff.mp hAB
+    simp only [hφ, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply] at h
+    exact Matrix.map_injective hsub_inj h
+  have hcardR : Nat.card (R F p n) = p ^ (n : ℕ) := caseV_card_R n
+  haveI : Finite (R F p n) :=
+    Nat.finite_of_card_ne_zero (by rw [hcardR]; exact pow_ne_zero _ (Fact.out : p.Prime).pos.ne')
+  haveI : Fintype (R F p n) := Fintype.ofFinite _
+  have hq1 : 1 < p ^ (n : ℕ) := Nat.one_lt_pow n.pos.ne' (Fact.out : p.Prime).one_lt
+  have hfc : Fintype.card (R F p n) = p ^ (n : ℕ) := by rw [← hcardR, Nat.card_eq_fintype_card]
+  let e3 : ↥(Subgroup.map φ ⊤) ≃* SL(2, R F p n) :=
+    (Subgroup.equivMapOfInjective ⊤ φ hφinj).symm.trans Subgroup.topEquiv
+  haveI : Finite ↥(Subgroup.map φ ⊤) := Finite.of_equiv _ e3.symm.toEquiv
+  haveI : Finite ↥(conj c • G) := Finite.of_equiv _ (Subgroup.equivSMul (conj c) G).toEquiv
+  have hcardImg : Nat.card (Subgroup.map φ ⊤) = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ) := by
+    rw [Nat.card_congr e3.toEquiv, Nat.card_eq_fintype_card]; exact SL_card hfc hq1
+  have hcc : Nat.card (conj c • G : Subgroup SL(2,F)) = Nat.card G := card_conj_smul_eq_card c
+  have hcardle : Nat.card (Subgroup.map φ ⊤) ≤ Nat.card (conj c • G : Subgroup SL(2,F)) :=
+    le_of_eq (by rw [hcardImg, hcc, hcard])
+  have heq : conj c • G = Subgroup.map φ ⊤ := Subgroup.eq_of_le_of_card_ge hle hcardle
+  exact caseV_iso_of_conj_eq_map n G c (hφ ▸ heq)
+
+/-- **Case Va Step-5 interface** (tex 2054): the entire Va residual reduced to a single geometric
+hypothesis. If some conjugate `conj c • G` has every element's entries in the subfield `R F p n`
+(the concrete output of Steps 1-4: `G̃ ⊆ SL(2, 𝔽_q)`), and `|G| = q(q²-1)` with `q = pⁿ`, then
+`G ≅ SL(2, GaloisField p n)`. Chains `caseV_geo_mem_map_subtype_of_entries` (elementwise into the
+subfield image) with `caseV_iso_of_conj_le_map` (cardinality-forced equality + transport). -/
+lemma caseV_a_step5_finish {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) [Finite G] (c : SL(2,F))
+    (hentries : ∀ x ∈ conj c • G, ∀ i j, (x : Matrix (Fin 2) (Fin 2) F) i j ∈ R F p n)
+    (hcard : Nat.card G = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ)) :
+    Isomorphic G SL(2, GaloisField p n.val) := by
+  refine caseV_iso_of_conj_le_map n G c (fun x hx => ?_) hcard
+  exact caseV_geo_mem_map_subtype_of_entries (R F p n) x (hentries x hx)
+
+set_option maxHeartbeats 1600000 in
+/-- Case Va, Butler tex 1953-2054 (`i = 1` or `e = 1`, so `ei = 2`, `|K| = q - 1`):
 `G ≅ SL(2, 𝔽_q)` with `𝔽_q = GaloisField p n`, `q = pⁿ`.
 
 ROUTE MAP (the geometric normalization of Steps 1-3 is shared verbatim with `caseV_b`).
@@ -5445,14 +5628,16 @@ ROUTE MAP (the geometric normalization of Steps 1-3 is shared verbatim with `cas
   `G̃ = vGv⁻¹` and the subfield realisation `R F p n ≃* GaloisField p n` give
   `G ≅ SL(2, GaloisField p n)` (`m := n`).
 
-RESIDUALS (multi-session; not yet mechanised): Steps 1-3 (the entire projective-line normalization
-and double-coset partition) must be transcribed through Ch5's `Projectivization` /
-`SL2_triptrans_on_projectivization` API — the largest block, and shared with `caseV_b`; Step 4's
-identification of the abstract `𝕄`, `ℕ` with concrete `Finset`s and of `𝔽_q^*` with `(R F p n)ˣ`;
-and Step 5's subfield iso `R F p n ≃* GaloisField p n` plus the `SL(2,·)` transport
-(`SL2_mulEquiv_of_ringEquiv`). The two helpers above (`caseV_finset_eq_of_card_of_pow_eq_one`,
-`caseV_card_SL2_GaloisField`) discharge the root-count crux (Step 4) and the final cardinality
-match (Step 5). -/
+MECHANIZED (Wave 26), with Steps 1-3 discharged algebraically instead of projectively: the Ch6
+conjugator (`exists_conj_Sylow_eq_S_inf_and_normalizer_le_L`, `Q₁ ≤ S`, `N₁ ≤ L`) composed with
+the shear `s τ` killing the `K`-generator's shear part (`caseV_geo_shear_conj_kill`; `δ² ≠ 1`
+since a `δ² = 1` generator squares into `S` by `caseV_geo_ds_sq`, against `|K| = q-1 ≥ 3`) and a
+diagonal rescale `d η`, `η² = σ₀` (alg. closedness), pinning `s 1 ∈ Q̂`. The inverting `ŷ` comes
+from `of_index_normalizer_eq_two` on `A` (`hComplete` conjugates `K` to `A`; `B`/Sylow-type
+branches refuted by cardinality resp. coprimality), shaped to `d ρ * w` by
+`caseV_geo_y_eq_dw_of_inverting`. Partition: `caseV_geo_doset_disjoint_L`/`_ncard` plus
+`(q+1)·|N̂| = |Ĝ|`. The `mattr` identity `ω = -ρλ` at `λ = 1` pins `ρ ∈ -⟨δ⟩`, so every entry
+lands in `⟨δ⟩ ∪ {0} ⊆ R F p n`, and `caseV_iso_of_conj_le_map` concludes. -/
 lemma caseV_a {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -5479,7 +5664,649 @@ lemma caseV_a {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     (hshape1 : 2 * ga = i * (q - 1)) (hshape2 : 2 * gb = i * (q + 1))
     (hshape3 : 2 * g = i * (q * (q ^ 2 - 1))) :
     ∃ m : ℕ+, Isomorphic G SL(2, GaloisField p m.val) := by
-  sorry
+  classical
+  have hsmulmem : ∀ (a : SL(2,F)) (X : Subgroup SL(2,F)) (y : SL(2,F)),
+      y ∈ conj a • X ↔ ∃ x ∈ X, a * x * a⁻¹ = y := by
+    intro a X y
+    rw [Subgroup.mem_smul_pointwise_iff_exists]
+    simp only [MulAut.smul_def, conj_apply]
+  -- ===== Step 0: numerics =====
+  set e := Nat.card (center SL(2,F)) with he_def
+  have he_pos : 0 < e := Nat.card_pos
+  have hi_pos : 0 < i := by
+    rcases Nat.eq_zero_or_pos i with h | h
+    · rw [h, mul_zero] at hei; omega
+    · exact h
+  have he_le2 : e ≤ 2 := Nat.le_of_dvd (by omega) ⟨i, hei.symm⟩
+  have hega : e * ga = q - 1 := by
+    have h1 : e * (2 * ga) = e * (i * (q - 1)) := by rw [hshape1]
+    have h2 : e * (2 * ga) = 2 * (e * ga) := by ring
+    have h3 : e * (i * (q - 1)) = e * i * (q - 1) := by ring
+    rw [h2, h3, hei] at h1
+    exact Nat.eq_of_mul_eq_mul_left (by norm_num) h1
+  have heg : e * g = q * (q ^ 2 - 1) := by
+    have h1 : e * (2 * g) = e * (i * (q * (q ^ 2 - 1))) := by rw [hshape3]
+    have h2 : e * (2 * g) = 2 * (e * g) := by ring
+    have h3 : e * (i * (q * (q ^ 2 - 1))) = e * i * (q * (q ^ 2 - 1)) := by ring
+    rw [h2, h3, hei] at h1
+    exact Nat.eq_of_mul_eq_mul_left (by norm_num) h1
+  have hcardK : Nat.card K = q - 1 := by rw [hK_card, hkga]; exact hega
+  have hp_prime : Nat.Prime p := Fact.out
+  have hpq : p ∣ q := by rw [hqpow]; exact dvd_pow_self p hn0
+  have hp_ndvd : ¬ p ∣ (q - 1) := by
+    intro hd
+    have h1 : p ∣ q - (q - 1) := Nat.dvd_sub hpq hd
+    have h2 : q - (q - 1) = 1 := by omega
+    rw [h2] at h1
+    have := Nat.le_of_dvd (by norm_num) h1
+    have := hp_prime.two_le
+    omega
+  have hgalt : ga < gb := by
+    have h1 : i * (q + 1) = i * (q - 1) + 2 * i := by
+      have hq1 : q - 1 + 2 = q + 1 := by omega
+      calc i * (q + 1) = i * (q - 1 + 2) := by rw [hq1]
+        _ = i * (q - 1) + 2 * i := by ring
+    omega
+  -- ===== Step 1: K is a recognized class; extract the inverting element =====
+  haveI hKfin : Finite ↥K :=
+    (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hK_le).to_subtype
+  have hQbot : Q.toSubgroup ≠ ⊥ := by
+    intro h
+    rw [h] at hq
+    simp at hq
+    omega
+  have hKsub_cyc : IsCyclic ↥(K.subgroupOf G) :=
+    isCyclic_of_surjective _ (Subgroup.subgroupOfEquivOfLe hK_le).symm.surjective
+  have hcardKsub : Nat.card (K.subgroupOf G) = Nat.card K :=
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le).toEquiv
+  have hcopK : Nat.Coprime (Nat.card (K.subgroupOf G)) p := by
+    rw [hcardKsub, hcardK, Nat.coprime_comm]
+    exact (Nat.Prime.coprime_iff_not_dvd hp_prime).mpr hp_ndvd
+  have hKZlt : Nat.card (K.subgroupOf G) > Nat.card (center SL(2,F)) := by
+    rw [hcardKsub, hcardK, ← he_def]
+    omega
+  have hKmem : K ∈ MaximalAbelianSubgroupsOf G := by
+    have h := K_mem_MaximalAbelianSubgroups_of_center_lt_card_K G Q hQbot (K.subgroupOf G)
+      hKsub_cyc hNQK hKZlt hcopK
+    rwa [Subgroup.map_subgroupOf_eq_of_le hK_le] at h
+  obtain ⟨c₀, hc₀G, hc₀⟩ : ∃ c ∈ G, conj c • K = A := by
+    rcases hComplete K hKmem with h | ⟨c₀, hc₀G, hc₀⟩ | hsyl
+    · exact h
+    · exfalso
+      have hcB : Nat.card B = Nat.card K := by rw [← hc₀]; exact card_conj_smul_eq_card c₀
+      rw [hB_card, hcardK] at hcB
+      have hgbga : e * gb = e * ga := by rw [hcB, hega]
+      have := Nat.eq_of_mul_eq_mul_left he_pos hgbga
+      omega
+    · exfalso
+      have h := NumericClassEquation.dvd_card_of_isSylowType hsyl
+      rw [hcardK] at h
+      exact hp_ndvd h
+  haveI hAfin : Finite ↥A :=
+    (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hA_mem.right).to_subtype
+  obtain ⟨genA, hgenA⟩ := hA_cyc.exists_generator
+  have hAzp : A = Subgroup.zpowers (genA : SL(2,F)) := by
+    ext v
+    constructor
+    · intro hv
+      obtain ⟨mz, hmz⟩ := Subgroup.mem_zpowers_iff.mp (hgenA ⟨v, hv⟩)
+      refine Subgroup.mem_zpowers_iff.mpr ⟨mz, ?_⟩
+      have := congrArg (Subtype.val) hmz
+      simpa using this
+    · intro hv
+      obtain ⟨mz, hmz⟩ := Subgroup.mem_zpowers_iff.mp hv
+      rw [← hmz]
+      exact Subgroup.zpow_mem A genA.2 mz
+  obtain ⟨yA, hyA_mem, hyA_conj⟩ :
+      ∃ y ∈ ((normalizer ((A) : Set SL(2,F))) ⊓ G).carrier \ A, y * genA * y⁻¹ = genA⁻¹ := by
+    by_cases hp2 : p = 2
+    · subst hp2
+      exact of_index_normalizer_eq_two_char_two A G hA_mem center_le_G hA_cop hA_relIndex genA
+    · exact of_index_normalizer_eq_two hp2 A G hA_mem center_le_G hA_cop hA_relIndex genA
+  simp only [Set.mem_sdiff, SetLike.mem_coe, Subgroup.mem_carrier, Subgroup.mem_inf] at hyA_mem
+  obtain ⟨⟨hyA_norm, hyA_G⟩, -⟩ := hyA_mem
+  have hyA_conj' : yA * (genA : SL(2,F)) * yA⁻¹ = ((genA : SL(2,F)))⁻¹ := by
+    rw [hyA_conj]; simp
+  set κ : SL(2,F) := c₀⁻¹ * (genA : SL(2,F)) * c₀ with hκdef
+  have hKzp : K = Subgroup.zpowers κ := by
+    have h1 : conj c₀⁻¹ • A = K := by rw [← hc₀, _root_.map_inv, inv_smul_smul]
+    rw [← h1, hAzp, conj_zpowers_eq, inv_inv]
+  have hordκ : orderOf κ = q - 1 := by
+    have h := Nat.card_zpowers κ
+    rw [← hKzp, hcardK] at h
+    exact h.symm
+  set yK : SL(2,F) := c₀⁻¹ * yA * c₀ with hyKdef
+  have hyK_G : yK ∈ G := mul_mem (mul_mem (inv_mem hc₀G) hyA_G) hc₀G
+  have hyK_inv : yK * κ * yK⁻¹ = κ⁻¹ := by
+    calc yK * κ * yK⁻¹
+        = c₀⁻¹ * (yA * (genA : SL(2,F)) * yA⁻¹) * c₀ := by rw [hyKdef, hκdef]; group
+      _ = c₀⁻¹ * ((genA : SL(2,F)))⁻¹ * c₀ := by rw [hyA_conj']
+      _ = κ⁻¹ := by rw [hκdef]; group
+  -- ===== Step 2: frame normalization (Ch6 conjugator `c₁`) =====
+  obtain ⟨c₁, hQeq, hNle⟩ := exists_conj_Sylow_eq_S_inf_and_normalizer_le_L G Q hQbot
+  set Q' : Subgroup SL(2,F) := Subgroup.map G.subtype Q.toSubgroup with hQ'def
+  set N' : Subgroup SL(2,F) :=
+    Subgroup.map G.subtype (normalizer (Q.toSubgroup : Set ↥G)) with hN'def
+  set G₁ : Subgroup SL(2,F) := conj c₁⁻¹ • G with hG₁def
+  set Q₁ : Subgroup SL(2,F) := conj c₁⁻¹ • Q' with hQ₁def
+  set N₁ : Subgroup SL(2,F) := conj c₁⁻¹ • N' with hN₁def
+  set K₁ : Subgroup SL(2,F) := conj c₁⁻¹ • K with hK₁def
+  have hc₁inv : conj c₁⁻¹ = (conj c₁)⁻¹ := _root_.map_inv conj c₁
+  have hQ₁S : Q₁ ≤ SpecialSubgroups.S F := by
+    have h1 : Q' ≤ conj c₁ • SpecialSubgroups.S F := by rw [hQeq]; exact inf_le_left
+    calc Q₁ ≤ conj c₁⁻¹ • (conj c₁ • SpecialSubgroups.S F) :=
+          Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr h1
+      _ = SpecialSubgroups.S F := by rw [hc₁inv, inv_smul_smul]
+  have hN₁L : N₁ ≤ SpecialSubgroups.L F := by
+    have h1 : N' ≤ conj c₁ • SpecialSubgroups.L F := hNle.trans inf_le_left
+    calc N₁ ≤ conj c₁⁻¹ • (conj c₁ • SpecialSubgroups.L F) :=
+          Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr h1
+      _ = SpecialSubgroups.L F := by rw [hc₁inv, inv_smul_smul]
+  have hN'sup : N' = Q' ⊔ K := by
+    rw [hN'def, hNQK, Subgroup.map_sup, Subgroup.map_subgroupOf_eq_of_le hK_le]
+  have hK₁_le_N₁ : K₁ ≤ N₁ :=
+    Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr (hN'sup ▸ le_sup_right)
+  set κ₁ : SL(2,F) := c₁⁻¹ * κ * c₁ with hκ₁def
+  have hK₁zp : K₁ = Subgroup.zpowers κ₁ := by
+    rw [hK₁def, hKzp, conj_zpowers_eq, inv_inv]
+  have hκ₁L : κ₁ ∈ SpecialSubgroups.L F :=
+    hN₁L (hK₁_le_N₁ (hK₁zp ▸ Subgroup.mem_zpowers κ₁))
+  obtain ⟨δ, σ, hκ₁form⟩ := hκ₁L
+  have hordκ₁ : orderOf κ₁ = q - 1 := by
+    have h := orderOf_injective (MulAut.conj c₁⁻¹).toMonoidHom (MulEquiv.injective _) κ
+    simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply, inv_inv] at h
+    rw [← hκ₁def] at h
+    rw [h, hordκ]
+  have hcardK₁ : Nat.card K₁ = q - 1 := by
+    rw [hK₁zp, Nat.card_zpowers, hordκ₁]
+  -- δ² ≠ 1
+  have hκ₁K₁ : κ₁ ∈ K₁ := hK₁zp ▸ Subgroup.mem_zpowers κ₁
+  have hK₁S_triv : ∀ x, x ∈ K₁ → x ∈ SpecialSubgroups.S F → x = 1 := by
+    intro x hxK hxS
+    obtain ⟨ς, hς⟩ := hxS
+    by_cases hς0 : ς = 0
+    · rw [← hς, hς0, s_zero_eq_one]
+    · exfalso
+      have hordx : orderOf x = p := by rw [← hς]; exact order_s_eq_char ς hς0
+      haveI : Finite ↥K₁ := Nat.finite_of_card_ne_zero (by omega)
+      have h1 : orderOf (⟨x, hxK⟩ : ↥K₁) ∣ Nat.card ↥K₁ := orderOf_dvd_natCard _
+      have h2 : orderOf (⟨x, hxK⟩ : ↥K₁) = orderOf x :=
+        (orderOf_injective K₁.subtype (Subgroup.subtype_injective K₁) ⟨x, hxK⟩).symm
+      rw [h2, hordx, hcardK₁] at h1
+      exact hp_ndvd h1
+  have hδ2 : (δ : F) ^ 2 ≠ 1 := by
+    intro hcontra
+    have hδu : δ ^ 2 = 1 := Units.ext (by
+      rw [Units.val_pow_eq_pow_val, hcontra, Units.val_one])
+    have hκ₁sq : κ₁ ^ 2 = s (σ * ((δ : F) ^ 2 + 1)) := by
+      rw [← hκ₁form, caseV_geo_ds_sq, hδu, d_one_eq_one, one_mul]
+    have h1 : κ₁ ^ 2 = 1 :=
+      hK₁S_triv _ (pow_mem hκ₁K₁ 2) ⟨σ * ((δ : F) ^ 2 + 1), hκ₁sq.symm⟩
+    have h2 : orderOf κ₁ ∣ 2 := orderOf_dvd_of_pow_eq_one h1
+    rw [hordκ₁] at h2
+    have := Nat.le_of_dvd (by norm_num) h2
+    omega
+  -- ===== Step 3: kill the shear part of `κ₁`; rescale so that `s 1 ∈ Qh` =====
+  set τ : F := σ / (1 - (δ : F) ^ 2) with hτdef
+  have hkill : s τ * κ₁ * (s τ)⁻¹ = d δ := by
+    rw [← hκ₁form]; exact caseV_geo_shear_conj_kill δ σ hδ2
+  have hQτ : conj (s τ) • Q₁ = Q₁ := by
+    apply le_antisymm
+    · intro y hy
+      rw [Subgroup.mem_smul_pointwise_iff_exists] at hy
+      obtain ⟨x, hxQ, rfl⟩ := hy
+      rw [MulAut.smul_def, conj_apply]
+      obtain ⟨ς, rfl⟩ := hQ₁S hxQ
+      rw [caseV_geo_s_conj_s]
+      exact hxQ
+    · intro y hyQ
+      rw [Subgroup.mem_smul_pointwise_iff_exists]
+      refine ⟨y, hyQ, ?_⟩
+      rw [MulAut.smul_def, conj_apply]
+      obtain ⟨ς, rfl⟩ := hQ₁S hyQ
+      rw [caseV_geo_s_conj_s]
+  -- cardinalities of the primed/subscripted objects
+  have hcardQ' : Nat.card Q' = q := by
+    rw [hQ'def,
+      ← Nat.card_congr (Subgroup.equivMapOfInjective Q.toSubgroup G.subtype
+        (Subgroup.subtype_injective G)).toEquiv]
+    exact hq
+  have hcardQ₁ : Nat.card Q₁ = q := by rw [hQ₁def, card_conj_smul_eq_card, hcardQ']
+  -- pick a nontrivial shear `s σ₀ ∈ Q₁` and a square root `η` of `σ₀`
+  have hQ₁_ne_bot : Q₁ ≠ ⊥ := by
+    intro h
+    rw [h] at hcardQ₁
+    simp at hcardQ₁
+    omega
+  obtain ⟨x₀s, hx₀ne⟩ : ∃ a : ↥Q₁, a ≠ 1 := by
+    rw [← Subgroup.nontrivial_iff_ne_bot] at hQ₁_ne_bot
+    exact exists_ne 1
+  obtain ⟨x₀, hx₀Q₁⟩ := x₀s
+  have hx₀ne1 : x₀ ≠ 1 := fun h => hx₀ne (Subtype.ext h)
+  obtain ⟨σ₀, hσ₀form⟩ := hQ₁S hx₀Q₁
+  have hσ₀ne : σ₀ ≠ 0 := by
+    intro h
+    rw [h, s_zero_eq_one] at hσ₀form
+    exact hx₀ne1 hσ₀form.symm
+  obtain ⟨η₀, hη₀⟩ := IsAlgClosed.exists_pow_nat_eq σ₀ (by norm_num : 0 < 2)
+  have hη₀ne : η₀ ≠ 0 := by
+    intro h
+    rw [h, zero_pow (by norm_num : (2:ℕ) ≠ 0)] at hη₀
+    exact hσ₀ne hη₀.symm
+  set η : Fˣ := Units.mk0 η₀ hη₀ne with hηdef
+  -- ===== the total conjugator =====
+  set ĉ : SL(2,F) := d η * (s τ * c₁⁻¹) with hĉdef
+  have hsmul3 : ∀ X : Subgroup SL(2,F),
+      conj ĉ • X = conj (d η) • (conj (s τ) • (conj c₁⁻¹ • X)) := by
+    intro X
+    rw [hĉdef, _root_.map_mul, _root_.map_mul, mul_smul, mul_smul]
+  set Gh : Subgroup SL(2,F) := conj ĉ • G with hGhdef
+  set Qh : Subgroup SL(2,F) := conj (d η) • Q₁ with hQhdef
+  set Kh : Subgroup SL(2,F) := Subgroup.zpowers (d δ) with hKhdef
+  set Nh : Subgroup SL(2,F) := conj ĉ • N' with hNhdef
+  have hQheq : conj ĉ • Q' = Qh := by rw [hsmul3, hQτ]
+  have hKheq : conj ĉ • K = Kh := by
+    rw [hsmul3]
+    have h1 : conj (s τ) • K₁ = Subgroup.zpowers (d δ) := by
+      rw [hK₁zp, conj_zpowers_eq, hkill]
+    rw [hK₁def] at h1
+    rw [h1, conj_zpowers_eq]
+    have h2 : d η * d δ * (d η)⁻¹ = d δ := by
+      rw [inv_d_eq_d_inv, d_mul_d_eq_d_mul, d_mul_d_eq_d_mul]
+      congr 1
+      rw [mul_comm η δ, mul_assoc, mul_inv_cancel, mul_one]
+    rw [h2]
+  have hNhsup : Nh = Qh ⊔ Kh := by
+    rw [hNhdef, hN'sup, Subgroup.smul_sup, hQheq, hKheq]
+  have hQhS : Qh ≤ SpecialSubgroups.S F := by
+    intro x hx
+    obtain ⟨x', hx', rfl⟩ := (hsmulmem _ _ _).mp hx
+    obtain ⟨ς, rfl⟩ := hQ₁S hx'
+    rw [d_mul_s_mul_d_inv_eq_s]
+    exact ⟨_, rfl⟩
+  have hSL : SpecialSubgroups.S F ≤ SpecialSubgroups.L F := by
+    rintro x ⟨ς, rfl⟩
+    exact ⟨1, ς, by rw [d_one_eq_one, one_mul]⟩
+  have hs1Qh : s 1 ∈ Qh := by
+    rw [hQhdef]
+    refine (hsmulmem _ _ _).mpr ⟨x₀, hx₀Q₁, ?_⟩
+    rw [← hσ₀form, d_mul_s_mul_d_inv_eq_s]
+    congr 1
+    rw [Units.val_inv_eq_inv_val]
+    have hval : (η : F) = η₀ := rfl
+    rw [hval]
+    field_simp
+    rw [← hη₀]
+  have hNhL : Nh ≤ SpecialSubgroups.L F := by
+    have hLconj : ∀ u : SL(2,F), u ∈ SpecialSubgroups.L F →
+        ∀ X : Subgroup SL(2,F), X ≤ SpecialSubgroups.L F →
+        conj u • X ≤ SpecialSubgroups.L F := by
+      intro u hu X hX x hx
+      obtain ⟨x', hx', rfl⟩ := (hsmulmem _ _ _).mp hx
+      exact mul_mem (mul_mem hu (hX hx')) (inv_mem hu)
+    have hsτL : s τ ∈ SpecialSubgroups.L F := ⟨1, τ, by rw [d_one_eq_one, one_mul]⟩
+    have hdηL : d η ∈ SpecialSubgroups.L F := ⟨η, 0, by rw [s_zero_eq_one, mul_one]⟩
+    rw [hNhdef, hsmul3]
+    exact hLconj _ hdηL _ (hLconj _ hsτL _ hN₁L)
+  -- ===== cards in the hat frame =====
+  have hcardNz : Nat.card (normalizer (Q.toSubgroup : Set ↥G)) = q * (q - 1) := by
+    set Nz : Subgroup ↥G := normalizer (Q.toSubgroup : Set ↥G) with hNzdef
+    have hQ_le_Nz : Q.toSubgroup ≤ Nz := Subgroup.le_normalizer
+    have hK_le_Nz : K.subgroupOf G ≤ Nz := by rw [hNQK]; exact le_sup_right
+    set Qn : Subgroup ↥Nz := Q.toSubgroup.subgroupOf Nz with hQndef
+    set Kn : Subgroup ↥Nz := (K.subgroupOf G).subgroupOf Nz with hKndef
+    have hsup : Qn ⊔ Kn = ⊤ := by
+      have h := congrArg (Subgroup.subgroupOf · Nz) hNQK
+      rw [Subgroup.subgroupOf_self, Subgroup.subgroupOf_sup hQ_le_Nz hK_le_Nz] at h
+      exact h.symm
+    have hdisj : Qn ⊓ Kn = ⊥ := by
+      have h := congrArg (Subgroup.subgroupOf · Nz) (disjoint_iff.mp hQK_disj)
+      rwa [subgroupOf_inf_eq, Subgroup.bot_subgroupOf] at h
+    haveI hQn_normal : Qn.Normal := Subgroup.normal_in_normalizer
+    have hcomplement : IsComplement' Qn Kn := by
+      apply isComplement'_of_disjoint_and_mul_eq_univ (disjoint_iff.mpr hdisj)
+      have h := Subgroup.normal_mul Qn Kn
+      rw [hsup, Subgroup.coe_top] at h
+      exact h.symm
+    have hcard_mul : Nat.card Qn * Nat.card Kn = Nat.card Nz := hcomplement.card_mul
+    have hcard_Qn : Nat.card Qn = q :=
+      (Nat.card_congr (Subgroup.subgroupOfEquivOfLe hQ_le_Nz).toEquiv).trans hq
+    have hcard_Kn : Nat.card Kn = q - 1 :=
+      ((Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le_Nz).toEquiv).trans
+        hcardKsub).trans hcardK
+    rw [← hcard_mul, hcard_Qn, hcard_Kn]
+  have hcardN' : Nat.card N' = q * (q - 1) := by
+    rw [hN'def,
+      ← Nat.card_congr (Subgroup.equivMapOfInjective _ G.subtype
+        (Subgroup.subtype_injective G)).toEquiv]
+    exact hcardNz
+  have hcardNh : Nat.card Nh = q * (q - 1) := by rw [hNhdef, card_conj_smul_eq_card, hcardN']
+  have hcardQh : Nat.card Qh = q := by rw [hQhdef, card_conj_smul_eq_card, hcardQ₁]
+  have hcardGh : Nat.card Gh = q * (q ^ 2 - 1) := by
+    rw [hGhdef, card_conj_smul_eq_card, hg]; exact heg
+  -- diagonal order and `R`-membership of the `δ`-powers
+  have horddδ : orderOf (d δ) = q - 1 := by
+    have h := orderOf_injective (MulAut.conj (s τ)).toMonoidHom (MulEquiv.injective _) κ₁
+    simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h
+    rw [hkill] at h
+    rw [h, hordκ₁]
+  have hdpow : ∀ j : ℤ, (d δ) ^ j = d (δ ^ j) := by
+    intro j
+    exact (map_zpow (MonoidHom.mk' (fun u : Fˣ => d u)
+      (fun a b => (d_mul_d_eq_d_mul a b).symm)) δ j).symm
+  have hδq1 : δ ^ (q - 1) = 1 := by
+    have h1 : (d δ) ^ (q - 1) = 1 := by rw [← horddδ]; exact pow_orderOf_eq_one (d δ)
+    have h2 : (d δ) ^ (q - 1) = d (δ ^ (q - 1)) :=
+      (map_pow (MonoidHom.mk' (fun u : Fˣ => d u)
+        (fun a b => (d_mul_d_eq_d_mul a b).symm)) δ (q - 1)).symm
+    rw [h2] at h1
+    have h3 : d (δ ^ (q - 1)) = d 1 := by rw [h1, d_one_eq_one]
+    exact (d_eq_d_iff _ _).mp h3
+  set nn : ℕ+ := ⟨n, Nat.pos_of_ne_zero hn0⟩ with hnndef
+  have hmemR : ∀ x : F, x ^ q = x → x ∈ R F p nn := by
+    intro x hx
+    have h1 : x ^ p ^ (nn : ℕ) = x := by
+      have h2 : (nn : ℕ) = n := rfl
+      rw [h2, ← hqpow]
+      exact hx
+    simp only [R, RingHom.mem_eqLocusField, RingHom.id_apply]
+    exact h1
+  have hδR : ∀ j : ℤ, ((δ ^ j : Fˣ) : F) ∈ R F p nn := by
+    intro j
+    apply hmemR
+    have h2 : (δ ^ j) ^ (q - 1) = 1 := by
+      rw [← _root_.zpow_natCast (δ ^ j) (q - 1), ← _root_.zpow_mul, mul_comm, _root_.zpow_mul,
+        _root_.zpow_natCast, hδq1,
+        _root_.one_zpow]
+    have h1 : (δ ^ j) ^ q = δ ^ j := by
+      calc (δ ^ j) ^ q = (δ ^ j) ^ (q - 1) * (δ ^ j) := by
+            rw [← pow_succ]; congr 1; omega
+        _ = δ ^ j := by rw [h2, one_mul]
+    calc ((δ ^ j : Fˣ) : F) ^ q = (((δ ^ j) ^ q : Fˣ) : F) := by
+          rw [Units.val_pow_eq_pow_val]
+      _ = ((δ ^ j : Fˣ) : F) := by rw [h1]
+  -- ===== Step 4: the anti-diagonal `ŷ` =====
+  set ŷ : SL(2,F) := ĉ * yK * ĉ⁻¹ with hŷdef
+  have hŷGh : ŷ ∈ Gh := by
+    rw [hGhdef]
+    exact (hsmulmem _ _ _).mpr ⟨yK, hyK_G, rfl⟩
+  have hkconj : ĉ * κ * ĉ⁻¹ = d δ := by
+    have h1 : (s τ * c₁⁻¹) * κ * (s τ * c₁⁻¹)⁻¹ = d δ := by
+      have h2 : (s τ * c₁⁻¹) * κ * (s τ * c₁⁻¹)⁻¹ = s τ * (c₁⁻¹ * κ * c₁) * (s τ)⁻¹ := by
+        group
+      rw [h2, ← hκ₁def, hkill]
+    calc ĉ * κ * ĉ⁻¹
+        = d η * ((s τ * c₁⁻¹) * κ * (s τ * c₁⁻¹)⁻¹) * (d η)⁻¹ := by rw [hĉdef]; group
+      _ = d η * d δ * (d η)⁻¹ := by rw [h1]
+      _ = d δ := by
+          rw [inv_d_eq_d_inv, d_mul_d_eq_d_mul, d_mul_d_eq_d_mul]
+          congr 1
+          rw [mul_comm η δ, mul_assoc, mul_inv_cancel, mul_one]
+  have hŷinv : ŷ * d δ * ŷ⁻¹ = (d δ)⁻¹ := by
+    calc ŷ * d δ * ŷ⁻¹
+        = ĉ * (yK * κ * yK⁻¹) * ĉ⁻¹ := by rw [hŷdef, ← hkconj]; group
+      _ = ĉ * κ⁻¹ * ĉ⁻¹ := by rw [hyK_inv]
+      _ = (ĉ * κ * ĉ⁻¹)⁻¹ := by group
+      _ = (d δ)⁻¹ := by rw [hkconj]
+  have hŷinv' : ŷ⁻¹ * d δ * ŷ = (d δ)⁻¹ := by
+    have h3 : d δ = ŷ⁻¹ * (d δ)⁻¹ * ŷ := by
+      calc d δ = ŷ⁻¹ * (ŷ * d δ * ŷ⁻¹) * ŷ := by group
+        _ = ŷ⁻¹ * (d δ)⁻¹ * ŷ := by rw [hŷinv]
+    calc ŷ⁻¹ * d δ * ŷ = (ŷ⁻¹ * (d δ)⁻¹ * ŷ)⁻¹ := by group
+      _ = (d δ)⁻¹ := by rw [← h3]
+  have hconj_zpow : ∀ (u x : SL(2,F)) (m : ℤ), u * x ^ m * u⁻¹ = (u * x * u⁻¹) ^ m := by
+    intro u x m
+    have h1 := map_zpow (MulAut.conj u).toMonoidHom x m
+    simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h1
+    exact h1
+  have hŷnorm : ŷ ∈ normalizer Kh := by
+    rw [Subgroup.mem_normalizer_iff]
+    intro h
+    constructor
+    · intro hh
+      obtain ⟨m, rfl⟩ := Subgroup.mem_zpowers_iff.mp hh
+      rw [hconj_zpow, hŷinv]
+      exact Subgroup.zpow_mem _ (inv_mem (Subgroup.mem_zpowers _)) m
+    · intro hh
+      obtain ⟨m, hm⟩ := Subgroup.mem_zpowers_iff.mp hh
+      have h1 : h = ŷ⁻¹ * (d δ) ^ m * ŷ := by rw [hm]; group
+      have h2 : ŷ⁻¹ * (d δ) ^ m * ŷ = ((d δ)⁻¹) ^ m := by
+        have h3 := hconj_zpow ŷ⁻¹ (d δ) m
+        rw [inv_inv] at h3
+        rw [h3, hŷinv']
+      rw [h1, h2]
+      exact Subgroup.zpow_mem _ (inv_mem (Subgroup.mem_zpowers _)) m
+  have hdδZ : d δ ∉ SpecialSubgroups.Z F := by
+    intro h
+    rcases SpecialSubgroups.mem_Z_iff.mp h with h1 | h1
+    · have : δ = 1 := by
+        rw [← d_one_eq_one] at h1
+        exact (d_eq_d_iff _ _).mp h1
+      apply hδ2
+      rw [this]
+      norm_num
+    · have : δ = -1 := by
+        rw [← d_neg_one_eq_neg_one] at h1
+        exact (d_eq_d_iff _ _).mp h1
+      apply hδ2
+      rw [this]
+      norm_num
+  have hKhD : Kh ≤ SpecialSubgroups.D F :=
+    Subgroup.zpowers_le.mpr SpecialSubgroups.d_mem_D
+  have h2cardKh : 2 < Nat.card Kh := by
+    rw [hKhdef, Nat.card_zpowers, horddδ]
+    omega
+  obtain ⟨ρ, hŷdw⟩ := caseV_geo_y_eq_dw_of_inverting hKhD h2cardKh
+    (Subgroup.mem_zpowers (d δ)) hdδZ hŷnorm hŷinv
+  -- ===== Step 5: the double-coset partition =====
+  haveI hGhfin : Finite ↥Gh := Finite.of_equiv _ (Subgroup.equivSMul (conj ĉ) G).toEquiv
+  have hN'G : N' ≤ G := Subgroup.map_subtype_le _
+  have hNhGh : Nh ≤ Gh := by
+    rw [hNhdef, hGhdef]
+    exact Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr hN'G
+  have hQhNh : Qh ≤ Nh := hNhsup ▸ le_sup_left
+  have hKhNh : Kh ≤ Nh := hNhsup ▸ le_sup_right
+  have hQhGh : Qh ≤ Gh := hQhNh.trans hNhGh
+  haveI hNhfin : Finite ↥Nh :=
+    (Set.Finite.subset (Set.toFinite (Gh : Set SL(2,F))) hNhGh).to_subtype
+  haveI hQhfin : Finite ↥Qh :=
+    (Set.Finite.subset (Set.toFinite (Gh : Set SL(2,F))) hQhGh).to_subtype
+  set 𝒟 : Set SL(2,F) :=
+    DoubleCoset.doubleCoset (d ρ * w) (Nh : Set SL(2,F)) (Qh : Set SL(2,F)) with h𝒟def
+  have hQhL : Qh ≤ SpecialSubgroups.L F := hQhS.trans hSL
+  have hdisj𝒟 : Disjoint 𝒟 (Nh : Set SL(2,F)) := caseV_geo_doset_disjoint_L hNhL hQhL ρ
+  have h𝒟card : 𝒟.ncard = Nat.card ↥Nh * Nat.card ↥Qh := caseV_geo_doset_ncard hNhL hQhS ρ
+  have h𝒟Gh : 𝒟 ⊆ (Gh : Set SL(2,F)) := by
+    rintro x hx
+    obtain ⟨nx, hnx, qx, hqx, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hx
+    exact mul_mem (mul_mem (hNhGh hnx) (hŷdw ▸ hŷGh)) (hQhGh hqx)
+  have harith : q * (q - 1) + q * (q - 1) * q = q * (q ^ 2 - 1) := by
+    obtain ⟨q', rfl⟩ : ∃ q', q = q' + 1 := ⟨q - 1, by omega⟩
+    have h1 : (q' + 1) ^ 2 - 1 = q' ^ 2 + 2 * q' := by
+      have : (q' + 1) ^ 2 = q' ^ 2 + 2 * q' + 1 := by ring
+      omega
+    rw [h1]
+    simp only [Nat.add_sub_cancel]
+    ring
+  have hunion : (Nh : Set SL(2,F)) ∪ 𝒟 = (Gh : Set SL(2,F)) := by
+    apply Set.eq_of_subset_of_ncard_le
+    · exact Set.union_subset (SetLike.coe_subset_coe.mpr hNhGh) h𝒟Gh
+    · have hfinNh : (Nh : Set SL(2,F)).Finite := Set.toFinite _
+      have hfin𝒟 : 𝒟.Finite := (Set.toFinite (Gh : Set SL(2,F))).subset h𝒟Gh
+      have h1 : ((Nh : Set SL(2,F)) ∪ 𝒟).ncard = (Nh : Set SL(2,F)).ncard + 𝒟.ncard :=
+        Set.ncard_union_eq hdisj𝒟.symm hfinNh hfin𝒟
+      have h2 : (Nh : Set SL(2,F)).ncard = q * (q - 1) := by
+        rw [← hcardNh]; exact (Nat.card_coe_set_eq _).symm
+      have h3 : (Gh : Set SL(2,F)).ncard = q * (q ^ 2 - 1) := by
+        rw [← hcardGh]; exact (Nat.card_coe_set_eq _).symm
+      rw [h1, h2, h3, h𝒟card, hcardNh, hcardQh, harith]
+    · exact Set.toFinite _
+  -- ===== Step 6: Nh-decomposition and the `mattr` parameter identity =====
+  have hNhnormQhmem : ∀ u ∈ Nh, ∀ v ∈ Qh, u * v * u⁻¹ ∈ Qh := by
+    have hconjnorm : ∀ (a : SL(2,F)) (X Y : Subgroup SL(2,F)),
+        (∀ u ∈ X, ∀ v ∈ Y, u * v * u⁻¹ ∈ Y) →
+        ∀ u ∈ conj a • X, ∀ v ∈ conj a • Y, u * v * u⁻¹ ∈ conj a • Y := by
+      intro a X Y hXY u hu v hv
+      obtain ⟨u₀, hu₀, rfl⟩ := (hsmulmem _ _ _).mp hu
+      obtain ⟨v₀, hv₀, rfl⟩ := (hsmulmem _ _ _).mp hv
+      refine (hsmulmem _ _ _).mpr ⟨u₀ * v₀ * u₀⁻¹, hXY u₀ hu₀ v₀ hv₀, ?_⟩
+      group
+    have hbase : ∀ u ∈ N', ∀ v ∈ Q', u * v * u⁻¹ ∈ Q' := by
+      rintro u hu v hv
+      rw [hN'def] at hu
+      rw [hQ'def] at hv
+      obtain ⟨u₀, hu₀, rfl⟩ := Subgroup.mem_map.mp hu
+      obtain ⟨v₀, hv₀, rfl⟩ := Subgroup.mem_map.mp hv
+      refine Subgroup.mem_map.mpr ⟨u₀ * v₀ * u₀⁻¹, (mem_normalizer_iff.mp hu₀ v₀).mp hv₀, ?_⟩
+      simp
+    have l1 := hconjnorm c₁⁻¹ _ _ hbase
+    have l2 := hconjnorm (s τ) _ _ l1
+    have l3 := hconjnorm (d η) _ _ l2
+    have hNheq2 : Nh = conj (d η) • (conj (s τ) • (conj c₁⁻¹ • N')) := by
+      rw [hNhdef, hsmul3]
+    have hQheq2 : Qh = conj (d η) • (conj (s τ) • (conj c₁⁻¹ • Q')) := by
+      rw [← hQheq, hsmul3]
+    rw [hNheq2, hQheq2]
+    exact l3
+  have hKhnormQh : Kh ≤ normalizer Qh := by
+    intro x hx
+    rw [Subgroup.mem_normalizer_iff]
+    intro h
+    constructor
+    · exact fun hh => hNhnormQhmem x (hKhNh hx) h hh
+    · intro hh
+      have h1 := hNhnormQhmem x⁻¹ (inv_mem (hKhNh hx)) _ hh
+      have h2 : x⁻¹ * (x * h * x⁻¹) * x⁻¹⁻¹ = h := by group
+      rwa [h2] at h1
+  have hNdec : ∀ nx, nx ∈ Nh → ∃ (lam : F) (j : ℤ), s lam ∈ Qh ∧ nx = s lam * d (δ ^ j) := by
+    intro nx hnx
+    have hset : (Nh : Set SL(2,F)) = (Qh : Set SL(2,F)) * (Kh : Set SL(2,F)) := by
+      rw [hNhsup]
+      exact Subgroup.coe_mul_of_right_le_normalizer_left Qh Kh hKhnormQh
+    have hx : nx ∈ (Qh : Set SL(2,F)) * (Kh : Set SL(2,F)) := by
+      rw [← hset]; exact hnx
+    obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_mul.mp hx
+    obtain ⟨lam, hlam⟩ := hQhS ha
+    obtain ⟨j, hj⟩ := Subgroup.mem_zpowers_iff.mp hb
+    refine ⟨lam, j, by rw [hlam]; exact ha, ?_⟩
+    rw [← hlam, ← hj, hdpow]
+  have hρne : (ρ : F) ≠ 0 := Units.ne_zero ρ
+  have hpar : ∀ lam : F, s lam ∈ Qh → lam ≠ 0 →
+      ∃ j : ℤ, -(ρ : F) * lam = ((δ ^ j : Fˣ) : F) := by
+    intro lam hlam hlam0
+    have hXGh : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∈ Gh := by
+      rw [← hŷdw]
+      exact mul_mem (mul_mem hŷGh (hQhGh hlam)) (inv_mem hŷGh)
+    have hXL : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∉ SpecialSubgroups.L F := by
+      intro hmem
+      rw [SpecialSubgroups.mem_L_iff_lower_triangular, MatrixShapes.IsLowerTriangular,
+        caseV_geo_conj_shear] at hmem
+      have hne : -(ρ : F) ^ 2 * lam ≠ 0 :=
+        mul_ne_zero (neg_ne_zero.mpr (pow_ne_zero 2 hρne)) hlam0
+      apply hne
+      simpa using hmem
+    have hX𝒟 : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∈ 𝒟 := by
+      have h1 : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∈ (Nh : Set SL(2,F)) ∪ 𝒟 := by
+        rw [hunion]
+        exact hXGh
+      rcases h1 with h | h
+      · exact absurd (hNhL h) hXL
+      · exact h
+    obtain ⟨nx, hnx, qx, hqx, hXeq⟩ := DoubleCoset.mem_doubleCoset.mp hX𝒟
+    have hnx' : nx ∈ Nh := SetLike.mem_coe.mp hnx
+    have hqx' : qx ∈ Qh := SetLike.mem_coe.mp hqx
+    obtain ⟨lam', j, hlam'Qh, hnxform⟩ := hNdec nx hnx'
+    obtain ⟨mu, hmu⟩ := hQhS hqx'
+    have heq2 : -(ρ : F) ^ 2 * lam = ((δ ^ j : Fˣ) : F) * (ρ : F) := by
+      have hL : (((d ρ * w) * s lam * (d ρ * w)⁻¹ : SL(2,F)) :
+          Matrix (Fin 2) (Fin 2) F) 0 1 = -(ρ : F) ^ 2 * lam := by
+        rw [caseV_geo_conj_shear]
+        simp
+      have hR : ((s lam' * d (δ ^ j) * (d ρ * w) * s mu : SL(2,F)) :
+          Matrix (Fin 2) (Fin 2) F) 0 1 = ((δ ^ j : Fˣ) : F) * (ρ : F) :=
+        caseV_geo_onemore_topRight lam' mu (δ ^ j) ρ
+      calc -(ρ : F) ^ 2 * lam
+          = (((d ρ * w) * s lam * (d ρ * w)⁻¹ : SL(2,F)) :
+            Matrix (Fin 2) (Fin 2) F) 0 1 := hL.symm
+        _ = ((nx * (d ρ * w) * qx : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) 0 1 := by
+            rw [← hXeq]
+        _ = ((δ ^ j : Fˣ) : F) * (ρ : F) := by rw [hnxform, ← hmu]; exact hR
+    refine ⟨j, mul_right_cancel₀ hρne ?_⟩
+    rw [← heq2]; ring
+  -- pin `ρ` via `s 1 ∈ Qh`
+  obtain ⟨j₁, hj₁⟩ := hpar 1 hs1Qh one_ne_zero
+  have hρval : (ρ : F) = -((δ ^ j₁ : Fˣ) : F) := by rw [← hj₁]; ring
+  have hρR : (ρ : F) ∈ R F p nn := by rw [hρval]; exact neg_mem (hδR j₁)
+  have hQhpar : ∀ lam : F, s lam ∈ Qh → lam ∈ R F p nn := by
+    intro lam hlam
+    by_cases h0 : lam = 0
+    · rw [h0]; exact zero_mem _
+    · obtain ⟨j, hj⟩ := hpar lam hlam h0
+      have hj₁' : -(ρ : F) = ((δ ^ j₁ : Fˣ) : F) := by rw [← hj₁]; ring
+      rw [hj₁'] at hj
+      have hlamval : lam = ((δ ^ (j - j₁) : Fˣ) : F) := by
+        have hne : ((δ ^ j₁ : Fˣ) : F) ≠ 0 := Units.ne_zero _
+        have hu : δ ^ j₁ * δ ^ (j - j₁) = δ ^ j := by
+          rw [← _root_.zpow_add]; congr 1; ring
+        have hval : ((δ ^ j₁ : Fˣ) : F) * ((δ ^ (j - j₁) : Fˣ) : F) = ((δ ^ j : Fˣ) : F) := by
+          rw [← Units.val_mul, hu]
+        apply mul_left_cancel₀ hne
+        rw [hj, hval]
+      rw [hlamval]
+      exact hδR _
+  -- ===== Step 7: all entries in `R F p nn`; conclude =====
+  have hsM : ∀ lam : F, lam ∈ R F p nn →
+      s lam ∈ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p nn).subtype) ⊤ := by
+    intro lam h
+    apply caseV_geo_mem_map_subtype_of_entries
+    intro ii jj
+    fin_cases ii <;> fin_cases jj
+    · simpa [s] using one_mem _
+    · simpa [s] using zero_mem _
+    · simpa [s] using h
+    · simpa [s] using one_mem _
+  have hdM : ∀ u : Fˣ, (u : F) ∈ R F p nn →
+      d u ∈ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p nn).subtype) ⊤ := by
+    intro u h
+    apply caseV_geo_mem_map_subtype_of_entries
+    intro ii jj
+    fin_cases ii <;> fin_cases jj
+    · simpa [d] using h
+    · simpa [d] using zero_mem _
+    · simpa [d] using zero_mem _
+    · simpa [d, Units.val_inv_eq_inv_val] using inv_mem h
+  have hwM : w ∈ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p nn).subtype) ⊤ := by
+    apply caseV_geo_mem_map_subtype_of_entries
+    intro ii jj
+    fin_cases ii <;> fin_cases jj
+    · simpa [w] using zero_mem _
+    · simpa [w] using one_mem _
+    · simpa [w] using neg_mem (one_mem _)
+    · simpa [w] using zero_mem _
+  have hNhM : ∀ x ∈ Nh,
+      x ∈ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p nn).subtype) ⊤ := by
+    intro x hx
+    obtain ⟨lam, j, hlamQh, rfl⟩ := hNdec x hx
+    exact mul_mem (hsM lam (hQhpar lam hlamQh)) (hdM (δ ^ j) (hδR j))
+  have hGhM : ∀ x ∈ Gh,
+      x ∈ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p nn).subtype) ⊤ := by
+    intro x hx
+    have h1 : x ∈ (Nh : Set SL(2,F)) ∪ 𝒟 := by rw [hunion]; exact SetLike.mem_coe.mpr hx
+    rcases h1 with h | h
+    · exact hNhM x (SetLike.mem_coe.mp h)
+    · obtain ⟨nx, hnx, qx, hqx, rfl⟩ := DoubleCoset.mem_doubleCoset.mp h
+      have hnx' : nx ∈ Nh := SetLike.mem_coe.mp hnx
+      have hqx' : qx ∈ Qh := SetLike.mem_coe.mp hqx
+      obtain ⟨mu, hmu⟩ := hQhS hqx'
+      have hsmuQh : s mu ∈ Qh := by rw [hmu]; exact hqx'
+      refine mul_mem (mul_mem (hNhM nx hnx') (mul_mem (hdM ρ hρR) hwM)) ?_
+      rw [← hmu]
+      exact hsM mu (hQhpar mu hsmuQh)
+  refine ⟨nn, caseV_iso_of_conj_le_map nn G ĉ (fun x hx => hGhM x hx) ?_⟩
+  have h1 : ((nn : ℕ)) = n := rfl
+  rw [h1, ← hqpow, hg]
+  calc e * g = q * (q ^ 2 - 1) := heg
+    _ = (q ^ 2 - 1) * q := by ring
 
 section CaseVb
 
@@ -5670,9 +6497,17 @@ lemma caseV_vb_card_SL2_join_d (π : (GaloisField p (2*k.val))ˣ) (hπ : SL2_joi
 
 end CaseVb
 
-/-- (SORRY) Case Vb (and Vc at `q = 3`), Butler tex 2013-2043 (`i = 2 = e`, `|K| = 2(q-1)`):
-`G ≅ ⟨SL(2,𝔽_q), d_π⟩` with `SL(2,𝔽_q) ◁ G`. **Gap:** same projective-line normalization as Va,
-now with `ω ∈ 𝔽_{q²} \ 𝔽_q` and `π` a generator of the order-`2(q-1)` cyclic `𝕄`. -/
+set_option maxHeartbeats 3200000 in
+/-- Case Vb (and Vc at `q = 3`), Butler tex 2013-2043 (`i = 2 = e`, `|K| = 2(q-1)`):
+`G ≅ ⟨SL(2,𝔽_q), d_π⟩` with `SL(2,𝔽_q) ◁ G`. MECHANIZED (Wave 26), sharing `caseV_a`'s
+algebraic frame (Ch6 conjugator + `caseV_geo_shear_conj_kill` + `d η` rescale, inverting `ŷ`
+from `of_index_normalizer_eq_two`, double-coset partition), now with `|K̂| = 2(q-1)`, so
+`δ^{q-1} = -1` and `π := eR2(δ)` lands in `𝔽_{q²} \ 𝔽_q` with `π² ∈ 𝔽_q` (the
+`SL2_join_d_pi_spec`; the subfield `𝔽_q ⊆ 𝔽_{q²}` is identified with the `q`-power-fixed locus
+by a root-counting argument). The shear parameters are pinned into `𝔽_q` by the `⟨δ²⟩`-orbit of
+`s 1` (a full `(q-1)`-orbit inside the `q`-element parameter group, by cardinality), and the
+image of `Ĝ` in `SL(2, GaloisField p 2n)` is exactly `⟨SL(2,𝔽_q), d_π⟩` by cardinality
+(`caseV_vb_card_SL2_join_d`). -/
 lemma caseV_b {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -5700,9 +6535,1153 @@ lemma caseV_b {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     (hshape3 : g = q * (q ^ 2 - 1)) :
     ∃ m : ℕ+, ∃ π : (GaloisField p (2 * m.val))ˣ,
       SL2_join_d_pi_spec p m π ∧ Isomorphic G (SL2_join_d p m π) := by
-  sorry
+  classical
+  have hsmulmem : ∀ (a : SL(2,F)) (X : Subgroup SL(2,F)) (y : SL(2,F)),
+      y ∈ conj a • X ↔ ∃ x ∈ X, a * x * a⁻¹ = y := by
+    intro a X y
+    rw [Subgroup.mem_smul_pointwise_iff_exists]
+    simp only [MulAut.smul_def, conj_apply]
+  -- ===== Step 0: numerics =====
+  set e := Nat.card (center SL(2,F)) with he_def
+  have hp_prime : Nat.Prime p := Fact.out
+  have hp_ne2 : p ≠ 2 := by
+    intro hp2
+    subst hp2
+    have h2 : (2 : F) = 0 := CharTwo.two_eq_zero
+    have he1 : e = 1 := by
+      rw [he_def, SpecialSubgroups.center_SL2_eq_Z]
+      exact SpecialSubgroups.card_Z_eq_one_of_two_eq_zero h2
+    omega
+  have hcardK : Nat.card K = 2 * (q - 1) := by rw [hK_card, hkga, hshape1, he2]
+  have hpq : p ∣ q := by rw [hqpow]; exact dvd_pow_self p hn0
+  have hp_ndvd : ¬ p ∣ (q - 1) := by
+    intro hd
+    have h1 : p ∣ q - (q - 1) := Nat.dvd_sub hpq hd
+    have h2 : q - (q - 1) = 1 := by omega
+    rw [h2] at h1
+    have := Nat.le_of_dvd (by norm_num) h1
+    have := hp_prime.two_le
+    omega
+  have hp_ndvd2 : ¬ p ∣ 2 * (q - 1) := by
+    intro hd
+    rcases (Nat.Prime.dvd_mul hp_prime).mp hd with h | h
+    · exact hp_ne2 ((Nat.prime_dvd_prime_iff_eq hp_prime Nat.prime_two).mp h)
+    · exact hp_ndvd h
+  have hgalt : ga < gb := by omega
+  -- ===== Step 1: K is a recognized class; extract the inverting element =====
+  haveI hKfin : Finite ↥K :=
+    (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hK_le).to_subtype
+  have hQbot : Q.toSubgroup ≠ ⊥ := by
+    intro h
+    rw [h] at hq
+    simp at hq
+    omega
+  have hKsub_cyc : IsCyclic ↥(K.subgroupOf G) :=
+    isCyclic_of_surjective _ (Subgroup.subgroupOfEquivOfLe hK_le).symm.surjective
+  have hcardKsub : Nat.card (K.subgroupOf G) = Nat.card K :=
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le).toEquiv
+  have hcopK : Nat.Coprime (Nat.card (K.subgroupOf G)) p := by
+    rw [hcardKsub, hcardK, Nat.coprime_comm]
+    exact (Nat.Prime.coprime_iff_not_dvd hp_prime).mpr hp_ndvd2
+  have hKZlt : Nat.card (K.subgroupOf G) > Nat.card (center SL(2,F)) := by
+    rw [hcardKsub, hcardK, ← he_def]
+    omega
+  have hKmem : K ∈ MaximalAbelianSubgroupsOf G := by
+    have h := K_mem_MaximalAbelianSubgroups_of_center_lt_card_K G Q hQbot (K.subgroupOf G)
+      hKsub_cyc hNQK hKZlt hcopK
+    rwa [Subgroup.map_subgroupOf_eq_of_le hK_le] at h
+  obtain ⟨c₀, hc₀G, hc₀⟩ : ∃ c ∈ G, conj c • K = A := by
+    rcases hComplete K hKmem with h | ⟨c₀, hc₀G, hc₀⟩ | hsyl
+    · exact h
+    · exfalso
+      have hcB : Nat.card B = Nat.card K := by rw [← hc₀]; exact card_conj_smul_eq_card c₀
+      rw [hB_card, hcardK, he2] at hcB
+      omega
+    · exfalso
+      have h := NumericClassEquation.dvd_card_of_isSylowType hsyl
+      rw [hcardK] at h
+      exact hp_ndvd2 h
+  haveI hAfin : Finite ↥A :=
+    (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hA_mem.right).to_subtype
+  obtain ⟨genA, hgenA⟩ := hA_cyc.exists_generator
+  have hAzp : A = Subgroup.zpowers (genA : SL(2,F)) := by
+    ext v
+    constructor
+    · intro hv
+      obtain ⟨mz, hmz⟩ := Subgroup.mem_zpowers_iff.mp (hgenA ⟨v, hv⟩)
+      refine Subgroup.mem_zpowers_iff.mpr ⟨mz, ?_⟩
+      have := congrArg (Subtype.val) hmz
+      simpa using this
+    · intro hv
+      obtain ⟨mz, hmz⟩ := Subgroup.mem_zpowers_iff.mp hv
+      rw [← hmz]
+      exact Subgroup.zpow_mem A genA.2 mz
+  obtain ⟨yA, hyA_mem, hyA_conj⟩ :=
+    of_index_normalizer_eq_two hp_ne2 A G hA_mem center_le_G hA_cop hA_relIndex genA
+  simp only [Set.mem_sdiff, SetLike.mem_coe, Subgroup.mem_carrier, Subgroup.mem_inf] at hyA_mem
+  obtain ⟨⟨hyA_norm, hyA_G⟩, -⟩ := hyA_mem
+  have hyA_conj' : yA * (genA : SL(2,F)) * yA⁻¹ = ((genA : SL(2,F)))⁻¹ := by
+    rw [hyA_conj]; simp
+  set κ : SL(2,F) := c₀⁻¹ * (genA : SL(2,F)) * c₀ with hκdef
+  have hKzp : K = Subgroup.zpowers κ := by
+    have h1 : conj c₀⁻¹ • A = K := by rw [← hc₀, _root_.map_inv, inv_smul_smul]
+    rw [← h1, hAzp, conj_zpowers_eq, inv_inv]
+  have hordκ : orderOf κ = 2 * (q - 1) := by
+    have h := Nat.card_zpowers κ
+    rw [← hKzp, hcardK] at h
+    exact h.symm
+  set yK : SL(2,F) := c₀⁻¹ * yA * c₀ with hyKdef
+  have hyK_G : yK ∈ G := mul_mem (mul_mem (inv_mem hc₀G) hyA_G) hc₀G
+  have hyK_inv : yK * κ * yK⁻¹ = κ⁻¹ := by
+    calc yK * κ * yK⁻¹
+        = c₀⁻¹ * (yA * (genA : SL(2,F)) * yA⁻¹) * c₀ := by rw [hyKdef, hκdef]; group
+      _ = c₀⁻¹ * ((genA : SL(2,F)))⁻¹ * c₀ := by rw [hyA_conj']
+      _ = κ⁻¹ := by rw [hκdef]; group
+  -- ===== Step 2: frame normalization (Ch6 conjugator `c₁`) =====
+  obtain ⟨c₁, hQeq, hNle⟩ := exists_conj_Sylow_eq_S_inf_and_normalizer_le_L G Q hQbot
+  set Q' : Subgroup SL(2,F) := Subgroup.map G.subtype Q.toSubgroup with hQ'def
+  set N' : Subgroup SL(2,F) :=
+    Subgroup.map G.subtype (normalizer (Q.toSubgroup : Set ↥G)) with hN'def
+  set G₁ : Subgroup SL(2,F) := conj c₁⁻¹ • G with hG₁def
+  set Q₁ : Subgroup SL(2,F) := conj c₁⁻¹ • Q' with hQ₁def
+  set N₁ : Subgroup SL(2,F) := conj c₁⁻¹ • N' with hN₁def
+  set K₁ : Subgroup SL(2,F) := conj c₁⁻¹ • K with hK₁def
+  have hc₁inv : conj c₁⁻¹ = (conj c₁)⁻¹ := _root_.map_inv conj c₁
+  have hQ₁S : Q₁ ≤ SpecialSubgroups.S F := by
+    have h1 : Q' ≤ conj c₁ • SpecialSubgroups.S F := by rw [hQeq]; exact inf_le_left
+    calc Q₁ ≤ conj c₁⁻¹ • (conj c₁ • SpecialSubgroups.S F) :=
+          Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr h1
+      _ = SpecialSubgroups.S F := by rw [hc₁inv, inv_smul_smul]
+  have hN₁L : N₁ ≤ SpecialSubgroups.L F := by
+    have h1 : N' ≤ conj c₁ • SpecialSubgroups.L F := hNle.trans inf_le_left
+    calc N₁ ≤ conj c₁⁻¹ • (conj c₁ • SpecialSubgroups.L F) :=
+          Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr h1
+      _ = SpecialSubgroups.L F := by rw [hc₁inv, inv_smul_smul]
+  have hN'sup : N' = Q' ⊔ K := by
+    rw [hN'def, hNQK, Subgroup.map_sup, Subgroup.map_subgroupOf_eq_of_le hK_le]
+  have hK₁_le_N₁ : K₁ ≤ N₁ :=
+    Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr (hN'sup ▸ le_sup_right)
+  set κ₁ : SL(2,F) := c₁⁻¹ * κ * c₁ with hκ₁def
+  have hK₁zp : K₁ = Subgroup.zpowers κ₁ := by
+    rw [hK₁def, hKzp, conj_zpowers_eq, inv_inv]
+  have hκ₁L : κ₁ ∈ SpecialSubgroups.L F :=
+    hN₁L (hK₁_le_N₁ (hK₁zp ▸ Subgroup.mem_zpowers κ₁))
+  obtain ⟨δ, σ, hκ₁form⟩ := hκ₁L
+  have hordκ₁ : orderOf κ₁ = 2 * (q - 1) := by
+    have h := orderOf_injective (MulAut.conj c₁⁻¹).toMonoidHom (MulEquiv.injective _) κ
+    simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply, inv_inv] at h
+    rw [← hκ₁def] at h
+    rw [h, hordκ]
+  have hcardK₁ : Nat.card K₁ = 2 * (q - 1) := by
+    rw [hK₁zp, Nat.card_zpowers, hordκ₁]
+  -- δ² ≠ 1
+  have hκ₁K₁ : κ₁ ∈ K₁ := hK₁zp ▸ Subgroup.mem_zpowers κ₁
+  have hK₁S_triv : ∀ x, x ∈ K₁ → x ∈ SpecialSubgroups.S F → x = 1 := by
+    intro x hxK hxS
+    obtain ⟨ς, hς⟩ := hxS
+    by_cases hς0 : ς = 0
+    · rw [← hς, hς0, s_zero_eq_one]
+    · exfalso
+      have hordx : orderOf x = p := by rw [← hς]; exact order_s_eq_char ς hς0
+      haveI : Finite ↥K₁ := Nat.finite_of_card_ne_zero (by omega)
+      have h1 : orderOf (⟨x, hxK⟩ : ↥K₁) ∣ Nat.card ↥K₁ := orderOf_dvd_natCard _
+      have h2 : orderOf (⟨x, hxK⟩ : ↥K₁) = orderOf x :=
+        (orderOf_injective K₁.subtype (Subgroup.subtype_injective K₁) ⟨x, hxK⟩).symm
+      rw [h2, hordx, hcardK₁] at h1
+      exact hp_ndvd2 h1
+  have hδ2 : (δ : F) ^ 2 ≠ 1 := by
+    intro hcontra
+    have hδu : δ ^ 2 = 1 := Units.ext (by
+      rw [Units.val_pow_eq_pow_val, hcontra, Units.val_one])
+    have hκ₁sq : κ₁ ^ 2 = s (σ * ((δ : F) ^ 2 + 1)) := by
+      rw [← hκ₁form, caseV_geo_ds_sq, hδu, d_one_eq_one, one_mul]
+    have h1 : κ₁ ^ 2 = 1 :=
+      hK₁S_triv _ (pow_mem hκ₁K₁ 2) ⟨σ * ((δ : F) ^ 2 + 1), hκ₁sq.symm⟩
+    have h2 : orderOf κ₁ ∣ 2 := orderOf_dvd_of_pow_eq_one h1
+    rw [hordκ₁] at h2
+    have := Nat.le_of_dvd (by norm_num) h2
+    omega
+  -- ===== Step 3: kill the shear part of `κ₁`; rescale so that `s 1 ∈ Qh` =====
+  set τ : F := σ / (1 - (δ : F) ^ 2) with hτdef
+  have hkill : s τ * κ₁ * (s τ)⁻¹ = d δ := by
+    rw [← hκ₁form]; exact caseV_geo_shear_conj_kill δ σ hδ2
+  have hQτ : conj (s τ) • Q₁ = Q₁ := by
+    apply le_antisymm
+    · intro y hy
+      rw [Subgroup.mem_smul_pointwise_iff_exists] at hy
+      obtain ⟨x, hxQ, rfl⟩ := hy
+      rw [MulAut.smul_def, conj_apply]
+      obtain ⟨ς, rfl⟩ := hQ₁S hxQ
+      rw [caseV_geo_s_conj_s]
+      exact hxQ
+    · intro y hyQ
+      rw [Subgroup.mem_smul_pointwise_iff_exists]
+      refine ⟨y, hyQ, ?_⟩
+      rw [MulAut.smul_def, conj_apply]
+      obtain ⟨ς, rfl⟩ := hQ₁S hyQ
+      rw [caseV_geo_s_conj_s]
+  -- cardinalities of the primed/subscripted objects
+  have hcardQ' : Nat.card Q' = q := by
+    rw [hQ'def,
+      ← Nat.card_congr (Subgroup.equivMapOfInjective Q.toSubgroup G.subtype
+        (Subgroup.subtype_injective G)).toEquiv]
+    exact hq
+  have hcardQ₁ : Nat.card Q₁ = q := by rw [hQ₁def, card_conj_smul_eq_card, hcardQ']
+  -- pick a nontrivial shear `s σ₀ ∈ Q₁` and a square root `η` of `σ₀`
+  have hQ₁_ne_bot : Q₁ ≠ ⊥ := by
+    intro h
+    rw [h] at hcardQ₁
+    simp at hcardQ₁
+    omega
+  obtain ⟨x₀s, hx₀ne⟩ : ∃ a : ↥Q₁, a ≠ 1 := by
+    rw [← Subgroup.nontrivial_iff_ne_bot] at hQ₁_ne_bot
+    exact exists_ne 1
+  obtain ⟨x₀, hx₀Q₁⟩ := x₀s
+  have hx₀ne1 : x₀ ≠ 1 := fun h => hx₀ne (Subtype.ext h)
+  obtain ⟨σ₀, hσ₀form⟩ := hQ₁S hx₀Q₁
+  have hσ₀ne : σ₀ ≠ 0 := by
+    intro h
+    rw [h, s_zero_eq_one] at hσ₀form
+    exact hx₀ne1 hσ₀form.symm
+  obtain ⟨η₀, hη₀⟩ := IsAlgClosed.exists_pow_nat_eq σ₀ (by norm_num : 0 < 2)
+  have hη₀ne : η₀ ≠ 0 := by
+    intro h
+    rw [h, zero_pow (by norm_num : (2:ℕ) ≠ 0)] at hη₀
+    exact hσ₀ne hη₀.symm
+  set η : Fˣ := Units.mk0 η₀ hη₀ne with hηdef
+  -- ===== the total conjugator =====
+  set ĉ : SL(2,F) := d η * (s τ * c₁⁻¹) with hĉdef
+  have hsmul3 : ∀ X : Subgroup SL(2,F),
+      conj ĉ • X = conj (d η) • (conj (s τ) • (conj c₁⁻¹ • X)) := by
+    intro X
+    rw [hĉdef, _root_.map_mul, _root_.map_mul, mul_smul, mul_smul]
+  set Gh : Subgroup SL(2,F) := conj ĉ • G with hGhdef
+  set Qh : Subgroup SL(2,F) := conj (d η) • Q₁ with hQhdef
+  set Kh : Subgroup SL(2,F) := Subgroup.zpowers (d δ) with hKhdef
+  set Nh : Subgroup SL(2,F) := conj ĉ • N' with hNhdef
+  have hQheq : conj ĉ • Q' = Qh := by rw [hsmul3, hQτ]
+  have hKheq : conj ĉ • K = Kh := by
+    rw [hsmul3]
+    have h1 : conj (s τ) • K₁ = Subgroup.zpowers (d δ) := by
+      rw [hK₁zp, conj_zpowers_eq, hkill]
+    rw [hK₁def] at h1
+    rw [h1, conj_zpowers_eq]
+    have h2 : d η * d δ * (d η)⁻¹ = d δ := by
+      rw [inv_d_eq_d_inv, d_mul_d_eq_d_mul, d_mul_d_eq_d_mul]
+      congr 1
+      rw [mul_comm η δ, mul_assoc, mul_inv_cancel, mul_one]
+    rw [h2]
+  have hNhsup : Nh = Qh ⊔ Kh := by
+    rw [hNhdef, hN'sup, Subgroup.smul_sup, hQheq, hKheq]
+  have hQhS : Qh ≤ SpecialSubgroups.S F := by
+    intro x hx
+    obtain ⟨x', hx', rfl⟩ := (hsmulmem _ _ _).mp hx
+    obtain ⟨ς, rfl⟩ := hQ₁S hx'
+    rw [d_mul_s_mul_d_inv_eq_s]
+    exact ⟨_, rfl⟩
+  have hSL : SpecialSubgroups.S F ≤ SpecialSubgroups.L F := by
+    rintro x ⟨ς, rfl⟩
+    exact ⟨1, ς, by rw [d_one_eq_one, one_mul]⟩
+  have hs1Qh : s 1 ∈ Qh := by
+    rw [hQhdef]
+    refine (hsmulmem _ _ _).mpr ⟨x₀, hx₀Q₁, ?_⟩
+    rw [← hσ₀form, d_mul_s_mul_d_inv_eq_s]
+    congr 1
+    rw [Units.val_inv_eq_inv_val]
+    have hval : (η : F) = η₀ := rfl
+    rw [hval]
+    field_simp
+    rw [← hη₀]
+  have hNhL : Nh ≤ SpecialSubgroups.L F := by
+    have hLconj : ∀ u : SL(2,F), u ∈ SpecialSubgroups.L F →
+        ∀ X : Subgroup SL(2,F), X ≤ SpecialSubgroups.L F →
+        conj u • X ≤ SpecialSubgroups.L F := by
+      intro u hu X hX x hx
+      obtain ⟨x', hx', rfl⟩ := (hsmulmem _ _ _).mp hx
+      exact mul_mem (mul_mem hu (hX hx')) (inv_mem hu)
+    have hsτL : s τ ∈ SpecialSubgroups.L F := ⟨1, τ, by rw [d_one_eq_one, one_mul]⟩
+    have hdηL : d η ∈ SpecialSubgroups.L F := ⟨η, 0, by rw [s_zero_eq_one, mul_one]⟩
+    rw [hNhdef, hsmul3]
+    exact hLconj _ hdηL _ (hLconj _ hsτL _ hN₁L)
+  -- ===== cards in the hat frame =====
+  have hcardNz : Nat.card (normalizer (Q.toSubgroup : Set ↥G)) = q * (2 * (q - 1)) := by
+    set Nz : Subgroup ↥G := normalizer (Q.toSubgroup : Set ↥G) with hNzdef
+    have hQ_le_Nz : Q.toSubgroup ≤ Nz := Subgroup.le_normalizer
+    have hK_le_Nz : K.subgroupOf G ≤ Nz := by rw [hNQK]; exact le_sup_right
+    set Qn : Subgroup ↥Nz := Q.toSubgroup.subgroupOf Nz with hQndef
+    set Kn : Subgroup ↥Nz := (K.subgroupOf G).subgroupOf Nz with hKndef
+    have hsup : Qn ⊔ Kn = ⊤ := by
+      have h := congrArg (Subgroup.subgroupOf · Nz) hNQK
+      rw [Subgroup.subgroupOf_self, Subgroup.subgroupOf_sup hQ_le_Nz hK_le_Nz] at h
+      exact h.symm
+    have hdisj : Qn ⊓ Kn = ⊥ := by
+      have h := congrArg (Subgroup.subgroupOf · Nz) (disjoint_iff.mp hQK_disj)
+      rwa [subgroupOf_inf_eq, Subgroup.bot_subgroupOf] at h
+    haveI hQn_normal : Qn.Normal := Subgroup.normal_in_normalizer
+    have hcomplement : IsComplement' Qn Kn := by
+      apply isComplement'_of_disjoint_and_mul_eq_univ (disjoint_iff.mpr hdisj)
+      have h := Subgroup.normal_mul Qn Kn
+      rw [hsup, Subgroup.coe_top] at h
+      exact h.symm
+    have hcard_mul : Nat.card Qn * Nat.card Kn = Nat.card Nz := hcomplement.card_mul
+    have hcard_Qn : Nat.card Qn = q :=
+      (Nat.card_congr (Subgroup.subgroupOfEquivOfLe hQ_le_Nz).toEquiv).trans hq
+    have hcard_Kn : Nat.card Kn = 2 * (q - 1) :=
+      ((Nat.card_congr (Subgroup.subgroupOfEquivOfLe hK_le_Nz).toEquiv).trans
+        hcardKsub).trans hcardK
+    rw [← hcard_mul, hcard_Qn, hcard_Kn]
+  have hcardN' : Nat.card N' = q * (2 * (q - 1)) := by
+    rw [hN'def,
+      ← Nat.card_congr (Subgroup.equivMapOfInjective _ G.subtype
+        (Subgroup.subtype_injective G)).toEquiv]
+    exact hcardNz
+  have hcardNh : Nat.card Nh = q * (2 * (q - 1)) := by
+    rw [hNhdef, card_conj_smul_eq_card, hcardN']
+  have hcardQh : Nat.card Qh = q := by rw [hQhdef, card_conj_smul_eq_card, hcardQ₁]
+  have hcardGh : Nat.card Gh = 2 * (q * (q ^ 2 - 1)) := by
+    rw [hGhdef, card_conj_smul_eq_card, hg, he2, hshape3]
+  -- diagonal order and `R`-membership of the `δ`-powers
+  have horddδ : orderOf (d δ) = 2 * (q - 1) := by
+    have h := orderOf_injective (MulAut.conj (s τ)).toMonoidHom (MulEquiv.injective _) κ₁
+    simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h
+    rw [hkill] at h
+    rw [h, hordκ₁]
+  have hdpow : ∀ j : ℤ, (d δ) ^ j = d (δ ^ j) := by
+    intro j
+    exact (map_zpow (MonoidHom.mk' (fun u : Fˣ => d u)
+      (fun a b => (d_mul_d_eq_d_mul a b).symm)) δ j).symm
+  have hdpowN : ∀ m : ℕ, (d δ) ^ m = d (δ ^ m) := fun m =>
+    (map_pow (MonoidHom.mk' (fun u : Fˣ => d u)
+      (fun a b => (d_mul_d_eq_d_mul a b).symm)) δ m).symm
+  have hδ2q1 : δ ^ (2 * (q - 1)) = 1 := by
+    have h1 : (d δ) ^ (2 * (q - 1)) = 1 := by rw [← horddδ]; exact pow_orderOf_eq_one (d δ)
+    rw [hdpowN] at h1
+    have h3 : d (δ ^ (2 * (q - 1))) = d 1 := by rw [h1, d_one_eq_one]
+    exact (d_eq_d_iff _ _).mp h3
+  have hordδ : orderOf δ = 2 * (q - 1) := by
+    rw [← horddδ]
+    exact (orderOf_injective (MonoidHom.mk' (fun u : Fˣ => d u)
+      (fun a b => (d_mul_d_eq_d_mul a b).symm))
+      (fun a b h => (d_eq_d_iff a b).mp h) δ).symm
+  have hδq1neg : δ ^ (q - 1) = -1 := by
+    have hne1 : δ ^ (q - 1) ≠ 1 := by
+      intro h
+      have hd1 : (d δ) ^ (q - 1) = 1 := by rw [hdpowN, h, d_one_eq_one]
+      have h2 := orderOf_dvd_of_pow_eq_one hd1
+      rw [horddδ] at h2
+      have := Nat.le_of_dvd (by omega) h2
+      omega
+    have hsq : (δ ^ (q - 1)) ^ 2 = 1 ^ 2 := by
+      rw [one_pow, ← pow_mul]
+      have h4 : (q - 1) * 2 = 2 * (q - 1) := by ring
+      rw [h4, hδ2q1]
+    rcases Units.eq_or_eq_neg_of_sq_eq_sq _ _ hsq with h | h
+    · exact absurd h hne1
+    · exact h
+  set nn : ℕ+ := ⟨n, Nat.pos_of_ne_zero hn0⟩ with hnndef
+  have hmemR : ∀ x : F, x ^ q = x → x ∈ R F p nn := by
+    intro x hx
+    have h1 : x ^ p ^ (nn : ℕ) = x := by
+      have h2 : (nn : ℕ) = n := rfl
+      rw [h2, ← hqpow]
+      exact hx
+    simp only [R, RingHom.mem_eqLocusField, RingHom.id_apply]
+    exact h1
+  set nn2 : ℕ+ := ⟨2 * n, by omega⟩ with hnn2def
+  have hmemR2 : ∀ x : F, x ^ (q * q) = x → x ∈ R F p nn2 := by
+    intro x hx
+    have h1 : x ^ p ^ (nn2 : ℕ) = x := by
+      have h2 : (nn2 : ℕ) = 2 * n := rfl
+      have h3 : p ^ (2 * n) = q * q := by rw [hqpow, ← pow_add]; congr 1; ring
+      rw [h2, h3]
+      exact hx
+    simp only [R, RingHom.mem_eqLocusField, RingHom.id_apply]
+    exact h1
+  have hqodd : Odd q := by rw [hqpow]; exact (hp_prime.odd_of_ne_two hp_ne2).pow
+  have hq2fact : q * q - 1 = 2 * (q - 1) * ((q + 1) / 2) := by
+    obtain ⟨t2, ht2⟩ : ∃ t2, q + 1 = 2 * t2 := by
+      rcases hqodd with ⟨j, hj⟩
+      exact ⟨j + 1, by omega⟩
+    have h5 : (q + 1) / 2 = t2 := by omega
+    rw [h5]
+    obtain ⟨q', rfl⟩ : ∃ q', q = q' + 1 := ⟨q - 1, by omega⟩
+    have h2 : (q' + 1) * (q' + 1) = q' * (q' + 2) + 1 := by ring
+    have h6 : q' + 2 = 2 * t2 := by omega
+    calc (q' + 1) * (q' + 1) - 1 = q' * (q' + 2) := by rw [h2, Nat.add_sub_cancel]
+      _ = q' * (2 * t2) := by rw [h6]
+      _ = 2 * (q' + 1 - 1) * t2 := by rw [Nat.add_sub_cancel]; ring
+  have hpow_qq : ∀ j : ℤ, (δ ^ j) ^ (q * q) = δ ^ j := by
+    intro j
+    have h2 : (δ ^ j) ^ (q * q - 1) = 1 := by
+      rw [← _root_.zpow_natCast (δ ^ j) (q * q - 1), ← _root_.zpow_mul,
+        mul_comm j ((q * q - 1 : ℕ) : ℤ),
+        _root_.zpow_mul, _root_.zpow_natCast, hq2fact, pow_mul, hδ2q1, one_pow, _root_.one_zpow]
+    have hqq1 : q * q - 1 + 1 = q * q :=
+      Nat.succ_pred_eq_of_pos (Nat.pos_of_ne_zero (Nat.mul_ne_zero (by omega) (by omega)))
+    calc (δ ^ j) ^ (q * q) = (δ ^ j) ^ (q * q - 1) * (δ ^ j) := by
+          rw [← pow_succ, hqq1]
+      _ = δ ^ j := by rw [h2, one_mul]
+  have hδR2 : ∀ j : ℤ, ((δ ^ j : Fˣ) : F) ∈ R F p nn2 := by
+    intro j
+    apply hmemR2
+    calc ((δ ^ j : Fˣ) : F) ^ (q * q) = (((δ ^ j) ^ (q * q) : Fˣ) : F) := by
+          rw [Units.val_pow_eq_pow_val]
+      _ = ((δ ^ j : Fˣ) : F) := by rw [hpow_qq j]
+  have hδevenR : ∀ m : ℤ, ((δ ^ (2 * m) : Fˣ) : F) ∈ R F p nn := by
+    intro m
+    apply hmemR
+    have h2 : (δ ^ (2 * m)) ^ (q - 1) = 1 := by
+      rw [← _root_.zpow_natCast (δ ^ (2 * m)) (q - 1), ← _root_.zpow_mul]
+      have h4 : 2 * m * ((q - 1 : ℕ) : ℤ) = ((2 * (q - 1) : ℕ) : ℤ) * m := by push_cast; ring
+      rw [h4, _root_.zpow_mul, _root_.zpow_natCast, hδ2q1, _root_.one_zpow]
+    have h1 : (δ ^ (2 * m)) ^ q = δ ^ (2 * m) := by
+      calc (δ ^ (2 * m)) ^ q = (δ ^ (2 * m)) ^ (q - 1) * (δ ^ (2 * m)) := by
+            rw [← pow_succ]; congr 1; omega
+        _ = δ ^ (2 * m) := by rw [h2, one_mul]
+    calc ((δ ^ (2 * m) : Fˣ) : F) ^ q = (((δ ^ (2 * m)) ^ q : Fˣ) : F) := by
+          rw [Units.val_pow_eq_pow_val]
+      _ = ((δ ^ (2 * m) : Fˣ) : F) := by rw [h1]
+  -- ===== Step 4: the anti-diagonal `ŷ` =====
+  set ŷ : SL(2,F) := ĉ * yK * ĉ⁻¹ with hŷdef
+  have hŷGh : ŷ ∈ Gh := by
+    rw [hGhdef]
+    exact (hsmulmem _ _ _).mpr ⟨yK, hyK_G, rfl⟩
+  have hkconj : ĉ * κ * ĉ⁻¹ = d δ := by
+    have h1 : (s τ * c₁⁻¹) * κ * (s τ * c₁⁻¹)⁻¹ = d δ := by
+      have h2 : (s τ * c₁⁻¹) * κ * (s τ * c₁⁻¹)⁻¹ = s τ * (c₁⁻¹ * κ * c₁) * (s τ)⁻¹ := by
+        group
+      rw [h2, ← hκ₁def, hkill]
+    calc ĉ * κ * ĉ⁻¹
+        = d η * ((s τ * c₁⁻¹) * κ * (s τ * c₁⁻¹)⁻¹) * (d η)⁻¹ := by rw [hĉdef]; group
+      _ = d η * d δ * (d η)⁻¹ := by rw [h1]
+      _ = d δ := by
+          rw [inv_d_eq_d_inv, d_mul_d_eq_d_mul, d_mul_d_eq_d_mul]
+          congr 1
+          rw [mul_comm η δ, mul_assoc, mul_inv_cancel, mul_one]
+  have hŷinv : ŷ * d δ * ŷ⁻¹ = (d δ)⁻¹ := by
+    calc ŷ * d δ * ŷ⁻¹
+        = ĉ * (yK * κ * yK⁻¹) * ĉ⁻¹ := by rw [hŷdef, ← hkconj]; group
+      _ = ĉ * κ⁻¹ * ĉ⁻¹ := by rw [hyK_inv]
+      _ = (ĉ * κ * ĉ⁻¹)⁻¹ := by group
+      _ = (d δ)⁻¹ := by rw [hkconj]
+  have hŷinv' : ŷ⁻¹ * d δ * ŷ = (d δ)⁻¹ := by
+    have h3 : d δ = ŷ⁻¹ * (d δ)⁻¹ * ŷ := by
+      calc d δ = ŷ⁻¹ * (ŷ * d δ * ŷ⁻¹) * ŷ := by group
+        _ = ŷ⁻¹ * (d δ)⁻¹ * ŷ := by rw [hŷinv]
+    calc ŷ⁻¹ * d δ * ŷ = (ŷ⁻¹ * (d δ)⁻¹ * ŷ)⁻¹ := by group
+      _ = (d δ)⁻¹ := by rw [← h3]
+  have hconj_zpow : ∀ (u x : SL(2,F)) (m : ℤ), u * x ^ m * u⁻¹ = (u * x * u⁻¹) ^ m := by
+    intro u x m
+    have h1 := map_zpow (MulAut.conj u).toMonoidHom x m
+    simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply] at h1
+    exact h1
+  have hŷnorm : ŷ ∈ normalizer Kh := by
+    rw [Subgroup.mem_normalizer_iff]
+    intro h
+    constructor
+    · intro hh
+      obtain ⟨m, rfl⟩ := Subgroup.mem_zpowers_iff.mp hh
+      rw [hconj_zpow, hŷinv]
+      exact Subgroup.zpow_mem _ (inv_mem (Subgroup.mem_zpowers _)) m
+    · intro hh
+      obtain ⟨m, hm⟩ := Subgroup.mem_zpowers_iff.mp hh
+      have h1 : h = ŷ⁻¹ * (d δ) ^ m * ŷ := by rw [hm]; group
+      have h2 : ŷ⁻¹ * (d δ) ^ m * ŷ = ((d δ)⁻¹) ^ m := by
+        have h3 := hconj_zpow ŷ⁻¹ (d δ) m
+        rw [inv_inv] at h3
+        rw [h3, hŷinv']
+      rw [h1, h2]
+      exact Subgroup.zpow_mem _ (inv_mem (Subgroup.mem_zpowers _)) m
+  have hdδZ : d δ ∉ SpecialSubgroups.Z F := by
+    intro h
+    rcases SpecialSubgroups.mem_Z_iff.mp h with h1 | h1
+    · have : δ = 1 := by
+        rw [← d_one_eq_one] at h1
+        exact (d_eq_d_iff _ _).mp h1
+      apply hδ2
+      rw [this]
+      norm_num
+    · have : δ = -1 := by
+        rw [← d_neg_one_eq_neg_one] at h1
+        exact (d_eq_d_iff _ _).mp h1
+      apply hδ2
+      rw [this]
+      norm_num
+  have hKhD : Kh ≤ SpecialSubgroups.D F :=
+    Subgroup.zpowers_le.mpr SpecialSubgroups.d_mem_D
+  have h2cardKh : 2 < Nat.card Kh := by
+    rw [hKhdef, Nat.card_zpowers, horddδ]
+    omega
+  obtain ⟨ρ, hŷdw⟩ := caseV_geo_y_eq_dw_of_inverting hKhD h2cardKh
+    (Subgroup.mem_zpowers (d δ)) hdδZ hŷnorm hŷinv
+  -- ===== Step 5: the double-coset partition =====
+  haveI hGhfin : Finite ↥Gh := Finite.of_equiv _ (Subgroup.equivSMul (conj ĉ) G).toEquiv
+  have hN'G : N' ≤ G := Subgroup.map_subtype_le _
+  have hNhGh : Nh ≤ Gh := by
+    rw [hNhdef, hGhdef]
+    exact Subgroup.pointwise_smul_le_pointwise_smul_iff.mpr hN'G
+  have hQhNh : Qh ≤ Nh := hNhsup ▸ le_sup_left
+  have hKhNh : Kh ≤ Nh := hNhsup ▸ le_sup_right
+  have hQhGh : Qh ≤ Gh := hQhNh.trans hNhGh
+  haveI hNhfin : Finite ↥Nh :=
+    (Set.Finite.subset (Set.toFinite (Gh : Set SL(2,F))) hNhGh).to_subtype
+  haveI hQhfin : Finite ↥Qh :=
+    (Set.Finite.subset (Set.toFinite (Gh : Set SL(2,F))) hQhGh).to_subtype
+  set 𝒟 : Set SL(2,F) :=
+    DoubleCoset.doubleCoset (d ρ * w) (Nh : Set SL(2,F)) (Qh : Set SL(2,F)) with h𝒟def
+  have hQhL : Qh ≤ SpecialSubgroups.L F := hQhS.trans hSL
+  have hdisj𝒟 : Disjoint 𝒟 (Nh : Set SL(2,F)) := caseV_geo_doset_disjoint_L hNhL hQhL ρ
+  have h𝒟card : 𝒟.ncard = Nat.card ↥Nh * Nat.card ↥Qh := caseV_geo_doset_ncard hNhL hQhS ρ
+  have h𝒟Gh : 𝒟 ⊆ (Gh : Set SL(2,F)) := by
+    rintro x hx
+    obtain ⟨nx, hnx, qx, hqx, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hx
+    exact mul_mem (mul_mem (hNhGh hnx) (hŷdw ▸ hŷGh)) (hQhGh hqx)
+  have harith : q * (2 * (q - 1)) + q * (2 * (q - 1)) * q = 2 * (q * (q ^ 2 - 1)) := by
+    obtain ⟨q', rfl⟩ : ∃ q', q = q' + 1 := ⟨q - 1, by omega⟩
+    have h1 : (q' + 1) ^ 2 - 1 = q' ^ 2 + 2 * q' := by
+      have : (q' + 1) ^ 2 = q' ^ 2 + 2 * q' + 1 := by ring
+      omega
+    rw [h1]
+    simp only [Nat.add_sub_cancel]
+    ring
+  have hunion : (Nh : Set SL(2,F)) ∪ 𝒟 = (Gh : Set SL(2,F)) := by
+    apply Set.eq_of_subset_of_ncard_le
+    · exact Set.union_subset (SetLike.coe_subset_coe.mpr hNhGh) h𝒟Gh
+    · have hfinNh : (Nh : Set SL(2,F)).Finite := Set.toFinite _
+      have hfin𝒟 : 𝒟.Finite := (Set.toFinite (Gh : Set SL(2,F))).subset h𝒟Gh
+      have h1 : ((Nh : Set SL(2,F)) ∪ 𝒟).ncard = (Nh : Set SL(2,F)).ncard + 𝒟.ncard :=
+        Set.ncard_union_eq hdisj𝒟.symm hfinNh hfin𝒟
+      have h2 : (Nh : Set SL(2,F)).ncard = q * (2 * (q - 1)) := by
+        rw [← hcardNh]; exact (Nat.card_coe_set_eq _).symm
+      have h3 : (Gh : Set SL(2,F)).ncard = 2 * (q * (q ^ 2 - 1)) := by
+        rw [← hcardGh]; exact (Nat.card_coe_set_eq _).symm
+      rw [h1, h2, h3, h𝒟card, hcardNh, hcardQh, harith]
+    · exact Set.toFinite _
+  -- ===== Step 6: Nh-decomposition and the `mattr` parameter identity =====
+  have hNhnormQhmem : ∀ u ∈ Nh, ∀ v ∈ Qh, u * v * u⁻¹ ∈ Qh := by
+    have hconjnorm : ∀ (a : SL(2,F)) (X Y : Subgroup SL(2,F)),
+        (∀ u ∈ X, ∀ v ∈ Y, u * v * u⁻¹ ∈ Y) →
+        ∀ u ∈ conj a • X, ∀ v ∈ conj a • Y, u * v * u⁻¹ ∈ conj a • Y := by
+      intro a X Y hXY u hu v hv
+      obtain ⟨u₀, hu₀, rfl⟩ := (hsmulmem _ _ _).mp hu
+      obtain ⟨v₀, hv₀, rfl⟩ := (hsmulmem _ _ _).mp hv
+      refine (hsmulmem _ _ _).mpr ⟨u₀ * v₀ * u₀⁻¹, hXY u₀ hu₀ v₀ hv₀, ?_⟩
+      group
+    have hbase : ∀ u ∈ N', ∀ v ∈ Q', u * v * u⁻¹ ∈ Q' := by
+      rintro u hu v hv
+      rw [hN'def] at hu
+      rw [hQ'def] at hv
+      obtain ⟨u₀, hu₀, rfl⟩ := Subgroup.mem_map.mp hu
+      obtain ⟨v₀, hv₀, rfl⟩ := Subgroup.mem_map.mp hv
+      refine Subgroup.mem_map.mpr ⟨u₀ * v₀ * u₀⁻¹, (mem_normalizer_iff.mp hu₀ v₀).mp hv₀, ?_⟩
+      simp
+    have l1 := hconjnorm c₁⁻¹ _ _ hbase
+    have l2 := hconjnorm (s τ) _ _ l1
+    have l3 := hconjnorm (d η) _ _ l2
+    have hNheq2 : Nh = conj (d η) • (conj (s τ) • (conj c₁⁻¹ • N')) := by
+      rw [hNhdef, hsmul3]
+    have hQheq2 : Qh = conj (d η) • (conj (s τ) • (conj c₁⁻¹ • Q')) := by
+      rw [← hQheq, hsmul3]
+    rw [hNheq2, hQheq2]
+    exact l3
+  have hKhnormQh : Kh ≤ normalizer Qh := by
+    intro x hx
+    rw [Subgroup.mem_normalizer_iff]
+    intro h
+    constructor
+    · exact fun hh => hNhnormQhmem x (hKhNh hx) h hh
+    · intro hh
+      have h1 := hNhnormQhmem x⁻¹ (inv_mem (hKhNh hx)) _ hh
+      have h2 : x⁻¹ * (x * h * x⁻¹) * x⁻¹⁻¹ = h := by group
+      rwa [h2] at h1
+  have hNdec : ∀ nx, nx ∈ Nh → ∃ (lam : F) (j : ℤ), s lam ∈ Qh ∧ nx = s lam * d (δ ^ j) := by
+    intro nx hnx
+    have hset : (Nh : Set SL(2,F)) = (Qh : Set SL(2,F)) * (Kh : Set SL(2,F)) := by
+      rw [hNhsup]
+      exact Subgroup.coe_mul_of_right_le_normalizer_left Qh Kh hKhnormQh
+    have hx : nx ∈ (Qh : Set SL(2,F)) * (Kh : Set SL(2,F)) := by
+      rw [← hset]; exact hnx
+    obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_mul.mp hx
+    obtain ⟨lam, hlam⟩ := hQhS ha
+    obtain ⟨j, hj⟩ := Subgroup.mem_zpowers_iff.mp hb
+    refine ⟨lam, j, by rw [hlam]; exact ha, ?_⟩
+    rw [← hlam, ← hj, hdpow]
+  have hρne : (ρ : F) ≠ 0 := Units.ne_zero ρ
+  have hpar : ∀ lam : F, s lam ∈ Qh → lam ≠ 0 →
+      ∃ j : ℤ, -(ρ : F) * lam = ((δ ^ j : Fˣ) : F) := by
+    intro lam hlam hlam0
+    have hXGh : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∈ Gh := by
+      rw [← hŷdw]
+      exact mul_mem (mul_mem hŷGh (hQhGh hlam)) (inv_mem hŷGh)
+    have hXL : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∉ SpecialSubgroups.L F := by
+      intro hmem
+      rw [SpecialSubgroups.mem_L_iff_lower_triangular, MatrixShapes.IsLowerTriangular,
+        caseV_geo_conj_shear] at hmem
+      have hne : -(ρ : F) ^ 2 * lam ≠ 0 :=
+        mul_ne_zero (neg_ne_zero.mpr (pow_ne_zero 2 hρne)) hlam0
+      apply hne
+      simpa using hmem
+    have hX𝒟 : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∈ 𝒟 := by
+      have h1 : (d ρ * w) * s lam * (d ρ * w)⁻¹ ∈ (Nh : Set SL(2,F)) ∪ 𝒟 := by
+        rw [hunion]
+        exact hXGh
+      rcases h1 with h | h
+      · exact absurd (hNhL h) hXL
+      · exact h
+    obtain ⟨nx, hnx, qx, hqx, hXeq⟩ := DoubleCoset.mem_doubleCoset.mp hX𝒟
+    have hnx' : nx ∈ Nh := SetLike.mem_coe.mp hnx
+    have hqx' : qx ∈ Qh := SetLike.mem_coe.mp hqx
+    obtain ⟨lam', j, hlam'Qh, hnxform⟩ := hNdec nx hnx'
+    obtain ⟨mu, hmu⟩ := hQhS hqx'
+    have heq2 : -(ρ : F) ^ 2 * lam = ((δ ^ j : Fˣ) : F) * (ρ : F) := by
+      have hL : (((d ρ * w) * s lam * (d ρ * w)⁻¹ : SL(2,F)) :
+          Matrix (Fin 2) (Fin 2) F) 0 1 = -(ρ : F) ^ 2 * lam := by
+        rw [caseV_geo_conj_shear]
+        simp
+      have hR : ((s lam' * d (δ ^ j) * (d ρ * w) * s mu : SL(2,F)) :
+          Matrix (Fin 2) (Fin 2) F) 0 1 = ((δ ^ j : Fˣ) : F) * (ρ : F) :=
+        caseV_geo_onemore_topRight lam' mu (δ ^ j) ρ
+      calc -(ρ : F) ^ 2 * lam
+          = (((d ρ * w) * s lam * (d ρ * w)⁻¹ : SL(2,F)) :
+            Matrix (Fin 2) (Fin 2) F) 0 1 := hL.symm
+        _ = ((nx * (d ρ * w) * qx : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) 0 1 := by
+            rw [← hXeq]
+        _ = ((δ ^ j : Fˣ) : F) * (ρ : F) := by rw [hnxform, ← hmu]; exact hR
+    refine ⟨j, mul_right_cancel₀ hρne ?_⟩
+    rw [← heq2]; ring
+  -- pin `ρ` via `s 1 ∈ Qh` (mattr at `λ = 1`); `ρ` is then itself a `δ`-power via `δ^(q-1) = -1`
+  obtain ⟨j₁, hj₁⟩ := hpar 1 hs1Qh one_ne_zero
+  have hρval : (ρ : F) = -((δ ^ j₁ : Fˣ) : F) := by rw [← hj₁]; ring
+  have hρpow : ρ = δ ^ (((q - 1 : ℕ) : ℤ) + j₁) := by
+    have hval : ((δ ^ (((q - 1 : ℕ) : ℤ) + j₁) : Fˣ) : F) = -((δ ^ j₁ : Fˣ) : F) := by
+      rw [_root_.zpow_add, Units.val_mul, _root_.zpow_natCast, hδq1neg]
+      simp
+    apply Units.ext
+    rw [hρval, hval]
+  have hρR2 : (ρ : F) ∈ R F p nn2 := by rw [hρval]; exact neg_mem (hδR2 j₁)
+  -- ===== Step 6b (Vb-specific): the `⟨δ²⟩`-orbit pins all shear parameters into `𝔽_q` =====
+  have hpow2 : ∀ m : ℤ, (δ ^ 2) ^ m = δ ^ (2 * m) := by
+    intro m
+    rw [← _root_.zpow_natCast δ 2, ← _root_.zpow_mul]
+    norm_num
+  have hEvenQh : ∀ m : ℤ, s ((δ ^ (2 * m) : Fˣ) : F) ∈ Qh := by
+    intro m
+    have hu : (d δ) ^ (-m) ∈ Nh := hKhNh (Subgroup.mem_zpowers_iff.mpr ⟨-m, rfl⟩)
+    have h := hNhnormQhmem ((d δ) ^ (-m)) hu (s 1) hs1Qh
+    rw [hdpow, d_mul_s_mul_d_inv_eq_s] at h
+    have hval : (1 : F) * ((((δ ^ (-m))⁻¹ : Fˣ)) : F) * ((((δ ^ (-m))⁻¹ : Fˣ)) : F)
+        = ((δ ^ (2 * m) : Fˣ) : F) := by
+      rw [one_mul, ← Units.val_mul, _root_.zpow_neg, inv_inv, ← _root_.zpow_add]
+      congr 2
+      ring
+    rw [hval] at h
+    exact h
+  set Nset : Set F := {x : F | s x ∈ Qh} with hNsetdef
+  have hsinj : Function.Injective (fun x : F => s x) := fun a b h => (s_eq_s_iff a b).mp h
+  have himg : (fun x : F => s x) '' Nset = (Qh : Set SL(2,F)) := by
+    ext z
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      exact hx
+    · intro hz
+      obtain ⟨μ, hμ⟩ := hQhS hz
+      exact ⟨μ, by rw [hNsetdef]; show s μ ∈ Qh; rw [hμ]; exact hz, hμ⟩
+  have hNsetfin : Nset.Finite := by
+    apply Set.Finite.of_finite_image _ hsinj.injOn
+    rw [himg]
+    exact Set.toFinite _
+  have hNsetcard : Nset.ncard = q := by
+    have h1 := Set.ncard_image_of_injective Nset hsinj
+    have h2 : (Qh : Set SL(2,F)).ncard = q := by
+      rw [← hcardQh]; exact (Nat.card_coe_set_eq _).symm
+    rw [himg, h2] at h1
+    exact h1.symm
+  set Dset : Set F :=
+    Units.val '' ((Subgroup.zpowers (δ ^ 2) : Subgroup Fˣ) : Set Fˣ) with hDsetdef
+  have hDsub : Dset ⊆ Nset \ {0} := by
+    rintro x ⟨u, hu, rfl⟩
+    obtain ⟨m, rfl⟩ := Subgroup.mem_zpowers_iff.mp hu
+    rw [hpow2]
+    refine ⟨hEvenQh m, ?_⟩
+    simp only [Set.mem_singleton_iff]
+    exact Units.ne_zero _
+  have hDcard : Dset.ncard = q - 1 := by
+    have h1 : Dset.ncard = Nat.card (Subgroup.zpowers (δ ^ 2)) := by
+      rw [hDsetdef, Set.ncard_image_of_injective _ (fun a b h => Units.ext h)]
+      exact (Nat.card_coe_set_eq _).symm
+    have h3 : Nat.gcd (2 * (q - 1)) 2 = 2 := by
+      rw [Nat.gcd_comm]
+      exact Nat.gcd_eq_left (dvd_mul_right 2 (q - 1))
+    have h2 : orderOf (δ ^ 2) = q - 1 := by
+      rw [orderOf_pow' δ (two_ne_zero), hordδ, h3]
+      omega
+    rw [h1, Nat.card_zpowers, h2]
+  have hND : (Nset \ {0}).ncard = q - 1 := by
+    have h0 : (0 : F) ∈ Nset := by
+      rw [hNsetdef]
+      show s 0 ∈ Qh
+      rw [s_zero_eq_one]
+      exact one_mem _
+    rw [Set.ncard_sdiff_singleton_of_mem h0, hNsetcard]
+  have hDNeq : Dset = Nset \ {0} :=
+    Set.eq_of_subset_of_ncard_le hDsub (by rw [hND, hDcard])
+      (hNsetfin.subset Set.diff_subset)
+  have hQhpar : ∀ lam : F, s lam ∈ Qh → lam ∈ R F p nn := by
+    intro lam hlam
+    by_cases h0 : lam = 0
+    · rw [h0]; exact zero_mem _
+    · have hmem : lam ∈ Dset := by
+        rw [hDNeq]
+        exact ⟨hlam, h0⟩
+      obtain ⟨u, hu, rfl⟩ := hmem
+      obtain ⟨m, rfl⟩ := Subgroup.mem_zpowers_iff.mp hu
+      rw [hpow2]
+      exact hδevenR m
+  have hRsub : ∀ x : F, x ∈ R F p nn → x ∈ R F p nn2 := by
+    intro x hx
+    simp only [R, RingHom.mem_eqLocusField, RingHom.id_apply] at hx
+    rw [_root_.iterateFrobenius_def] at hx
+    have hpnq : p ^ (nn : ℕ) = q := hqpow.symm
+    rw [hpnq] at hx
+    apply hmemR2
+    rw [pow_mul, hx, hx]
+  -- ===== Step 7 (Vb): transport to `SL(2,𝔽_{q²})` and identify `⟨SL(2,𝔽_q), d_π⟩` =====
+  set φ₂ : SL(2, R F p nn2) →* SL(2, F) :=
+    Matrix.SpecialLinearGroup.map (R F p nn2).subtype with hφ₂def
+  have hsub_inj : Function.Injective ⇑(R F p nn2).subtype := fun a b h => Subtype.ext h
+  have hφ₂inj : Function.Injective φ₂ := by
+    intro A B hAB
+    apply Subtype.ext
+    have h : (φ₂ A).1 = (φ₂ B).1 := Subtype.ext_iff.mp hAB
+    simp only [hφ₂def, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply] at h
+    exact Matrix.map_injective hsub_inj h
+  set M2' : Subgroup SL(2,F) := Subgroup.map φ₂ ⊤ with hM2def
+  have hsM2 : ∀ lam : F, lam ∈ R F p nn2 → s lam ∈ M2' := by
+    intro lam h
+    apply caseV_geo_mem_map_subtype_of_entries
+    intro ii jj
+    fin_cases ii <;> fin_cases jj
+    · simpa [s] using one_mem _
+    · simpa [s] using zero_mem _
+    · simpa [s] using h
+    · simpa [s] using one_mem _
+  have hdM2 : ∀ u : Fˣ, (u : F) ∈ R F p nn2 → d u ∈ M2' := by
+    intro u h
+    apply caseV_geo_mem_map_subtype_of_entries
+    intro ii jj
+    fin_cases ii <;> fin_cases jj
+    · simpa [d] using h
+    · simpa [d] using zero_mem _
+    · simpa [d] using zero_mem _
+    · simpa [d, Units.val_inv_eq_inv_val] using inv_mem h
+  have hwM2 : w ∈ M2' := by
+    apply caseV_geo_mem_map_subtype_of_entries
+    intro ii jj
+    fin_cases ii <;> fin_cases jj
+    · simpa [w] using zero_mem _
+    · simpa [w] using one_mem _
+    · simpa [w] using neg_mem (one_mem _)
+    · simpa [w] using zero_mem _
+  have hGhM2 : Gh ≤ M2' := by
+    intro x hx
+    have h1 : x ∈ (Nh : Set SL(2,F)) ∪ 𝒟 := by rw [hunion]; exact SetLike.mem_coe.mpr hx
+    rcases h1 with h | h
+    · obtain ⟨lam, jj, hlamQh, rfl⟩ := hNdec x (SetLike.mem_coe.mp h)
+      exact mul_mem (hsM2 lam (hRsub _ (hQhpar lam hlamQh))) (hdM2 (δ ^ jj) (hδR2 jj))
+    · obtain ⟨nx, hnx, qx, hqx, rfl⟩ := DoubleCoset.mem_doubleCoset.mp h
+      have hnx' : nx ∈ Nh := SetLike.mem_coe.mp hnx
+      have hqx' : qx ∈ Qh := SetLike.mem_coe.mp hqx
+      obtain ⟨lam, jj, hlamQh, rfl⟩ := hNdec nx hnx'
+      obtain ⟨mu, hmu⟩ := hQhS hqx'
+      have hsmuQh : s mu ∈ Qh := by rw [hmu]; exact hqx'
+      refine mul_mem (mul_mem ?_ (mul_mem (hdM2 ρ hρR2) hwM2)) ?_
+      · exact mul_mem (hsM2 lam (hRsub _ (hQhpar lam hlamQh))) (hdM2 (δ ^ jj) (hδR2 jj))
+      · rw [← hmu]
+        exact hsM2 mu (hRsub _ (hQhpar mu hsmuQh))
+  obtain ⟨eR2⟩ := caseV_ringEquiv_R_GaloisField (F := F) (p := p) nn2
+  have eR2' : R F p nn2 ≃+* GaloisField p (2 * nn.val) := eR2
+  set ψ : SL(2, R F p nn2) ≃* SL(2, GaloisField p (2 * nn.val)) :=
+    SL2_mulEquiv_of_ringEquiv eR2' with hψdef
+  set e3 : ↥M2' ≃* SL(2, R F p nn2) :=
+    (Subgroup.equivMapOfInjective ⊤ φ₂ hφ₂inj).symm.trans Subgroup.topEquiv with he3def
+  set Θ : ↥M2' →* SL(2, GaloisField p (2 * nn.val)) :=
+    ψ.toMonoidHom.comp e3.toMonoidHom with hΘdef
+  have he3val : ∀ z : ↥M2', φ₂ (e3 z) = ↑z := by
+    intro z
+    have h1 := (Subgroup.equivMapOfInjective ⊤ φ₂ hφ₂inj).apply_symm_apply z
+    have h2 := congrArg (Subtype.val) h1
+    rw [← h2]
+    rfl
+  have hΘapp : ∀ z : ↥M2', Θ z = ψ (e3 z) := fun z => rfl
+  have hψsymmapp : ∀ X : SL(2, GaloisField p (2 * nn.val)),
+      ψ.symm X = Matrix.SpecialLinearGroup.map eR2'.symm.toRingHom X := fun X => rfl
+  have hΘchar : ∀ (z : ↥M2') (X : SL(2, GaloisField p (2 * nn.val))),
+      φ₂ (ψ.symm X) = ↑z → Θ z = X := by
+    intro z X hX
+    have h1 : e3 z = ψ.symm X := hφ₂inj (by rw [he3val z, ← hX])
+    rw [hΘapp, h1]
+    exact ψ.apply_symm_apply X
+  have hψsymm_entry : ∀ (X : SL(2, GaloisField p (2 * nn.val))) (i2 j2 : Fin 2),
+      ((φ₂ (ψ.symm X) : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) i2 j2
+        = ((eR2'.symm ((X : Matrix (Fin 2) (Fin 2) (GaloisField p (2 * nn.val))) i2 j2)
+            : R F p nn2) : F) := by
+    intro X i2 j2
+    rw [hψsymmapp, hφ₂def]
+    rw [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply,
+      Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply]
+    rfl
+  -- the twisting unit `π` (image of `δ`)
+  have hδmem2 : ((δ : Fˣ) : F) ∈ R F p nn2 := by simpa using hδR2 1
+  have hδinvmem2 : ((δ⁻¹ : Fˣ) : F) ∈ R F p nn2 := by simpa using hδR2 (-1)
+  set vδ : R F p nn2 := ⟨((δ : Fˣ) : F), hδmem2⟩ with hvδdef
+  set vδi : R F p nn2 := ⟨((δ⁻¹ : Fˣ) : F), hδinvmem2⟩ with hvδidef
+  have hvv : vδ * vδi = 1 := by
+    apply Subtype.ext
+    show ((δ : Fˣ) : F) * ((δ⁻¹ : Fˣ) : F) = 1
+    rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
+  have hvv' : vδi * vδ = 1 := by
+    apply Subtype.ext
+    show ((δ⁻¹ : Fˣ) : F) * ((δ : Fˣ) : F) = 1
+    rw [← Units.val_mul, inv_mul_cancel, Units.val_one]
+  set π : (GaloisField p (2 * nn.val))ˣ :=
+    Units.map eR2'.toRingHom.toMonoidHom ⟨vδ, vδi, hvv, hvv'⟩ with hπdef
+  have hπval : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) = eR2' vδ :=
+    rfl
+  -- the subfield `𝔽_q ⊆ 𝔽_{q²}` is exactly the `q`-power-fixed locus (counting)
+  haveI : Fintype (GaloisField p nn.val) := Fintype.ofFinite _
+  have hcardGFn : Nat.card (GaloisField p nn.val) = q := by
+    rw [hqpow]
+    exact GaloisField.card p nn.val hn0
+  set Sq : Set (GaloisField p (2 * nn.val)) := Set.range (GaloisField_ringHom p nn) with hSqdef
+  set Fixq : Set (GaloisField p (2 * nn.val)) := {x | x ^ q = x} with hFixdef
+  have hSqsub : Sq ⊆ Fixq := by
+    rintro x ⟨c, rfl⟩
+    show (GaloisField_ringHom p nn c) ^ q = GaloisField_ringHom p nn c
+    rw [← map_pow]
+    congr 1
+    have h1 : c ^ Fintype.card (GaloisField p nn.val) = c := FiniteField.pow_card c
+    rwa [Fintype.card_eq_nat_card, hcardGFn] at h1
+  have hSqcard : Sq.ncard = q := by
+    rw [hSqdef]
+    exact (Set.ncard_range_of_injective
+      (caseV_vb_ringHom_inj (p := p) (k := nn))).trans hcardGFn
+  have hFixcard : Fixq.ncard ≤ q := by
+    have hsub2 : Fixq ⊆ insert (0 : GaloisField p (2 * nn.val))
+        ↑(Polynomial.nthRootsFinset (q - 1) (1 : GaloisField p (2 * nn.val))) := by
+      intro x hx
+      rcases eq_or_ne x 0 with rfl | hx0
+      · exact Set.mem_insert _ _
+      · refine Set.mem_insert_of_mem _ ?_
+        rw [Finset.mem_coe, Polynomial.mem_nthRootsFinset (by omega : 0 < q - 1)]
+        have hxq : x ^ q = x := hx
+        have h1 : x ^ (q - 1) * x = 1 * x := by
+          rw [one_mul, ← pow_succ]
+          have h2 : q - 1 + 1 = q := by omega
+          rw [h2]
+          exact hxq
+        exact mul_right_cancel₀ hx0 h1
+    have h1 : (↑(Polynomial.nthRootsFinset (q - 1) (1 : GaloisField p (2 * nn.val)))
+        : Set (GaloisField p (2 * nn.val))).ncard ≤ q - 1 := by
+      rw [Set.ncard_coe_finset]
+      rw [Polynomial.nthRootsFinset]
+      exact (Multiset.toFinset_card_le _).trans (Polynomial.card_nthRoots _ _)
+    calc Fixq.ncard
+        ≤ (insert (0 : GaloisField p (2 * nn.val))
+            (↑(Polynomial.nthRootsFinset (q - 1) (1 : GaloisField p (2 * nn.val)))
+              : Set (GaloisField p (2 * nn.val)))).ncard :=
+          Set.ncard_le_ncard hsub2 ((Finset.finite_toSet _).insert 0)
+      _ ≤ (↑(Polynomial.nthRootsFinset (q - 1) (1 : GaloisField p (2 * nn.val)))
+            : Set (GaloisField p (2 * nn.val))).ncard + 1 := Set.ncard_insert_le _ _
+      _ ≤ q := by omega
+  have hSqFix : Sq = Fixq :=
+    Set.eq_of_subset_of_ncard_le hSqsub (by rw [hSqcard]; exact hFixcard) (Set.toFinite _)
+  -- the `π`-spec
+  have hπq1 : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ (q - 1)
+      = -1 := by
+    have h2 : vδ ^ (q - 1) = -1 := by
+      apply Subtype.ext
+      have h3 : ((vδ ^ (q - 1) : R F p nn2) : F) = ((δ : Fˣ) : F) ^ (q - 1) :=
+        SubmonoidClass.coe_pow vδ (q - 1)
+      rw [h3, ← Units.val_pow_eq_pow_val, hδq1neg]
+      rw [Units.val_neg, Units.val_one]
+      push_cast
+      ring
+    calc ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ (q - 1)
+        = eR2' (vδ ^ (q - 1)) := by rw [hπval, ← map_pow]
+      _ = -1 := by rw [h2, map_neg, map_one]
+  have hspec : SL2_join_d_pi_spec p nn π := by
+    unfold SL2_join_d_pi_spec
+    constructor
+    · intro hmem
+      have hfix : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ q
+          = ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) := by
+        have h1 : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ∈ Fixq := by
+          rw [← hSqFix]
+          exact hmem
+        exact h1
+      have hneg : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ q
+          = -((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) := by
+        calc ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ q
+            = ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ (q - 1)
+              * ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) := by
+              rw [← pow_succ]
+              congr 1
+              omega
+          _ = -((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) := by
+              rw [hπq1]
+              ring
+      have h2ne : (2 : GaloisField p (2 * nn.val)) ≠ 0 := by
+        intro h
+        have h3 : ((2 : ℕ) : GaloisField p (2 * nn.val)) = 0 := by push_cast; exact h
+        rw [CharP.cast_eq_zero_iff _ p 2] at h3
+        exact hp_ne2 ((Nat.prime_dvd_prime_iff_eq hp_prime Nat.prime_two).mp h3)
+      have hπne : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ≠ 0 :=
+        Units.ne_zero π
+      have h5 : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val))
+          = -((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) :=
+        hfix.symm.trans hneg
+      have h4 : (2 : GaloisField p (2 * nn.val))
+          * ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) = 0 := by
+        calc (2 : GaloisField p (2 * nn.val))
+            * ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val))
+            = ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val))
+              + ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) :=
+              two_mul _
+          _ = 0 := by nth_rewrite 2 [h5]; exact add_neg_cancel _
+      rcases mul_eq_zero.mp h4 with h | h
+      · exact h2ne h
+      · exact hπne h
+    · have h1 : ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2
+          ∈ Fixq := by
+        show (((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2) ^ q
+          = ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2
+        have h2 : (((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2)
+            ^ (q - 1) = 1 := by
+          rw [← pow_mul, mul_comm 2 (q - 1), pow_mul, hπq1]
+          ring
+        calc (((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2) ^ q
+            = (((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2) ^ (q - 1)
+              * ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2 := by
+              rw [← pow_succ]
+              congr 1
+              omega
+          _ = ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ 2 := by
+              rw [h2, one_mul]
+      rw [← hSqFix] at h1
+      exact h1
+  -- Θ-values on the generators
+  have hkey : ∀ jj : ℤ,
+      ((eR2'.symm (((π ^ jj : (GaloisField p (2 * nn.val))ˣ))
+          : GaloisField p (2 * nn.val)) : R F p nn2) : F) = ((δ ^ jj : Fˣ) : F) := by
+    intro jj
+    have h1 : ((π ^ jj : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val))
+        = eR2' (vδ ^ jj) := by
+      calc ((π ^ jj : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val))
+          = ((π : (GaloisField p (2 * nn.val))ˣ) : GaloisField p (2 * nn.val)) ^ jj :=
+            Units.val_zpow_eq_zpow_val π jj
+        _ = (eR2' vδ) ^ jj := by rw [hπval]
+        _ = eR2' (vδ ^ jj) := (map_zpow₀ eR2' vδ jj).symm
+    rw [h1, RingEquiv.symm_apply_apply]
+    calc ((vδ ^ jj : R F p nn2) : F) = ((vδ : R F p nn2) : F) ^ jj :=
+          map_zpow₀ (R F p nn2).subtype vδ jj
+      _ = ((δ : Fˣ) : F) ^ jj := rfl
+      _ = ((δ ^ jj : Fˣ) : F) := (Units.val_zpow_eq_zpow_val δ jj).symm
+  have hΘd : ∀ (jj : ℤ) (h : d (δ ^ jj) ∈ M2'), Θ ⟨d (δ ^ jj), h⟩ = d (π ^ jj) := by
+    intro jj h
+    apply hΘchar
+    apply Subtype.ext
+    apply Matrix.ext
+    intro i2 j2
+    rw [hψsymm_entry]
+    fin_cases i2 <;> fin_cases j2
+    · show ((eR2'.symm ((d (π ^ jj)).1 0 0) : R F p nn2) : F) = (d (δ ^ jj)).1 0 0
+      simp only [SpecialMatrices.d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply,
+        Matrix.cons_val', Matrix.cons_val_zero, Matrix.empty_val', Matrix.cons_val_fin_one]
+      exact hkey jj
+    · show ((eR2'.symm ((d (π ^ jj)).1 0 1) : R F p nn2) : F) = (d (δ ^ jj)).1 0 1
+      simp only [SpecialMatrices.d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply,
+        Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val',
+        Matrix.cons_val_fin_one, Matrix.head_cons]
+      rw [map_zero]
+      simp
+    · show ((eR2'.symm ((d (π ^ jj)).1 1 0) : R F p nn2) : F) = (d (δ ^ jj)).1 1 0
+      simp only [SpecialMatrices.d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply,
+        Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val',
+        Matrix.cons_val_fin_one, Matrix.head_cons, Matrix.head_fin_const]
+      rw [map_zero]
+      simp
+    · show ((eR2'.symm ((d (π ^ jj)).1 1 1) : R F p nn2) : F) = (d (δ ^ jj)).1 1 1
+      simp only [SpecialMatrices.d, Matrix.SpecialLinearGroup.coe_mk, Matrix.of_apply,
+        Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val',
+        Matrix.cons_val_fin_one, Matrix.head_cons, Matrix.head_fin_const]
+      rw [← Units.val_inv_eq_inv_val, ← _root_.zpow_neg, ← Units.val_inv_eq_inv_val,
+        ← _root_.zpow_neg]
+      exact hkey (-jj)
+  -- entries of `Θ z` are `q`-power-fixed when the `z`-entries lie in `𝔽_q`
+  have hΘfix : ∀ (z : ↥M2'),
+      (∀ i2 j2, ((z : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) i2 j2 ∈ R F p nn) →
+      Θ z ∈ Subgroup.map (@SL2_monoidHom_SL2 p _ nn) ⊤ := by
+    intro z hz
+    have hent : ∀ i2 j2, ((Θ z : SL(2, GaloisField p (2 * nn.val)))
+        : Matrix (Fin 2) (Fin 2) (GaloisField p (2 * nn.val))) i2 j2 ∈ Sq := by
+      intro i2 j2
+      set y := ((Θ z : SL(2, GaloisField p (2 * nn.val)))
+        : Matrix (Fin 2) (Fin 2) (GaloisField p (2 * nn.val))) i2 j2 with hydef
+      have h1 : ψ.symm (Θ z) = e3 z := by rw [hΘapp]; exact ψ.symm_apply_apply (e3 z)
+      have h2 := hψsymm_entry (Θ z) i2 j2
+      rw [h1, he3val z] at h2
+      have hvq : ((eR2'.symm y : R F p nn2) : F) ^ q = ((eR2'.symm y : R F p nn2) : F) := by
+        rw [← hydef] at h2
+        rw [← h2]
+        have hm := hz i2 j2
+        simp only [R, RingHom.mem_eqLocusField, RingHom.id_apply] at hm
+        rw [_root_.iterateFrobenius_def] at hm
+        have hpnq : p ^ (nn : ℕ) = q := hqpow.symm
+        rw [hpnq] at hm
+        exact hm
+      have haq : (eR2'.symm y) ^ q = eR2'.symm y := by
+        apply Subtype.ext
+        rw [SubmonoidClass.coe_pow]
+        exact hvq
+      have hy2 : y = eR2' (eR2'.symm y) := (RingEquiv.apply_symm_apply eR2' y).symm
+      have hyq : y ^ q = y := by
+        conv_lhs => rw [hy2]
+        rw [← map_pow, haq, ← hy2]
+      rw [hSqFix]
+      exact hyq
+    choose Mf hMf using fun i2 j2 => hent i2 j2
+    have hmap : (Matrix.of Mf).map (GaloisField_ringHom p nn)
+        = ((Θ z : SL(2, GaloisField p (2 * nn.val)))
+          : Matrix (Fin 2) (Fin 2) (GaloisField p (2 * nn.val))) :=
+      Matrix.ext fun i2 j2 => hMf i2 j2
+    have hdet : (Matrix.of Mf).det = 1 := by
+      apply caseV_vb_ringHom_inj
+      rw [RingHom.map_det, RingHom.mapMatrix_apply, hmap, map_one]
+      exact (Θ z).property
+    refine ⟨⟨Matrix.of Mf, hdet⟩, Subgroup.mem_top _, ?_⟩
+    apply Subtype.ext
+    apply Matrix.ext
+    intro i2 j2
+    rw [caseV_vb_monoidHom_apply_entry]
+    exact hMf i2 j2
+  have hsent : ∀ lam : F, lam ∈ R F p nn →
+      ∀ i2 j2, ((s lam : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) i2 j2 ∈ R F p nn := by
+    intro lam h i2 j2
+    fin_cases i2 <;> fin_cases j2
+    · simpa [s] using one_mem _
+    · simpa [s] using zero_mem _
+    · simpa [s] using h
+    · simpa [s] using one_mem _
+  have hwent : ∀ i2 j2, ((w : SL(2,F)) : Matrix (Fin 2) (Fin 2) F) i2 j2 ∈ R F p nn := by
+    intro i2 j2
+    fin_cases i2 <;> fin_cases j2
+    · simpa [w] using zero_mem _
+    · simpa [w] using one_mem _
+    · simpa [w] using neg_mem (one_mem _)
+    · simpa [w] using zero_mem _
+  have hΘmul : ∀ (a b : SL(2,F)) (ha : a ∈ M2') (hb : b ∈ M2'),
+      Θ ⟨a * b, mul_mem ha hb⟩ = Θ ⟨a, ha⟩ * Θ ⟨b, hb⟩ := by
+    intro a b ha hb
+    rw [← map_mul]
+    rfl
+  have hdpowGF : ∀ jj : ℤ, (d π) ^ jj = d (π ^ jj) := fun jj =>
+    (map_zpow (MonoidHom.mk' (fun u : (GaloisField p (2 * nn.val))ˣ => d u)
+      (fun a b => (d_mul_d_eq_d_mul a b).symm)) π jj).symm
+  have hJ : SL2_join_d p nn π
+      = Subgroup.map (@SL2_monoidHom_SL2 p _ nn) ⊤ ⊔ Subgroup.closure {d π} := rfl
+  have hdπmem : ∀ jj : ℤ, d (π ^ jj) ∈ SL2_join_d p nn π := by
+    intro jj
+    rw [hJ, ← hdpowGF jj]
+    exact Subgroup.mem_sup_right
+      (Subgroup.zpow_mem _ (Subgroup.subset_closure (Set.mem_singleton _)) jj)
+  have hMmem : ∀ x, x ∈ Subgroup.map (@SL2_monoidHom_SL2 p _ nn) ⊤ →
+      x ∈ SL2_join_d p nn π := by
+    intro x hx
+    rw [hJ]
+    exact Subgroup.mem_sup_left hx
+  -- the isomorphism
+  set ι : ↥Gh →* SL(2, GaloisField p (2 * nn.val)) :=
+    Θ.comp (Subgroup.inclusion hGhM2) with hιdef
+  have hιinj : Function.Injective ι := by
+    have h1 : Function.Injective Θ := by
+      have h2 : Function.Injective (⇑ψ ∘ ⇑e3) := ψ.injective.comp e3.injective
+      exact h2
+    have h3 : Function.Injective ⇑(Subgroup.inclusion hGhM2) :=
+      Subgroup.inclusion_injective hGhM2
+    exact h1.comp h3
+  have hιapp : ∀ xh : ↥Gh, ι xh = Θ ⟨(xh : SL(2,F)), hGhM2 xh.2⟩ := fun xh => rfl
+  have hrange_le : ι.range ≤ SL2_join_d p nn π := by
+    rintro y ⟨xh, rfl⟩
+    have hxGh : (xh : SL(2,F)) ∈ Gh := xh.2
+    have h1 : (xh : SL(2,F)) ∈ (Nh : Set SL(2,F)) ∪ 𝒟 := by
+      rw [hunion]
+      exact SetLike.mem_coe.mpr hxGh
+    rw [hιapp]
+    rcases h1 with h | h
+    · obtain ⟨lam, jj, hlamQh, hform⟩ := hNdec _ (SetLike.mem_coe.mp h)
+      have hsmem : s lam ∈ M2' := hsM2 lam (hRsub _ (hQhpar lam hlamQh))
+      have hdmem : d (δ ^ jj) ∈ M2' := hdM2 (δ ^ jj) (hδR2 jj)
+      have hz : (⟨(xh : SL(2,F)), hGhM2 xh.2⟩ : ↥M2')
+          = ⟨s lam * d (δ ^ jj), mul_mem hsmem hdmem⟩ := Subtype.ext hform
+      have hsplit := hΘmul (s lam) (d (δ ^ jj)) hsmem hdmem
+      rw [hz, hsplit]
+      exact mul_mem (hMmem _ (hΘfix _ (hsent lam (hQhpar lam hlamQh))))
+        (by rw [hΘd jj hdmem]; exact hdπmem jj)
+    · obtain ⟨nx, hnx, qx, hqx, hform⟩ := DoubleCoset.mem_doubleCoset.mp h
+      obtain ⟨lam, jj, hlamQh, hnxform⟩ := hNdec nx (SetLike.mem_coe.mp hnx)
+      obtain ⟨mu, hmu⟩ := hQhS (SetLike.mem_coe.mp hqx)
+      have hsmuQh : s mu ∈ Qh := by rw [hmu]; exact SetLike.mem_coe.mp hqx
+      have hdρeq : d ρ = d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) := by rw [← hρpow]
+      have hABC : (xh : SL(2,F)) = s lam * d (δ ^ jj)
+          * (d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) * w) * s mu := by
+        rw [hform, hnxform, ← hmu, hdρeq]
+      have hs1m : s lam ∈ M2' := hsM2 lam (hRsub _ (hQhpar lam hlamQh))
+      have hd1m : d (δ ^ jj) ∈ M2' := hdM2 (δ ^ jj) (hδR2 jj)
+      have hd2m : d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) ∈ M2' :=
+        hdM2 (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) (hδR2 _)
+      have hs2m : s mu ∈ M2' := hsM2 mu (hRsub _ (hQhpar mu hsmuQh))
+      have hm1 : s lam * d (δ ^ jj) ∈ M2' := mul_mem hs1m hd1m
+      have hm2 : d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) * w ∈ M2' := mul_mem hd2m hwM2
+      have hm12 : s lam * d (δ ^ jj) * (d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) * w) ∈ M2' :=
+        mul_mem hm1 hm2
+      have hz : (⟨(xh : SL(2,F)), hGhM2 xh.2⟩ : ↥M2')
+          = ⟨s lam * d (δ ^ jj) * (d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) * w) * s mu,
+              mul_mem hm12 hs2m⟩ :=
+        Subtype.ext hABC
+      have hsplit1 := hΘmul (s lam * d (δ ^ jj) * (d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) * w))
+        (s mu) hm12 hs2m
+      have hsplit2 := hΘmul (s lam * d (δ ^ jj)) (d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁)) * w)
+        hm1 hm2
+      have hsplit3 := hΘmul (s lam) (d (δ ^ jj)) hs1m hd1m
+      have hsplit4 := hΘmul (d (δ ^ (((q - 1 : ℕ) : ℤ) + j₁))) w hd2m hwM2
+      rw [hz, hsplit1, hsplit2, hsplit3, hsplit4]
+      refine mul_mem (mul_mem (mul_mem ?_ ?_) (mul_mem ?_ ?_)) ?_
+      · exact hMmem _ (hΘfix _ (hsent lam (hQhpar lam hlamQh)))
+      · rw [hΘd jj hd1m]
+        exact hdπmem jj
+      · rw [hΘd _ hd2m]
+        exact hdπmem _
+      · exact hMmem _ (hΘfix _ hwent)
+      · exact hMmem _ (hΘfix _ (hsent mu (hQhpar mu hsmuQh)))
+  have hcard_range : Nat.card ι.range = Nat.card G := by
+    have h1 : Nat.card ↥Gh = Nat.card ι.range :=
+      Nat.card_congr (MonoidHom.ofInjective hιinj).toEquiv
+    rw [← h1, hGhdef, card_conj_smul_eq_card]
+  have hcard_join : Nat.card (SL2_join_d p nn π) = Nat.card G := by
+    rw [caseV_vb_card_SL2_join_d π hspec]
+    have h2 := caseV_card_SL2_GaloisField (p := p) nn
+    have hpnq : p ^ (nn : ℕ) = q := hqpow.symm
+    rw [hpnq] at h2
+    rw [h2, hg, he2, hshape3]
+    ring
+  have hrange_eq : ι.range = SL2_join_d p nn π := by
+    apply Subgroup.eq_of_le_of_card_ge hrange_le
+    rw [hcard_range, hcard_join]
+  exact ⟨nn, π, hspec,
+    ⟨(Subgroup.equivSMul (conj ĉ) G).trans
+      ((MonoidHom.ofInjective hιinj).trans (MulEquiv.subgroupCongr hrange_eq))⟩⟩
 
-/-- Core dispatch: proven modulo the sorried sub-lemmas above. -/
+/-- Core dispatch: fully proven (all sub-lemmas above are mechanized as of Wave 26). -/
 private lemma caseV_core {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -5836,9 +7815,9 @@ abelian classes `A1, A2` (normalizer relative index `2`), the cyclic complement 
 arithmetic (`caseV_arith`, via `CaseArithmetic.case_0_2`) leaves four cases: `q ≥ 4` gives Va
 (`caseV_a`, `G ≅ SL(2,𝔽_q)`) or Vb (`caseV_b`, `G ≅ ⟨SL(2,𝔽_q), d_π⟩`); `q ≤ 3` forces
 `q = p = 3`, splitting into Vc (`g₂ = 4`, Vb-shaped) and Vd (`g₂ = 5`, `G ≅ SL(2,5)`;
-`caseV_d_quotient_simple` + `caseV_d_recognition`). Dispatch is `caseV_core`. The
+`caseV_d_quotient_simple` + `caseV_d_recognition`). Dispatch is `caseV_core`. All
 geometric/recognition feeders (`caseV_k_dvd_q_sub_one`, `caseV_qk_ne_g`, `caseV_a`, `caseV_b`,
-`caseV_d_quotient_simple`, `caseV_d_recognition`) remain `sorry`; see their docstrings. -/
+`caseV_d_quotient_simple`, `caseV_d_recognition`) are now proven — Case V is sorry-free. -/
 lemma case_V {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -6055,14 +8034,330 @@ private lemma caseVI_nconj_symm {F : Type*} [Field F] (G : Subgroup SL(2,F))
   rw [← hc, _root_.map_inv]
   exact inv_smul_smul (conj c) B
 
-/-- **Case VIb S₄-recognition of the order-24 quotient (Butler tex ~2178-2201) — sorried gap.**
-With `|G| = 48`, its unique (central) involution `z`, and the three maximal abelian classes of
-orders `4, 6, 8`, Butler identifies the order-`24` central quotient `G ⧸ ⟨z⟩` as the symmetric
-group `S₄ = Perm (Fin 4)`, in such a way that every transposition lifts to an order-`4` element of
-`G` (its `Ŝ₄` argument, distinguishing `2O` from `GL(2,3)`). This is precisely the recognition of
-an abstract order-`24` group as `S₄` from its class structure; `mathlib` has no such machinery, so
-this step is the sole remaining gap of Case VIb (the downstream
-`mulEquiv_of_card48_uniqueInvolution_quotientS4` is unconditionally proven). -/
+/-- **Small-orbit contradiction (Butler Case VIb workhorse).** In a `|G| = 48` class-VI group
+with an order-`6` maximal abelian class `Ab`, no noncentral `w ∈ G` can have all its
+`G`-conjugates in `{w, w⁻¹}`: the centralizer class `C = C_{SL₂}(w) ⊓ G` would have index `≤ 2`
+in `G`, hence contain the order-`3` element `b` of `Ab` (as `b = (b²)²` and squares land in an
+index-`≤ 2` subgroup), forcing `C = Ab` (two maximal abelian classes sharing the noncentral `b`
+coincide) of order `6` — but then `48 = |G| ≤ 2 · 6`. -/
+private lemma caseVI_b_orbit_aux {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (he2 : Nat.card (center SL(2,F)) = 2) (hG48 : Nat.card G = 48)
+    (Ab : Subgroup SL(2,F)) (hAb_mem : Ab ∈ MaximalAbelianSubgroupsOf G)
+    (hAb6 : Nat.card Ab = 6)
+    (w : ↥G) (hw_ncen : (w : SL(2,F)) ∉ center SL(2,F))
+    (hconj : ∀ g : ↥G, g * w * g⁻¹ = w ∨ g * w * g⁻¹ = w⁻¹) : False := by
+  classical
+  -- `C := C_{SL₂}(w) ⊓ G` is a maximal abelian subgroup of `G`
+  have hC_mem : centralizer {(w : SL(2,F))} ⊓ G ∈ MaximalAbelianSubgroupsOf G :=
+    centralizer_inf_mem_maximalAbelianSubgroupsOf_of_noncentral G _ ⟨w.2, hw_ncen⟩
+  set C : Subgroup SL(2,F) := centralizer {(w : SL(2,F))} ⊓ G with hC_def
+  set C' : Subgroup ↥G := C.subgroupOf G with hC'_def
+  -- two conjugators of `w` to the same element differ by an element of `C'`
+  have hmem_of_conj_eq : ∀ a b : ↥G, a * w * a⁻¹ = b * w * b⁻¹ → a⁻¹ * b ∈ C' := by
+    intro a b h
+    have hcomm : w * (a⁻¹ * b) = (a⁻¹ * b) * w := by
+      calc w * (a⁻¹ * b) = a⁻¹ * (a * w * a⁻¹) * b := by group
+        _ = a⁻¹ * (b * w * b⁻¹) * b := by rw [h]
+        _ = (a⁻¹ * b) * w := by group
+    rw [hC'_def, Subgroup.mem_subgroupOf, hC_def, Subgroup.mem_inf]
+    refine ⟨?_, (a⁻¹ * b).2⟩
+    rw [Subgroup.mem_centralizer_iff]
+    simp only [Set.mem_singleton_iff, forall_eq]
+    exact_mod_cast congrArg Subtype.val hcomm
+  -- the coset space `G ⧸ C'` injects into `{w, w⁻¹}` (conjugate-of-`w` fibers), so it has `≤ 2`
+  -- elements
+  have hqle : Nat.card (↥G ⧸ C') ≤ 2 := by
+    have hinj : Function.Injective (fun q : ↥G ⧸ C' =>
+        (⟨q.out * w * q.out⁻¹, by
+          rcases hconj q.out with h | h <;> rw [h] <;> simp⟩ : ({w, w⁻¹} : Set ↥G))) := by
+      intro q q' h
+      have h' : q.out * w * q.out⁻¹ = q'.out * w * q'.out⁻¹ := congrArg Subtype.val h
+      have heq : (QuotientGroup.mk q.out : ↥G ⧸ C') = QuotientGroup.mk q'.out :=
+        QuotientGroup.eq.mpr (hmem_of_conj_eq _ _ h')
+      rwa [QuotientGroup.out_eq', QuotientGroup.out_eq'] at heq
+    have hcard_le := Nat.card_le_card_of_injective _ hinj
+    have hpair : Nat.card ({w, w⁻¹} : Set ↥G) ≤ 2 := by
+      rw [Nat.card_coe_set_eq]
+      have h := Set.ncard_insert_le w ({w⁻¹} : Set ↥G)
+      rw [Set.ncard_singleton] at h
+      omega
+    exact le_trans hcard_le hpair
+  -- hence `C'` has index `≤ 2` in `G`
+  have hidx : C'.index = 1 ∨ C'.index = 2 := by
+    have h1 : C'.index ≤ 2 := by rw [Subgroup.index_eq_card]; exact hqle
+    have h2 : C'.index ≠ 0 := Subgroup.index_ne_zero_of_finite
+    omega
+  -- the order-`3` element `b` of `Ab`
+  haveI hAb_fin : Finite Ab :=
+    (Set.Finite.subset (Set.toFinite (G : Set SL(2,F))) hAb_mem.right).to_subtype
+  obtain ⟨b₀, hb₀⟩ := exists_prime_orderOf_dvd_card' (G := Ab) 3 (by rw [hAb6]; norm_num)
+  have hbG : (b₀ : SL(2,F)) ∈ G := hAb_mem.right b₀.2
+  set bb : ↥G := ⟨(b₀ : SL(2,F)), hbG⟩ with hbb_def
+  have hbb_ord : orderOf bb = 3 := by
+    have h1 : orderOf (bb : SL(2,F)) = 3 := by
+      show orderOf (b₀ : SL(2,F)) = 3
+      rw [orderOf_coe]; exact hb₀
+    rw [← orderOf_coe bb]; exact h1
+  have hbb3 : bb ^ 3 = 1 := by rw [← hbb_ord]; exact pow_orderOf_eq_one bb
+  -- `bb ∈ C'`: an index-`≤ 2` subgroup contains all squares, and `bb = (bb²)²`
+  have hbbC : bb ∈ C' := by
+    have hbb4 : (bb ^ 2) ^ 2 = bb := by
+      rw [← pow_mul, show 2 * 2 = 3 + 1 from rfl, pow_succ, hbb3, one_mul]
+    rcases hidx with h1 | h2
+    · have htop : C' = ⊤ := Subgroup.index_eq_one.mp h1
+      rw [htop]; exact Subgroup.mem_top bb
+    · haveI : C'.Normal := Subgroup.normal_of_index_eq_two h2
+      have hsq : bb ^ 2 ∈ C' := by
+        have h := Subgroup.pow_index_mem C' bb
+        rwa [h2] at h
+      rw [← hbb4]
+      exact Subgroup.pow_mem C' hsq 2
+  have hbC : (bb : SL(2,F)) ∈ C := Subgroup.mem_subgroupOf.mp hbbC
+  -- `bb` is noncentral (order `3` does not divide `|Z(SL₂)| = 2`)
+  have hb_ncen : (bb : SL(2,F)) ∉ center SL(2,F) := by
+    intro hb
+    have h := orderOf_dvd_natCard (⟨(bb : SL(2,F)), hb⟩ : center SL(2,F))
+    rw [orderOf_mk, orderOf_coe, hbb_ord, he2] at h
+    norm_num at h
+  -- two maximal abelian classes sharing the noncentral `bb` coincide: `Ab = C`
+  have hAbC : Ab = C := by
+    by_contra hne
+    have hmeet := center_eq_meet_of_ne_MaximalAbelianSubgroups Ab C G hAb_mem hC_mem hne
+      center_le_G
+    exact hb_ncen (hmeet ▸ (Subgroup.mem_inf.mpr ⟨b₀.2, hbC⟩))
+  -- counting: `48 = |G| = |G ⧸ C'| · |C'| ≤ 2 · 6`
+  have hC'card : Nat.card C' = 6 := by
+    rw [hC'_def, Nat.card_congr (Subgroup.subgroupOfEquivOfLe inf_le_right).toEquiv, ← hC_def,
+      ← hAbC]
+    exact hAb6
+  have hcount := Subgroup.card_eq_card_quotient_mul_card_subgroup C'
+  rw [hG48, hC'card] at hcount
+  omega
+
+/-- **Case VIb: the order-`24` quotient has no normal subgroup of order `3`** — a normal `B̄`
+of order `3` in `G ⧸ ⟨z⟩` is generated by an order-`3` `v`, which lifts (after adjusting by `z`)
+to an order-`3` element `w ∈ G` whose conjugates all lie in `{w, w⁻¹}` (they descend into
+`B̄ \ {1} = {v, v⁻¹}`, and the `·z`-coset alternatives have nontrivial cubes), contradicting
+`caseVI_b_orbit_aux`. -/
+private lemma caseVI_b_no_normal_card_three {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (he2 : Nat.card (center SL(2,F)) = 2) (hG48 : Nat.card G = 48)
+    (z : ↥G) (hz2 : z ^ 2 = 1) (hz1 : z ≠ 1) (hz_cen : z ∈ Subgroup.center ↥G)
+    [hzNormal : (Subgroup.zpowers z).Normal]
+    (Ab : Subgroup SL(2,F)) (hAb_mem : Ab ∈ MaximalAbelianSubgroupsOf G)
+    (hAb6 : Nat.card Ab = 6)
+    (B : Subgroup (↥G ⧸ Subgroup.zpowers z)) (hBnorm : B.Normal) (hB3 : Nat.card B = 3) :
+    False := by
+  classical
+  have hzcomm : ∀ x : ↥G, x * z = z * x := fun x => Subgroup.mem_center_iff.mp hz_cen x
+  have hz3 : z ^ 3 = z := by
+    rw [show (3 : ℕ) = 2 + 1 from rfl, pow_succ, hz2, one_mul]
+  -- an order-`3` generator `v` of `B`
+  obtain ⟨v₀, hv₀⟩ := exists_prime_orderOf_dvd_card' (G := B) 3 (by rw [hB3])
+  have hv_ord : orderOf (v₀ : ↥G ⧸ Subgroup.zpowers z) = 3 := (orderOf_coe v₀).trans hv₀
+  have hv3 : (v₀ : ↥G ⧸ Subgroup.zpowers z) ^ 3 = 1 := by
+    rw [← hv_ord]; exact pow_orderOf_eq_one _
+  have hv1 : (v₀ : ↥G ⧸ Subgroup.zpowers z) ≠ 1 := by
+    intro h
+    rw [h, orderOf_one] at hv_ord
+    norm_num at hv_ord
+  have hBz : Subgroup.zpowers (v₀ : ↥G ⧸ Subgroup.zpowers z) = B :=
+    Subgroup.eq_of_le_of_card_ge (Subgroup.zpowers_le.mpr v₀.2)
+      (by rw [Nat.card_zpowers, hv_ord, hB3])
+  -- lift `v` to an order-`3` element `w` of `G` (adjusting the lift by `z` if needed)
+  obtain ⟨w₀, hw₀⟩ := QuotientGroup.mk_surjective (v₀ : ↥G ⧸ Subgroup.zpowers z)
+  have hw₀3 : w₀ ^ 3 ∈ Subgroup.zpowers z := by
+    rw [← QuotientGroup.eq_one_iff, QuotientGroup.mk_pow, hw₀]
+    exact hv3
+  obtain ⟨w, hwmk, hw3⟩ : ∃ w : ↥G,
+      QuotientGroup.mk w = (v₀ : ↥G ⧸ Subgroup.zpowers z) ∧ w ^ 3 = 1 := by
+    rcases binaryOctahedral_mem_zpowers_involution hz2 _ hw₀3 with h | h
+    · exact ⟨w₀, hw₀, h⟩
+    · refine ⟨w₀ * z, ?_, ?_⟩
+      · rw [QuotientGroup.mk_mul, hw₀,
+          (QuotientGroup.eq_one_iff z).mpr (Subgroup.mem_zpowers z), mul_one]
+      · have hc : Commute w₀ z := hzcomm w₀
+        rw [hc.mul_pow, h, hz3]
+        rw [show z * z = z ^ 2 from (sq z).symm, hz2]
+  have hwne : w ≠ 1 := by
+    intro h
+    exact hv1 (by rw [← hwmk, h, QuotientGroup.mk_one])
+  have hw_ord : orderOf w = 3 := orderOf_eq_prime hw3 hwne
+  -- all conjugates of `w` lie in `{w, w⁻¹}`
+  have hconj : ∀ g : ↥G, g * w * g⁻¹ = w ∨ g * w * g⁻¹ = w⁻¹ := by
+    intro g
+    have hconj3 : (g * w * g⁻¹) ^ 3 = 1 := by
+      calc (g * w * g⁻¹) ^ 3 = g * w ^ 3 * g⁻¹ := _root_.conj_pow
+        _ = 1 := by rw [hw3]; group
+    -- the conjugate descends into `B = ⟨v⟩`
+    have hmkconj : (QuotientGroup.mk (g * w * g⁻¹) : ↥G ⧸ Subgroup.zpowers z)
+        ∈ Subgroup.zpowers (v₀ : ↥G ⧸ Subgroup.zpowers z) := by
+      rw [QuotientGroup.mk_mul, QuotientGroup.mk_mul, QuotientGroup.mk_inv, hwmk, hBz]
+      exact hBnorm.conj_mem _ v₀.2 (QuotientGroup.mk g)
+    obtain ⟨k, hk⟩ := hmkconj
+    have hk' : (v₀ : ↥G ⧸ Subgroup.zpowers z) ^ k = QuotientGroup.mk (g * w * g⁻¹) := hk
+    have hv3' : (v₀ : ↥G ⧸ Subgroup.zpowers z) ^ (3 : ℤ) = 1 := by
+      rw [show (3 : ℤ) = ((3 : ℕ) : ℤ) from rfl, _root_.zpow_natCast, hv3]
+    have hdecomp : (v₀ : ↥G ⧸ Subgroup.zpowers z) ^ k
+        = (v₀ : ↥G ⧸ Subgroup.zpowers z) ^ (k % 3) := by
+      conv_lhs => rw [← Int.mul_ediv_add_emod k 3]
+      rw [_root_.zpow_add, _root_.zpow_mul, hv3', _root_.one_zpow, one_mul]
+    have hrange : k % 3 = 0 ∨ k % 3 = 1 ∨ k % 3 = 2 := by omega
+    rcases hrange with h0 | h1 | h2
+    · -- `mk (g w g⁻¹) = 1`: impossible (`w ≠ 1` and `z` has trivial cube-defect)
+      exfalso
+      have hmk : QuotientGroup.mk (g * w * g⁻¹) = (1 : ↥G ⧸ Subgroup.zpowers z) := by
+        rw [← hk', hdecomp, h0, _root_.zpow_zero]
+      have hmem := (QuotientGroup.eq_one_iff _).mp hmk
+      rcases binaryOctahedral_mem_zpowers_involution hz2 _ hmem with hcase | hcase
+      · apply hwne
+        calc w = g⁻¹ * (g * w * g⁻¹) * g := by group
+          _ = g⁻¹ * 1 * g := by rw [hcase]
+          _ = 1 := by group
+      · apply hz1
+        rw [← hz3, ← hcase]
+        exact hconj3
+    · -- `mk (g w g⁻¹) = v`: the conjugate is `w` (the `w z` alternative has cube `z ≠ 1`)
+      have hmk : QuotientGroup.mk (g * w * g⁻¹)
+          = (QuotientGroup.mk w : ↥G ⧸ Subgroup.zpowers z) := by
+        rw [← hk', hdecomp, h1, _root_.zpow_one, hwmk]
+      rcases binaryOctahedral_mem_zpowers_involution hz2 _ (QuotientGroup.eq.mp hmk)
+        with hcase | hcase
+      · exact Or.inl (inv_mul_eq_one.mp hcase)
+      · exfalso
+        apply hz1
+        have hh : (g * w * g⁻¹) * z = w := by rw [← hcase]; group
+        have hcz : Commute (g * w * g⁻¹) z := hzcomm _
+        calc z = z ^ 3 := hz3.symm
+          _ = (g * w * g⁻¹) ^ 3 * z ^ 3 := by rw [hconj3, one_mul]
+          _ = ((g * w * g⁻¹) * z) ^ 3 := (hcz.mul_pow 3).symm
+          _ = w ^ 3 := by rw [hh]
+          _ = 1 := hw3
+    · -- `mk (g w g⁻¹) = v²`: the conjugate is `w² = w⁻¹` (again `· z` has cube `z ≠ 1`)
+      have hmk : QuotientGroup.mk (g * w * g⁻¹)
+          = (QuotientGroup.mk (w * w) : ↥G ⧸ Subgroup.zpowers z) := by
+        rw [← hk', hdecomp, h2, _root_.zpow_two, ← hwmk, ← QuotientGroup.mk_mul]
+      have hww : w * w = w⁻¹ := by
+        have h : w ^ 2 * w = 1 := by rw [← pow_succ]; exact hw3
+        rw [← sq]
+        exact eq_inv_of_mul_eq_one_left h
+      rcases binaryOctahedral_mem_zpowers_involution hz2 _ (QuotientGroup.eq.mp hmk)
+        with hcase | hcase
+      · refine Or.inr ?_
+        rw [inv_mul_eq_one.mp hcase, hww]
+      · exfalso
+        apply hz1
+        have hh : (g * w * g⁻¹) * z = w * w := by rw [← hcase]; group
+        have h6 : (w * w) ^ 3 = 1 := by
+          rw [← sq, ← pow_mul, show 2 * 3 = 3 * 2 from rfl, pow_mul, hw3, one_pow]
+        have hcz : Commute (g * w * g⁻¹) z := hzcomm _
+        calc z = z ^ 3 := hz3.symm
+          _ = (g * w * g⁻¹) ^ 3 * z ^ 3 := by rw [hconj3, one_mul]
+          _ = ((g * w * g⁻¹) * z) ^ 3 := (hcz.mul_pow 3).symm
+          _ = (w * w) ^ 3 := by rw [hh]
+          _ = 1 := h6
+  -- `w` is noncentral in `SL(2,F)` (order `3` does not divide `2`), so the orbit lemma applies
+  have hw_ncen : (w : SL(2,F)) ∉ center SL(2,F) := by
+    intro hcen
+    have h := orderOf_dvd_natCard (⟨(w : SL(2,F)), hcen⟩ : center SL(2,F))
+    rw [orderOf_mk, orderOf_coe, hw_ord, he2] at h
+    norm_num at h
+  exact caseVI_b_orbit_aux G center_le_G he2 hG48 Ab hAb_mem hAb6 w hw_ncen hconj
+
+/-- **Case VIb: the order-`24` quotient has no central involution** — a central involution `u`
+of `G ⧸ ⟨z⟩` lifts to an order-`4` element `w ∈ G` (with `w² = z`, by uniqueness of the
+involution), whose conjugates all lie in `{w, w z} = {w, w⁻¹}` by centrality of `u`,
+contradicting `caseVI_b_orbit_aux`. -/
+private lemma caseVI_b_no_central_involution {F : Type*} [Field F] [IsAlgClosed F]
+    [DecidableEq F]
+    (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
+    (he2 : Nat.card (center SL(2,F)) = 2) (hG48 : Nat.card G = 48)
+    (z : ↥G) (hz2 : z ^ 2 = 1) (hz1 : z ≠ 1)
+    (huniq : ∀ w : ↥G, w ^ 2 = 1 → w ≠ 1 → w = z)
+    [hzNormal : (Subgroup.zpowers z).Normal]
+    (Ab : Subgroup SL(2,F)) (hAb_mem : Ab ∈ MaximalAbelianSubgroupsOf G)
+    (hAb6 : Nat.card Ab = 6) :
+    ∀ u : ↥G ⧸ Subgroup.zpowers z, u ∈ Subgroup.center (↥G ⧸ Subgroup.zpowers z) →
+      u ^ 2 = 1 → u = 1 := by
+  intro u hu_cen hu2
+  by_contra hu1
+  obtain ⟨w, hw⟩ := QuotientGroup.mk_surjective u
+  -- the lift has `w² = z`, hence order `4`
+  have hw1 : w ≠ 1 := by
+    intro h
+    exact hu1 (by rw [← hw, h, QuotientGroup.mk_one])
+  have hsqmem : w ^ 2 ∈ Subgroup.zpowers z := by
+    rw [← QuotientGroup.eq_one_iff, QuotientGroup.mk_pow, hw]
+    exact hu2
+  have hw2z : w ^ 2 = z := by
+    rcases binaryOctahedral_mem_zpowers_involution hz2 _ hsqmem with h | h
+    · exfalso
+      apply hu1
+      rw [← hw, huniq w h hw1]
+      exact (QuotientGroup.eq_one_iff z).mpr (Subgroup.mem_zpowers z)
+    · exact h
+  have hw4 : w ^ 4 = 1 := by
+    rw [show (4 : ℕ) = 2 * 2 from rfl, pow_mul, hw2z, hz2]
+  have hw_ord : orderOf w = 4 := by
+    haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+    have h := orderOf_eq_prime_pow (x := w) (p := 2) (n := 1)
+      (by rw [pow_one, hw2z]; exact hz1)
+      (by rw [show (2 : ℕ) ^ 2 = 4 by norm_num]; exact hw4)
+    rw [h]; norm_num
+  -- centrality of `u` puts every conjugate of `w` in `{w, w z} = {w, w⁻¹}`
+  have hzinv : z⁻¹ = z := inv_eq_of_mul_eq_one_right (by rw [← sq]; exact hz2)
+  have hconj : ∀ g : ↥G, g * w * g⁻¹ = w ∨ g * w * g⁻¹ = w⁻¹ := by
+    intro g
+    have hmk : (QuotientGroup.mk (g * w * g⁻¹) : ↥G ⧸ Subgroup.zpowers z)
+        = QuotientGroup.mk w := by
+      rw [QuotientGroup.mk_mul, QuotientGroup.mk_mul, QuotientGroup.mk_inv, hw]
+      have hcen := Subgroup.mem_center_iff.mp hu_cen (QuotientGroup.mk g)
+      calc QuotientGroup.mk g * u * (QuotientGroup.mk g)⁻¹
+          = u * QuotientGroup.mk g * (QuotientGroup.mk g)⁻¹ := by rw [hcen]
+        _ = u := by group
+    rcases binaryOctahedral_mem_zpowers_involution hz2 _ (QuotientGroup.eq.mp hmk)
+      with hcase | hcase
+    · exact Or.inl (inv_mul_eq_one.mp hcase)
+    · refine Or.inr ?_
+      have hh : (g * w * g⁻¹) * z = w := by rw [← hcase]; group
+      have hw3inv : w ^ 3 = w⁻¹ := by
+        have h : w ^ 3 * w = 1 := by rw [← pow_succ]; exact hw4
+        exact eq_inv_of_mul_eq_one_left h
+      calc g * w * g⁻¹ = ((g * w * g⁻¹) * z) * z⁻¹ := by group
+        _ = w * z⁻¹ := by rw [hh]
+        _ = w * z := by rw [hzinv]
+        _ = w * w ^ 2 := by rw [hw2z]
+        _ = w ^ 3 := by
+          rw [show (3 : ℕ) = 2 + 1 from rfl]
+          exact (pow_succ' w 2).symm
+        _ = w⁻¹ := hw3inv
+  -- `w` is noncentral in `SL(2,F)` (order `4` does not divide `2`), so the orbit lemma applies
+  have hw_ncen : (w : SL(2,F)) ∉ center SL(2,F) := by
+    intro hcen
+    have h := orderOf_dvd_natCard (⟨(w : SL(2,F)), hcen⟩ : center SL(2,F))
+    rw [orderOf_mk, orderOf_coe, hw_ord, he2] at h
+    norm_num at h
+  exact caseVI_b_orbit_aux G center_le_G he2 hG48 Ab hAb_mem hAb6 w hw_ncen hconj
+
+/-- **Case VIb S₄-recognition of the order-`24` quotient (Butler tex ~2178-2201) — PROVEN.**
+With `|G| = 48`, its unique (central) involution `z`, and the order-`6` maximal abelian class
+`Ab`, the central quotient `G ⧸ ⟨z⟩` (order `24`) is the symmetric group `S₄ = Perm (Fin 4)`,
+in such a way that every transposition lifts to an order-`4` element of `G` (Butler's `Ŝ₄`
+property, distinguishing `2O` from `GL(2,3)`; the downstream
+`mulEquiv_of_card48_uniqueInvolution_quotientS4` then concludes `G ≅ 2O`).
+
+The abstract order-`24` → `S₄` recognition is
+`Ch7S4Recognition.mulEquiv_permFinFour_of_card_24` (the `Mathlib`-only leaf module
+`Ch7_S4Recognition`, via Sylow-`3` counting and the conjugation action on the four
+Sylow-`3`-subgroups); its two nonexistence hypotheses (no normal order-`3` subgroup, no central
+involution) are supplied here from the class data through the two suppliers above, both funneled
+into `caseVI_b_orbit_aux`. This replaces Butler's coset action on `N_G(A₂)/Z` (tex ~2182-2196),
+which would need the normalizer data of `Ab` (not carried by `case_VI_core`); the Sylow-`3`
+route needs only `Ab` itself. The `Aa`/`Ac` witness data, `hAc_cyc`, and the two `relIndex`
+hypotheses are kept in the signature for interface stability with the `case_VI_core` call site,
+though this proof no longer consumes them. The transposition-lift half is the generic
+unique-involution argument `Ch7S4Recognition.orderOf_eq_four_of_isSwap`. -/
 lemma caseVI_b_quotient_iso_S4 {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
     [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -6078,7 +8373,34 @@ lemma caseVI_b_quotient_iso_S4 {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [
     (hAc_relIndex : relIndex (Ac.subgroupOf G) (normalizer (Ac.subgroupOf G : Set ↥G)) = 2) :
     ∃ f : (↥G ⧸ Subgroup.zpowers z) ≃* Equiv.Perm (Fin 4),
       ∀ w : ↥G, (f (QuotientGroup.mk w)).IsSwap → orderOf w = 4 := by
-  sorry
+  classical
+  -- `|Z(SL₂)| = 2` from `p ≠ 2`
+  have h2ne : (2 : F) ≠ 0 := by
+    intro h2
+    have hCharP2 : CharP F 2 := CharTwo.of_one_ne_zero_of_two_eq_zero one_ne_zero h2
+    exact hp_ne_two (CharP.eq F (‹CharP F p› : CharP F p) hCharP2)
+  haveI : NeZero (2 : F) := ⟨h2ne⟩
+  have he2 : Nat.card (center SL(2,F)) = 2 := by
+    rw [SpecialSubgroups.center_SL2_eq_Z]; exact SpecialSubgroups.card_Z_eq_two_of_two_ne_zero
+  -- `z` is central, `|⟨z⟩| = 2`, `|G ⧸ ⟨z⟩| = 24`
+  have hz_cen : z ∈ Subgroup.center ↥G := isCentral_of_unique_involution hz2 hz1 huniq
+  have hzord : orderOf z = 2 := by
+    haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+    exact orderOf_eq_prime hz2 hz1
+  have hzcard : Nat.card (Subgroup.zpowers z) = 2 := by rw [Nat.card_zpowers, hzord]
+  have hQ24 : Nat.card (↥G ⧸ Subgroup.zpowers z) = 24 := by
+    have h := Subgroup.card_eq_card_quotient_mul_card_subgroup (Subgroup.zpowers z)
+    rw [hcard48, hzcard] at h
+    omega
+  -- the two nonexistence hypotheses of the `S₄`-recognition module, from the class data
+  have h3 : ∀ B : Subgroup (↥G ⧸ Subgroup.zpowers z), B.Normal → Nat.card B = 3 → False :=
+    fun B hBnorm hB3 => caseVI_b_no_normal_card_three G center_le_G he2 hcard48 z hz2 hz1
+      hz_cen Ab hAb_mem hAb6 B hBnorm hB3
+  have h2 : ∀ u : ↥G ⧸ Subgroup.zpowers z, u ∈ Subgroup.center (↥G ⧸ Subgroup.zpowers z) →
+      u ^ 2 = 1 → u = 1 :=
+    caseVI_b_no_central_involution G center_le_G he2 hcard48 z hz2 hz1 huniq Ab hAb_mem hAb6
+  obtain ⟨f⟩ := Ch7S4Recognition.mulEquiv_permFinFour_of_card_24 hQ24 h3 h2
+  exact ⟨f, fun w hw => Ch7S4Recognition.orderOf_eq_four_of_isSwap hz2 hz1 huniq f w hw⟩
 
 /-- **Case VIc quotient simplicity (Butler tex ~2088-2111 shape).** For a `G ≤ SL(2,F)` of order
 `120` with center of order `2`, two maximal abelian subgroups of orders `4` and `10` (the latter
@@ -6195,8 +8517,9 @@ Takes the class-equation data already specialized to `q = 1` (`hsum`, i.e. Butle
   to be `G`-conjugate (`caseVI_conj_of_card_six` above), contradicting `hAbAc_nconj` (which is
   why the *middle* witness `Ab` and the non-conjugacy fact now appear in the signature);
   `gc = 4` (**Case VIb**, tex ~2173-2201): `g = 24`, `|G| = 48`, unique central involution `z`;
-  `mulEquiv_of_card48_uniqueInvolution_quotientS4` concludes `G ≅ 2O` once the order-`24` quotient
-  `G ⧸ ⟨z⟩` is recognized as `S₄` (the one remaining gap, isolated as `caseVI_b_quotient_iso_S4`);
+  `mulEquiv_of_card48_uniqueInvolution_quotientS4` concludes `G ≅ 2O` from the recognition of
+  the order-`24` quotient `G ⧸ ⟨z⟩` as `S₄` (`caseVI_b_quotient_iso_S4`, now proven via the
+  `Ch7_S4Recognition` leaf module);
   `gc = 5` (**Case VIc**, tex ~2202-2205): `g = 60`, `|G| = 120`, `G ⧸ Z(G)` simple of order `60`
   (`caseVI_quotient_simple`), so `caseV_d_recognition` gives `G ≅ SL(2,5)` (`p ∤ |G|` here). -/
 private lemma case_VI_core {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F]
@@ -6573,7 +8896,7 @@ private lemma case_VI_core {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [Deci
       have hAb6 : Nat.card Ab = 6 := by rw [hAb_card, he2, hgb3]
       have hAc6 : Nat.card Ac = 6 := by rw [hAc_card, he2, hgc3]
       exact caseVI_conj_of_card_six G center_le_G he2 hG24 Ab hAb_mem hAb6 Ac hAc_mem hAc6
-    · -- TODO: Case VIb, `Ŝ₄`/`BinaryOctahedralGroup` representation-group argument (tex ~2173-2201).
+    · -- Case VIb: `Ŝ₄`/`BinaryOctahedralGroup` representation-group argument (tex ~2173-2201).
       refine Or.inr (Or.inl ?_)
       -- p ≠ 2, e = 2
       have h2dvdG : (2 : ℕ) ∣ Nat.card G := by
@@ -6678,9 +9001,10 @@ explicitly below (`rcases le_total` three times, one per pairwise comparison) an
 to `case_VI_core` above, which does the rest of the arithmetic, the `(2,3,3)` Sylow-conjugacy
 elimination (fed by the three pairwise non-conjugacy hypotheses below -- themselves supplied
 from `BridgeData`'s `hAt_distinct` at the call site -- flipped via `caseVI_nconj_symm` where the
-ordering demands), and (for Case VIa) the full group-recognition argument. **Cases VIb/VIc
-remain sorried** inside `case_VI_core`: see its own docstring for exactly what is missing (the
-`Ŝ₄` representation-group argument and the `SL(2,5)`-relabelling argument respectively). -/
+ordering demands), and (for Cases VIa/VIb) the full group-recognition argument -- Case VIb via
+`caseVI_b_quotient_iso_S4`, now proven through the `Ch7_S4Recognition` leaf module. **Case VIc
+remains sorried** inside `case_VI_core`: see its own docstring for exactly what is missing (the
+`SL(2,5)`-relabelling argument, i.e. Case Vd's own remaining gap). -/
 lemma case_VI {F : Type*} {p : ℕ} [Field F] [IsAlgClosed F] [DecidableEq F] [Fact (Nat.Prime p)]
     [CharP F p]
     (G : Subgroup SL(2,F)) [Finite G] (center_le_G : center SL(2,F) ≤ G)
@@ -7042,109 +9366,6 @@ lemma card_GaloisField_dvd_card_GaloisField (p : ℕ) [Fact (Nat.Prime p)] {m n 
   apply pow_dvd_pow
   suffices m.val ∣ n.val by exact Nat.le_of_dvd n.prop this
   exact PNat.dvd_iff.mp m_dvd_n
-
-/-- A ring isomorphism `R ≃+* S` induces a group isomorphism `SL(2,R) ≃* SL(2,S)`
-(`Matrix.SpecialLinearGroup.map` applied in both directions along `e`/`e.symm`, mutually
-inverse since `e.symm.comp e.toRingHom = RingHom.id`). Needed to identify `SL(2,ZMod 3)` (the
-concrete group `case_IV`'s Case IVb produces) with `SL(2,GaloisField 3 1)` (Butler Class II's
-item (ix) shape `SL(2,𝔽_{p^k})` at `k = 1`), via `GaloisField.equivZmodP`. -/
-noncomputable def SL2_mulEquiv_of_ringEquiv {R S : Type*} [CommRing R] [CommRing S]
-    (e : R ≃+* S) : SL(2,R) ≃* SL(2,S) where
-  toFun := Matrix.SpecialLinearGroup.map e.toRingHom
-  invFun := Matrix.SpecialLinearGroup.map e.symm.toRingHom
-  left_inv A := by
-    apply Subtype.ext
-    ext <;> simp [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply]
-  right_inv A := by
-    apply Subtype.ext
-    ext <;> simp [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply]
-  map_mul' := (Matrix.SpecialLinearGroup.map e.toRingHom).map_mul
-
-/-- Conjugation preserves the cardinality of a subgroup (`Subgroup.equivSMul` for the
-`MulAut.conj` pointwise action). -/
-lemma card_conj_smul_eq_card {L : Type*} [Group L] {B : Subgroup L} (c : L) :
-    Nat.card (conj c • B : Subgroup L) = Nat.card B :=
-  (Nat.card_congr (Subgroup.equivSMul (conj c) B).toEquiv).symm
-
-/- ==========================================================================================
-`caseV` Step-5 recognition endpoint (Butler tex 2054), frame-independent and shared by Cases Va/Vb.
-Given the normalized-frame conclusion of Steps 1-4 — a conjugate of `G` sits inside (Va: equals)
-the subfield copy `SL(2, R F p n)` — these lemmas transport it through the chain
-`G ≃* vGv⁻¹ ≃* SL(2, R F p n) ≃* SL(2, GaloisField p n)` (conjugation `Subgroup.equivSMul`; the
-subfield inclusion `Matrix.SpecialLinearGroup.map (R F p n).subtype` is injective, so its image on
-`⊤` is `Subgroup.equivMapOfInjective`-isomorphic to `SL(2, R F p n)`; then the subfield ring iso of
-`caseV_ringEquiv_R_GaloisField` via `SL2_mulEquiv_of_ringEquiv`). NB: these consume
-`SL2_mulEquiv_of_ringEquiv`/`card_conj_smul_eq_card` above, so when `caseV_a` is mechanized this
-block (together with those two) relocates before it. -/
-
-/-- Step-5 recognition, equality form: if a conjugate of `G` *equals* the image of the whole
-`SL(2, R F p n)` under the subfield inclusion, then `G ≅ SL(2, GaloisField p n)`. -/
-lemma caseV_iso_of_conj_eq_map {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
-    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) (c : SL(2,F))
-    (hG : conj c • G =
-      Subgroup.map (Matrix.SpecialLinearGroup.map (R F p n).subtype) ⊤) :
-    Isomorphic G SL(2, GaloisField p n.val) := by
-  obtain ⟨eR⟩ := caseV_ringEquiv_R_GaloisField (F := F) (p := p) n
-  set φ : SL(2, R F p n) →* SL(2, F) := Matrix.SpecialLinearGroup.map (R F p n).subtype with hφ
-  have hsub_inj : Function.Injective ⇑(R F p n).subtype := fun a b h => Subtype.ext h
-  have hφinj : Function.Injective φ := by
-    intro A B hAB
-    apply Subtype.ext
-    have h : (φ A).1 = (φ B).1 := Subtype.ext_iff.mp hAB
-    simp only [hφ, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply] at h
-    exact Matrix.map_injective hsub_inj h
-  let e1 : ↥G ≃* ↥(conj c • G) := Subgroup.equivSMul (conj c) G
-  let e2 : ↥(conj c • G) ≃* ↥(Subgroup.map φ ⊤) := MulEquiv.subgroupCongr hG
-  let e3 : ↥(Subgroup.map φ ⊤) ≃* SL(2, R F p n) :=
-    (Subgroup.equivMapOfInjective ⊤ φ hφinj).symm.trans Subgroup.topEquiv
-  exact ⟨((e1.trans e2).trans e3).trans (SL2_mulEquiv_of_ringEquiv eR)⟩
-
-/-- Step-5 recognition, containment form (the route-map's actual Step-4 output, tex 2054): if a
-conjugate of `G` is *contained* in the subfield copy `SL(2, R F p n)` and `|G| = q(q²-1)` with
-`q = pⁿ`, then equality holds by cardinality and `G ≅ SL(2, GaloisField p n)`. -/
-lemma caseV_iso_of_conj_le_map {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
-    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) [Finite G] (c : SL(2,F))
-    (hle : conj c • G ≤ Subgroup.map (Matrix.SpecialLinearGroup.map (R F p n).subtype) ⊤)
-    (hcard : Nat.card G = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ)) :
-    Isomorphic G SL(2, GaloisField p n.val) := by
-  set φ : SL(2, R F p n) →* SL(2, F) := Matrix.SpecialLinearGroup.map (R F p n).subtype with hφ
-  have hsub_inj : Function.Injective ⇑(R F p n).subtype := fun a b h => Subtype.ext h
-  have hφinj : Function.Injective φ := by
-    intro A B hAB
-    apply Subtype.ext
-    have h : (φ A).1 = (φ B).1 := Subtype.ext_iff.mp hAB
-    simp only [hφ, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply] at h
-    exact Matrix.map_injective hsub_inj h
-  have hcardR : Nat.card (R F p n) = p ^ (n : ℕ) := caseV_card_R n
-  haveI : Finite (R F p n) :=
-    Nat.finite_of_card_ne_zero (by rw [hcardR]; exact pow_ne_zero _ (Fact.out : p.Prime).pos.ne')
-  haveI : Fintype (R F p n) := Fintype.ofFinite _
-  have hq1 : 1 < p ^ (n : ℕ) := Nat.one_lt_pow n.pos.ne' (Fact.out : p.Prime).one_lt
-  have hfc : Fintype.card (R F p n) = p ^ (n : ℕ) := by rw [← hcardR, Nat.card_eq_fintype_card]
-  let e3 : ↥(Subgroup.map φ ⊤) ≃* SL(2, R F p n) :=
-    (Subgroup.equivMapOfInjective ⊤ φ hφinj).symm.trans Subgroup.topEquiv
-  haveI : Finite ↥(Subgroup.map φ ⊤) := Finite.of_equiv _ e3.symm.toEquiv
-  haveI : Finite ↥(conj c • G) := Finite.of_equiv _ (Subgroup.equivSMul (conj c) G).toEquiv
-  have hcardImg : Nat.card (Subgroup.map φ ⊤) = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ) := by
-    rw [Nat.card_congr e3.toEquiv, Nat.card_eq_fintype_card]; exact SL_card hfc hq1
-  have hcc : Nat.card (conj c • G : Subgroup SL(2,F)) = Nat.card G := card_conj_smul_eq_card c
-  have hcardle : Nat.card (Subgroup.map φ ⊤) ≤ Nat.card (conj c • G : Subgroup SL(2,F)) :=
-    le_of_eq (by rw [hcardImg, hcc, hcard])
-  have heq : conj c • G = Subgroup.map φ ⊤ := Subgroup.eq_of_le_of_card_ge hle hcardle
-  exact caseV_iso_of_conj_eq_map n G c (hφ ▸ heq)
-
-/-- **Case Va Step-5 interface** (tex 2054): the entire Va residual reduced to a single geometric
-hypothesis. If some conjugate `conj c • G` has every element's entries in the subfield `R F p n`
-(the concrete output of Steps 1-4: `G̃ ⊆ SL(2, 𝔽_q)`), and `|G| = q(q²-1)` with `q = pⁿ`, then
-`G ≅ SL(2, GaloisField p n)`. Chains `caseV_geo_mem_map_subtype_of_entries` (elementwise into the
-subfield image) with `caseV_iso_of_conj_le_map` (cardinality-forced equality + transport). -/
-lemma caseV_a_step5_finish {F : Type*} [Field F] [IsAlgClosed F] {p : ℕ}
-    [Fact (Nat.Prime p)] [CharP F p] (n : ℕ+) (G : Subgroup SL(2,F)) [Finite G] (c : SL(2,F))
-    (hentries : ∀ x ∈ conj c • G, ∀ i j, (x : Matrix (Fin 2) (Fin 2) F) i j ∈ R F p n)
-    (hcard : Nat.card G = ((p ^ (n : ℕ)) ^ 2 - 1) * p ^ (n : ℕ)) :
-    Isomorphic G SL(2, GaloisField p n.val) := by
-  refine caseV_iso_of_conj_le_map n G c (fun x hx => ?_) hcard
-  exact caseV_geo_mem_map_subtype_of_entries (R F p n) x (hentries x hx)
 
 /-- **Theorem 6.8(v), coprimality half.** If `K` is the (Schur–Zassenhaus, `S2_B.exists_IsCyclic_
 K_normalizer_eq_Q_join_K`) complement to a Sylow `p`-subgroup `S₀` of `G` (`normalizer (S₀.

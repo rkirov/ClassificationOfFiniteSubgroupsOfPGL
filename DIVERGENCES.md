@@ -5,6 +5,19 @@ SL(2,F̄_p) / PGL(2,F̄_p)). Where the Lean development diverges from Christophe
 exposition (`ChristopherButler.tex`, cited by tex line numbers), the divergence is recorded
 here and in the corresponding docstrings.
 
+**STATUS (2026-07-13): the formalization is SORRY-FREE.** All three final theorems
+(`dicksons_classification_theorem_class_I`, `_class_II`,
+`FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod`) and every supporting lemma
+depend only on `[propext, Classical.choice, Quot.sound]`. The two facts Butler cites without
+proof are proven from scratch: Suzuki's Ŝ₄-cover uniqueness via a Todd–Coxeter bound
+`|⟨x,y | x⁴=y³=(xy)²⟩| ≤ 48` (`Ch7_GroupRecognition`), and Schur's `H₂(A₅) = C₂` content via
+the binary icosahedral bound `|⟨x,y | x⁵=y³=(xy)²⟩| ≤ 120` (`Ch7_CaseVd_2I`). Two further
+proof-route divergences from Butler, documented in their docstrings: the Case VIb order-24
+quotient is recognized as `S₄` through its conjugation action on four Sylow-3 subgroups
+(`Ch7_S4Recognition`) rather than Butler's coset action, and Case V's projective-line
+normalization is done by explicit shear/diagonal conjugation rather than the projective
+fixed-point transcription.
+
 ## Statement-level divergences
 
 1. **Thm 6.8(iv) trivial case / `p = 2`** (tex 838; `S2_A: eq_center_of_card_le_two`).
