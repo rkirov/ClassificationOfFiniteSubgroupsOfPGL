@@ -2,7 +2,9 @@
   "challenge_module": "Challenge",
   "solution_module": "Solution",
   "theorem_names": [
-    "DicksonChallenge.dickson_classification_PGL2"
+    "DicksonChallenge.dickson_classification_PGL2",
+    "DicksonChallenge.dickson_classification_SL2_coprime",
+    "DicksonChallenge.dickson_classification_SL2_dvd"
   ],
   "permitted_axioms": [
     "propext",

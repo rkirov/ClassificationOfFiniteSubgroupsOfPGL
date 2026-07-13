@@ -55,4 +55,135 @@ theorem dickson_classification_PGL2 (p : ℕ) [Fact (Nat.Prime p)] (hp2 : p ≠ 
       (∃ k : ℕ+, Nonempty (G ≃* PGL2 (GaloisField p k.val))) := by
   sorry
 
+/-!
+## Dickson's two seminal `SL₂` theorems
+
+Below are the two theorems that underlie the `PGL₂` classification above: Dickson's classification
+of the finite subgroups `G ≤ SL(2, F)` of the special linear group over an algebraically closed
+field `F` of odd characteristic `p`, split according to whether `p` divides `|G|`.
+
+Both are stated over the same generality as the repository's proofs (`[Field F] [IsAlgClosed F]
+[DecidableEq F] [CharP F p]`, all Mathlib type classes), reference only Mathlib notions, and
+each carries the **center-normalization caveat** honestly (see the individual docstrings):
+the hypothesis `Subgroup.center (SL(2, F)) ≤ G`, i.e. `-1 ∈ G`, is the standard normalization in
+Dickson's treatment — the classification is stated for subgroups that contain the center — and the
+repository's proofs carry it throughout. It is kept verbatim here rather than hidden.
+-/
+
+/-! ### The binary octahedral group `2O`, presented explicitly (Class I, disjunct 5)
+
+The binary octahedral group `2O` (Butler's `Ŝ₄`, the binary cover of the octahedral rotation
+group `S₄`) is the `⟨2, 3, 4⟩` binary polyhedral / von Dyck group with presentation
+`⟨x, y | x⁴ = y³ = (xy)²⟩`; it has order `48` (the common central value `x⁴ = y³ = (xy)²` is the
+order-`2` element `-1`, and modulo it one recovers the `(2,3,4)` triangle-group presentation of
+`S₄`). We spell it out from first principles as a `PresentedGroup` over a two-symbol type, so the
+challenge statement is fully auditable and depends on nothing outside Mathlib. -/
+
+/-- The two generators `x`, `y` of the binary octahedral presentation. -/
+inductive S2O
+  | x
+  | y
+
+/-- The relators of `2O = ⟨x, y | x⁴ = y³ = (xy)²⟩`. As is standard for `PresentedGroup`, a
+presentation is given by the set of *words that are trivial* in the group; here the two words
+`x⁴·(y³)⁻¹` (encoding `x⁴ = y³`) and `x⁴·((xy)²)⁻¹` (encoding `x⁴ = (xy)²`). -/
+def BinaryOctahedralRelations : Set (FreeGroup S2O) :=
+  { FreeGroup.of S2O.x ^ 4 * (FreeGroup.of S2O.y ^ 3)⁻¹ } ∪
+  { FreeGroup.of S2O.x ^ 4 * ((FreeGroup.of S2O.x * FreeGroup.of S2O.y) ^ 2)⁻¹ }
+
+/-- The binary octahedral group `2O`, as the group presented by `BinaryOctahedralRelations`. -/
+abbrev BinaryOctahedral2O := PresentedGroup BinaryOctahedralRelations
+
+/-- The explicit diagonal element `diag(π, π⁻¹) ∈ SL₂(𝔽_{p^{2k}})` adjoined in Class II item (x),
+i.e. the matrix
+
+    ⎡ π    0  ⎤
+    ⎣ 0   π⁻¹ ⎦
+
+whose determinant `π · π⁻¹ = 1` places it in the special linear group. Its entries are chosen to
+match the repository's diagonal generator (`SpecialMatrices.d π`) verbatim, which is what lets the
+bridge in `Solution.lean` identify the two "twisted" subgroups by a plain matrix `ext`. -/
+noncomputable def D {p : ℕ} [Fact (Nat.Prime p)] {k : ℕ+} (π : (GaloisField p (2 * k.val))ˣ) :
+    Matrix.SpecialLinearGroup (Fin 2) (GaloisField p (2 * k.val)) :=
+  ⟨!![(π : GaloisField p (2 * k.val)), 0; 0, (π : GaloisField p (2 * k.val))⁻¹],
+    by rw [Matrix.det_fin_two_of]; simp⟩
+
+/-- **Dickson's classification of finite `G ≤ SL(2, F)` — Class I** (the coprime /
+binary-polyhedral case).
+
+Let `F` be algebraically closed of odd prime characteristic `p`, and let `G ≤ SL(2, F)` be a
+finite subgroup whose order `|G|` is coprime to `p`. Then `G` is one of the following five types:
+
+1. cyclic; or
+2. a generalised quaternion (dicyclic) group `QuaternionGroup n` (order `4n`); or
+3. `SL(2, 𝔽₃)`, the binary tetrahedral group `2T` (order `24`); or
+4. `SL(2, 𝔽₅)`, the binary icosahedral group `2I` (order `120`); or
+5. the binary octahedral group `2O = ⟨x, y | x⁴ = y³ = (xy)²⟩` (order `48`, `BinaryOctahedral2O`).
+
+**Center-normalization caveat.** The hypothesis `Subgroup.center (SL(2, F)) ≤ G` (`-1 ∈ G`) is the
+standard normalization in Dickson's treatment and is carried by the repository's proof; it is kept
+here verbatim and documented rather than hidden. -/
+theorem dickson_classification_SL2_coprime {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
+    {p : ℕ} [CharP F p] (hp : Nat.Prime p) (hp2 : p ≠ 2)
+    (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F)) [Finite G]
+    (hcop : Nat.Coprime (Nat.card G) p)
+    (center_le_G : Subgroup.center (Matrix.SpecialLinearGroup (Fin 2) F) ≤ G) :
+    -- (1) cyclic
+    IsCyclic G ∨
+      -- (2) generalised quaternion / dicyclic of order `4n`
+      (∃ n, Nonempty (G ≃* QuaternionGroup n)) ∨
+      -- (3) binary tetrahedral `2T ≅ SL(2, 𝔽₃)`
+      Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 3)) ∨
+      -- (4) binary icosahedral `2I ≅ SL(2, 𝔽₅)`
+      Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 5)) ∨
+      -- (5) binary octahedral `2O = ⟨x, y | x⁴ = y³ = (xy)²⟩`
+      Nonempty (G ≃* BinaryOctahedral2O) := sorry
+
+/-- **Dickson's classification of finite `G ≤ SL(2, F)` — Class II** (the modular case).
+
+Let `F` be algebraically closed of odd prime characteristic `p`, and let `G ≤ SL(2, F)` be a
+finite subgroup whose order is *divisible* by `p`. Then `G` is one of five types, numbered
+`(vi)`–`(x)` to continue Butler's enumeration:
+
+- (vi) a "Borel"-type group: an elementary-abelian normal `p`-subgroup `Q` (here spelled as plain
+  quantifiers: `Q` is commutative and every non-identity element has order exactly `p`) with a
+  cyclic complement `K` of order coprime to `p`; or
+- (vii) `p = 2` and `G ≅ DihedralGroup n` for some odd `n` (vacuous here since `p ≠ 2`, but kept to
+  mirror the repository statement); or
+- (viii) `p = 3` and `G ≅ SL(2, 𝔽₅)`; or
+- (ix) `G ≅ SL(2, 𝔽_{p^k})` for some `k ≥ 1` (`GaloisField p k`); or
+- (x) a "twisted" group `⟨SL(2, 𝔽_q), d_π⟩ ≤ SL(2, 𝔽_{q²})`, `q = p^k`: the image of `SL(2, 𝔽_q)`
+  under a field embedding `f : 𝔽_q ↪ 𝔽_{q²}`, joined with the diagonal twist `d_π = D π` for a
+  unit `π ∈ 𝔽_{q²}` with `π ∉ 𝔽_q` but `π² ∈ 𝔽_q` (so `𝔽_q ↦ Set.range f`, and `SL(2, 𝔽_q)` is
+  normal of index `2`). The embedding `f` is quantified existentially: this keeps the statement
+  self-contained and Mathlib-only, and is faithful in the sense that it is *implied by* the
+  repository's specific-embedding statement — the bridge discharges it by supplying the repository's
+  canonical Galois embedding for `f`.
+
+**Center-normalization caveat.** As in Class I, the hypothesis `Subgroup.center (SL(2, F)) ≤ G`
+(`-1 ∈ G`) is the standard Dickson normalization, carried by the repository's proof and kept here
+verbatim. -/
+theorem dickson_classification_SL2_dvd {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
+    {p : ℕ} [Fact (Nat.Prime p)] [CharP F p]
+    (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F)) [Finite G] (hp : p ∣ Nat.card G)
+    (center_le_G : Subgroup.center (Matrix.SpecialLinearGroup (Fin 2) F) ≤ G) (hp2 : p ≠ 2) :
+    -- (vi) elementary-abelian normal `p`-subgroup `Q` with cyclic complement `K`, `p ∤ |K|`
+    (∃ Q : Subgroup G,
+        ((∀ a b : Q, a * b = b * a) ∧ (∀ h : Q, h ≠ 1 → orderOf h = p)) ∧ Q.Normal ∧
+        ∃ K : Subgroup G,
+          Subgroup.IsComplement' Q K ∧ IsCyclic K ∧ Nat.Coprime p (Nat.card K)) ∨
+      -- (vii) `p = 2` and dihedral of odd order (vacuous under `p ≠ 2`, kept to mirror the repo)
+      (p = 2 ∧ ∃ n : ℕ, Odd n ∧ Nonempty (G ≃* DihedralGroup n)) ∨
+      -- (viii) `p = 3` and `G ≅ SL(2, 𝔽₅)`
+      (p = 3 ∧ Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 5))) ∨
+      -- (ix) `G ≅ SL(2, 𝔽_{p^k})`
+      (∃ k : ℕ+, Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (GaloisField p k.val))) ∨
+      -- (x) twisted `⟨SL(2, 𝔽_q), d_π⟩ ≤ SL(2, 𝔽_{q²})` for an embedding `f` and twist `π`
+      (∃ k : ℕ+, ∃ f : GaloisField p k.val →+* GaloisField p (2 * k.val),
+        ∃ π : (GaloisField p (2 * k.val))ˣ,
+          (π : GaloisField p (2 * k.val)) ∉ Set.range f ∧
+          ((π : GaloisField p (2 * k.val)) ^ 2) ∈ Set.range f ∧
+          Nonempty (G ≃* ↥(Subgroup.map (Matrix.SpecialLinearGroup.map f) ⊤ ⊔
+            Subgroup.closure {D π}))) := sorry
+
 end DicksonChallenge

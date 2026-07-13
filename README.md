@@ -21,9 +21,16 @@ Statement-level trust is addressed by the independent-verification setup below.
 You do **not** need to read the ~20k-line development to check *what* was proven:
 
 - [`comparator/Challenge.lean`](comparator/Challenge.lean) — the **independently auditable
-  statement** of the main theorem. It imports only Mathlib, defines the two notions it needs
-  (`PGL2`, `PSL2`) as explicit one-line quotients, spells out every disjunct in plain Mathlib
-  vocabulary, and ends in `sorry`. **Read this file** — it is the whole trust surface.
+  statements** of the three headline theorems: the FLT-facing `PGL₂` classification
+  (`dickson_classification_PGL2`) and Dickson's two seminal `SL₂` theorems — Class I, the
+  binary-polyhedral list (`dickson_classification_SL2_coprime`: cyclic, dicyclic, `SL(2,𝔽₃)`,
+  binary octahedral `2O`, `SL(2,𝔽₅)`), and Class II, the modular case
+  (`dickson_classification_SL2_dvd`: Borel, `SL(2,𝔽_{p^k})`, and the twisted index-2 extension).
+  The file imports only Mathlib, defines everything it needs explicitly (the `PGL2`/`PSL2`
+  quotients, the `2O` presentation `⟨x, y | x⁴ = y³ = (xy)²⟩` from first principles, the diagonal
+  twist matrix), spells out every disjunct in plain Mathlib vocabulary, and ends each theorem in
+  `sorry`. **Read this file** — it is the whole trust surface. (The `SL₂` statements carry the
+  standard `-1 ∈ G` Dickson normalization, documented in their docstrings.)
 - [`comparator/Solution.lean`](comparator/Solution.lean) — restates the identical statement
   and discharges it from this repository's main theorem (one small definitional bridge).
 - [`verify.sh`](verify.sh) — runs the official
