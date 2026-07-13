@@ -1,0 +1,1155 @@
+import ClassificationOfSubgroups.Ch7_GroupRecognition
+
+/-!
+# The Schur cover `SL(2,5) = 2I` of `A₅`, by Todd-Coxeter
+
+Extracted from `Ch7_DicksonsClassificationTheorem.lean` (Wave 24 aftermath) purely for build
+performance: the 15-rule confluent-rewriting bound `caseV_d_2I_bound_of_relations` needs
+`maxHeartbeats 4000000` and dominated the monolith's elaboration time, while being frozen
+(consumed only by `caseV_d_schur_cover`, which stays in the Dickson file). As a leaf module it
+elaborates once and is served from its olean thereafter.
+-/
+
+open Matrix Subgroup LinearMap Ch7GroupRecognition MulAut
+
+open scoped MatrixGroups Pointwise
+
+/-! ### Case Vd/VIc, Butler tex 2111: the Schur cover `SL(2,5) = 2I` of `A₅`, by Todd-Coxeter
+
+`caseV_d_schur_cover` below needs: a group `H` of order `120` with a unique involution and
+`H/Z(H) ≅ A₅` is `≅ SL(2, ZMod 5)`. Butler cites Schur (`H₂(A₅) = C₂`); `mathlib` has no
+Schur-multiplier / universal-central-extension API, so this is proven directly through the
+binary icosahedral presentation `2I = ⟨x, y | x⁵ = y³ = (xy)²⟩`, mirroring the `2O` machinery
+of `Ch7GroupRecognition` (`binaryOctahedral_bound_of_relations`, Wave 23):
+
+1. `caseV_d_2I_bound_of_relations` — hand-run Todd-Coxeter: any group on `X, Y` with
+   `X⁵ = Y³ = (XY)²` has order `≤ 120`, via a `15`-rule confluent rewriting system (the deep
+   derivation being `y⁶ = 1`, i.e. `z² = 1` for the central `z = x⁵`, a `14`-step
+   relator-insertion chain) closing `120` shortlex normal forms.
+2. `CaseVd2I.recognition` — such an `H` is a bijective image of `2I`: lift a `(5,3,2)`
+   generator pair of `A₅` (`CaseVd2I.exists_gens`) along `H → H/Z(H) ≃ A₅`, pin the three
+   relations on the unique involution, and compare `|2I| ≤ 120 = |H|`.
+3. `CaseVd2I.schur_cover` — `SL(2, ZMod 5)` realizes the same presentation concretely
+   (`X₅ = !![0,1;4,3]`, `Y₅ = !![0,4;1,1]`, all relations `decide`d), and the induced
+   `H →* SL(2, ZMod 5)` is injective because every nontrivial normal subgroup of `H` contains
+   the unique involution (`CaseVd2I.normal_contains_involution`: Cauchy for even order, and an
+   odd-order normal subgroup would inject into the simple `A₅` with order `≤ 15 < 60`), whose
+   image `X₅⁵ = -1 ≠ 1`; conclude by `|H| = 120 = |SL(2, ZMod 5)|`. -/
+
+/-- Local word-reduction tactic for the `caseV_d_2I_*` Todd-Coxeter proof; mirrors
+`Ch7GroupRecognition`'s `wgrp` (see `binaryOctahedral_bound_of_relations`). -/
+macro "w2i" : tactic =>
+  `(tactic| simp only [_root_.mul_inv_rev, inv_inv, mul_assoc, inv_mul_cancel_left,
+      mul_inv_cancel_left, inv_mul_cancel, mul_inv_cancel, mul_one, one_mul, inv_one])
+
+open scoped Pointwise in
+/-- Finiteness/cardinality engine for the `2I` coset enumeration: a `120`-element copy of
+`Ch7GroupRecognition.binaryOctahedral_card_le_of_closed` (which is `Fin 48`-specific). -/
+theorem caseV_d_2I_card_le_of_closed {G : Type*} [Group G] (nf : Fin 120 → G) (X Y : G)
+    (hgen : Subgroup.closure ({X, Y} : Set G) = ⊤)
+    (h1 : (1 : G) ∈ Set.range nf)
+    (hX : ∀ k, X * nf k ∈ Set.range nf)
+    (hY : ∀ k, Y * nf k ∈ Set.range nf) :
+    Finite G ∧ Nat.card G ≤ 120 := by
+  set T : Set G := Set.range nf with hT
+  have hTfin : T.Finite := Set.finite_range nf
+  have hgenmul : ∀ g ∈ ({X, Y} : Set G), g • T = T := by
+    intro g hg
+    have hsub : g • T ⊆ T := by
+      rintro a ⟨t, ht, rfl⟩
+      obtain ⟨k, rfl⟩ := ht
+      simp only [smul_eq_mul]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hg
+      rcases hg with rfl | rfl
+      · exact hX k
+      · exact hY k
+    apply Set.eq_of_subset_of_ncard_le hsub _ hTfin
+    rw [Set.ncard_smul_set]
+  have hstab : ∀ g : G, g • T = T := by
+    have hsub : ∀ g ∈ Subgroup.closure ({X, Y} : Set G), g • T = T := by
+      intro g hg
+      induction hg using Subgroup.closure_induction with
+      | mem x hx => exact hgenmul x hx
+      | one => exact one_smul _ _
+      | mul a b _ _ ha hb => rw [mul_smul, hb, ha]
+      | inv a _ ha =>
+          have h : a⁻¹ • T = a⁻¹ • (a • T) := by rw [ha]
+          rw [h, ← mul_smul, inv_mul_cancel, one_smul]
+    intro g; exact hsub g (by rw [hgen]; trivial)
+  have huniv : T = Set.univ := by
+    rw [Set.eq_univ_iff_forall]
+    intro g
+    have : g • (1 : G) ∈ g • T := Set.smul_mem_smul_set h1
+    rwa [hstab g, smul_eq_mul, mul_one] at this
+  have hfin : Finite G := by
+    have := hTfin; rw [huniv] at this; exact Set.finite_univ_iff.mp this
+  refine ⟨hfin, ?_⟩
+  have hsurj : Function.Surjective nf := by rw [← Set.range_eq_univ, ← hT]; exact huniv
+  calc Nat.card G ≤ Nat.card (Fin 120) := Nat.card_le_card_of_surjective nf hsurj
+    _ = 120 := by simp
+
+set_option maxHeartbeats 4000000 in
+set_option maxRecDepth 16000 in
+/-- **Abstract Todd-Coxeter bound for the `⟨5,3,2⟩` presentation** (Butler tex 2111, the
+binary icosahedral group `2I`): any group generated by `X, Y` with `X⁵ = Y³ = (XY)²` is
+finite of order `≤ 120`. Hand-run coset enumeration mirroring
+`Ch7GroupRecognition.binaryOctahedral_bound_of_relations` (the `⟨4,3,2⟩`/`2O` case): a
+confluent rewriting system of `15` positive-word rules is derived from the relations —
+the deep one being `y⁶ = 1` (equivalently `z² = 1` for the central `z := x⁵`), a `14`-step
+relator-insertion chain — and the `120` shortlex normal forms are closed under left
+multiplication by `X` and `Y`, so `caseV_d_2I_card_le_of_closed` applies. -/
+theorem caseV_d_2I_bound_of_relations {G : Type*} [Group G] (X Y : G)
+    (rel1 : X ^ 5 = Y ^ 3) (rel2 : X ^ 5 = (X * Y) ^ 2)
+    (hgen : Subgroup.closure ({X, Y} : Set G) = ⊤) :
+    Finite G ∧ Nat.card G ≤ 120 := by
+  have hX5 : X^5 = X*X*X*X*X := by rw [pow_succ, pow_succ, pow_succ, pow_succ, pow_one]
+  have hY3 : Y^3 = Y*Y*Y := by rw [pow_succ, pow_succ, pow_one]
+  have hXY2 : (X*Y)^2 = X*Y*X*Y := by rw [pow_two]; w2i
+  have R1 : X*X*X*X*X = Y*Y*Y := by rw [← hX5, ← hY3]; exact rel1
+  have R2 : X*X*X*X*X = X*Y*X*Y := by rw [← hX5, ← hXY2]; exact rel2
+  have rule1 : X*X*X*X = Y*X*Y := by
+    have h : X*(X*X*X*X) = X*(Y*X*Y) := by
+      rw [show X*(X*X*X*X) = X*X*X*X*X from by w2i, R2] <;> w2i
+    exact mul_left_cancel h
+  have rule0 : X*Y*X = Y*Y := by
+    have h : (X*Y*X)*Y = (Y*Y)*Y := by
+      rw [show (X*Y*X)*Y = X*Y*X*Y from by w2i, ← R2, R1] <;> w2i
+    exact mul_right_cancel h
+  have rule2 : Y*Y*Y*X = X*Y*Y*Y := by
+    calc (Y*Y*Y*X : G) = Y*Y*Y*X := rfl
+      _ = X*Y*X*Y*X := by
+        have h1 : ((Y*Y)*Y*X : G) = Y*Y*Y*X := by w2i
+        have h2 : ((X*Y*X)*Y*X : G) = X*Y*X*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*Y*X) rule0.symm).trans h2)
+      _ = X*Y*Y*Y := by
+        have h1 : (X*Y*(X*Y*X) : G) = X*Y*X*Y*X := by w2i
+        have h2 : (X*Y*(Y*Y) : G) = X*Y*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*Y*t) rule0).trans h2)
+  have rule3 : Y*X*Y*Y*X = X*X*X*Y*Y := by
+    calc (Y*X*Y*Y*X : G) = Y*X*Y*Y*X := rfl
+      _ = X*X*X*X*Y*X := by
+        have h1 : ((Y*X*Y)*Y*X : G) = Y*X*Y*Y*X := by w2i
+        have h2 : ((X*X*X*X)*Y*X : G) = X*X*X*X*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*Y*X) rule1.symm).trans h2)
+      _ = X*X*X*Y*Y := by
+        have h1 : (X*X*X*(X*Y*X) : G) = X*X*X*X*Y*X := by w2i
+        have h2 : (X*X*X*(Y*Y) : G) = X*X*X*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*X*X*t) rule0).trans h2)
+  have rule4 : Y*Y*X*X*X = X*Y*Y*X*Y := by
+    calc (Y*Y*X*X*X : G) = Y*Y*X*X*X := rfl
+      _ = X*Y*X*X*X*X := by
+        have h1 : ((Y*Y)*X*X*X : G) = Y*Y*X*X*X := by w2i
+        have h2 : ((X*Y*X)*X*X*X : G) = X*Y*X*X*X*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*X*X*X) rule0.symm).trans h2)
+      _ = X*Y*Y*X*Y := by
+        have h1 : (X*Y*(X*X*X*X) : G) = X*Y*X*X*X*X := by w2i
+        have h2 : (X*Y*(Y*X*Y) : G) = X*Y*Y*X*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*Y*t) rule1).trans h2)
+  have rule6 : Y*X*X*Y*Y*X*Y = X*X*X*Y*Y*X*X := by
+    calc (Y*X*X*Y*Y*X*Y : G) = Y*X*X*Y*Y*X*Y := rfl
+      _ = Y*X*Y*Y*X*X*X := by
+        have h1 : (Y*X*(X*Y*Y*X*Y) : G) = Y*X*X*Y*Y*X*Y := by w2i
+        have h2 : (Y*X*(Y*Y*X*X*X) : G) = Y*X*Y*Y*X*X*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*t) rule4.symm).trans h2)
+      _ = X*X*X*Y*Y*X*X := by
+        have h1 : ((Y*X*Y*Y*X)*X*X : G) = Y*X*Y*Y*X*X*X := by w2i
+        have h2 : ((X*X*X*Y*Y)*X*X : G) = X*X*X*Y*Y*X*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*X*X) rule3).trans h2)
+  have rule7 : Y*X*X*Y*Y*X*X*Y*Y*Y = X*X*X*Y*Y*X*X*Y*Y*X := by
+    calc (Y*X*X*Y*Y*X*X*Y*Y*Y : G) = Y*X*X*Y*Y*X*X*Y*Y*Y := rfl
+      _ = Y*X*X*Y*Y*X*Y*Y*Y*X := by
+        have h1 : (Y*X*X*Y*Y*X*(X*Y*Y*Y) : G) = Y*X*X*Y*Y*X*X*Y*Y*Y := by w2i
+        have h2 : (Y*X*X*Y*Y*X*(Y*Y*Y*X) : G) = Y*X*X*Y*Y*X*Y*Y*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*X*Y*Y*X*t) rule2.symm).trans h2)
+      _ = X*X*X*Y*Y*X*X*Y*Y*X := by
+        have h1 : ((Y*X*X*Y*Y*X*Y)*Y*Y*X : G) = Y*X*X*Y*Y*X*Y*Y*Y*X := by w2i
+        have h2 : ((X*X*X*Y*Y*X*X)*Y*Y*X : G) = X*X*X*Y*Y*X*X*Y*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*Y*Y*X) rule6).trans h2)
+  have rule8 : Y*X*X*X*Y*Y*X*Y*Y*Y*Y = X*X*X*Y*Y*X*X*Y*Y*X*X := by
+    calc (Y*X*X*X*Y*Y*X*Y*Y*Y*Y : G) = Y*X*X*X*Y*Y*X*Y*Y*Y*Y := rfl
+      _ = Y*X*X*Y*Y*X*X*X*Y*Y*Y := by
+        have h1 : (Y*X*X*(X*Y*Y*X*Y)*Y*Y*Y : G) = Y*X*X*X*Y*Y*X*Y*Y*Y*Y := by w2i
+        have h2 : (Y*X*X*(Y*Y*X*X*X)*Y*Y*Y : G) = Y*X*X*Y*Y*X*X*X*Y*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*X*t*Y*Y*Y) rule4.symm).trans h2)
+      _ = Y*X*X*Y*Y*X*X*Y*Y*Y*X := by
+        have h1 : (Y*X*X*Y*Y*X*X*(X*Y*Y*Y) : G) = Y*X*X*Y*Y*X*X*X*Y*Y*Y := by w2i
+        have h2 : (Y*X*X*Y*Y*X*X*(Y*Y*Y*X) : G) = Y*X*X*Y*Y*X*X*Y*Y*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*X*Y*Y*X*X*t) rule2.symm).trans h2)
+      _ = X*X*X*Y*Y*X*X*Y*Y*X*X := by
+        have h1 : ((Y*X*X*Y*Y*X*X*Y*Y*Y)*X : G) = Y*X*X*Y*Y*X*X*Y*Y*Y*X := by w2i
+        have h2 : ((X*X*X*Y*Y*X*X*Y*Y*X)*X : G) = X*X*X*Y*Y*X*X*Y*Y*X*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*X) rule7).trans h2)
+  have hb_rule0 : X*Y*X*Y⁻¹*Y⁻¹ = 1 := by
+    have h : (X*Y*X*Y⁻¹*Y⁻¹ : G) = (X*Y*X)*(Y*Y)⁻¹ := by w2i
+    rw [h, rule0] <;> w2i
+  have hb_rule0i : Y*Y*X⁻¹*Y⁻¹*X⁻¹ = 1 := by
+    have h : (Y*Y*X⁻¹*Y⁻¹*X⁻¹ : G) = (X*Y*X*Y⁻¹*Y⁻¹)⁻¹ := by w2i
+    rw [h, hb_rule0] <;> w2i
+  have hb_rule2 : Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹*X⁻¹ = 1 := by
+    have h : (Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹*X⁻¹ : G) = (Y*Y*Y*X)*(X*Y*Y*Y)⁻¹ := by w2i
+    rw [h, rule2] <;> w2i
+  have hb_rule3 : Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*X⁻¹ = 1 := by
+    have h : (Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*X⁻¹ : G) = (Y*X*Y*Y*X)*(X*X*X*Y*Y)⁻¹ := by w2i
+    rw [h, rule3] <;> w2i
+  have hb_rule3i : X*X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹ = 1 := by
+    have h : (X*X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹ : G) = (Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*X⁻¹)⁻¹ := by w2i
+    rw [h, hb_rule3] <;> w2i
+  have hb_rule6 : Y*X*X*Y*Y*X*Y*X⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*X⁻¹ = 1 := by
+    have h : (Y*X*X*Y*Y*X*Y*X⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*X⁻¹ : G) = (Y*X*X*Y*Y*X*Y)*(X*X*X*Y*Y*X*X)⁻¹ := by w2i
+    rw [h, rule6] <;> w2i
+  have hb_rule6i : X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹ = 1 := by
+    have h : (X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹ : G) = (Y*X*X*Y*Y*X*Y*X⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*X⁻¹)⁻¹ := by w2i
+    rw [h, hb_rule6] <;> w2i
+  have hr_XyyXY : X⁻¹*Y*Y*X⁻¹*Y⁻¹ = 1 := by
+    have h : (X⁻¹*Y*Y*X⁻¹*Y⁻¹ : G) = (Y*Y*X⁻¹*Y⁻¹)⁻¹*(Y*Y*X⁻¹*Y⁻¹*X⁻¹)*(Y*Y*X⁻¹*Y⁻¹) := by w2i
+    rw [h, hb_rule0i] <;> w2i
+  have hr_YXyyX : Y⁻¹*X⁻¹*Y*Y*X⁻¹ = 1 := by
+    have h : (Y⁻¹*X⁻¹*Y*Y*X⁻¹ : G) = (Y*Y*X⁻¹)⁻¹*(Y*Y*X⁻¹*Y⁻¹*X⁻¹)*(Y*Y*X⁻¹) := by w2i
+    rw [h, hb_rule0i] <;> w2i
+  have hr_yXYXy : Y*X⁻¹*Y⁻¹*X⁻¹*Y = 1 := by
+    have h : (Y*X⁻¹*Y⁻¹*X⁻¹*Y : G) = (Y)⁻¹*(Y*Y*X⁻¹*Y⁻¹*X⁻¹)*(Y) := by w2i
+    rw [h, hb_rule0i] <;> w2i
+  have hr_XyyyxYYY : X⁻¹*Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹ = 1 := by
+    have h : (X⁻¹*Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹ : G) = (Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹)⁻¹*(Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹*X⁻¹)*(Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹) := by w2i
+    rw [h, hb_rule2] <;> w2i
+  have hr_YYXYxxxyyX : Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X⁻¹ = 1 := by
+    have h : (Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X⁻¹ : G) = (X*X*X*Y*Y*X⁻¹)⁻¹*(X*X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹)*(X*X*X*Y*Y*X⁻¹) := by w2i
+    rw [h, hb_rule3i] <;> w2i
+  have hr_xxyyXYYXYx : X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X = 1 := by
+    have h : (X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X : G) = (X)⁻¹*(X*X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹)*(X) := by w2i
+    rw [h, hb_rule3i] <;> w2i
+  have hr_XXYxxxyyxxYXYY : X⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹ = 1 := by
+    have h : (X⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹ : G) = (X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹)⁻¹*(X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹)*(X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹) := by w2i
+    rw [h, hb_rule6i] <;> w2i
+  have hr_xxyyxxYXYYXXYx : X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X = 1 := by
+    have h : (X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X : G) = (X)⁻¹*(X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹)*(X) := by w2i
+    rw [h, hb_rule6i] <;> w2i
+  have hr_xyyxxYXYYXXYxx : X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X*X = 1 := by
+    have h : (X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X*X : G) = (X*X)⁻¹*(X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹)*(X*X) := by w2i
+    rw [h, hb_rule6i] <;> w2i
+  have rule5 : Y*Y*Y*Y*Y*Y = 1 := by
+    calc (Y*Y*Y*Y*Y*Y : G) = Y*Y*Y*Y*Y*Y := rfl
+      _ = X⁻¹*Y*Y*Y*X*Y*Y*Y := by
+        have h1 : ((X⁻¹*Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹)*Y*Y*Y*Y*Y*Y : G) = ((1:G))*Y*Y*Y*Y*Y*Y := congrArg (fun t => t*Y*Y*Y*Y*Y*Y) hr_XyyyxYYY
+        have h2 : (((1:G))*Y*Y*Y*Y*Y*Y : G) = Y*Y*Y*Y*Y*Y := by w2i
+        have h3 : ((X⁻¹*Y*Y*Y*X*Y⁻¹*Y⁻¹*Y⁻¹)*Y*Y*Y*Y*Y*Y : G) = X⁻¹*Y*Y*Y*X*Y*Y*Y := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X*X*Y*Y := by
+        have h1 : (X⁻¹*Y*(X⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹)*Y*Y*X*Y*Y*Y : G) = X⁻¹*Y*((1:G))*Y*Y*X*Y*Y*Y := congrArg (fun t => X⁻¹*Y*t*Y*Y*X*Y*Y*Y) hr_XXYxxxyyxxYXYY
+        have h2 : (X⁻¹*Y*((1:G))*Y*Y*X*Y*Y*Y : G) = X⁻¹*Y*Y*Y*X*Y*Y*Y := by w2i
+        have h3 : (X⁻¹*Y*(X⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹)*Y*Y*X*Y*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X*X*Y*Y := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*Y*Y*X⁻¹*Y*X*X*Y*Y := by
+        have h1 : (X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*(Y*Y*X⁻¹*Y⁻¹*X⁻¹)*X*Y*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*((1:G))*X*Y*Y*X*X*Y*Y := congrArg (fun t => X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*t*X*Y*Y*X*X*Y*Y) hb_rule0i
+        have h2 : (X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*((1:G))*X*Y*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X*X*Y*Y := by w2i
+        have h3 : (X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*(Y*Y*X⁻¹*Y⁻¹*X⁻¹)*X*Y*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*Y*Y*X⁻¹*Y*X*X*Y*Y := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y := by
+        have h1 : (X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*(Y*Y*X⁻¹*Y⁻¹*X⁻¹)*X*Y*Y*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*((1:G))*X*Y*Y*X⁻¹*Y*X*X*Y*Y := congrArg (fun t => X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*t*X*Y*Y*X⁻¹*Y*X*X*Y*Y) hb_rule0i
+        have h2 : (X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*((1:G))*X*Y*Y*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*X*Y*Y*X⁻¹*Y*X*X*Y*Y := by w2i
+        have h3 : (X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*(Y*Y*X⁻¹*Y⁻¹*X⁻¹)*X*Y*Y*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y := by
+        have h1 : (X⁻¹*Y*X⁻¹*X⁻¹*(Y*X⁻¹*Y⁻¹*X⁻¹*Y)*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*((1:G))*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y := congrArg (fun t => X⁻¹*Y*X⁻¹*X⁻¹*t*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y) hr_yXYXy
+        have h2 : (X⁻¹*Y*X⁻¹*X⁻¹*((1:G))*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y := by w2i
+        have h3 : (X⁻¹*Y*X⁻¹*X⁻¹*(Y*X⁻¹*Y⁻¹*X⁻¹*Y)*Y⁻¹*X*Y*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*(X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*((1:G))*X⁻¹*Y*X*X*Y*Y := congrArg (fun t => X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*t*X⁻¹*Y*X*X*Y*Y) hr_xxyyxxYXYYXXYx
+        have h2 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*((1:G))*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y := by w2i
+        have h3 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*(X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*X*Y*Y : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*(X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*((1:G))*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹ := congrArg (fun t => X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*t*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹) hr_xxyyxxYXYYXXYx
+        have h2 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*((1:G))*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹ := by w2i
+        have h3 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*(X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*(X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*((1:G))*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹ := congrArg (fun t => X⁻¹*Y*X⁻¹*X⁻¹*Y*t*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹) hr_xxyyxxYXYYXXYx
+        have h2 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*((1:G))*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        have h3 : (X⁻¹*Y*X⁻¹*X⁻¹*Y*(X*X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*(X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X*X)*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*((1:G))*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := congrArg (fun t => X⁻¹*Y*t*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹) hr_xyyxxYXYYXXYxx
+        have h2 : (X⁻¹*Y*((1:G))*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        have h3 : (X⁻¹*Y*(X*Y*Y*X*X*Y⁻¹*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y⁻¹*X*X)*X⁻¹*X⁻¹*Y*X*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*(Y⁻¹*X⁻¹*Y*Y*X⁻¹)*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*((1:G))*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := congrArg (fun t => X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*t*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹) hr_YXyyX
+        have h2 : (X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*((1:G))*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        have h3 : (X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*(Y⁻¹*X⁻¹*Y*Y*X⁻¹)*X*Y⁻¹*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*(X⁻¹*Y*Y*X⁻¹*Y⁻¹)*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*((1:G))*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹ := congrArg (fun t => X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*t*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹) hr_XyyXY
+        have h2 : (X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*((1:G))*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹ := by w2i
+        have h3 : (X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*(X⁻¹*Y*Y*X⁻¹*Y⁻¹)*Y*X*Y⁻¹*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*X*Y*Y*X*(Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X⁻¹)*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*((1:G))*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹ := congrArg (fun t => X⁻¹*Y*X*Y*Y*X*t*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹) hr_YYXYxxxyyX
+        have h2 : (X⁻¹*Y*X*Y*Y*X*((1:G))*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹ := by w2i
+        have h3 : (X⁻¹*Y*X*Y*Y*X*(Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X*X*X*Y*Y*X⁻¹)*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹*Y*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹ := by
+        have h1 : (X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*(Y*X⁻¹*Y⁻¹*X⁻¹*Y)*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*((1:G))*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹ := congrArg (fun t => X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*t*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹) hr_yXYXy
+        have h2 : (X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*((1:G))*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹ := by w2i
+        have h3 : (X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*(Y*X⁻¹*Y⁻¹*X⁻¹*Y)*Y⁻¹*X*Y*X*Y⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹ := by w2i
+        exact (h1.trans h2).symm.trans h3
+      _ = 1 := by
+        have h1 : ((X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹ : G) = ((1:G))*X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹ := congrArg (fun t => t*X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹) hr_xxyyXYYXYx
+        have h2 : (((1:G))*X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹ : G) = X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹ := by w2i
+        have h3 : ((X*X*Y*Y*X⁻¹*Y⁻¹*Y⁻¹*X⁻¹*Y⁻¹*X)*X⁻¹*Y*X*Y*Y*X*Y⁻¹*Y⁻¹*X⁻¹*X⁻¹ : G) = 1 := by w2i
+        exact (h1.trans h2).symm.trans h3
+  have rule9 : X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y = Y*X*X*Y*Y*X := by
+    calc (X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y : G) = X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y := rfl
+      _ = Y*X*X*Y*Y*X*Y*Y*Y*Y*Y*Y := by
+        have h1 : ((X*X*X*Y*Y*X*X)*Y*Y*Y*Y*Y : G) = X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y := by w2i
+        have h2 : ((Y*X*X*Y*Y*X*Y)*Y*Y*Y*Y*Y : G) = Y*X*X*Y*Y*X*Y*Y*Y*Y*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*Y*Y*Y*Y*Y) rule6.symm).trans h2)
+      _ = Y*X*X*Y*Y*X := by
+        have h1 : (Y*X*X*Y*Y*X*(Y*Y*Y*Y*Y*Y) : G) = Y*X*X*Y*Y*X*Y*Y*Y*Y*Y*Y := by w2i
+        have h2 : (Y*X*X*Y*Y*X*((1:G)) : G) = Y*X*X*Y*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*X*Y*Y*X*t) rule5).trans h2)
+  have rule10 : X*X*Y*Y*X*X*Y*Y*X*X*Y*Y = Y*X*X*Y*Y*X*X := by
+    calc (X*X*Y*Y*X*X*Y*Y*X*X*Y*Y : G) = X*X*Y*Y*X*X*Y*Y*X*X*Y*Y := rfl
+      _ = X*X*X*Y*X*X*X*Y*Y*X*X*Y*Y := by
+        have h1 : (X*X*(Y*Y)*X*X*Y*Y*X*X*Y*Y : G) = X*X*Y*Y*X*X*Y*Y*X*X*Y*Y := by w2i
+        have h2 : (X*X*(X*Y*X)*X*X*Y*Y*X*X*Y*Y : G) = X*X*X*Y*X*X*X*Y*Y*X*X*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*X*t*X*X*Y*Y*X*X*Y*Y) rule0.symm).trans h2)
+      _ = X*X*X*Y*Y*X*X*Y*Y*X*Y*Y*Y := by
+        have h1 : (X*X*X*Y*(X*X*X*Y*Y*X*X)*Y*Y : G) = X*X*X*Y*X*X*X*Y*Y*X*X*Y*Y := by w2i
+        have h2 : (X*X*X*Y*(Y*X*X*Y*Y*X*Y)*Y*Y : G) = X*X*X*Y*Y*X*X*Y*Y*X*Y*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*X*X*Y*t*Y*Y) rule6.symm).trans h2)
+      _ = X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y*X := by
+        have h1 : (X*X*X*Y*Y*X*X*Y*Y*(X*Y*Y*Y) : G) = X*X*X*Y*Y*X*X*Y*Y*X*Y*Y*Y := by w2i
+        have h2 : (X*X*X*Y*Y*X*X*Y*Y*(Y*Y*Y*X) : G) = X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*X*X*Y*Y*X*X*Y*Y*t) rule2.symm).trans h2)
+      _ = Y*X*X*Y*Y*X*X := by
+        have h1 : ((X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y)*X : G) = X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y*X := by w2i
+        have h2 : ((Y*X*X*Y*Y*X)*X : G) = Y*X*X*Y*Y*X*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*X) rule9).trans h2)
+  have rule11 : X*Y*Y*X*X*Y*Y*X*X*Y*Y*X = Y*X*X*Y*Y*X*X*Y := by
+    calc (X*Y*Y*X*X*Y*Y*X*X*Y*Y*X : G) = X*Y*Y*X*X*Y*Y*X*X*Y*Y*X := rfl
+      _ = X*X*Y*X*X*X*Y*Y*X*X*Y*Y*X := by
+        have h1 : (X*(Y*Y)*X*X*Y*Y*X*X*Y*Y*X : G) = X*Y*Y*X*X*Y*Y*X*X*Y*Y*X := by w2i
+        have h2 : (X*(X*Y*X)*X*X*Y*Y*X*X*Y*Y*X : G) = X*X*Y*X*X*X*Y*Y*X*X*Y*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*t*X*X*Y*Y*X*X*Y*Y*X) rule0.symm).trans h2)
+      _ = X*X*Y*Y*X*X*Y*Y*X*X*Y*Y*Y := by
+        have h1 : (X*X*Y*(X*X*X*Y*Y*X*X*Y*Y*X) : G) = X*X*Y*X*X*X*Y*Y*X*X*Y*Y*X := by w2i
+        have h2 : (X*X*Y*(Y*X*X*Y*Y*X*X*Y*Y*Y) : G) = X*X*Y*Y*X*X*Y*Y*X*X*Y*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*X*Y*t) rule7.symm).trans h2)
+      _ = Y*X*X*Y*Y*X*X*Y := by
+        have h1 : ((X*X*Y*Y*X*X*Y*Y*X*X*Y*Y)*Y : G) = X*X*Y*Y*X*X*Y*Y*X*X*Y*Y*Y := by w2i
+        have h2 : ((Y*X*X*Y*Y*X*X)*Y : G) = Y*X*X*Y*Y*X*X*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*Y) rule10).trans h2)
+  have rule12 : Y*X*X*X*Y*Y*X*X*Y*Y*X*X = X*Y*Y*X*X*Y := by
+    calc (Y*X*X*X*Y*Y*X*X*Y*Y*X*X : G) = Y*X*X*X*Y*Y*X*X*Y*Y*X*X := rfl
+      _ = Y*Y*X*X*X*Y*Y*X*Y*Y*Y*Y := by
+        have h1 : (Y*(X*X*X*Y*Y*X*X*Y*Y*X*X) : G) = Y*X*X*X*Y*Y*X*X*Y*Y*X*X := by w2i
+        have h2 : (Y*(Y*X*X*X*Y*Y*X*Y*Y*Y*Y) : G) = Y*Y*X*X*X*Y*Y*X*Y*Y*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*t) rule8.symm).trans h2)
+      _ = Y*Y*X*X*X*Y*Y*Y*Y*Y*X*Y := by
+        have h1 : (Y*Y*X*X*X*Y*Y*(X*Y*Y*Y)*Y : G) = Y*Y*X*X*X*Y*Y*X*Y*Y*Y*Y := by w2i
+        have h2 : (Y*Y*X*X*X*Y*Y*(Y*Y*Y*X)*Y : G) = Y*Y*X*X*X*Y*Y*Y*Y*Y*X*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*Y*X*X*X*Y*Y*t*Y) rule2.symm).trans h2)
+      _ = X*Y*Y*X*Y*Y*Y*Y*Y*Y*X*Y := by
+        have h1 : ((Y*Y*X*X*X)*Y*Y*Y*Y*Y*X*Y : G) = Y*Y*X*X*X*Y*Y*Y*Y*Y*X*Y := by w2i
+        have h2 : ((X*Y*Y*X*Y)*Y*Y*Y*Y*Y*X*Y : G) = X*Y*Y*X*Y*Y*Y*Y*Y*Y*X*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*Y*Y*Y*Y*Y*X*Y) rule4).trans h2)
+      _ = X*Y*Y*X*X*Y := by
+        have h1 : (X*Y*Y*X*(Y*Y*Y*Y*Y*Y)*X*Y : G) = X*Y*Y*X*Y*Y*Y*Y*Y*Y*X*Y := by w2i
+        have h2 : (X*Y*Y*X*((1:G))*X*Y : G) = X*Y*Y*X*X*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*Y*Y*X*t*X*Y) rule5).trans h2)
+  have rule13 : Y*X*X*Y*Y*X*X*Y*Y*X*X*Y = X*Y*Y*X*X*Y*Y*X := by
+    calc (Y*X*X*Y*Y*X*X*Y*Y*X*X*Y : G) = Y*X*X*Y*Y*X*X*Y*Y*X*X*Y := rfl
+      _ = Y*X*X*X*Y*X*X*X*Y*Y*X*X*Y := by
+        have h1 : (Y*X*X*(Y*Y)*X*X*Y*Y*X*X*Y : G) = Y*X*X*Y*Y*X*X*Y*Y*X*X*Y := by w2i
+        have h2 : (Y*X*X*(X*Y*X)*X*X*Y*Y*X*X*Y : G) = Y*X*X*X*Y*X*X*X*Y*Y*X*X*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*X*t*X*X*Y*Y*X*X*Y) rule0.symm).trans h2)
+      _ = Y*X*X*X*Y*Y*X*X*Y*Y*X*Y*Y := by
+        have h1 : (Y*X*X*X*Y*(X*X*X*Y*Y*X*X)*Y : G) = Y*X*X*X*Y*X*X*X*Y*Y*X*X*Y := by w2i
+        have h2 : (Y*X*X*X*Y*(Y*X*X*Y*Y*X*Y)*Y : G) = Y*X*X*X*Y*Y*X*X*Y*Y*X*Y*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*X*X*Y*t*Y) rule6.symm).trans h2)
+      _ = Y*X*X*X*Y*Y*X*X*Y*Y*X*X*Y*X := by
+        have h1 : (Y*X*X*X*Y*Y*X*X*Y*Y*X*(Y*Y) : G) = Y*X*X*X*Y*Y*X*X*Y*Y*X*Y*Y := by w2i
+        have h2 : (Y*X*X*X*Y*Y*X*X*Y*Y*X*(X*Y*X) : G) = Y*X*X*X*Y*Y*X*X*Y*Y*X*X*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => Y*X*X*X*Y*Y*X*X*Y*Y*X*t) rule0.symm).trans h2)
+      _ = X*Y*Y*X*X*Y*Y*X := by
+        have h1 : ((Y*X*X*X*Y*Y*X*X*Y*Y*X*X)*Y*X : G) = Y*X*X*X*Y*Y*X*X*Y*Y*X*X*Y*X := by w2i
+        have h2 : ((X*Y*Y*X*X*Y)*Y*X : G) = X*Y*Y*X*X*Y*Y*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*Y*X) rule12).trans h2)
+  have rule14 : Y*Y*X*X*Y*Y*X*X*Y*Y*X*X = X*X*Y*Y*X*X*Y := by
+    calc (Y*Y*X*X*Y*Y*X*X*Y*Y*X*X : G) = Y*Y*X*X*Y*Y*X*X*Y*Y*X*X := rfl
+      _ = X*Y*X*X*X*Y*Y*X*X*Y*Y*X*X := by
+        have h1 : ((Y*Y)*X*X*Y*Y*X*X*Y*Y*X*X : G) = Y*Y*X*X*Y*Y*X*X*Y*Y*X*X := by w2i
+        have h2 : ((X*Y*X)*X*X*Y*Y*X*X*Y*Y*X*X : G) = X*Y*X*X*X*Y*Y*X*X*Y*Y*X*X := by w2i
+        exact h1.symm.trans ((congrArg (fun t => t*X*X*Y*Y*X*X*Y*Y*X*X) rule0.symm).trans h2)
+      _ = X*X*Y*Y*X*X*Y := by
+        have h1 : (X*(Y*X*X*X*Y*Y*X*X*Y*Y*X*X) : G) = X*Y*X*X*X*Y*Y*X*X*Y*Y*X*X := by w2i
+        have h2 : (X*(X*Y*Y*X*X*Y) : G) = X*X*Y*Y*X*X*Y := by w2i
+        exact h1.symm.trans ((congrArg (fun t => X*t) rule12).trans h2)
+  have c0 : ∀ r : G, X*(Y*(X*(r))) = Y*(Y*(r)) := fun r => by
+    rw [show X*(Y*(X*(r))) = X*Y*X*r from by w2i, rule0] <;> w2i
+  have p0 : X*(Y*(X)) = Y*(Y) := by
+    rw [show X*(Y*(X)) = X*Y*X from by w2i, rule0] <;> w2i
+  have c1 : ∀ r : G, X*(X*(X*(X*(r)))) = Y*(X*(Y*(r))) := fun r => by
+    rw [show X*(X*(X*(X*(r)))) = X*X*X*X*r from by w2i, rule1] <;> w2i
+  have p1 : X*(X*(X*(X))) = Y*(X*(Y)) := by
+    rw [show X*(X*(X*(X))) = X*X*X*X from by w2i, rule1] <;> w2i
+  have c2 : ∀ r : G, Y*(Y*(Y*(X*(r)))) = X*(Y*(Y*(Y*(r)))) := fun r => by
+    rw [show Y*(Y*(Y*(X*(r)))) = Y*Y*Y*X*r from by w2i, rule2] <;> w2i
+  have p2 : Y*(Y*(Y*(X))) = X*(Y*(Y*(Y))) := by
+    rw [show Y*(Y*(Y*(X))) = Y*Y*Y*X from by w2i, rule2] <;> w2i
+  have c3 : ∀ r : G, Y*(X*(Y*(Y*(X*(r))))) = X*(X*(X*(Y*(Y*(r))))) := fun r => by
+    rw [show Y*(X*(Y*(Y*(X*(r))))) = Y*X*Y*Y*X*r from by w2i, rule3] <;> w2i
+  have p3 : Y*(X*(Y*(Y*(X)))) = X*(X*(X*(Y*(Y)))) := by
+    rw [show Y*(X*(Y*(Y*(X)))) = Y*X*Y*Y*X from by w2i, rule3] <;> w2i
+  have c4 : ∀ r : G, Y*(Y*(X*(X*(X*(r))))) = X*(Y*(Y*(X*(Y*(r))))) := fun r => by
+    rw [show Y*(Y*(X*(X*(X*(r))))) = Y*Y*X*X*X*r from by w2i, rule4] <;> w2i
+  have p4 : Y*(Y*(X*(X*(X)))) = X*(Y*(Y*(X*(Y)))) := by
+    rw [show Y*(Y*(X*(X*(X)))) = Y*Y*X*X*X from by w2i, rule4] <;> w2i
+  have c5 : ∀ r : G, Y*(Y*(Y*(Y*(Y*(Y*(r)))))) = r := fun r => by
+    rw [show Y*(Y*(Y*(Y*(Y*(Y*(r)))))) = Y*Y*Y*Y*Y*Y*r from by w2i, rule5] <;> w2i
+  have p5 : Y*(Y*(Y*(Y*(Y*(Y))))) = (1:G) := by
+    rw [show Y*(Y*(Y*(Y*(Y*(Y))))) = Y*Y*Y*Y*Y*Y from by w2i, rule5] <;> w2i
+  have c6 : ∀ r : G, Y*(X*(X*(Y*(Y*(X*(Y*(r))))))) = X*(X*(X*(Y*(Y*(X*(X*(r))))))) := fun r => by
+    rw [show Y*(X*(X*(Y*(Y*(X*(Y*(r))))))) = Y*X*X*Y*Y*X*Y*r from by w2i, rule6] <;> w2i
+  have p6 : Y*(X*(X*(Y*(Y*(X*(Y)))))) = X*(X*(X*(Y*(Y*(X*(X)))))) := by
+    rw [show Y*(X*(X*(Y*(Y*(X*(Y)))))) = Y*X*X*Y*Y*X*Y from by w2i, rule6] <;> w2i
+  have c7 : ∀ r : G, Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y*(r)))))))))) = X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(r)))))))))) := fun r => by
+    rw [show Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y*(r)))))))))) = Y*X*X*Y*Y*X*X*Y*Y*Y*r from by w2i, rule7] <;> w2i
+  have p7 : Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y))))))))) = X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X))))))))) := by
+    rw [show Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y))))))))) = Y*X*X*Y*Y*X*X*Y*Y*Y from by w2i, rule7] <;> w2i
+  have c8 : ∀ r : G, Y*(X*(X*(X*(Y*(Y*(X*(Y*(Y*(Y*(Y*(r))))))))))) = X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(r))))))))))) := fun r => by
+    rw [show Y*(X*(X*(X*(Y*(Y*(X*(Y*(Y*(Y*(Y*(r))))))))))) = Y*X*X*X*Y*Y*X*Y*Y*Y*Y*r from by w2i, rule8] <;> w2i
+  have p8 : Y*(X*(X*(X*(Y*(Y*(X*(Y*(Y*(Y*(Y)))))))))) = X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X)))))))))) := by
+    rw [show Y*(X*(X*(X*(Y*(Y*(X*(Y*(Y*(Y*(Y)))))))))) = Y*X*X*X*Y*Y*X*Y*Y*Y*Y from by w2i, rule8] <;> w2i
+  have c9 : ∀ r : G, X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y*(Y*(Y*(r)))))))))))) = Y*(X*(X*(Y*(Y*(X*(r)))))) := fun r => by
+    rw [show X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y*(Y*(Y*(r)))))))))))) = X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y*r from by w2i, rule9] <;> w2i
+  have p9 : X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y*(Y*(Y))))))))))) = Y*(X*(X*(Y*(Y*(X))))) := by
+    rw [show X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(Y*(Y*(Y))))))))))) = X*X*X*Y*Y*X*X*Y*Y*Y*Y*Y from by w2i, rule9] <;> w2i
+  have c10 : ∀ r : G, X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(r)))))))))))) = Y*(X*(X*(Y*(Y*(X*(X*(r))))))) := fun r => by
+    rw [show X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(r)))))))))))) = X*X*Y*Y*X*X*Y*Y*X*X*Y*Y*r from by w2i, rule10] <;> w2i
+  have p10 : X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y))))))))))) = Y*(X*(X*(Y*(Y*(X*(X)))))) := by
+    rw [show X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y))))))))))) = X*X*Y*Y*X*X*Y*Y*X*X*Y*Y from by w2i, rule10] <;> w2i
+  have c11 : ∀ r : G, X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(r)))))))))))) = Y*(X*(X*(Y*(Y*(X*(X*(Y*(r)))))))) := fun r => by
+    rw [show X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(r)))))))))))) = X*Y*Y*X*X*Y*Y*X*X*Y*Y*X*r from by w2i, rule11] <;> w2i
+  have p11 : X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X))))))))))) = Y*(X*(X*(Y*(Y*(X*(X*(Y))))))) := by
+    rw [show X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X))))))))))) = X*Y*Y*X*X*Y*Y*X*X*Y*Y*X from by w2i, rule11] <;> w2i
+  have c12 : ∀ r : G, Y*(X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(r)))))))))))) = X*(Y*(Y*(X*(X*(Y*(r)))))) := fun r => by
+    rw [show Y*(X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(r)))))))))))) = Y*X*X*X*Y*Y*X*X*Y*Y*X*X*r from by w2i, rule12] <;> w2i
+  have p12 : Y*(X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X))))))))))) = X*(Y*(Y*(X*(X*(Y))))) := by
+    rw [show Y*(X*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X))))))))))) = Y*X*X*X*Y*Y*X*X*Y*Y*X*X from by w2i, rule12] <;> w2i
+  have c13 : ∀ r : G, Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(r)))))))))))) = X*(Y*(Y*(X*(X*(Y*(Y*(X*(r)))))))) := fun r => by
+    rw [show Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(r)))))))))))) = Y*X*X*Y*Y*X*X*Y*Y*X*X*Y*r from by w2i, rule13] <;> w2i
+  have p13 : Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y))))))))))) = X*(Y*(Y*(X*(X*(Y*(Y*(X))))))) := by
+    rw [show Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y))))))))))) = Y*X*X*Y*Y*X*X*Y*Y*X*X*Y from by w2i, rule13] <;> w2i
+  have c14 : ∀ r : G, Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(r)))))))))))) = X*(X*(Y*(Y*(X*(X*(Y*(r))))))) := fun r => by
+    rw [show Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X*(r)))))))))))) = Y*Y*X*X*Y*Y*X*X*Y*Y*X*X*r from by w2i, rule14] <;> w2i
+  have p14 : Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X))))))))))) = X*(X*(Y*(Y*(X*(X*(Y)))))) := by
+    rw [show Y*(Y*(X*(X*(Y*(Y*(X*(X*(Y*(Y*(X*(X))))))))))) = Y*Y*X*X*Y*Y*X*X*Y*Y*X*X from by w2i, rule14] <;> w2i
+  refine caseV_d_2I_card_le_of_closed (![(1:G), X, Y, X*X, X*Y, Y*X, Y*Y, X*X*X, X*X*Y, X*Y*Y, Y*X*X, Y*X*Y, Y*Y*X, Y*Y*Y, X*X*X*Y, X*X*Y*Y, X*Y*Y*X, X*Y*Y*Y, Y*X*X*X, Y*X*X*Y, Y*X*Y*Y, Y*Y*X*X, Y*Y*X*Y, Y*Y*Y*Y, X*X*X*Y*Y, X*X*Y*Y*X, X*X*Y*Y*Y, X*Y*Y*X*X, X*Y*Y*X*Y, X*Y*Y*Y*Y, Y*X*X*X*Y, Y*X*X*Y*Y, Y*X*Y*Y*Y, Y*Y*X*X*Y, Y*Y*X*Y*Y, Y*Y*Y*Y*Y, X*X*X*Y*Y*X, X*X*X*Y*Y*Y, X*X*Y*Y*X*X, X*X*Y*Y*X*Y, X*X*Y*Y*Y*Y, X*Y*Y*X*X*Y, X*Y*Y*X*Y*Y, X*Y*Y*Y*Y*Y, Y*X*X*X*Y*Y, Y*X*X*Y*Y*X, Y*X*X*Y*Y*Y, Y*X*Y*Y*Y*Y, Y*Y*X*X*Y*Y, Y*Y*X*Y*Y*Y, X*X*X*Y*Y*X*X, X*X*X*Y*Y*X*Y, X*X*X*Y*Y*Y*Y, X*X*Y*Y*X*X*Y, X*X*Y*Y*X*Y*Y, X*X*Y*Y*Y*Y*Y, X*Y*Y*X*X*Y*Y, X*Y*Y*X*Y*Y*Y, Y*X*X*X*Y*Y*X, Y*X*X*X*Y*Y*Y, Y*X*X*Y*Y*X*X, Y*X*X*Y*Y*Y*Y, Y*X*Y*Y*Y*Y*Y, Y*Y*X*X*Y*Y*X, Y*Y*X*X*Y*Y*Y, Y*Y*X*Y*Y*Y*Y, X*X*X*Y*Y*X*X*Y, X*X*X*Y*Y*X*Y*Y, X*X*X*Y*Y*Y*Y*Y, X*X*Y*Y*X*X*Y*Y, X*X*Y*Y*X*Y*Y*Y, X*Y*Y*X*X*Y*Y*X, X*Y*Y*X*X*Y*Y*Y, X*Y*Y*X*Y*Y*Y*Y, Y*X*X*X*Y*Y*X*X, Y*X*X*X*Y*Y*X*Y, Y*X*X*X*Y*Y*Y*Y, Y*X*X*Y*Y*X*X*Y, Y*X*X*Y*Y*Y*Y*Y, Y*Y*X*X*Y*Y*X*X, Y*Y*X*X*Y*Y*Y*Y, Y*Y*X*Y*Y*Y*Y*Y, X*X*X*Y*Y*X*X*Y*Y, X*X*X*Y*Y*X*Y*Y*Y, X*X*Y*Y*X*X*Y*Y*X, X*X*Y*Y*X*X*Y*Y*Y, X*X*Y*Y*X*Y*Y*Y*Y, X*Y*Y*X*X*Y*Y*X*X, X*Y*Y*X*X*Y*Y*Y*Y, X*Y*Y*X*Y*Y*Y*Y*Y, Y*X*X*X*Y*Y*X*X*Y, Y*X*X*X*Y*Y*X*Y*Y, Y*X*X*X*Y*Y*Y*Y*Y, Y*X*X*Y*Y*X*X*Y*Y, Y*Y*X*X*Y*Y*X*X*Y, Y*Y*X*X*Y*Y*Y*Y*Y, X*X*X*Y*Y*X*X*Y*Y*X, X*X*X*Y*Y*X*X*Y*Y*Y, X*X*X*Y*Y*X*Y*Y*Y*Y, X*X*Y*Y*X*X*Y*Y*X*X, X*X*Y*Y*X*X*Y*Y*Y*Y, X*X*Y*Y*X*Y*Y*Y*Y*Y, X*Y*Y*X*X*Y*Y*X*X*Y, X*Y*Y*X*X*Y*Y*Y*Y*Y, Y*X*X*X*Y*Y*X*X*Y*Y, Y*X*X*X*Y*Y*X*Y*Y*Y, Y*X*X*Y*Y*X*X*Y*Y*X, Y*Y*X*X*Y*Y*X*X*Y*Y, X*X*X*Y*Y*X*X*Y*Y*X*X, X*X*X*Y*Y*X*X*Y*Y*Y*Y, X*X*X*Y*Y*X*Y*Y*Y*Y*Y, X*X*Y*Y*X*X*Y*Y*X*X*Y, X*X*Y*Y*X*X*Y*Y*Y*Y*Y, X*Y*Y*X*X*Y*Y*X*X*Y*Y, Y*X*X*X*Y*Y*X*X*Y*Y*X, Y*X*X*X*Y*Y*X*X*Y*Y*Y, Y*X*X*Y*Y*X*X*Y*Y*X*X, Y*Y*X*X*Y*Y*X*X*Y*Y*X, X*X*X*Y*Y*X*X*Y*Y*X*X*Y, Y*X*X*X*Y*Y*X*X*Y*Y*Y*Y] : Fin 120 → G) X Y hgen ⟨0, rfl⟩ ?_ ?_
+  · intro k
+    fin_cases k
+    · exact ⟨⟨1, by omega⟩, by show X = X * ((1:G)); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨3, by omega⟩, by show X*X = X * (X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨4, by omega⟩, by show X*Y = X * (Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨7, by omega⟩, by show X*X*X = X * (X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨8, by omega⟩, by show X*X*Y = X * (X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨6, by omega⟩, by show Y*Y = X * (Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨9, by omega⟩, by show X*Y*Y = X * (Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨11, by omega⟩, by show Y*X*Y = X * (X*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨14, by omega⟩, by show X*X*X*Y = X * (X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨15, by omega⟩, by show X*X*Y*Y = X * (X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨12, by omega⟩, by show Y*Y*X = X * (Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨13, by omega⟩, by show Y*Y*Y = X * (Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨16, by omega⟩, by show X*Y*Y*X = X * (Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨17, by omega⟩, by show X*Y*Y*Y = X * (Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨20, by omega⟩, by show Y*X*Y*Y = X * (X*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨24, by omega⟩, by show X*X*X*Y*Y = X * (X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨25, by omega⟩, by show X*X*Y*Y*X = X * (X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨26, by omega⟩, by show X*X*Y*Y*Y = X * (X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨21, by omega⟩, by show Y*Y*X*X = X * (Y*X*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨22, by omega⟩, by show Y*Y*X*Y = X * (Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨23, by omega⟩, by show Y*Y*Y*Y = X * (Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨27, by omega⟩, by show X*Y*Y*X*X = X * (Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨28, by omega⟩, by show X*Y*Y*X*Y = X * (Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨29, by omega⟩, by show X*Y*Y*Y*Y = X * (Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨32, by omega⟩, by show Y*X*Y*Y*Y = X * (X*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨36, by omega⟩, by show X*X*X*Y*Y*X = X * (X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨37, by omega⟩, by show X*X*X*Y*Y*Y = X * (X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨38, by omega⟩, by show X*X*Y*Y*X*X = X * (X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨39, by omega⟩, by show X*X*Y*Y*X*Y = X * (X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨40, by omega⟩, by show X*X*Y*Y*Y*Y = X * (X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨33, by omega⟩, by show Y*Y*X*X*Y = X * (Y*X*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨34, by omega⟩, by show Y*Y*X*Y*Y = X * (Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨35, by omega⟩, by show Y*Y*Y*Y*Y = X * (Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨41, by omega⟩, by show X*Y*Y*X*X*Y = X * (Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨42, by omega⟩, by show X*Y*Y*X*Y*Y = X * (Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨43, by omega⟩, by show X*Y*Y*Y*Y*Y = X * (Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨46, by omega⟩, by show Y*X*X*Y*Y*Y = X * (X*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨47, by omega⟩, by show Y*X*Y*Y*Y*Y = X * (X*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨50, by omega⟩, by show X*X*X*Y*Y*X*X = X * (X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨51, by omega⟩, by show X*X*X*Y*Y*X*Y = X * (X*X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨52, by omega⟩, by show X*X*X*Y*Y*Y*Y = X * (X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨53, by omega⟩, by show X*X*Y*Y*X*X*Y = X * (X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨54, by omega⟩, by show X*X*Y*Y*X*Y*Y = X * (X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨55, by omega⟩, by show X*X*Y*Y*Y*Y*Y = X * (X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨48, by omega⟩, by show Y*Y*X*X*Y*Y = X * (Y*X*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨44, by omega⟩, by show Y*X*X*X*Y*Y = X * (Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨49, by omega⟩, by show Y*Y*X*Y*Y*Y = X * (Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨0, by omega⟩, by show (1:G) = X * (Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨56, by omega⟩, by show X*Y*Y*X*X*Y*Y = X * (Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨57, by omega⟩, by show X*Y*Y*X*Y*Y*Y = X * (Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨59, by omega⟩, by show Y*X*X*X*Y*Y*Y = X * (X*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨61, by omega⟩, by show Y*X*X*Y*Y*Y*Y = X * (X*X*X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨62, by omega⟩, by show Y*X*Y*Y*Y*Y*Y = X * (X*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨66, by omega⟩, by show X*X*X*Y*Y*X*X*Y = X * (X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨67, by omega⟩, by show X*X*X*Y*Y*X*Y*Y = X * (X*X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨68, by omega⟩, by show X*X*X*Y*Y*Y*Y*Y = X * (X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨69, by omega⟩, by show X*X*Y*Y*X*X*Y*Y = X * (X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨70, by omega⟩, by show X*X*Y*Y*X*Y*Y*Y = X * (X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨63, by omega⟩, by show Y*Y*X*X*Y*Y*X = X * (Y*X*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨64, by omega⟩, by show Y*Y*X*X*Y*Y*Y = X * (Y*X*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨58, by omega⟩, by show Y*X*X*X*Y*Y*X = X * (Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨65, by omega⟩, by show Y*Y*X*Y*Y*Y*Y = X * (Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨2, by omega⟩, by show Y = X * (Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨71, by omega⟩, by show X*Y*Y*X*X*Y*Y*X = X * (Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨72, by omega⟩, by show X*Y*Y*X*X*Y*Y*Y = X * (Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨73, by omega⟩, by show X*Y*Y*X*Y*Y*Y*Y = X * (Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨76, by omega⟩, by show Y*X*X*X*Y*Y*Y*Y = X * (X*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨78, by omega⟩, by show Y*X*X*Y*Y*Y*Y*Y = X * (X*X*X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨5, by omega⟩, by show Y*X = X * (X*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨82, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y = X * (X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨83, by omega⟩, by show X*X*X*Y*Y*X*Y*Y*Y = X * (X*X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨84, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*X = X * (X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨85, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*Y = X * (X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨86, by omega⟩, by show X*X*Y*Y*X*Y*Y*Y*Y = X * (X*Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨79, by omega⟩, by show Y*Y*X*X*Y*Y*X*X = X * (Y*X*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨74, by omega⟩, by show Y*X*X*X*Y*Y*X*X = X * (Y*X*X*X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨80, by omega⟩, by show Y*Y*X*X*Y*Y*Y*Y = X * (Y*X*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨75, by omega⟩, by show Y*X*X*X*Y*Y*X*Y = X * (Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨81, by omega⟩, by show Y*Y*X*Y*Y*Y*Y*Y = X * (Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨87, by omega⟩, by show X*Y*Y*X*X*Y*Y*X*X = X * (Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨88, by omega⟩, by show X*Y*Y*X*X*Y*Y*Y*Y = X * (Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨89, by omega⟩, by show X*Y*Y*X*Y*Y*Y*Y*Y = X * (Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨92, by omega⟩, by show Y*X*X*X*Y*Y*Y*Y*Y = X * (X*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨10, by omega⟩, by show Y*X*X = X * (X*X*X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨96, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*X = X * (X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨97, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*Y = X * (X*X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨98, by omega⟩, by show X*X*X*Y*Y*X*Y*Y*Y*Y = X * (X*X*Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨99, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*X*X = X * (X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨100, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*Y*Y = X * (X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨101, by omega⟩, by show X*X*Y*Y*X*Y*Y*Y*Y*Y = X * (X*Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨94, by omega⟩, by show Y*Y*X*X*Y*Y*X*X*Y = X * (Y*X*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨90, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y = X * (Y*X*X*X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨95, by omega⟩, by show Y*Y*X*X*Y*Y*Y*Y*Y = X * (Y*X*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨91, by omega⟩, by show Y*X*X*X*Y*Y*X*Y*Y = X * (Y*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨102, by omega⟩, by show X*Y*Y*X*X*Y*Y*X*X*Y = X * (Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨103, by omega⟩, by show X*Y*Y*X*X*Y*Y*Y*Y*Y = X * (Y*Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨105, by omega⟩, by show Y*X*X*X*Y*Y*X*Y*Y*Y = X * (X*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨18, by omega⟩, by show Y*X*X*X = X * (X*X*X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨19, by omega⟩, by show Y*X*X*Y = X * (X*X*X*Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨108, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*X*X = X * (X*X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨109, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*Y*Y = X * (X*X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨110, by omega⟩, by show X*X*X*Y*Y*X*Y*Y*Y*Y*Y = X * (X*X*Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨111, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*X*X*Y = X * (X*Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨112, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*Y*Y*Y = X * (X*Y*Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨107, by omega⟩, by show Y*Y*X*X*Y*Y*X*X*Y*Y = X * (Y*X*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨104, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y = X * (Y*X*X*X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨93, by omega⟩, by show Y*X*X*Y*Y*X*X*Y*Y = X * (Y*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨113, by omega⟩, by show X*Y*Y*X*X*Y*Y*X*X*Y*Y = X * (Y*Y*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨115, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y*Y = X * (X*X*X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨30, by omega⟩, by show Y*X*X*X*Y = X * (X*X*X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨31, by omega⟩, by show Y*X*X*Y*Y = X * (X*X*X*Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨118, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*X*X*Y = X * (X*X*Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨45, by omega⟩, by show Y*X*X*Y*Y*X = X * (X*X*Y*Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨60, by omega⟩, by show Y*X*X*Y*Y*X*X = X * (X*Y*Y*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨117, by omega⟩, by show Y*Y*X*X*Y*Y*X*X*Y*Y*X = X * (Y*X*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨114, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y*X = X * (Y*X*X*X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨106, by omega⟩, by show Y*X*X*Y*Y*X*X*Y*Y*X = X * (Y*X*X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨77, by omega⟩, by show Y*X*X*Y*Y*X*X*Y = X * (Y*Y*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨119, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y*Y*Y = X * (X*X*X*Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨116, by omega⟩, by show Y*X*X*Y*Y*X*X*Y*Y*X*X = X * (Y*X*X*X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+  · intro k
+    fin_cases k
+    · exact ⟨⟨2, by omega⟩, by show Y = Y * ((1:G)); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨5, by omega⟩, by show Y*X = Y * (X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨6, by omega⟩, by show Y*Y = Y * (Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨10, by omega⟩, by show Y*X*X = Y * (X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨11, by omega⟩, by show Y*X*Y = Y * (X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨12, by omega⟩, by show Y*Y*X = Y * (Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨13, by omega⟩, by show Y*Y*Y = Y * (Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨18, by omega⟩, by show Y*X*X*X = Y * (X*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨19, by omega⟩, by show Y*X*X*Y = Y * (X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨20, by omega⟩, by show Y*X*Y*Y = Y * (X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨21, by omega⟩, by show Y*Y*X*X = Y * (Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨22, by omega⟩, by show Y*Y*X*Y = Y * (Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨17, by omega⟩, by show X*Y*Y*Y = Y * (Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨23, by omega⟩, by show Y*Y*Y*Y = Y * (Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨30, by omega⟩, by show Y*X*X*X*Y = Y * (X*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨31, by omega⟩, by show Y*X*X*Y*Y = Y * (X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨24, by omega⟩, by show X*X*X*Y*Y = Y * (X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨32, by omega⟩, by show Y*X*Y*Y*Y = Y * (X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨28, by omega⟩, by show X*Y*Y*X*Y = Y * (Y*X*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨33, by omega⟩, by show Y*Y*X*X*Y = Y * (Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨34, by omega⟩, by show Y*Y*X*Y*Y = Y * (Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨26, by omega⟩, by show X*X*Y*Y*Y = Y * (Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨29, by omega⟩, by show X*Y*Y*Y*Y = Y * (Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨35, by omega⟩, by show Y*Y*Y*Y*Y = Y * (Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨44, by omega⟩, by show Y*X*X*X*Y*Y = Y * (X*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨45, by omega⟩, by show Y*X*X*Y*Y*X = Y * (X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨46, by omega⟩, by show Y*X*X*Y*Y*Y = Y * (X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨36, by omega⟩, by show X*X*X*Y*Y*X = Y * (X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨37, by omega⟩, by show X*X*X*Y*Y*Y = Y * (X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨47, by omega⟩, by show Y*X*Y*Y*Y*Y = Y * (X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨42, by omega⟩, by show X*Y*Y*X*Y*Y = Y * (Y*X*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨48, by omega⟩, by show Y*Y*X*X*Y*Y = Y * (Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨49, by omega⟩, by show Y*Y*X*Y*Y*Y = Y * (Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨40, by omega⟩, by show X*X*Y*Y*Y*Y = Y * (Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨43, by omega⟩, by show X*Y*Y*Y*Y*Y = Y * (Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨0, by omega⟩, by show (1:G) = Y * (Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨58, by omega⟩, by show Y*X*X*X*Y*Y*X = Y * (X*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨59, by omega⟩, by show Y*X*X*X*Y*Y*Y = Y * (X*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨60, by omega⟩, by show Y*X*X*Y*Y*X*X = Y * (X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨50, by omega⟩, by show X*X*X*Y*Y*X*X = Y * (X*X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨61, by omega⟩, by show Y*X*X*Y*Y*Y*Y = Y * (X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨51, by omega⟩, by show X*X*X*Y*Y*X*Y = Y * (X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨52, by omega⟩, by show X*X*X*Y*Y*Y*Y = Y * (X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨62, by omega⟩, by show Y*X*Y*Y*Y*Y*Y = Y * (X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨57, by omega⟩, by show X*Y*Y*X*Y*Y*Y = Y * (Y*X*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨63, by omega⟩, by show Y*Y*X*X*Y*Y*X = Y * (Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨64, by omega⟩, by show Y*Y*X*X*Y*Y*Y = Y * (Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨65, by omega⟩, by show Y*Y*X*Y*Y*Y*Y = Y * (Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨55, by omega⟩, by show X*X*Y*Y*Y*Y*Y = Y * (Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨1, by omega⟩, by show X = Y * (Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨74, by omega⟩, by show Y*X*X*X*Y*Y*X*X = Y * (X*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨75, by omega⟩, by show Y*X*X*X*Y*Y*X*Y = Y * (X*X*X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨76, by omega⟩, by show Y*X*X*X*Y*Y*Y*Y = Y * (X*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨77, by omega⟩, by show Y*X*X*Y*Y*X*X*Y = Y * (X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨66, by omega⟩, by show X*X*X*Y*Y*X*X*Y = Y * (X*X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨78, by omega⟩, by show Y*X*X*Y*Y*Y*Y*Y = Y * (X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨67, by omega⟩, by show X*X*X*Y*Y*X*Y*Y = Y * (X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨68, by omega⟩, by show X*X*X*Y*Y*Y*Y*Y = Y * (X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨72, by omega⟩, by show X*Y*Y*X*X*Y*Y*Y = Y * (Y*X*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨73, by omega⟩, by show X*Y*Y*X*Y*Y*Y*Y = Y * (Y*X*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨79, by omega⟩, by show Y*Y*X*X*Y*Y*X*X = Y * (Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨80, by omega⟩, by show Y*Y*X*X*Y*Y*Y*Y = Y * (Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨81, by omega⟩, by show Y*Y*X*Y*Y*Y*Y*Y = Y * (Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨70, by omega⟩, by show X*X*Y*Y*X*Y*Y*Y = Y * (Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨3, by omega⟩, by show X*X = Y * (Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨4, by omega⟩, by show X*Y = Y * (Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨90, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y = Y * (X*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨91, by omega⟩, by show Y*X*X*X*Y*Y*X*Y*Y = Y * (X*X*X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨92, by omega⟩, by show Y*X*X*X*Y*Y*Y*Y*Y = Y * (X*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨93, by omega⟩, by show Y*X*X*Y*Y*X*X*Y*Y = Y * (X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨82, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y = Y * (X*X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨69, by omega⟩, by show X*X*Y*Y*X*X*Y*Y = Y * (X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨83, by omega⟩, by show X*X*X*Y*Y*X*Y*Y*Y = Y * (X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨7, by omega⟩, by show X*X*X = Y * (X*Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨86, by omega⟩, by show X*X*Y*Y*X*Y*Y*Y*Y = Y * (Y*X*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨88, by omega⟩, by show X*Y*Y*X*X*Y*Y*Y*Y = Y * (Y*X*X*X*Y*Y*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨89, by omega⟩, by show X*Y*Y*X*Y*Y*Y*Y*Y = Y * (Y*X*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨94, by omega⟩, by show Y*Y*X*X*Y*Y*X*X*Y = Y * (Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨95, by omega⟩, by show Y*Y*X*X*Y*Y*Y*Y*Y = Y * (Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨85, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*Y = Y * (Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨8, by omega⟩, by show X*X*Y = Y * (Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨9, by omega⟩, by show X*Y*Y = Y * (Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨104, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y = Y * (X*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨105, by omega⟩, by show Y*X*X*X*Y*Y*X*Y*Y*Y = Y * (X*X*X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨106, by omega⟩, by show Y*X*X*Y*Y*X*X*Y*Y*X = Y * (X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨96, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*X = Y * (X*X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨97, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*Y = Y * (X*X*Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨84, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*X = Y * (X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨98, by omega⟩, by show X*X*X*Y*Y*X*Y*Y*Y*Y = Y * (X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨14, by omega⟩, by show X*X*X*Y = Y * (X*Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨101, by omega⟩, by show X*X*Y*Y*X*Y*Y*Y*Y*Y = Y * (Y*X*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨103, by omega⟩, by show X*Y*Y*X*X*Y*Y*Y*Y*Y = Y * (Y*X*X*X*Y*Y*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨16, by omega⟩, by show X*Y*Y*X = Y * (Y*X*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨107, by omega⟩, by show Y*Y*X*X*Y*Y*X*X*Y*Y = Y * (Y*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨100, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*Y*Y = Y * (Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨15, by omega⟩, by show X*X*Y*Y = Y * (Y*Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨114, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y*X = Y * (X*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨115, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y*Y = Y * (X*X*X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨108, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*X*X = Y * (X*X*X*Y*Y*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨116, by omega⟩, by show Y*X*X*Y*Y*X*X*Y*Y*X*X = Y * (X*X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨99, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*X*X = Y * (X*X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨109, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*Y*Y = Y * (X*X*Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨87, by omega⟩, by show X*Y*Y*X*X*Y*Y*X*X = Y * (X*Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨110, by omega⟩, by show X*X*X*Y*Y*X*Y*Y*Y*Y*Y = Y * (X*Y*Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨25, by omega⟩, by show X*X*Y*Y*X = Y * (Y*X*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨27, by omega⟩, by show X*Y*Y*X*X = Y * (Y*X*X*X*Y*Y*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨117, by omega⟩, by show Y*Y*X*X*Y*Y*X*X*Y*Y*X = Y * (Y*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨112, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*Y*Y*Y = Y * (Y*Y*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨41, by omega⟩, by show X*Y*Y*X*X*Y = Y * (X*X*X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨119, by omega⟩, by show Y*X*X*X*Y*Y*X*X*Y*Y*Y*Y = Y * (X*X*X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨118, by omega⟩, by show X*X*X*Y*Y*X*X*Y*Y*X*X*Y = Y * (X*X*X*Y*Y*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨71, by omega⟩, by show X*Y*Y*X*X*Y*Y*X = Y * (X*X*Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨111, by omega⟩, by show X*X*Y*Y*X*X*Y*Y*X*X*Y = Y * (X*X*Y*Y*X*X*Y*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨102, by omega⟩, by show X*Y*Y*X*X*Y*Y*X*X*Y = Y * (X*Y*Y*X*X*Y*Y*X*X*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨38, by omega⟩, by show X*X*Y*Y*X*X = Y * (Y*X*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨39, by omega⟩, by show X*X*Y*Y*X*Y = Y * (Y*X*X*X*Y*Y*X*X*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨53, by omega⟩, by show X*X*Y*Y*X*X*Y = Y * (Y*X*X*Y*Y*X*X*Y*Y*X*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨113, by omega⟩, by show X*Y*Y*X*X*Y*Y*X*X*Y*Y = Y * (Y*Y*X*X*Y*Y*X*X*Y*Y*X); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨56, by omega⟩, by show X*Y*Y*X*X*Y*Y = Y * (X*X*X*Y*Y*X*X*Y*Y*X*X*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+    · exact ⟨⟨54, by omega⟩, by show X*X*Y*Y*X*Y*Y = Y * (Y*X*X*X*Y*Y*X*X*Y*Y*Y*Y); simp only [mul_assoc, mul_one, one_mul, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]⟩
+
+namespace CaseVd2I
+
+
+inductive Sym | x | y
+deriving DecidableEq
+
+open Sym in
+def Rels : Set (FreeGroup Sym) :=
+  { FreeGroup.of x ^ 5 * ((FreeGroup.of y) ^ 3)⁻¹ } ∪
+  { FreeGroup.of x ^ 5 * ((FreeGroup.of x * FreeGroup.of y) ^ 2)⁻¹ }
+
+abbrev G2I := PresentedGroup Rels
+
+lemma x5_eq_y3 : (PresentedGroup.of Sym.x : G2I) ^ 5 = (PresentedGroup.of Sym.y) ^ 3 := by
+  have h : PresentedGroup.mk Rels
+      (FreeGroup.of Sym.x ^ 5 * ((FreeGroup.of Sym.y) ^ 3)⁻¹) = 1 :=
+    PresentedGroup.one_of_mem (Or.inl rfl)
+  rw [_root_.map_mul, _root_.map_pow, _root_.map_inv, _root_.map_pow] at h
+  exact mul_inv_eq_one.mp h
+
+lemma x5_eq_xy2 : (PresentedGroup.of Sym.x : G2I) ^ 5 =
+    (PresentedGroup.of Sym.x * PresentedGroup.of Sym.y) ^ 2 := by
+  have h : PresentedGroup.mk Rels
+      (FreeGroup.of Sym.x ^ 5 * ((FreeGroup.of Sym.x * FreeGroup.of Sym.y) ^ 2)⁻¹) = 1 :=
+    PresentedGroup.one_of_mem (Or.inr rfl)
+  rw [_root_.map_mul, _root_.map_pow, _root_.map_inv, _root_.map_pow, _root_.map_mul] at h
+  exact mul_inv_eq_one.mp h
+
+/-- **`2I` is finite with at most `120` elements** — the Todd-Coxeter bound
+`caseV_d_2I_bound_of_relations` applied to the presented group (whose generators generate, by
+`PresentedGroup.closure_range_of`). -/
+lemma finite_and_card_le : Finite G2I ∧ Nat.card G2I ≤ 120 := by
+  have hrange : Set.range (PresentedGroup.of : Sym → G2I)
+      = {PresentedGroup.of Sym.x, PresentedGroup.of Sym.y} := by
+    ext g
+    simp only [Set.mem_range, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨s, rfl⟩; cases s
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+    · rintro (rfl | rfl)
+      · exact ⟨Sym.x, rfl⟩
+      · exact ⟨Sym.y, rfl⟩
+  have hgen : Subgroup.closure ({PresentedGroup.of Sym.x,
+      PresentedGroup.of Sym.y} : Set G2I) = ⊤ := by
+    rw [← hrange]; exact PresentedGroup.closure_range_of Rels
+  exact caseV_d_2I_bound_of_relations _ _ x5_eq_y3 x5_eq_xy2 hgen
+
+
+/-- No proper subgroup of `A₅` contains elements of order `5` and `3`: its index would be
+`≤ 4`, and the (faithful, by simplicity) coset action would embed `A₅` (order `60`) into
+`Perm` of `≤ 4` points (order `≤ 24`). -/
+lemma closure_eq_top_of_orders (s t : alternatingGroup (Fin 5))
+    (hs5 : orderOf s = 5) (ht3 : orderOf t = 3) :
+    Subgroup.closure ({s, t} : Set (alternatingGroup (Fin 5))) = ⊤ := by
+  classical
+  set K := Subgroup.closure ({s, t} : Set (alternatingGroup (Fin 5))) with hKdef
+  have hA60 : Nat.card (alternatingGroup (Fin 5)) = 60 := by
+    rw [nat_card_alternatingGroup, Nat.card_eq_fintype_card, Fintype.card_fin]
+    norm_num [Nat.factorial]
+  have hsK : s ∈ K := Subgroup.subset_closure (Set.mem_insert _ _)
+  have htK : t ∈ K := Subgroup.subset_closure (Set.mem_insert_of_mem _ rfl)
+  have h5 : 5 ∣ Nat.card K := by
+    have hoc : orderOf (⟨s, hsK⟩ : K) = 5 := by
+      have htr : orderOf ((⟨s, hsK⟩ : K) : alternatingGroup (Fin 5)) =
+          orderOf (⟨s, hsK⟩ : K) := orderOf_coe _
+      rw [← htr]; exact hs5
+    have hdvd := orderOf_dvd_natCard (⟨s, hsK⟩ : K)
+    rwa [hoc] at hdvd
+  have h3 : 3 ∣ Nat.card K := by
+    have hoc : orderOf (⟨t, htK⟩ : K) = 3 := by
+      have htr : orderOf ((⟨t, htK⟩ : K) : alternatingGroup (Fin 5)) =
+          orderOf (⟨t, htK⟩ : K) := orderOf_coe _
+      rw [← htr]; exact ht3
+    have hdvd := orderOf_dvd_natCard (⟨t, htK⟩ : K)
+    rwa [hoc] at hdvd
+  have h15 : 15 ∣ Nat.card K := Nat.Coprime.mul_dvd_of_dvd_of_dvd (by norm_num) h3 h5
+  have hmul : Nat.card K * K.index = 60 := by
+    have h := Subgroup.card_mul_index K
+    rw [hA60] at h; exact h
+  have hidx : K.index = 1 ∨ K.index = 2 ∨ K.index = 4 := by
+    obtain ⟨m, hm⟩ := h15
+    have h4 : m * K.index = 4 := by
+      have h60 : 15 * (m * K.index) = 60 := by rw [← mul_assoc, ← hm]; exact hmul
+      omega
+    have hm4 : m ∣ 4 := ⟨K.index, h4.symm⟩
+    have hmpos : 0 < m := by
+      rcases Nat.eq_zero_or_pos m with rfl | h; · omega
+      · exact h
+    have hmle : m ≤ 4 := Nat.le_of_dvd (by norm_num) hm4
+    interval_cases m <;> omega
+  rcases hidx with h1 | hbad
+  · exact Subgroup.index_eq_one.mp h1
+  exfalso
+  have hKne : K ≠ ⊤ := by
+    intro h
+    rw [h, Subgroup.index_top] at hbad
+    omega
+  have hcore : K.normalCore = ⊥ := by
+    rcases IsSimpleGroup.eq_bot_or_eq_top_of_normal K.normalCore inferInstance with h | h
+    · exact h
+    · exact absurd (le_antisymm le_top (h ▸ Subgroup.normalCore_le K)) hKne
+  have hker : (MulAction.toPermHom (alternatingGroup (Fin 5))
+      (alternatingGroup (Fin 5) ⧸ K)).ker = ⊥ := by
+    rw [← Subgroup.normalCore_eq_ker]; exact hcore
+  have hinj : Function.Injective (MulAction.toPermHom (alternatingGroup (Fin 5))
+      (alternatingGroup (Fin 5) ⧸ K)) :=
+    (MulAction.toPermHom _ _).ker_eq_bot_iff.mp hker
+  have hle : Nat.card (alternatingGroup (Fin 5)) ≤
+      Nat.card (Equiv.Perm (alternatingGroup (Fin 5) ⧸ K)) :=
+    Nat.card_le_card_of_injective _ hinj
+  have hcards : Nat.card (Equiv.Perm (alternatingGroup (Fin 5) ⧸ K)) =
+      (K.index).factorial := by
+    rw [Nat.card_perm]; rfl
+  rw [hA60, hcards] at hle
+  rcases hbad with h | h <;> rw [h] at hle <;> norm_num [Nat.factorial] at hle
+
+lemma exists_gens : ∃ s t : alternatingGroup (Fin 5),
+    orderOf s = 5 ∧ orderOf t = 3 ∧ (s * t) ^ 2 = 1 ∧ s * t ≠ 1 ∧
+    Subgroup.closure ({s, t} : Set (alternatingGroup (Fin 5))) = ⊤ := by
+  haveI : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+  haveI : Fact (Nat.Prime 3) := ⟨by norm_num⟩
+  have hsmem : finRotate 5 ∈ alternatingGroup (Fin 5) := by
+    rw [Equiv.Perm.mem_alternatingGroup]; decide
+  have htmem : (finRotate 5)⁻¹ * (Equiv.swap 0 1 * Equiv.swap 3 4) ∈
+      alternatingGroup (Fin 5) := by
+    rw [Equiv.Perm.mem_alternatingGroup]; decide
+  have hs5 : orderOf (⟨finRotate 5, hsmem⟩ : alternatingGroup (Fin 5)) = 5 := by
+    refine orderOf_eq_prime (Subtype.ext ?_) (fun h => ?_)
+    · show (finRotate 5) ^ 5 = 1; decide
+    · have h' : finRotate 5 = 1 := congrArg Subtype.val h
+      exact absurd h' (by decide)
+  have ht3 : orderOf (⟨(finRotate 5)⁻¹ * (Equiv.swap 0 1 * Equiv.swap 3 4), htmem⟩ :
+      alternatingGroup (Fin 5)) = 3 := by
+    refine orderOf_eq_prime (Subtype.ext ?_) (fun h => ?_)
+    · show ((finRotate 5)⁻¹ * (Equiv.swap 0 1 * Equiv.swap 3 4)) ^ 3 = 1; decide
+    · have h' : (finRotate 5)⁻¹ * (Equiv.swap 0 1 * Equiv.swap 3 4) = 1 :=
+        congrArg Subtype.val h
+      exact absurd h' (by decide)
+  refine ⟨⟨finRotate 5, hsmem⟩,
+    ⟨(finRotate 5)⁻¹ * (Equiv.swap 0 1 * Equiv.swap 3 4), htmem⟩, hs5, ht3, ?_, ?_, ?_⟩
+  · refine Subtype.ext ?_
+    show (finRotate 5 * ((finRotate 5)⁻¹ * (Equiv.swap 0 1 * Equiv.swap 3 4))) ^ 2 = 1
+    decide
+  · intro h
+    have h' : finRotate 5 * ((finRotate 5)⁻¹ * (Equiv.swap 0 1 * Equiv.swap 3 4)) = 1 :=
+      congrArg Subtype.val h
+    exact absurd h' (by decide)
+  · exact closure_eq_top_of_orders _ _ hs5 ht3
+
+/-- Every element of a central order-2 subgroup (generated by the involution `τ`) is `1` or `τ`. -/
+lemma mem_center_two {H : Type*} [Group H] [Finite H] {τ : H} (hτ2 : τ ^ 2 = 1)
+    (hc2 : Nat.card (center H) = 2) (hτc : τ ∈ center H) (hτ1 : τ ≠ 1) :
+    ∀ w : H, w ∈ center H → w = 1 ∨ w = τ := by
+  intro w hw
+  set c : center H := ⟨w, hw⟩ with hc
+  set d : center H := ⟨τ, hτc⟩ with hd
+  have hd1 : d ≠ 1 := fun h => hτ1 (Subtype.ext_iff.mp h)
+  have hd2 : d ^ 2 = 1 := Subtype.ext (by simpa using hτ2)
+  have hdord : orderOf d = 2 := by
+    have hdvd : orderOf d ∣ 2 := by rw [← hc2]; exact orderOf_dvd_natCard d
+    have hne : orderOf d ≠ 1 := by rw [Ne, orderOf_eq_one_iff]; exact hd1
+    rcases (Nat.prime_two).eq_one_or_self_of_dvd _ hdvd with h | h
+    · exact absurd h hne
+    · exact h
+  have htop : zpowers d = ⊤ := by
+    apply Subgroup.eq_top_of_card_eq
+    rw [Nat.card_zpowers, hdord, hc2]
+  have hcd : c ∈ zpowers d := htop ▸ Subgroup.mem_top c
+  rcases Ch7GroupRecognition.binaryOctahedral_mem_zpowers_involution hd2 c hcd with h | h
+  · left; exact Subtype.ext_iff.mp h
+  · right; exact Subtype.ext_iff.mp h
+
+/-- **Shared recognition core.** A finite group `H` of order `120` with a unique involution and
+central quotient `≃* A₅` is `≃* 2I`. -/
+theorem recognition {H : Type*} [Group H] [Finite H] (hcard : Nat.card H = 120)
+    (hinv : ∃! τ : H, orderOf τ = 2) (e : H ⧸ center H ≃* alternatingGroup (Fin 5)) :
+    ∃ φ : G2I →* H, Function.Bijective φ ∧
+      orderOf (φ ((PresentedGroup.of Sym.x : G2I) ^ 5)) = 2 := by
+  classical
+  obtain ⟨s, t, hs5, ht3, hst2, hst1, hclosure⟩ := exists_gens
+  -- involution data
+  obtain ⟨τ, hτ2', hτu⟩ := hinv
+  have hτne1 : τ ≠ 1 := by intro h; rw [h, orderOf_one] at hτ2'; exact absurd hτ2' (by norm_num)
+  have hτsq : τ ^ 2 = 1 := by rw [← hτ2']; exact pow_orderOf_eq_one τ
+  have huniq2 : ∀ g : H, g ^ 2 = 1 → g ≠ 1 → g = τ := fun g hg2 hg1 =>
+    hτu g (orderOf_eq_prime hg2 hg1)
+  have hτC : τ ∈ center H := Ch7GroupRecognition.isCentral_of_unique_involution hτsq hτne1 huniq2
+  -- |center H| = 2
+  have hA5card : Nat.card (alternatingGroup (Fin 5)) = 60 := by
+    rw [nat_card_alternatingGroup, Nat.card_eq_fintype_card, Fintype.card_fin]
+    norm_num [Nat.factorial]
+  have h60 : Nat.card (H ⧸ center H) = 60 := by
+    rw [Nat.card_congr e.toEquiv, hA5card]
+  have hc2 : Nat.card (center H) = 2 := by
+    have hmul : Nat.card (center H) * Nat.card (H ⧸ center H) = 120 := by
+      have h := Subgroup.card_mul_index (center H); rw [hcard] at h; exact h
+    rw [h60] at hmul; omega
+  have hzmem : ∀ w : H, w ∈ center H → w = 1 ∨ w = τ := mem_center_two hτsq hc2 hτC hτne1
+  -- projection π
+  let π : H →* alternatingGroup (Fin 5) := e.toMonoidHom.comp (QuotientGroup.mk' (center H))
+  have hπ_apply : ∀ g : H, π g = e (QuotientGroup.mk g) := fun _ => rfl
+  have hπ_surj : Function.Surjective π := by
+    intro w
+    obtain ⟨q, hq⟩ := e.surjective w
+    obtain ⟨g, hg⟩ := QuotientGroup.mk'_surjective (center H) q
+    exact ⟨g, by rw [hπ_apply, ← hq]; exact congrArg e hg⟩
+  have hker : ∀ w : H, π w = 1 ↔ w ∈ center H := by
+    intro w
+    rw [hπ_apply, ← QuotientGroup.eq_one_iff (N := center H) w]
+    exact e.map_eq_one_iff
+  have hπτ : π τ = 1 := (hker τ).mpr hτC
+  have hτcomm : ∀ g : H, g * τ = τ * g := fun g => Subgroup.mem_center_iff.mp hτC g
+  -- lift generators
+  obtain ⟨x₀, hx₀⟩ := hπ_surj s
+  obtain ⟨y₀, hy₀⟩ := hπ_surj t
+  -- pin x₁^5 = τ
+  have hτ5 : τ ^ 5 = τ := by
+    rw [show (5:ℕ) = 2*2+1 from rfl, pow_add, pow_mul, hτsq, one_pow, one_mul, pow_one]
+  obtain ⟨x₁, hx₁π, hx15⟩ : ∃ x₁ : H, π x₁ = s ∧ x₁ ^ 5 = τ := by
+    have hpows : s ^ 5 = 1 := by
+      have hpow := pow_orderOf_eq_one s; rw [hs5] at hpow; exact hpow
+    have hmem : x₀ ^ 5 ∈ center H := by rw [← hker, _root_.map_pow, hx₀]; exact hpows
+    rcases hzmem _ hmem with h1 | hz'
+    · refine ⟨x₀ * τ, by rw [_root_.map_mul, hx₀, hπτ, mul_one], ?_⟩
+      have hc : Commute x₀ τ := hτcomm x₀
+      rw [hc.mul_pow, h1, one_mul, hτ5]
+    · exact ⟨x₀, hx₀, hz'⟩
+  -- pin y₁^3 = τ
+  have hτ3 : τ ^ 3 = τ := by
+    rw [show (3:ℕ) = 2+1 from rfl, pow_add, hτsq, one_mul, pow_one]
+  obtain ⟨y₁, hy₁π, hy13⟩ : ∃ y₁ : H, π y₁ = t ∧ y₁ ^ 3 = τ := by
+    have hpowt : t ^ 3 = 1 := by
+      have hpow := pow_orderOf_eq_one t; rw [ht3] at hpow; exact hpow
+    have hmem : y₀ ^ 3 ∈ center H := by rw [← hker, _root_.map_pow, hy₀]; exact hpowt
+    rcases hzmem _ hmem with h1 | hz'
+    · refine ⟨y₀ * τ, by rw [_root_.map_mul, hy₀, hπτ, mul_one], ?_⟩
+      have hc : Commute y₀ τ := hτcomm y₀
+      rw [hc.mul_pow, h1, one_mul, hτ3]
+    · exact ⟨y₀, hy₀, hz'⟩
+  -- pin (x₁ y₁)^2 = τ
+  have hxy2 : (x₁ * y₁) ^ 2 = τ := by
+    have hmem : (x₁ * y₁) ^ 2 ∈ center H := by
+      rw [← hker, _root_.map_pow, _root_.map_mul, hx₁π, hy₁π, hst2]
+    rcases hzmem _ hmem with h1 | hz'
+    · exfalso
+      -- x₁ y₁ would be an involution, and π (x₁ y₁) = s*t ≠ 1
+      have hne : x₁ * y₁ ≠ 1 := by
+        intro h; apply hst1; rw [← hx₁π, ← hy₁π, ← _root_.map_mul, h, _root_.map_one]
+      have hneτ : x₁ * y₁ ≠ τ := by
+        intro h; apply hst1
+        rw [← hx₁π, ← hy₁π, ← _root_.map_mul, h, hπτ]
+      have := huniq2 (x₁ * y₁) h1 hne
+      exact hneτ this
+    · exact hz'
+  -- build φ : G2I → H
+  let gens : Sym → H := fun v => match v with | .x => x₁ | .y => y₁
+  have hrels : ∀ r ∈ Rels, FreeGroup.lift gens r = 1 := by
+    intro r hr
+    simp only [Rels, Set.mem_union, Set.mem_singleton_iff] at hr
+    rcases hr with rfl | rfl
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of]
+      show x₁ ^ 5 * (y₁ ^ 3)⁻¹ = 1
+      rw [hx15, hy13, mul_inv_cancel]
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of]
+      show x₁ ^ 5 * ((x₁ * y₁) ^ 2)⁻¹ = 1
+      rw [hx15, hxy2, mul_inv_cancel]
+  let φ : G2I →* H := PresentedGroup.toGroup hrels
+  have hφx : φ (PresentedGroup.of Sym.x) = x₁ := PresentedGroup.toGroup.of hrels
+  have hφy : φ (PresentedGroup.of Sym.y) = y₁ := PresentedGroup.toGroup.of hrels
+  -- surjectivity
+  have hx₁mem : x₁ ∈ φ.range := ⟨PresentedGroup.of Sym.x, hφx⟩
+  have hy₁mem : y₁ ∈ φ.range := ⟨PresentedGroup.of Sym.y, hφy⟩
+  have hτmem : τ ∈ φ.range := by rw [← hx15]; exact pow_mem hx₁mem 5
+  have hrange_top : φ.range = ⊤ := by
+    rw [eq_top_iff]
+    intro g _
+    have hmap : Subgroup.map π φ.range = ⊤ := by
+      rw [eq_top_iff, ← hclosure, Subgroup.closure_le]
+      rintro w (rfl | rfl)
+      · exact ⟨x₁, hx₁mem, hx₁π⟩
+      · exact ⟨y₁, hy₁mem, hy₁π⟩
+    have hπg : π g ∈ Subgroup.map π φ.range := by rw [hmap]; exact Subgroup.mem_top _
+    obtain ⟨h, hh, hhg⟩ := Subgroup.mem_map.mp hπg
+    have hkerg : h⁻¹ * g ∈ center H := by rw [← hker, _root_.map_mul, _root_.map_inv, hhg, inv_mul_cancel]
+    have hg : g = h * (h⁻¹ * g) := by group
+    rw [hg]; refine Subgroup.mul_mem _ hh ?_
+    rcases hzmem _ hkerg with h1 | hz'
+    · rw [h1]; exact Subgroup.one_mem _
+    · rw [hz']; exact hτmem
+  have hφ_surj : Function.Surjective φ := MonoidHom.range_eq_top.mp hrange_top
+  -- cardinality
+  obtain ⟨hfin, hle⟩ := finite_and_card_le
+  haveI := hfin
+  have hge : 120 ≤ Nat.card G2I := by rw [← hcard]; exact Nat.card_le_card_of_surjective φ hφ_surj
+  have hbij : Function.Bijective φ :=
+    (Nat.bijective_iff_surjective_and_card φ).mpr ⟨hφ_surj, by rw [le_antisymm hle hge, hcard]⟩
+  refine ⟨φ, hbij, ?_⟩
+  rw [_root_.map_pow, hφx, hx15]
+  exact hτ2'
+
+set_option maxRecDepth 40000 in
+/-- `|SL(2, ZMod 5)| = 120` (local copy of `pgl_descent_card_SL2_ZMod5`, which appears later
+in the file than the Case Vd region and therefore cannot be referenced here). -/
+lemma card_SL2 : Nat.card SL(2, ZMod 5) = 120 := by
+  letI : Fintype SL(2, ZMod 5) := Subtype.fintype _
+  rw [Nat.card_eq_fintype_card]; decide
+
+/-- In a group of order `120` with a unique involution `τ` and central quotient `A₅`, every
+nontrivial normal subgroup contains `τ`: if `2 ∣ |N|` this is Cauchy plus uniqueness; otherwise
+`|N|` is odd, so `N` meets the (order-`2`) center trivially and injects into the simple `A₅`
+as a proper (odd order `≤ 15 < 60`) normal subgroup, forcing `N = ⊥`. -/
+lemma normal_contains_involution {H : Type*} [Group H] [Finite H]
+    (hcard : Nat.card H = 120) (hinv : ∃! τ : H, orderOf τ = 2)
+    (e : H ⧸ center H ≃* alternatingGroup (Fin 5))
+    (N : Subgroup H) [hNn : N.Normal] (hN : N ≠ ⊥) {τ : H} (hτ : orderOf τ = 2) :
+    τ ∈ N := by
+  classical
+  obtain ⟨τ₀, hτ₀, hτu⟩ := hinv
+  have hττ₀ : τ = τ₀ := hτu τ hτ
+  by_cases h2 : 2 ∣ Nat.card N
+  · haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+    obtain ⟨n, hn⟩ := exists_prime_orderOf_dvd_card' (G := N) 2 h2
+    have hcoe : orderOf (n : H) = 2 := by rw [orderOf_coe]; exact hn
+    have : (n : H) = τ := by rw [hττ₀]; exact hτu _ hcoe
+    rw [← this]; exact n.2
+  · exfalso
+    -- τ basics
+    have hτne1 : τ ≠ 1 := by
+      intro h; rw [h, orderOf_one] at hτ; exact absurd hτ (by norm_num)
+    have hτsq : τ ^ 2 = 1 := by rw [← hτ]; exact pow_orderOf_eq_one τ
+    have huniq2 : ∀ g : H, g ^ 2 = 1 → g ≠ 1 → g = τ := fun g hg2 hg1 => by
+      rw [hττ₀]; exact hτu g (orderOf_eq_prime hg2 hg1)
+    have hτC : τ ∈ center H :=
+      Ch7GroupRecognition.isCentral_of_unique_involution hτsq hτne1 huniq2
+    have hA5card : Nat.card (alternatingGroup (Fin 5)) = 60 := by
+      rw [nat_card_alternatingGroup, Nat.card_eq_fintype_card, Fintype.card_fin]
+      norm_num [Nat.factorial]
+    have hc2 : Nat.card (center H) = 2 := by
+      have h60 : Nat.card (H ⧸ center H) = 60 := by rw [Nat.card_congr e.toEquiv, hA5card]
+      have hmul : Nat.card (center H) * Nat.card (H ⧸ center H) = 120 := by
+        have h := Subgroup.card_mul_index (center H); rw [hcard] at h; exact h
+      rw [h60] at hmul; omega
+    have hzmem : ∀ w : H, w ∈ center H → w = 1 ∨ w = τ := mem_center_two hτsq hc2 hτC hτne1
+    -- τ ∉ N (else 2 ∣ |N|)
+    have hτN : τ ∉ N := by
+      intro hmem
+      apply h2
+      have hoc : orderOf (⟨τ, hmem⟩ : N) = 2 := by
+        have htr : orderOf ((⟨τ, hmem⟩ : N) : H) = orderOf (⟨τ, hmem⟩ : N) := orderOf_coe _
+        rw [← htr]; exact hτ
+      rw [← hoc]; exact orderOf_dvd_natCard _
+    -- push N into A₅
+    set π : H →* H ⧸ center H := QuotientGroup.mk' (center H) with hπdef
+    have hπsurj : Function.Surjective π := QuotientGroup.mk'_surjective _
+    set M : Subgroup (H ⧸ center H) := N.map π with hMdef
+    haveI hMn : M.Normal := Subgroup.Normal.map hNn π hπsurj
+    set M2 : Subgroup (alternatingGroup (Fin 5)) := M.map e.toMonoidHom with hM2def
+    haveI hM2n : M2.Normal := Subgroup.Normal.map hMn e.toMonoidHom e.surjective
+    rcases IsSimpleGroup.eq_bot_or_eq_top_of_normal M2 hM2n with hbot | htop
+    · -- N ≤ center, but N ∩ {1, τ} = {1}: N = ⊥
+      have hM : M = ⊥ := by
+        have hle : M ≤ e.toMonoidHom.ker := (Subgroup.map_eq_bot_iff _).mp hbot
+        have hek : e.toMonoidHom.ker = ⊥ := e.toMonoidHom.ker_eq_bot_iff.mpr e.injective
+        rw [hek] at hle
+        exact le_bot_iff.mp hle
+      have hNle : N ≤ center H := by
+        have hle : N ≤ π.ker := (Subgroup.map_eq_bot_iff _).mp hM
+        rwa [hπdef, QuotientGroup.ker_mk'] at hle
+      apply hN
+      rw [eq_bot_iff]
+      intro n hn
+      rcases hzmem n (hNle hn) with h1 | hτeq
+      · rw [h1]; exact Subgroup.one_mem ⊥
+      · exact absurd (hτeq ▸ hn) hτN
+    · -- |M2| = 60 ≤ |N| ≤ 15
+      have hM2card : Nat.card M2 = 60 := by
+        rw [htop, ← hA5card]
+        exact Subgroup.card_top
+      have hle2 : Nat.card M2 ≤ Nat.card M :=
+        Nat.card_le_card_of_surjective _ (e.toMonoidHom.subgroupMap_surjective M)
+      have hle1 : Nat.card M ≤ Nat.card N :=
+        Nat.card_le_card_of_surjective _ (π.subgroupMap_surjective N)
+      have hdvd : Nat.card N ∣ 120 := hcard ▸ Subgroup.card_subgroup_dvd_card N
+      have hodd : ¬ 2 ∣ Nat.card N := h2
+      have hcop : (Nat.card N).Coprime 8 := by
+        have h2' : (Nat.card N).Coprime 2 :=
+          ((Nat.prime_two.coprime_iff_not_dvd).mpr hodd).symm
+        have h8 := h2'.pow_right 3
+        norm_num at h8
+        exact h8
+      have h15 : Nat.card N ∣ 15 := by
+        refine hcop.dvd_of_dvd_mul_right ?_
+        have : (15 : ℕ) * 8 = 120 := by norm_num
+        rw [this]; exact hdvd
+      have hle15 : Nat.card N ≤ 15 := Nat.le_of_dvd (by norm_num) h15
+      omega
+
+open Matrix MatrixGroups in
+/-- A `⟨5,3,2⟩` generator: `X₅⁵ = Y₅³ = (X₅Y₅)² = -1` in `SL(2, ZMod 5)` (all `decide`d). -/
+private def X₅ : SL(2, ZMod 5) := ⟨!![0, 1; 4, 3], by decide⟩
+
+open Matrix MatrixGroups in
+/-- See `X₅`. -/
+private def Y₅ : SL(2, ZMod 5) := ⟨!![0, 4; 1, 1], by decide⟩
+
+private lemma X₅_rel1 : X₅ ^ 5 * (Y₅ ^ 3)⁻¹ = 1 := by decide
+
+private lemma X₅_rel2 : X₅ ^ 5 * ((X₅ * Y₅) ^ 2)⁻¹ = 1 := by decide
+
+private lemma X₅_pow5_ne : X₅ ^ 5 ≠ 1 := by decide
+
+/-- **Schur-cover endgame (Case Vd/VIc).** `recognition` gives a bijective `φ : 2I →* H`
+carrying the (unique) involution `x⁵` of `2I` to that of `H`; the concrete matrices
+`X₀ = !![0,1;4,3]`, `Y₀ = !![0,4;1,1]` in `SL(2, ZMod 5)` satisfy the `⟨5,3,2⟩` relations, so
+the universal property gives `ψ : 2I →* SL(2,5)`. The composite `H →* SL(2, ZMod 5)` kills no
+nontrivial normal subgroup (any such contains the involution `τ`, whose image is `X₀⁵ = -1 ≠ 1`
+by `normal_contains_involution`), hence is injective, hence bijective by cardinality. -/
+
+theorem schur_cover {H : Type*} [Group H] [Finite H] (hcard : Nat.card H = 120)
+    (hinv : ∃! τ : H, orderOf τ = 2)
+    (e : H ⧸ center H ≃* alternatingGroup (Fin 5)) :
+    Nonempty (H ≃* SL(2, ZMod 5)) := by
+  classical
+  obtain ⟨φ, hφbij, hφord⟩ := recognition hcard hinv e
+  obtain ⟨τ, hτ2, hτu⟩ := hinv
+  have hφτ : φ ((PresentedGroup.of Sym.x : G2I) ^ 5) = τ := hτu _ hφord
+  let gens : Sym → SL(2, ZMod 5) := fun s => match s with | .x => X₅ | .y => Y₅
+  have hrels : ∀ r ∈ Rels, FreeGroup.lift gens r = 1 := by
+    intro r hr
+    simp only [Rels, Set.mem_union, Set.mem_singleton_iff] at hr
+    rcases hr with rfl | rfl
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of]
+      exact X₅_rel1
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of]
+      exact X₅_rel2
+  let ψ : G2I →* SL(2, ZMod 5) := PresentedGroup.toGroup hrels
+  have hψx : ψ (PresentedGroup.of Sym.x) = X₅ := PresentedGroup.toGroup.of hrels
+  let Φ : G2I ≃* H := MulEquiv.ofBijective φ hφbij
+  let η : H →* SL(2, ZMod 5) := ψ.comp Φ.symm.toMonoidHom
+  have hΦτ : Φ.symm τ = (PresentedGroup.of Sym.x : G2I) ^ 5 := by
+    apply Φ.injective
+    rw [MulEquiv.apply_symm_apply]
+    exact hφτ.symm
+  have hητ : η τ = X₅ ^ 5 := by
+    show ψ (Φ.symm τ) = X₅ ^ 5
+    rw [hΦτ, _root_.map_pow, hψx]
+  have hker : η.ker = ⊥ := by
+    by_contra hne
+    have hτker : τ ∈ η.ker :=
+      normal_contains_involution hcard ⟨τ, hτ2, hτu⟩ e η.ker hne hτ2
+    have h1 : η τ = 1 := η.mem_ker.mp hτker
+    rw [hητ] at h1
+    exact X₅_pow5_ne h1
+  have hinj : Function.Injective η := η.ker_eq_bot_iff.mp hker
+  have hbij : Function.Bijective η :=
+    (Nat.bijective_iff_injective_and_card η).mpr ⟨hinj, by rw [hcard, card_SL2]⟩
+  exact ⟨MulEquiv.ofBijective η hbij⟩
+
+end CaseVd2I
