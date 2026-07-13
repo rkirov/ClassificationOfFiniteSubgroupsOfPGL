@@ -1,5 +1,7 @@
 # Classification of finite subgroups of $\textrm{PGL}_2(\bar{\mathbb{F}}_p)$
 
+[![Comparator verification](../../actions/workflows/verify.yml/badge.svg)](../../actions/workflows/verify.yml)
+
 **Status: the formalization is complete and sorry-free.** The three final theorems
 (`dicksons_classification_theorem_class_I`, `dicksons_classification_theorem_class_II`,
 `FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod`) are machine-verified with
