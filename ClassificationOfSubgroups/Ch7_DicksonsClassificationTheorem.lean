@@ -5310,6 +5310,59 @@ lemma caseV_geo_shear_eq_conj_antidiag_of_L [DecidableEq F] {N : Subgroup SL(2,F
     rw [heq]; exact caseV_geo_conj_antidiag_upperTri rho n hnL
   simpa [s] using h10
 
+/-- Step-3 covering count core (tex 2013-2022): with `N ≤ L` (lower-triangular) and `Q ≤ S`
+(lower shears), the parametrisation `(n, q) ↦ n · (d_ρ w) · q` of the double coset `N (d_ρ w) Q`
+is injective on `N × Q` — the trivial-intersection `[Q : Q ∩ y⁻¹ N y] = |Q|` recast as the
+bijection `N × Q ≃ N (d_ρ w) Q`. -/
+lemma caseV_geo_doset_injective [DecidableEq F] {N Q : Subgroup SL(2,F)}
+    (hN : N ≤ SpecialSubgroups.L F) (hQ : Q ≤ SpecialSubgroups.S F) (rho : Fˣ) :
+    Function.Injective
+      (fun nq : N × Q => (nq.1 : SL(2,F)) * (d rho * w) * (nq.2 : SL(2,F))) := by
+  rintro ⟨n₁, q₁⟩ ⟨n₂, q₂⟩ h
+  simp only at h
+  set y : SL(2,F) := d rho * w with hy
+  have hq2 : (q₂ : SL(2,F))
+      = ((n₂ : SL(2,F)) * y)⁻¹ * ((n₁ : SL(2,F)) * y * (q₁ : SL(2,F))) := by
+    rw [h]; group
+  have hconj : (q₂ : SL(2,F)) * (q₁ : SL(2,F))⁻¹
+      = y⁻¹ * ((n₂ : SL(2,F))⁻¹ * (n₁ : SL(2,F))) * y := by
+    rw [hq2]; group
+  obtain ⟨σ, hσ⟩ := hQ (mul_mem q₂.2 (inv_mem q₁.2))
+  have hnN : (n₂ : SL(2,F))⁻¹ * (n₁ : SL(2,F)) ∈ N := mul_mem (inv_mem n₂.2) n₁.2
+  have heq : s σ = y⁻¹ * ((n₂ : SL(2,F))⁻¹ * (n₁ : SL(2,F))) * y := by rw [hσ, hconj]
+  have hσ0 : σ = 0 := caseV_geo_shear_eq_conj_antidiag_of_L hN rho hnN heq
+  have hq21 : (q₂ : SL(2,F)) * (q₁ : SL(2,F))⁻¹ = 1 := by rw [← hσ, hσ0, s_zero_eq_one]
+  have hqeq : (q₁ : SL(2,F)) = (q₂ : SL(2,F)) := (mul_inv_eq_one.mp hq21).symm
+  have hneq : (n₁ : SL(2,F)) = (n₂ : SL(2,F)) := by
+    have h' : (n₁ : SL(2,F)) * y = (n₂ : SL(2,F)) * y := by
+      rw [hy] at h ⊢; rw [← hqeq] at h; exact mul_right_cancel h
+    exact mul_right_cancel h'
+  exact Prod.ext (Subtype.ext hneq) (Subtype.ext hqeq)
+
+/-- Step-3 covering count (tex `gsplit`, covering half): with `N ≤ L`, `Q ≤ S` finite, the double
+coset `N (d_ρ w) Q` has exactly `|N|·|Q|` elements. Together with the disjointness
+`caseV_geo_doset_disjoint_L` and `(|Q|+1)·|N| = |G̃|`, this yields Butler's partition
+`G̃ = N ⊍ N (d_ρ w) Q`. -/
+lemma caseV_geo_doset_ncard [DecidableEq F] {N Q : Subgroup SL(2,F)}
+    [Finite ↥N] [Finite ↥Q]
+    (hN : N ≤ SpecialSubgroups.L F) (hQ : Q ≤ SpecialSubgroups.S F) (rho : Fˣ) :
+    (DoubleCoset.doubleCoset (d rho * w) (N : Set SL(2,F)) (Q : Set SL(2,F))).ncard
+      = Nat.card ↥N * Nat.card ↥Q := by
+  classical
+  set f : ↥N × ↥Q → SL(2,F) :=
+    fun nq => (nq.1 : SL(2,F)) * (d rho * w) * (nq.2 : SL(2,F)) with hf
+  have hfinj : Function.Injective f := caseV_geo_doset_injective hN hQ rho
+  have hrange : Set.range f
+      = DoubleCoset.doubleCoset (d rho * w) (N : Set SL(2,F)) (Q : Set SL(2,F)) := by
+    ext x
+    simp only [Set.mem_range, DoubleCoset.mem_doubleCoset, hf]
+    constructor
+    · rintro ⟨⟨n, q⟩, rfl⟩
+      exact ⟨n, n.2, q, q.2, rfl⟩
+    · rintro ⟨n', hn', q', hq', rfl⟩
+      exact ⟨(⟨n', hn'⟩, ⟨q', hq'⟩), rfl⟩
+  rw [← hrange, Set.ncard_range_of_injective hfinj, Nat.card_prod]
+
 end CaseVGeo
 
 /- ==========================================================================================
@@ -7689,9 +7742,9 @@ back along the 2-to-1 covering `SL(2, F̄_p) → PGL(2, F̄_p)` (surjective with
 `center SL(2,F̄_p) = {±1}` since `F̄_p` is algebraically closed,
 `Ch4_PGLIsoPSLOverAlgClosedField`) and pushing each disjunct of the `SL₂`-classification of the
 pullback down through the quotient by the order-`2` kernel. The `pgl_descent_*` lemmas below are
-the per-disjunct quotient identifications; two genuinely missing recognition facts remain
-isolated as documented `sorry`s (`pgl_descent_binaryOctahedral_quotient`,
-`pgl_descent_SL2_join_d_quotient`); `pgl_descent_PSL2_ZMod3_iso_alternating` and
+the per-disjunct quotient identifications, all fully proven -- including
+`pgl_descent_binaryOctahedral_quotient` (`2O/{±1} ≅ S₄`, Wave 25) and
+`pgl_descent_SL2_join_d_quotient` (Wave 24); `pgl_descent_PSL2_ZMod3_iso_alternating` and
 `pgl_descent_PSL2_ZMod5_iso_alternating` are fully proven (Waves 18/20). -/
 
 /-- In a field of characteristic `p ≠ 2`, `2 ≠ 0`. -/
@@ -8317,15 +8370,126 @@ lemma pgl_descent_SL2_ZMod5_quotient (W : Subgroup SL(2, ZMod 5)) [W.Normal]
 
 /-- The binary octahedral group `2O = Ŝ₄` modulo its order-`2` (necessarily central, by
 uniqueness of the involution) subgroup is `S₄` (feeds Class I item (v) through the descent;
-tex ~2173-2201, Butler's Case VIb, proves the `SL₂`-side counterpart `G/Z ≅ S₄`). Missing
-infrastructure: `Ch7GroupRecognition.mulEquiv_of_card48_uniqueInvolution_quotientS4` goes the
-*other* way (a card-48 group with unique involution and quotient `S₄` is `≅ 2O`); the forward
-facts (`|2O| = 48`, unique involution, `2O ⧸ ⟨z⟩ ≃* S₄`) about the `PresentedGroup` are not
-yet formalized. Sorried pending those. -/
+tex ~2173-2201, Butler's Case VIb, proves the `SL₂`-side counterpart `G/Z ≅ S₄`). Proof: the
+concrete `S₄`-generators `s, t` of `binaryOctahedral_exists_generators` satisfy the `2O`-relations
+`s⁴ = t³ = (st)² = 1`, so `PresentedGroup.toGroup` yields a surjection `ψ : 2O → S₄` (its range
+contains the generating pair `{s, t}`). The order-`2` normal `W = ⟨w₀⟩` is central (a conjugate of
+`w₀` stays in `W` and is `≠ 1`, hence `= w₀`), so `ψ w₀` is a central element of `S₄`, forcing
+`ψ w₀ = 1` (`Z(S₄) = ⊥`, decided). Thus `W ≤ ker ψ`, `ψ` factors through `2O ⧸ W`, and
+`|2O ⧸ W| = |2O|/2 ≤ 24 = |S₄|` (using `binaryOctahedral_finite_and_card_le`) with the induced
+surjection upgrades to a bijection. -/
 lemma pgl_descent_binaryOctahedral_quotient (W : Subgroup BinaryOctahedralGroup) [W.Normal]
     (hW : Nat.card W = 2) :
     Nonempty ((BinaryOctahedralGroup ⧸ W) ≃* Equiv.Perm (Fin 4)) := by
-  sorry
+  classical
+  obtain ⟨hfin, hle⟩ := binaryOctahedral_finite_and_card_le
+  haveI := hfin
+  obtain ⟨s, t, hs4, hs2, ht3, hswap_st, hst2, hclosure⟩ := binaryOctahedral_exists_generators
+  -- build `ψ : 2O →* Perm (Fin 4)`
+  let gens : BinaryOctahedralSymbols → Equiv.Perm (Fin 4) := fun v => match v with
+    | .x => s
+    | .y => t
+  have hgx : gens BinaryOctahedralSymbols.x = s := rfl
+  have hgy : gens BinaryOctahedralSymbols.y = t := rfl
+  have hrels : ∀ r ∈ BinaryOctahedralRelations, FreeGroup.lift gens r = 1 := by
+    intro r hr
+    simp only [BinaryOctahedralRelations, Set.mem_union, Set.mem_singleton_iff] at hr
+    rcases hr with rfl | rfl
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of,
+        hgx, hgy]
+      rw [hs4, ht3, inv_one, mul_one]
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of,
+        hgx, hgy]
+      rw [hs4, hst2, inv_one, mul_one]
+  let ψ : BinaryOctahedralGroup →* Equiv.Perm (Fin 4) := PresentedGroup.toGroup hrels
+  have hψx : ψ (PresentedGroup.of BinaryOctahedralSymbols.x) = s :=
+    PresentedGroup.toGroup.of hrels
+  have hψy : ψ (PresentedGroup.of BinaryOctahedralSymbols.y) = t :=
+    PresentedGroup.toGroup.of hrels
+  -- surjectivity of `ψ`
+  have hψ_surj : Function.Surjective ψ := by
+    rw [← MonoidHom.range_eq_top, eq_top_iff, ← hclosure, Subgroup.closure_le]
+    rintro w (rfl | rfl)
+    · exact ⟨_, hψx⟩
+    · exact ⟨_, hψy⟩
+  -- extract the involution generating `W`
+  have hW_ne_bot : W ≠ ⊥ := by
+    intro h; rw [h] at hW; simp at hW
+  obtain ⟨wsub, hwsub_ne⟩ := Subgroup.ne_bot_iff_exists_ne_one.mp hW_ne_bot
+  set w₀ : BinaryOctahedralGroup := (wsub : BinaryOctahedralGroup) with hw0def
+  have hw0mem : w₀ ∈ W := wsub.2
+  have hw0ne : w₀ ≠ 1 := by
+    simp only [hw0def, ne_eq, OneMemClass.coe_eq_one]
+    exact hwsub_ne
+  have hdvd : orderOf wsub ∣ 2 := by rw [← hW]; exact orderOf_dvd_natCard _
+  have hwsub_sq : wsub ^ 2 = 1 := orderOf_dvd_iff_pow_eq_one.mp hdvd
+  have hw0sq : w₀ ^ 2 = 1 := by
+    have := congrArg (Subgroup.subtype W) hwsub_sq
+    simpa using this
+  have hord0 : orderOf w₀ = 2 := by
+    rcases (Nat.dvd_prime Nat.prime_two).mp (orderOf_dvd_of_pow_eq_one hw0sq) with h | h
+    · exact absurd (orderOf_eq_one_iff.mp h) hw0ne
+    · exact h
+  -- `W = ⟨w₀⟩`
+  have hzp_le : Subgroup.zpowers w₀ ≤ W := by rw [Subgroup.zpowers_le]; exact hw0mem
+  have hcard_zp : Nat.card (Subgroup.zpowers w₀) = 2 := by rw [Nat.card_zpowers]; exact hord0
+  have hWeq : W = Subgroup.zpowers w₀ := by
+    apply SetLike.coe_injective
+    symm
+    exact Set.eq_of_subset_of_ncard_le (SetLike.coe_subset_coe.mpr hzp_le)
+      (by show Nat.card (↥W) ≤ Nat.card (Subgroup.zpowers w₀); rw [hW, hcard_zp])
+  have hW_elem : ∀ v ∈ W, v = 1 ∨ v = w₀ := by
+    intro v hv
+    exact binaryOctahedral_mem_zpowers_involution hw0sq v (hWeq ▸ hv)
+  -- centrality of `w₀` in `2O` (normal subgroup of order `2`)
+  have hn : W.Normal := inferInstance
+  have hw0_central : ∀ g : BinaryOctahedralGroup, g * w₀ = w₀ * g := by
+    intro g
+    have hconj_mem : g * w₀ * g⁻¹ ∈ W := hn.conj_mem w₀ hw0mem g
+    have hconj_ne : g * w₀ * g⁻¹ ≠ 1 := by
+      intro h
+      apply hw0ne
+      have he : w₀ = g⁻¹ * (g * w₀ * g⁻¹) * g := by group
+      rw [h] at he
+      simpa using he
+    have hcw : g * w₀ * g⁻¹ = w₀ := (hW_elem _ hconj_mem).resolve_left hconj_ne
+    rw [mul_inv_eq_iff_eq_mul] at hcw
+    exact hcw
+  -- `ψ w₀` is central in `Perm (Fin 4)`, hence trivial (`Z(S₄) = ⊥`)
+  have hψw0_central : ∀ τ : Equiv.Perm (Fin 4), ψ w₀ * τ = τ * ψ w₀ := by
+    intro τ
+    obtain ⟨g, hg⟩ := hψ_surj τ
+    rw [← hg, ← _root_.map_mul, ← _root_.map_mul, hw0_central g]
+  have hcenter_bot : ∀ σ : Equiv.Perm (Fin 4),
+      (∀ τ : Equiv.Perm (Fin 4), σ * τ = τ * σ) → σ = 1 := by decide
+  have hψw0 : ψ w₀ = 1 := hcenter_bot (ψ w₀) hψw0_central
+  -- `W ≤ ker ψ`, so `ψ` factors through the quotient
+  have hW_le_ker : W ≤ ψ.ker := by
+    intro v hv
+    rw [MonoidHom.mem_ker]
+    rcases hW_elem v hv with h | h
+    · rw [h, _root_.map_one]
+    · rw [h, hψw0]
+  let ψbar : (BinaryOctahedralGroup ⧸ W) →* Equiv.Perm (Fin 4) :=
+    QuotientGroup.lift W ψ hW_le_ker
+  have hψbar_surj : Function.Surjective ψbar := by
+    intro τ
+    obtain ⟨g, hg⟩ := hψ_surj τ
+    exact ⟨QuotientGroup.mk g, by rw [← hg]; rfl⟩
+  -- cardinalities pin down the bijection
+  have hcardS4 : Nat.card (Equiv.Perm (Fin 4)) = 24 := by
+    rw [Nat.card_eq_fintype_card]; decide
+  have hquot_card := Subgroup.card_eq_card_quotient_mul_card_subgroup W
+  have hle24 : Nat.card (BinaryOctahedralGroup ⧸ W) ≤ 24 := by
+    rw [hW] at hquot_card
+    omega
+  have hge24 : 24 ≤ Nat.card (BinaryOctahedralGroup ⧸ W) := by
+    rw [← hcardS4]
+    exact Nat.card_le_card_of_surjective ψbar hψbar_surj
+  have hquoteq : Nat.card (BinaryOctahedralGroup ⧸ W) = 24 := le_antisymm hle24 hge24
+  have hbij : Function.Bijective ψbar :=
+    (Nat.bijective_iff_surjective_and_card ψbar).mpr ⟨hψbar_surj, by rw [hquoteq, hcardS4]⟩
+  exact ⟨MulEquiv.ofBijective ψbar hbij⟩
 
 /-- The center of `GL(2, 𝔽_q)` is the scalar torus, of order `q-1`
 (`GeneralLinearGroup.center_eq_range_scalar` + `Matrix.scalar` injective + `Fintype.card_units`).
@@ -8766,9 +8930,9 @@ pushed down through the order-`2` quotient: cyclic → cyclic, dicyclic → dihe
 (`pgl_descent_elementaryAbelian_of_surjective`, fully proven), `SL(2,𝔽_q)` → `PSL(2,𝔽_q)`
 (`pgl_descent_card_two_eq_center_SL2`, fully proven), `PSL(2,3) ≅ A₄` and `PSL(2,5) ≅ A₅`
 (fully proven, Waves 18/20), `⟨SL(2,𝔽_q),d_π⟩/{±1} ≅ PGL(2,𝔽_q)`
-(`pgl_descent_SL2_join_d_quotient`, fully proven, Wave 24). Remaining gaps are exactly the one
-documented recognition `sorry` above (`2O/{±1} ≅ S₄`) plus whatever
-`dicksons_classification_theorem_class_I/II` themselves still carry internally. -/
+(`pgl_descent_SL2_join_d_quotient`, fully proven, Wave 24), and `2O/{±1} ≅ S₄`
+(`pgl_descent_binaryOctahedral_quotient`, fully proven, Wave 25). Remaining gaps are exactly
+whatever `dicksons_classification_theorem_class_I/II` themselves still carry internally. -/
 -- ANCHOR: FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod
 theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ}
     [Fact (Nat.Prime p)] (hp2 : p ≠ 2)
