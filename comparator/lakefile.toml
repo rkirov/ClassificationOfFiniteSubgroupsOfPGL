@@ -1,0 +1,24 @@
+# In-repo comparator workspace (pattern: rkirov/jacobian-claude). Challenge.lean is the
+# independently-auditable statement (Mathlib-only, sorry'd); Solution.lean discharges it from
+# this repository's library (path-required, so comparator checks the exact library build — no
+# vendoring); ../verify.sh runs the real leanprover/comparator (statement match +
+# permitted-axiom check + kernel replay). Shares the root's packagesDir to reuse built Mathlib.
+name = "dickson_challenge"
+defaultTargets = ["Challenge", "Solution", "Submission"]
+packagesDir = "../.lake/packages"
+
+[leanOptions]
+autoImplicit = false
+
+[[require]]
+name = "ClassificationOfSubgroups"
+path = ".."
+
+[[lean_lib]]
+name = "Challenge"
+
+[[lean_lib]]
+name = "Solution"
+
+[[lean_lib]]
+name = "Submission"

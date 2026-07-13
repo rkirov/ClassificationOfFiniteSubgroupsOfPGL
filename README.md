@@ -1,9 +1,42 @@
 # Classification of finite subgroups of $\textrm{PGL}_2(\bar{\mathbb{F}}_p)$
 
+**Status: the formalization is complete and sorry-free.** The three final theorems
+(`dicksons_classification_theorem_class_I`, `dicksons_classification_theorem_class_II`,
+`FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod`) are machine-verified with
+`#print axioms` = `[propext, Classical.choice, Quot.sound]` — no `sorryAx`, no custom axioms.
+Divergences from Butler's exposition are recorded in [`DIVERGENCES.md`](DIVERGENCES.md).
+
+## ⚠ Disclaimer — AI-produced, unreviewed by a mathematician
+
+The endgame of this formalization (Chapter 7: the six case proofs, the recognition lemmas, the
+Todd–Coxeter presented-group bounds, and the final theorems) was produced by **Claude**
+(Anthropic's LLM) across many sessions with light human scoping/steering, on top of the
+human-authored blueprint and earlier chapters. The one hard guarantee is **Lean's kernel**.
+Statement-level trust is addressed by the independent-verification setup below.
+
+## Independent verification (`comparator/`, `challenge.lean` pattern)
+
+You do **not** need to read the ~20k-line development to check *what* was proven:
+
+- [`comparator/Challenge.lean`](comparator/Challenge.lean) — the **independently auditable
+  statement** of the main theorem. It imports only Mathlib, defines the two notions it needs
+  (`PGL2`, `PSL2`) as explicit one-line quotients, spells out every disjunct in plain Mathlib
+  vocabulary, and ends in `sorry`. **Read this file** — it is the whole trust surface.
+- [`comparator/Solution.lean`](comparator/Solution.lean) — restates the identical statement
+  and discharges it from this repository's main theorem (one small definitional bridge).
+- [`verify.sh`](verify.sh) — runs the official
+  [`leanprover/comparator`](https://github.com/leanprover/comparator) against the pair:
+  statement match between Challenge and Solution, permitted-axiom check
+  (`propext`, `Classical.choice`, `Quot.sound` only), and an **independent kernel replay**
+  of the entire proof term via `lean4export`, in a sandbox. The library's proofs are not
+  trusted — they are re-checked.
+
+Trust required: the Lean kernel, Mathlib, `comparator/Challenge.lean` (read it), and the
+comparator tool itself.
 
 ## Content of this project
 
-This project contains the $\LaTeX$ blueprint and the (ongoing) Lean formalization of the classification of finite subgroups of $\textrm{PGL}_2(F)$.
+This project contains the $\LaTeX$ blueprint and the Lean formalization of the classification of finite subgroups of $\textrm{PGL}_2(F)$.
 
 Which states:
 
