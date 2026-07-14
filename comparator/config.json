@@ -4,7 +4,9 @@
   "theorem_names": [
     "DicksonChallenge.dickson_classification_PGL2",
     "DicksonChallenge.dickson_classification_SL2_coprime",
-    "DicksonChallenge.dickson_classification_SL2_dvd"
+    "DicksonChallenge.dickson_classification_SL2_dvd",
+    "DicksonChallenge.klein_classification_SL2",
+    "DicksonChallenge.klein_classification_PGL2"
   ],
   "permitted_axioms": [
     "propext",

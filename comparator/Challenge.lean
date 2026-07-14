@@ -184,4 +184,42 @@ theorem dickson_classification_SL2_dvd {F : Type*} [Field F] [IsAlgClosed F] [De
           Nonempty (G ≃* ↥(Subgroup.map (Matrix.SpecialLinearGroup.map f) ⊤ ⊔
             Subgroup.closure {D π}))) := sorry
 
+/-!
+## Klein's classification in characteristic zero
+
+The two theorems below are the classical characteristic-`0` counterparts (Klein, 1876):
+the classification of the finite subgroups of `SL(2, K)` and of `PGL(2, K)` for `K`
+algebraically closed of characteristic zero — e.g. `K = ℂ`, where `PGL(2, ℂ)` is the Möbius
+group and the `PGL₂` list (cyclic, dihedral, `A₄`, `S₄`, `A₅`) is the symmetry classification
+of the platonic solids. No hypotheses beyond finiteness: any finite subgroup.
+-/
+
+/-- **Klein's classification of the finite subgroups of `SL(2, K)`**, `K` algebraically closed
+of characteristic zero (e.g. `K = ℂ`): every finite subgroup is
+
+1. cyclic, or
+2. dicyclic / binary dihedral (`QuaternionGroup n`, order `4n`), or
+3. the binary tetrahedral group `2T ≅ SL(2, 𝔽₃)` (order `24`), or
+4. the binary icosahedral group `2I ≅ SL(2, 𝔽₅)` (order `120`), or
+5. the binary octahedral group `2O = ⟨x, y | x⁴ = y³ = (xy)²⟩` (order `48`,
+   `BinaryOctahedral2O` as defined above). -/
+theorem klein_classification_SL2 {K : Type} [Field K] [IsAlgClosed K] [CharZero K]
+    (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) K)) [Finite G] :
+    IsCyclic G ∨
+      (∃ n, Nonempty (G ≃* QuaternionGroup n)) ∨
+      Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 3)) ∨
+      Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 5)) ∨
+      Nonempty (G ≃* BinaryOctahedral2O) := sorry
+
+/-- **Klein's classification of the finite subgroups of `PGL(2, K)`**, `K` algebraically closed
+of characteristic zero (for `K = ℂ`: the finite groups of Möbius transformations): every finite
+subgroup is cyclic, dihedral, `A₄`, `S₄` or `A₅`. -/
+theorem klein_classification_PGL2 {K : Type} [Field K] [IsAlgClosed K] [CharZero K]
+    (G : Subgroup (PGL2 K)) [Finite G] :
+    IsCyclic G ∨
+      (∃ n, Nonempty (G ≃* DihedralGroup n)) ∨
+      Nonempty (G ≃* alternatingGroup (Fin 4)) ∨
+      Nonempty (G ≃* Equiv.Perm (Fin 4)) ∨
+      Nonempty (G ≃* alternatingGroup (Fin 5)) := sorry
+
 end DicksonChallenge

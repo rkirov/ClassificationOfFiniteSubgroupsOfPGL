@@ -258,4 +258,34 @@ theorem dickson_classification_SL2_dvd {F : Type*} [Field F] [IsAlgClosed F] [De
       rw [hmap, hd]; rfl
     exact ⟨e.trans (MulEquiv.subgroupCongr hjoin.symm)⟩
 
+/-! ### Klein (characteristic zero) bridges -/
+
+theorem klein_classification_SL2 {K : Type} [Field K] [IsAlgClosed K] [CharZero K]
+    (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) K)) [Finite G] :
+    IsCyclic G ∨
+      (∃ n, Nonempty (G ≃* QuaternionGroup n)) ∨
+      Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 3)) ∨
+      Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 5)) ∨
+      Nonempty (G ≃* BinaryOctahedral2O) := by
+  rcases klein_classification_SL2_char_zero G with h | h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr (h.map fun e => e.trans transport2O.symm))))
+
+theorem klein_classification_PGL2 {K : Type} [Field K] [IsAlgClosed K] [CharZero K]
+    (G : Subgroup (PGL2 K)) [Finite G] :
+    IsCyclic G ∨
+      (∃ n, Nonempty (G ≃* DihedralGroup n)) ∨
+      Nonempty (G ≃* alternatingGroup (Fin 4)) ∨
+      Nonempty (G ≃* Equiv.Perm (Fin 4)) ∨
+      Nonempty (G ≃* alternatingGroup (Fin 5)) := by
+  rcases klein_classification_PGL2_char_zero G with h | h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+  · exact Or.inr (Or.inr (Or.inr (Or.inr h)))
+
 end DicksonChallenge

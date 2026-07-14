@@ -2,10 +2,13 @@
 
 [![Comparator verification](../../actions/workflows/verify.yml/badge.svg)](../../actions/workflows/verify.yml)
 
-**Status: the formalization is complete and sorry-free.** The three final theorems
-(`dicksons_classification_theorem_class_I`, `dicksons_classification_theorem_class_II`,
-`FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod`) are machine-verified with
-`#print axioms` = `[propext, Classical.choice, Quot.sound]` — no `sorryAx`, no custom axioms.
+**Status: the formalization is complete and sorry-free**, in **both characteristics**. The
+char-`p` theorems (`dicksons_classification_theorem_class_I`/`_II` — also in hypothesis-free
+primed forms — and `FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod`) and the
+char-`0` Klein theorems (`klein_classification_SL2_char_zero`,
+`klein_classification_PGL2_char_zero`, via Minkowski–Serre reduction mod `ℓ`) are all
+machine-verified with `#print axioms` = `[propext, Classical.choice, Quot.sound]` — no
+`sorryAx`, no custom axioms.
 Divergences from Butler's exposition are recorded in [`DIVERGENCES.md`](DIVERGENCES.md).
 
 ## ⚠ Disclaimer — AI-produced, unreviewed by a mathematician
@@ -21,7 +24,11 @@ Statement-level trust is addressed by the independent-verification setup below.
 You do **not** need to read the ~20k-line development to check *what* was proven:
 
 - [`comparator/Challenge.lean`](comparator/Challenge.lean) — the **independently auditable
-  statements** of the three headline theorems: the FLT-facing `PGL₂` classification
+  statements** of the five headline theorems, spanning both characteristics:
+  **Klein (char 0)** — the classification of finite subgroups of `SL(2, K)` and `PGL(2, K)`
+  for `K` algebraically closed of characteristic zero (`K = ℂ`: the platonic-solid /
+  Möbius-group classification), proven via Minkowski–Serre reduction mod `ℓ`; and
+  **Dickson (char p)** — the FLT-facing `PGL₂` classification
   (`dickson_classification_PGL2`) and Dickson's two seminal `SL₂` theorems — Class I, the
   binary-polyhedral list (`dickson_classification_SL2_coprime`: cyclic, dicyclic, `SL(2,𝔽₃)`,
   binary octahedral `2O`, `SL(2,𝔽₅)`), and Class II, the modular case
