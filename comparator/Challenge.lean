@@ -63,11 +63,12 @@ of the finite subgroups `G ≤ SL(2, F)` of the special linear group over an alg
 field `F` of odd characteristic `p`, split according to whether `p` divides `|G|`.
 
 Both are stated over the same generality as the repository's proofs (`[Field F] [IsAlgClosed F]
-[DecidableEq F] [CharP F p]`, all Mathlib type classes), reference only Mathlib notions, and
-each carries the **center-normalization caveat** honestly (see the individual docstrings):
-the hypothesis `Subgroup.center (SL(2, F)) ≤ G`, i.e. `-1 ∈ G`, is the standard normalization in
-Dickson's treatment — the classification is stated for subgroups that contain the center — and the
-repository's proofs carry it throughout. It is kept verbatim here rather than hidden.
+[DecidableEq F] [CharP F p]`, all Mathlib type classes), reference only Mathlib notions, and are
+**fully general**: they hold for *every* finite subgroup `G ≤ SL(2, F)` of the relevant order,
+with no center-containment hypothesis. (Dickson's classical treatment normalizes to subgroups
+containing the center `{±1}`; the repository discharges these general statements from that
+normalized form via the `G⟨−1⟩` lift — see `dicksons_classification_theorem_class_I'` / `_II'` —
+so the earlier center-normalization caveat is gone.)
 -/
 
 /-! ### The binary octahedral group `2O`, presented explicitly (Class I, disjunct 5)
@@ -120,14 +121,12 @@ finite subgroup whose order `|G|` is coprime to `p`. Then `G` is one of the foll
 4. `SL(2, 𝔽₅)`, the binary icosahedral group `2I` (order `120`); or
 5. the binary octahedral group `2O = ⟨x, y | x⁴ = y³ = (xy)²⟩` (order `48`, `BinaryOctahedral2O`).
 
-**Center-normalization caveat.** The hypothesis `Subgroup.center (SL(2, F)) ≤ G` (`-1 ∈ G`) is the
-standard normalization in Dickson's treatment and is carried by the repository's proof; it is kept
-here verbatim and documented rather than hidden. -/
+**Fully general.** No center-containment hypothesis is required: the statement holds for every
+finite `G ≤ SL(2, F)` with `|G|` coprime to `p`. -/
 theorem dickson_classification_SL2_coprime {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
     {p : ℕ} [CharP F p] (hp : Nat.Prime p) (hp2 : p ≠ 2)
     (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F)) [Finite G]
-    (hcop : Nat.Coprime (Nat.card G) p)
-    (center_le_G : Subgroup.center (Matrix.SpecialLinearGroup (Fin 2) F) ≤ G) :
+    (hcop : Nat.Coprime (Nat.card G) p) :
     -- (1) cyclic
     IsCyclic G ∨
       -- (2) generalised quaternion / dicyclic of order `4n`
@@ -160,13 +159,12 @@ finite subgroup whose order is *divisible* by `p`. Then `G` is one of five types
   repository's specific-embedding statement — the bridge discharges it by supplying the repository's
   canonical Galois embedding for `f`.
 
-**Center-normalization caveat.** As in Class I, the hypothesis `Subgroup.center (SL(2, F)) ≤ G`
-(`-1 ∈ G`) is the standard Dickson normalization, carried by the repository's proof and kept here
-verbatim. -/
+**Fully general.** As in Class I, no center-containment hypothesis is required: the statement
+holds for every finite `G ≤ SL(2, F)` whose order is divisible by `p`. -/
 theorem dickson_classification_SL2_dvd {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
     {p : ℕ} [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F)) [Finite G] (hp : p ∣ Nat.card G)
-    (center_le_G : Subgroup.center (Matrix.SpecialLinearGroup (Fin 2) F) ≤ G) (hp2 : p ≠ 2) :
+    (hp2 : p ≠ 2) :
     -- (vi) elementary-abelian normal `p`-subgroup `Q` with cyclic complement `K`, `p ∤ |K|`
     (∃ Q : Subgroup G,
         ((∀ a b : Q, a * b = b * a) ∧ (∀ h : Q, h ≠ 1 → orderOf h = p)) ∧ Q.Normal ∧

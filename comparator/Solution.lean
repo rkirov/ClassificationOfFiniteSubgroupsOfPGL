@@ -200,14 +200,13 @@ noncomputable def transport2O :
 theorem dickson_classification_SL2_coprime {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
     {p : ℕ} [CharP F p] (hp : Nat.Prime p) (hp2 : p ≠ 2)
     (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F)) [Finite G]
-    (hcop : Nat.Coprime (Nat.card G) p)
-    (center_le_G : Subgroup.center (Matrix.SpecialLinearGroup (Fin 2) F) ≤ G) :
+    (hcop : Nat.Coprime (Nat.card G) p) :
     IsCyclic G ∨
       (∃ n, Nonempty (G ≃* QuaternionGroup n)) ∨
       Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 3)) ∨
       Nonempty (G ≃* Matrix.SpecialLinearGroup (Fin 2) (ZMod 5)) ∨
       Nonempty (G ≃* BinaryOctahedral2O) := by
-  rcases dicksons_classification_theorem_class_I hp.prime G (Or.inr hcop) center_le_G hp2 with
+  rcases dicksons_classification_theorem_class_I' hp.prime G (Or.inr hcop) hp2 with
     h | ⟨n, h⟩ | h | h | h
   · exact Or.inl h
   · exact Or.inr (Or.inl ⟨n, h⟩)
@@ -222,7 +221,7 @@ theorem dickson_classification_SL2_coprime {F : Type*} [Field F] [IsAlgClosed F]
 theorem dickson_classification_SL2_dvd {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F]
     {p : ℕ} [Fact (Nat.Prime p)] [CharP F p]
     (G : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F)) [Finite G] (hp : p ∣ Nat.card G)
-    (center_le_G : Subgroup.center (Matrix.SpecialLinearGroup (Fin 2) F) ≤ G) (hp2 : p ≠ 2) :
+    (hp2 : p ≠ 2) :
     (∃ Q : Subgroup G,
         ((∀ a b : Q, a * b = b * a) ∧ (∀ h : Q, h ≠ 1 → orderOf h = p)) ∧ Q.Normal ∧
         ∃ K : Subgroup G,
@@ -236,7 +235,7 @@ theorem dickson_classification_SL2_dvd {F : Type*} [Field F] [IsAlgClosed F] [De
           ((π : GaloisField p (2 * k.val)) ^ 2) ∈ Set.range f ∧
           Nonempty (G ≃* ↥(Subgroup.map (Matrix.SpecialLinearGroup.map f) ⊤ ⊔
             Subgroup.closure {D π}))) := by
-  rcases dicksons_classification_theorem_class_II G hp center_le_G hp2 with
+  rcases dicksons_classification_theorem_class_II' G hp hp2 with
     ⟨Q, hQe, hQn, K, hK⟩ | ⟨hp2eq, n, hodd, h⟩ | ⟨hp3, h⟩ | ⟨k, h⟩ | ⟨k, π, hπspec, hiso⟩
   · -- (vi): unfold the repository's `IsElementaryAbelian` into plain quantifiers
     exact Or.inl ⟨Q, ⟨fun a b => hQe.1.is_comm.comm a b, hQe.2⟩, hQn, K, hK⟩

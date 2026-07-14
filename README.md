@@ -29,8 +29,8 @@ You do **not** need to read the ~20k-line development to check *what* was proven
   The file imports only Mathlib, defines everything it needs explicitly (the `PGL2`/`PSL2`
   quotients, the `2O` presentation `⟨x, y | x⁴ = y³ = (xy)²⟩` from first principles, the diagonal
   twist matrix), spells out every disjunct in plain Mathlib vocabulary, and ends each theorem in
-  `sorry`. **Read this file** — it is the whole trust surface. (The `SL₂` statements carry the
-  standard `-1 ∈ G` Dickson normalization, documented in their docstrings.)
+  `sorry`. **Read this file** — it is the whole trust surface. (The `SL₂` statements are fully
+  general — no `-1 ∈ G` normalization: any finite subgroup, via the `G·⟨−1⟩` lift.)
 - [`comparator/Solution.lean`](comparator/Solution.lean) — restates the identical statement
   and discharges it from this repository's main theorem (one small definitional bridge).
 - [`verify.sh`](verify.sh) — runs the official

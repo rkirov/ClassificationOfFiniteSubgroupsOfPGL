@@ -11247,4 +11247,269 @@ theorem FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod {p : ℕ}
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨e3.trans e4⟩))))
 -- ANCHOR_END: FLT_classification_fin_subgroups_of_PGL2_over_AlgClosure_ZMod
 
+/-- The lift `G' = G ⊔ Z`: when `-1 ∉ G`, there is a surjection `↥G' →* ↥G` and
+`|G'| = 2|G|`. -/
+lemma dickson_general_lift {F : Type*} [Field F] [NeZero (2 : F)]
+    (G : Subgroup SL(2,F)) [Finite G] (hneg : (-1 : SL(2,F)) ∉ G) :
+    ∃ ψ : ↥(G ⊔ center SL(2,F)) →* ↥G, Function.Surjective ψ ∧
+      Nat.card ↥(G ⊔ center SL(2,F)) = 2 * Nat.card ↥G := by
+  set Zc := center SL(2,F) with hZc
+  set G' := G ⊔ Zc with hG'
+  have hle : G ≤ G' := le_sup_left
+  have hZle : Zc ≤ G' := le_sup_right
+  set Z' := Zc.subgroupOf G' with hZ'
+  haveI : Z'.Normal := inferInstance
+  set incl0 : ↥G →* ↥G' := Subgroup.inclusion hle with hincl0
+  set f : ↥G →* (↥G' ⧸ Z') := (QuotientGroup.mk' Z').comp incl0 with hf
+  have hinj : Function.Injective f := by
+    rw [injective_iff_map_eq_one]
+    intro x hx
+    rw [hf, MonoidHom.comp_apply, QuotientGroup.mk'_apply, QuotientGroup.eq_one_iff,
+      Subgroup.mem_subgroupOf] at hx
+    have hxc : (↑x : SL(2,F)) ∈ Zc := by
+      rw [Subgroup.coe_inclusion] at hx; exact hx
+    rw [hZc, SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.mem_Z_iff] at hxc
+    rcases hxc with h1 | hm1
+    · exact OneMemClass.coe_eq_one.mp h1
+    · exact absurd (hm1 ▸ x.2) hneg
+  have hsurj_f : Function.Surjective f := by
+    intro y
+    obtain ⟨g', rfl⟩ := QuotientGroup.mk'_surjective Z' y
+    have hg'2 : (↑g' : SL(2,F)) ∈ G ⊔ Zc := g'.2
+    rw [← SetLike.mem_coe, Subgroup.mul_normal, Set.mem_mul] at hg'2
+    obtain ⟨a, ha, b, hb, hab⟩ := hg'2
+    refine ⟨⟨a, ha⟩, ?_⟩
+    rw [hf, MonoidHom.comp_apply, QuotientGroup.mk'_apply, QuotientGroup.mk'_apply,
+      QuotientGroup.eq, Subgroup.mem_subgroupOf]
+    have hcoe : (↑((incl0 ⟨a, ha⟩)⁻¹ * g') : SL(2,F)) = b := by
+      rw [Subgroup.coe_mul, Subgroup.coe_inv, Subgroup.coe_inclusion, ← hab]
+      simp
+    rw [hcoe]; exact hb
+  set e : ↥G ≃* (↥G' ⧸ Z') := MulEquiv.ofBijective f ⟨hinj, hsurj_f⟩ with he
+  refine ⟨e.symm.toMonoidHom.comp (QuotientGroup.mk' Z'), ?_, ?_⟩
+  · rw [MonoidHom.coe_comp]
+    exact Function.Surjective.comp e.symm.surjective (QuotientGroup.mk'_surjective Z')
+  · have hZ'card : Nat.card ↥Z' = 2 := by
+      rw [hZ', Nat.card_congr (Subgroup.subgroupOfEquivOfLe hZle).toEquiv, hZc,
+        SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.card_Z_eq_two_of_two_ne_zero]
+    have hquot := Subgroup.card_eq_card_quotient_mul_card_subgroup Z'
+    have hecard : Nat.card (↥G' ⧸ Z') = Nat.card ↥G := (Nat.card_congr e.toEquiv).symm
+    rw [hquot, hecard, hZ'card]; ring
+
+/-- From `¬ center ≤ G`, the involution `-1` is not in `G`. -/
+lemma dickson_general_neg_one_notMem {F : Type*} [Field F]
+    (G : Subgroup SL(2,F)) (hnc : ¬ center SL(2,F) ≤ G) : (-1 : SL(2,F)) ∉ G := by
+  intro hmem
+  apply hnc
+  intro x hx
+  rw [SpecialSubgroups.center_SL2_eq_Z, SpecialSubgroups.mem_Z_iff] at hx
+  rcases hx with rfl | rfl
+  · exact G.one_mem
+  · exact hmem
+
+/-- If `-1 ∉ G` (`p ≠ 2`) then `|G|` is odd: an order-`2` element (Cauchy) would be the unique
+involution `-1`, contradicting `-1 ∉ G`. -/
+lemma dickson_general_card_odd {F : Type*} [Field F] [NeZero (2 : F)]
+    (G : Subgroup SL(2,F)) [Finite G] (hneg : (-1 : SL(2,F)) ∉ G) : Odd (Nat.card ↥G) := by
+  rcases Nat.even_or_odd (Nat.card ↥G) with heven | hodd
+  · exfalso
+    haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+    obtain ⟨y, hy⟩ := exists_prime_orderOf_dvd_card' 2 heven.two_dvd
+    have hyo : y ^ 2 = 1 := by have := pow_orderOf_eq_one y; rwa [hy] at this
+    have hy1 : y ≠ 1 := by
+      intro h; rw [h, orderOf_one] at hy; exact absurd hy (by norm_num)
+    have hcoe2 : (↑y : SL(2,F)) ^ 2 = 1 := by
+      rw [← Subgroup.coe_pow, hyo, Subgroup.coe_one]
+    have hcoe1 : (↑y : SL(2,F)) ≠ 1 := by
+      rw [Ne, OneMemClass.coe_eq_one]; exact hy1
+    have hzeq : (↑y : SL(2,F)) = -1 := pgl_descent_involution_eq_neg_one hcoe2 hcoe1
+    exact hneg (hzeq ▸ y.2)
+  · exact hodd
+
+/-- `2` is coprime to any odd prime. -/
+lemma dickson_general_coprime_two {p : ℕ} (hp : Prime p) (hp2 : p ≠ 2) : Nat.Coprime 2 p :=
+  (Nat.coprime_primes Nat.prime_two hp.nat_prime).mpr (Ne.symm hp2)
+
+/-- `4 ∤ 2n` for `n` odd. -/
+lemma dickson_general_not_four_dvd_two_mul {n : ℕ} (hn : Odd n) : ¬ (4 ∣ 2 * n) := by
+  obtain ⟨m, rfl⟩ := hn; omega
+
+/-- `4 ∣ (q² − 1)·q` for `q` odd. -/
+lemma dickson_general_four_dvd_qsq (q : ℕ) (hq : Odd q) : 4 ∣ (q ^ 2 - 1) * q := by
+  obtain ⟨m, rfl⟩ := hq
+  have hsq : (2 * m + 1) ^ 2 = 4 * (m ^ 2 + m) + 1 := by ring
+  have hsub : (2 * m + 1) ^ 2 - 1 = 4 * (m ^ 2 + m) := by omega
+  rw [hsub]
+  exact (dvd_mul_right 4 (m ^ 2 + m)).mul_right (2 * m + 1)
+
+/-- `4 ∣ |QuaternionGroup n|` for `n ≥ 1`. -/
+lemma dickson_general_four_dvd_card_quaternion (n : ℕ) [NeZero n] :
+    4 ∣ Nat.card (QuaternionGroup n) := by
+  rw [Nat.card_eq_fintype_card, QuaternionGroup.card]
+  exact dvd_mul_right 4 n
+
+/-- `4 ∣ |2O|`: the binary octahedral group surjects onto `S₄` (order `24`). -/
+lemma dickson_general_four_dvd_card_2O : 4 ∣ Nat.card BinaryOctahedralGroup := by
+  obtain ⟨hfin, _⟩ := binaryOctahedral_finite_and_card_le
+  haveI := hfin
+  obtain ⟨s, t, hs4, hs2, ht3, hswap_st, hst2, hclosure⟩ := binaryOctahedral_exists_generators
+  let gens : BinaryOctahedralSymbols → Equiv.Perm (Fin 4) := fun v => match v with
+    | .x => s
+    | .y => t
+  have hgx : gens BinaryOctahedralSymbols.x = s := rfl
+  have hgy : gens BinaryOctahedralSymbols.y = t := rfl
+  have hrels : ∀ r ∈ BinaryOctahedralRelations, FreeGroup.lift gens r = 1 := by
+    intro r hr
+    simp only [BinaryOctahedralRelations, Set.mem_union, Set.mem_singleton_iff] at hr
+    rcases hr with rfl | rfl
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of,
+        hgx, hgy]
+      rw [hs4, ht3, inv_one, mul_one]
+    · simp only [_root_.map_mul, _root_.map_pow, _root_.map_inv, FreeGroup.lift_apply_of,
+        hgx, hgy]
+      rw [hs4, hst2, inv_one, mul_one]
+  let ψ : BinaryOctahedralGroup →* Equiv.Perm (Fin 4) := PresentedGroup.toGroup hrels
+  have hψx : ψ (PresentedGroup.of BinaryOctahedralSymbols.x) = s :=
+    PresentedGroup.toGroup.of hrels
+  have hψy : ψ (PresentedGroup.of BinaryOctahedralSymbols.y) = t :=
+    PresentedGroup.toGroup.of hrels
+  have hψ_surj : Function.Surjective ψ := by
+    rw [← MonoidHom.range_eq_top, eq_top_iff, ← hclosure, Subgroup.closure_le]
+    rintro w (rfl | rfl)
+    · exact ⟨_, hψx⟩
+    · exact ⟨_, hψy⟩
+  have hdvd : Nat.card (Equiv.Perm (Fin 4)) ∣ Nat.card BinaryOctahedralGroup :=
+    Subgroup.card_dvd_of_surjective ψ hψ_surj
+  have hcardS4 : Nat.card (Equiv.Perm (Fin 4)) = 24 := by
+    rw [Nat.card_eq_fintype_card]; decide
+  rw [hcardS4] at hdvd
+  exact dvd_trans (by norm_num) hdvd
+
+/-- **Theorem 3.6, Class I (general form).** Same as `dicksons_classification_theorem_class_I`
+but with the `center SL(2,F) ≤ G` hypothesis removed. When `-1 ∉ G` the lift `G' = G⟨−1⟩` has
+`|G'| = 2|G| ≡ 2 (mod 4)`, so of the five types produced by the normalized theorem only the cyclic
+one survives (the others have order divisible by `4`); a subgroup of a cyclic group is cyclic. -/
+theorem dicksons_classification_theorem_class_I' {F : Type*} [Field F] [IsAlgClosed F]
+    [DecidableEq F] {p : ℕ} [CharP F p] (hp : Prime p) (G : Subgroup SL(2,F)) [Finite G]
+    (hp' : p = 0 ∨ Nat.Coprime (Nat.card G) p) (hp2 : p ≠ 2) :
+    IsCyclic G ∨
+      (∃ n, Isomorphic G (QuaternionGroup n)) ∨
+      Isomorphic G SL(2, ZMod 3) ∨
+      Isomorphic G SL(2, ZMod 5) ∨
+      Isomorphic G BinaryOctahedralGroup := by
+  haveI : Fact (Nat.Prime p) := ⟨hp.nat_prime⟩
+  haveI : NeZero (2 : F) := pgl_descent_neZero_two F p hp2
+  by_cases hc : center SL(2,F) ≤ G
+  · exact dicksons_classification_theorem_class_I hp G hp' hc hp2
+  · have hneg := dickson_general_neg_one_notMem G hc
+    have hodd := dickson_general_card_odd G hneg
+    obtain ⟨ψ, hψ_surj, hcard⟩ := dickson_general_lift G hneg
+    set G' := G ⊔ center SL(2,F) with hG'
+    have hle : G ≤ G' := le_sup_left
+    haveI hG'fin : Finite ↥G' := by
+      apply Nat.finite_of_card_ne_zero
+      rw [hcard]; have := Nat.card_pos (α := ↥G); omega
+    have hcopG : Nat.Coprime (Nat.card ↥G) p := hp'.resolve_left hp.nat_prime.pos.ne'
+    have hp'2 : p = 0 ∨ Nat.Coprime (Nat.card ↥G') p := by
+      right; rw [hcard]
+      exact Nat.Coprime.mul_left (dickson_general_coprime_two hp hp2) hcopG
+    have hZle : center SL(2,F) ≤ G' := le_sup_right
+    rcases dicksons_classification_theorem_class_I hp G' hp'2 hZle hp2 with
+      hcyc | ⟨n, hquat⟩ | h23 | h25 | h2O
+    · left
+      haveI := hcyc
+      haveI : IsCyclic ↥(G.subgroupOf G') := inferInstance
+      exact (MulEquiv.isCyclic (Subgroup.subgroupOfEquivOfLe hle)).mp inferInstance
+    · exfalso
+      obtain ⟨e⟩ := hquat
+      haveI : NeZero n := ⟨by
+        rintro rfl
+        haveI : Finite (QuaternionGroup 0) := Finite.of_equiv _ e.toEquiv
+        haveI : Finite (DihedralGroup 0) := Finite.of_equiv _
+          QuaternionGroup.quaternionGroupZeroEquivDihedralGroupZero.toEquiv
+        exact not_finite (DihedralGroup 0)⟩
+      have hc4 : 4 ∣ Nat.card ↥G' := by
+        rw [Nat.card_congr e.toEquiv]; exact dickson_general_four_dvd_card_quaternion n
+      rw [hcard] at hc4
+      exact dickson_general_not_four_dvd_two_mul hodd hc4
+    · exfalso
+      obtain ⟨e⟩ := h23
+      have h24 : Nat.card ↥G' = 24 := by
+        rw [Nat.card_congr e.toEquiv, pgl_descent_card_SL2_ZMod3]
+      rw [hcard] at h24
+      obtain ⟨m, hm⟩ := hodd; omega
+    · exfalso
+      obtain ⟨e⟩ := h25
+      have h120 : Nat.card ↥G' = 120 := by
+        rw [Nat.card_congr e.toEquiv, pgl_descent_card_SL2_ZMod5]
+      rw [hcard] at h120
+      obtain ⟨m, hm⟩ := hodd; omega
+    · exfalso
+      obtain ⟨e⟩ := h2O
+      have hc4 : 4 ∣ Nat.card ↥G' := by
+        rw [Nat.card_congr e.toEquiv]; exact dickson_general_four_dvd_card_2O
+      rw [hcard] at hc4
+      exact dickson_general_not_four_dvd_two_mul hodd hc4
+
+/-- **Theorem 3.6, Class II (general form).** Same as `dicksons_classification_theorem_class_II`
+but with the `center SL(2,F) ≤ G` hypothesis removed. When `-1 ∉ G` the lift `G' = G⟨−1⟩` has
+`|G'| = 2|G| ≡ 2 (mod 4)`, so of the five types produced by the normalized theorem only item (vi)
+survives (items (viii)/(ix)/(x) all have order divisible by `4`, and (vii) needs `p = 2`); the (vi)
+structure descends from `G'` to `G` along the surjection `↥G' ↠ ↥G`. -/
+theorem dicksons_classification_theorem_class_II' {F : Type*} [Field F] [IsAlgClosed F]
+    [DecidableEq F] {p : ℕ}
+    [Fact (Nat.Prime p)] [CharP F p] (G : Subgroup SL(2,F)) [Finite G] (hp : p ∣ Nat.card G)
+    (hp2 : p ≠ 2) :
+    (∃ Q : Subgroup G, IsElementaryAbelian p Q ∧ Normal Q ∧
+        ∃ K : Subgroup G, IsComplement' Q K ∧ IsCyclic K ∧ Nat.Coprime p (Nat.card K)) ∨
+      (p = 2 ∧ ∃ n : ℕ, Odd n ∧ Isomorphic G (DihedralGroup n)) ∨
+      (p = 3 ∧ Isomorphic G SL(2, ZMod 5)) ∨
+      (∃ k : ℕ+, Isomorphic G SL(2, GaloisField p k.val)) ∨
+      (∃ k : ℕ+, ∃ π : (GaloisField p (2 * k.val))ˣ,
+        SL2_join_d_pi_spec p k π ∧ Isomorphic G (SL2_join_d p k π)) := by
+  haveI : NeZero (2 : F) := pgl_descent_neZero_two F p hp2
+  by_cases hc : center SL(2,F) ≤ G
+  · exact dicksons_classification_theorem_class_II G hp hc hp2
+  · have hneg := dickson_general_neg_one_notMem G hc
+    have hodd := dickson_general_card_odd G hneg
+    obtain ⟨ψ, hψ_surj, hcard⟩ := dickson_general_lift G hneg
+    haveI hG'fin : Finite ↥(G ⊔ center SL(2,F)) := by
+      apply Nat.finite_of_card_ne_zero
+      rw [hcard]; have := Nat.card_pos (α := ↥G); omega
+    have hZle : center SL(2,F) ≤ G ⊔ center SL(2,F) := le_sup_right
+    have hpG' : p ∣ Nat.card ↥(G ⊔ center SL(2,F)) := by
+      rw [hcard]; exact Dvd.dvd.mul_left hp 2
+    rcases dicksons_classification_theorem_class_II (G ⊔ center SL(2,F)) hpG' hZle hp2 with
+      ⟨Q, hQe, hQn, K, hQK, hKc, hKcop⟩ | ⟨hp2', -⟩ | ⟨-, h35⟩ | ⟨k, h3q⟩ | ⟨k, π, hπs, h3j⟩
+    · -- (vi) descends to `G` along the surjection `ψ`
+      left
+      exact pgl_descent_elementaryAbelian_of_surjective ψ hψ_surj Q hQe hQn K hQK hKc hKcop
+    · exact absurd hp2' hp2
+    · -- (viii) `SL(2,5)` at `p = 3`: order 120, `4 ∣ 120`
+      exfalso
+      obtain ⟨e⟩ := h35
+      have h120 : Nat.card ↥(G ⊔ center SL(2,F)) = 120 := by
+        rw [Nat.card_congr e.toEquiv, pgl_descent_card_SL2_ZMod5]
+      rw [hcard] at h120
+      obtain ⟨m, hm⟩ := hodd; omega
+    · -- (ix) `SL(2,𝔽_q)`: order `(q²−1)q`, `4 ∣` it since `q = p^k` odd
+      exfalso
+      obtain ⟨e⟩ := h3q
+      have hc4 : 4 ∣ Nat.card ↥(G ⊔ center SL(2,F)) := by
+        rw [Nat.card_congr e.toEquiv, caseV_card_SL2_GaloisField]
+        exact dickson_general_four_dvd_qsq (p ^ k.val)
+          ((Nat.Prime.odd_of_ne_two Fact.out hp2).pow)
+      rw [hcard] at hc4
+      exact dickson_general_not_four_dvd_two_mul hodd hc4
+    · -- (x) twisted: order `2(q²−1)q`, `4 ∣` it
+      exfalso
+      obtain ⟨e⟩ := h3j
+      have hc4 : 4 ∣ Nat.card ↥(G ⊔ center SL(2,F)) := by
+        rw [Nat.card_congr e.toEquiv, caseV_vb_card_SL2_join_d π hπs,
+          caseV_card_SL2_GaloisField]
+        exact Dvd.dvd.mul_left (dickson_general_four_dvd_qsq (p ^ k.val)
+          ((Nat.Prime.odd_of_ne_two Fact.out hp2).pow)) 2
+      rw [hcard] at hc4
+      exact dickson_general_not_four_dvd_two_mul hodd hc4
+
 #min_imports
