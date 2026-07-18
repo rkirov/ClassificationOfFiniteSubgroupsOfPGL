@@ -9,7 +9,7 @@ alternating group `alternatingGroup (Fin 5)`.
 
 It is **pure finite group theory** (no reference to `SL(2,F)`, `PGL`, or fields): it identifies
 the abstract isomorphism type `A₅` needed to *recognize* the image of `SL(2,5)/{±1}` in Dickson's
-classification, feeding case Vd/VIc (`ChristopherButler.tex`) via
+classification, feeding case Vd/VIc (the Butler exposition) via
 `Ch7_DicksonsClassificationTheorem.lean` (wired in separately by the orchestrator).
 
 ## Proof outline (standard, e.g. Dummit–Foote Prop. 6.2.13 / Rotman Thm 5.20)
@@ -47,9 +47,9 @@ classification, feeding case Vd/VIc (`ChristopherButler.tex`) via
 
 ## Divergences
 
-None yet recorded against `ChristopherButler.tex`: this file is *new* supporting group theory (a
+None yet recorded against the Butler exposition: this file is *new* supporting group theory (a
 classical fact used, but not itself proved, by Butler/Dickson), not a formalization of a specific
-numbered lemma in the tex. See `DIVERGENCES.md` for the project-wide convention.
+numbered lemma in the exposition. See `DIVERGENCES.md` for the project-wide convention.
 -/
 
 set_option linter.style.longLine true

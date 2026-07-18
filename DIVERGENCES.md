@@ -2,7 +2,7 @@
 
 This formalization targets the **classical Dickson classification** (finite subgroups of
 SL(2,F̄_p) / PGL(2,F̄_p)). Where the Lean development diverges from Christopher Butler's
-exposition (`ChristopherButler.tex`, cited by tex line numbers), the divergence is recorded
+exposition (the Butler exposition, cited by source line numbers), the divergence is recorded
 here and in the corresponding docstrings.
 
 **STATUS (2026-07-13): the formalization is SORRY-FREE.** All three final theorems

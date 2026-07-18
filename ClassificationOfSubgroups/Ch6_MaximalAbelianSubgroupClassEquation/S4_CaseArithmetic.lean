@@ -1,7 +1,7 @@
 /-
 This file formalizes the *pure arithmetic* skeleton of Christopher Butler's case analysis
 of the Maximal Abelian Subgroup Class Equation of a finite subgroup `G ≤ SL(2,F)`
-(`ChristopherButler.tex`, lines 1206-1270 for the rearrangement of the class equation and
+(the Butler exposition, lines 1206-1270 for the rearrangement of the class equation and
 the derivation of the 6 possible cases, and lines 1428-1881 for the individual cases).
 No group theory or `SL(2,F)` appears here: everything is stated over `ℚ`/`ℕ` so that the
 later case-split formalization (which will supply the group-theoretic hypotheses relating

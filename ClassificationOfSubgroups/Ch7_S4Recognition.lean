@@ -4,7 +4,7 @@ import Mathlib
 # Recognition of `S₄` among groups of order `24`
 
 This file proves the pure group-theoretic recognition theorem needed by Case VIb of Dickson's
-classification (`ChristopherButler.tex` ~2173-2201, via
+classification (the Butler exposition ~2173-2201, via
 `Ch7_DicksonsClassificationTheorem.lean`): a finite group `Q` of order `24` with
 
 * no normal subgroup of order `3`, and
@@ -38,7 +38,7 @@ supplies the two nonexistence hypotheses from Butler's maximal-abelian class dat
 
 ## Divergences
 
-None recorded against `ChristopherButler.tex`: like `Ch7_SimpleGroup60.lean`, this is new
+None recorded against the Butler exposition: like `Ch7_SimpleGroup60.lean`, this is new
 supporting group theory (Butler cites the recognition of `G/Z` as `S₄` and Suzuki's
 classification of its representation groups without proof), not a formalization of a specific
 numbered lemma. Butler's own route (the coset action on `N_G(A₂)/Z` of index `4`) is replaced
