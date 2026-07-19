@@ -5,7 +5,7 @@ generator/relation description of a finite group `G` in terms of two or three el
 `DihedralGroup n` / `QuaternionGroup n`, or with `SL(2, ZMod 3)`.
 
 They are used by the case analysis in Christopher Butler's classification of the finite
-subgroups of `SL(2,F)` (`ChristopherButler.tex`), specifically cases II(a), IV(a), VI(a) (dihedral
+subgroups of `SL(2,F)` (the Butler exposition), specifically cases II(a), IV(a), VI(a) (dihedral
 / dicyclic recognition) and II(b), IV(b) (`SL(2,3)` recognition), where a subgroup is shown to
 satisfy one of the presentations
 

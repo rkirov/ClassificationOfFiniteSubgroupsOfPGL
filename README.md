@@ -16,7 +16,7 @@ Divergences from Butler's exposition are recorded in [`DIVERGENCES.md`](DIVERGEN
 The endgame of this formalization (Chapter 7: the six case proofs, the recognition lemmas, the
 Todd–Coxeter presented-group bounds, and the final theorems) was produced by **Claude**
 (Anthropic's LLM) across many sessions with light human scoping/steering, on top of the
-human-authored blueprint and earlier chapters. The one hard guarantee is **Lean's kernel**.
+earlier human-authored development. The one hard guarantee is **Lean's kernel**.
 Statement-level trust is addressed by the independent-verification setup below.
 
 ## Independent verification (`comparator/`, `challenge.lean` pattern)
@@ -52,7 +52,7 @@ comparator tool itself.
 
 ## Content of this project
 
-This project contains the $\LaTeX$ blueprint and the Lean formalization of the classification of finite subgroups of $\textrm{PGL}_2(F)$.
+This project contains the Lean formalization of the classification of finite subgroups of $\textrm{PGL}_2(F)$.
 
 Which states:
 
@@ -72,7 +72,7 @@ This project is a contribution towards the formalization of Fermat's Last Theore
 
 I thank my supervisor Prof. David Jordan for his invaluable support and guidance throughout the project, 
 
-I would also like to thank Christopher Butler for providing the $\LaTeX$ code so I could easily set up the blueprint.
+I would also like to thank Christopher Butler for the exposition on which this project is based.
 
 I would also like to thank Prof. Kevin Buzzard for his support and patience.
 
